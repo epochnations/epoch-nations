@@ -99,6 +99,28 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
       is_read: false
     });
 
+    // Boost domestic stocks by 15%
+    const domesticStocks = await base44.entities.Stock.filter({ nation_id: nation.id });
+    for (const s of domesticStocks) {
+      const newPrice = parseFloat((s.current_price * 1.15).toFixed(2));
+      await base44.entities.Stock.update(s.id, {
+        current_price: newPrice,
+        price_history: [...(s.price_history || []), newPrice].slice(-20),
+        market_cap: parseFloat((newPrice * s.total_shares).toFixed(2))
+      });
+    }
+
+    // Gold-tier global news
+    await base44.entities.NewsArticle.create({
+      headline: `SCIENTIFIC BREAKTHROUGH: ${nation.name} Enters the ${nextEpoch} Age!`,
+      body: `A NEW ERA BEGINS: ${nation.name} has officially entered the ${nextEpoch} Epoch! Domestic stocks surged 15% on the news as global markets react to this massive shift in power. New units, sectors, and technologies are now available.`,
+      category: "tech",
+      tier: "gold",
+      nation_name: nation.name,
+      nation_flag: nation.flag_emoji,
+      nation_color: nation.flag_color
+    });
+
     setLoading(null);
     onRefresh?.();
     onClose?.();

@@ -99,6 +99,21 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
       total_value: damageDealt
     });
 
+    // Auto-post news
+    await base44.entities.NewsArticle.create({
+      headline: crashTriggered
+        ? `FLASH: ${myNation.name} Invades ${targetNation.name}! Markets Bracing for Impact`
+        : `BREAKING: ${myNation.name} Launches Military Strike Against ${targetNation.name}`,
+      body: crashTriggered
+        ? `A devastating critical strike by ${myNation.name} has triggered a market crash in ${targetNation.name}. Manufacturing output has fallen 15% and top stocks have been devalued. Global investors are watching nervously.`
+        : `${myNation.name} has declared war on ${targetNation.name}, dealing ${damageDealt} damage units in the opening offensive.`,
+      category: "war",
+      tier: crashTriggered ? "gold" : "breaking",
+      nation_name: myNation.name,
+      nation_flag: myNation.flag_emoji,
+      nation_color: myNation.flag_color
+    });
+
     setResult({ damage: damageDealt, critical: crashTriggered });
     setLoading(false);
     onRefresh?.();
