@@ -247,6 +247,22 @@ export default function Dashboard() {
           onClose={() => setShowIssueStock(false)}
         />
       )}
+
+      {/* Dilemma Engine — headless tick scheduler */}
+      {myNation && (
+        <DilemmaEngine
+          nation={myNation}
+          onDilemmaReady={(d) => setActiveDilemma(d)}
+        />
+      )}
+      {activeDilemma && myNation && (
+        <CouncilDilemmaModal
+          dilemma={activeDilemma}
+          nation={myNation}
+          onClose={() => setActiveDilemma(null)}
+          onRefresh={refresh}
+        />
+      )}
     </div>
   );
 }
