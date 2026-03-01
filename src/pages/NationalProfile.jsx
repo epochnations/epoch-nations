@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 import { Shield, TrendingUp, Swords, BookOpen, ChevronRight } from "lucide-react";
-import IdentityHeader from "../components/profile/IdentityHeader";
+import IdentityHeader from "../components/profile/IdentityHeader.jsx";
 import EconomicLedger from "../components/profile/EconomicLedger.jsx";
 import WarRoom from "../components/profile/WarRoom.jsx";
 import PolicyCenter from "../components/profile/PolicyCenter.jsx";
