@@ -3,9 +3,9 @@ import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 import { Shield, TrendingUp, Swords, BookOpen, ChevronRight } from "lucide-react";
 import IdentityHeader from "../components/profile/IdentityHeader";
-import EconomicLedger from "../components/profile/EconomicLedger";
-import WarRoom from "../components/profile/WarRoom";
-import PolicyCenter from "../components/profile/PolicyCenter";
+import EconomicLedger from "../components/profile/EconomicLedger.jsx";
+import WarRoom from "../components/profile/WarRoom.jsx";
+import PolicyCenter from "../components/profile/PolicyCenter.jsx";
 
 const TABS = [
   { id: "economy", label: "Economic Ledger", icon: TrendingUp },
