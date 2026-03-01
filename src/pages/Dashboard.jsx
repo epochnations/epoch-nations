@@ -111,6 +111,19 @@ export default function Dashboard() {
             <Sliders size={12} /> <span className="hidden sm:inline">Manage</span>
           </button>
 
+          <a
+            href={createPageUrl("GlobalChronicles")}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-400 text-xs font-bold hover:bg-white/10 transition-all"
+          >
+            📰 News
+          </a>
+          <a
+            href={createPageUrl("NationalProfile")}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-400 text-xs font-bold hover:bg-violet-500/20 transition-all"
+          >
+            👤 Profile
+          </a>
+
           {user && myNation && (
             <NotificationsPanel nationId={myNation?.id} ownerEmail={user?.email} />
           )}
