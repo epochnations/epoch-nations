@@ -1,4 +1,6 @@
+import { useState, useEffect, useRef } from "react";
 import { TrendingUp, Shield, Users, Zap, DollarSign, Factory, BookOpen } from "lucide-react";
+import StatTooltip from "../ui/StatTooltip";
 
 const EPOCH_COLORS = {
   Industrial: "from-amber-500 to-orange-600",

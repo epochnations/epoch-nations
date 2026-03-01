@@ -13,6 +13,8 @@ import NationModal from "../components/modals/NationModal";
 import TechTreePanel from "../components/panels/TechTreePanel";
 import NationManagement from "../components/panels/NationManagement";
 import IssueStockPanel from "../components/panels/IssueStockPanel";
+import DilemmaEngine from "../components/dashboard/DilemmaEngine";
+import CouncilDilemmaModal from "../components/dashboard/CouncilDilemmaModal";
 
 export default function Dashboard() {
   const [myNation, setMyNation] = useState(null);
