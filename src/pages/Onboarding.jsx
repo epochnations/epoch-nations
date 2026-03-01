@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
+import { Zap } from "lucide-react";
+import TourTooltip from "../components/onboarding/TourTooltip";
 
 const FLAG_EMOJIS = ["🏴", "⚔️", "🦅", "🐉", "🌟", "🔱", "🛡️", "🌙", "☀️", "🦁", "🐯", "🌊"];
 const FLAG_COLORS = [
@@ -17,6 +19,8 @@ export default function Onboarding() {
   const [selectedColor, setSelectedColor] = useState("#3b82f6");
   const [loading, setLoading] = useState(false);
   const [checkingExisting, setCheckingExisting] = useState(true);
+  const [showTour, setShowTour] = useState(false);
+  const [tourStep, setTourStep] = useState(0);
 
   useEffect(() => {
     checkExistingNation();
@@ -77,6 +81,24 @@ export default function Onboarding() {
       epoch_required: "Industrial"
     });
 
+    // Show tour before redirect
+    setLoading(false);
+    setShowTour(true);
+  }
+
+  function handleTourNext() {
+    if (tourStep < 4) {
+      setTourStep(t => t + 1);
+    } else {
+      window.location.href = createPageUrl("Dashboard");
+    }
+  }
+
+  function handleTourPrev() {
+    setTourStep(t => Math.max(0, t - 1));
+  }
+
+  function skipTour() {
     window.location.href = createPageUrl("Dashboard");
   }
 
@@ -93,7 +115,7 @@ export default function Onboarding() {
       {/* Background grid */}
       <div className="absolute inset-0 opacity-10"
         style={{ backgroundImage: "linear-gradient(rgba(0,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,255,0.1) 1px, transparent 1px)", backgroundSize: "50px 50px" }} />
-      
+
       <div className="relative z-10 w-full max-w-lg">
         {/* Header */}
         <div className="text-center mb-10">
@@ -102,6 +124,18 @@ export default function Onboarding() {
           </div>
           <p className="text-slate-400 text-sm tracking-widest uppercase">Grand Strategy Simulator</p>
         </div>
+
+        {/* Skip tutorial button */}
+        {step === 1 && (
+          <div className="flex justify-end mb-3">
+            <a
+              href={createPageUrl("Dashboard")}
+              className="flex items-center gap-1.5 px-4 py-2.5 min-h-[44px] rounded-xl text-xs font-bold bg-white/5 border border-white/10 text-slate-400 hover:bg-white/10 transition-all"
+            >
+              <Zap size={12} /> Skip Tutorial & Command Now
+            </a>
+          </div>
+        )}
 
         {/* Card */}
         <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-8 shadow-2xl">
@@ -119,6 +153,7 @@ export default function Onboarding() {
                   placeholder="e.g. The Republic of Valdoria"
                   value={nationName}
                   onChange={e => setNationName(e.target.value)}
+                  onKeyDown={e => e.key === "Enter" && nationName.trim() && setStep(2)}
                 />
               </div>
               <div>
@@ -133,7 +168,7 @@ export default function Onboarding() {
               <button
                 onClick={() => nationName.trim() && setStep(2)}
                 disabled={!nationName.trim()}
-                className="w-full py-3 rounded-xl font-bold tracking-wider text-sm transition-all bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-400 hover:to-blue-500 disabled:opacity-30 disabled:cursor-not-allowed"
+                className="w-full min-h-[44px] py-3 rounded-xl font-bold tracking-wider text-sm transition-all bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-400 hover:to-blue-500 disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 CONTINUE →
               </button>
@@ -189,13 +224,13 @@ export default function Onboarding() {
               </div>
 
               <div className="flex gap-3">
-                <button onClick={() => setStep(1)} className="flex-1 py-3 rounded-xl font-bold text-sm border border-white/10 text-slate-400 hover:bg-white/5 transition-all">
+                <button onClick={() => setStep(1)} className="flex-1 min-h-[44px] py-3 rounded-xl font-bold text-sm border border-white/10 text-slate-400 hover:bg-white/5 transition-all">
                   ← BACK
                 </button>
                 <button
                   onClick={createNation}
                   disabled={loading}
-                  className="flex-2 flex-grow py-3 rounded-xl font-bold tracking-wider text-sm transition-all bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-400 hover:to-blue-500 disabled:opacity-50"
+                  className="flex-2 flex-grow min-h-[44px] py-3 rounded-xl font-bold tracking-wider text-sm transition-all bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-400 hover:to-blue-500 disabled:opacity-50"
                 >
                   {loading ? "FOUNDING..." : "FOUND NATION 🚀"}
                 </button>
@@ -208,6 +243,19 @@ export default function Onboarding() {
           Starting era: Industrial Epoch · Virtual economy only
         </p>
       </div>
+
+      {/* Tour tooltip overlay */}
+      {showTour && (
+        <div className="fixed inset-0 z-[199] bg-black/40 backdrop-blur-sm pointer-events-none" />
+      )}
+      {showTour && (
+        <TourTooltip
+          step={tourStep}
+          onNext={handleTourNext}
+          onPrev={handleTourPrev}
+          onSkip={skipTour}
+        />
+      )}
     </div>
   );
 }
