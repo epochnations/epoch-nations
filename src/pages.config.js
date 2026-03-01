@@ -49,12 +49,16 @@
  */
 import Onboarding from './pages/Onboarding';
 import Dashboard from './pages/Dashboard';
+import GlobalChronicles from './pages/GlobalChronicles';
+import NationalProfile from './pages/NationalProfile';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "Onboarding": Onboarding,
     "Dashboard": Dashboard,
+    "GlobalChronicles": GlobalChronicles,
+    "NationalProfile": NationalProfile,
 }
 
 export const pagesConfig = {
