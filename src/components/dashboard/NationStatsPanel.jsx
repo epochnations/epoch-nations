@@ -14,14 +14,34 @@ const EPOCH_ICONS = {
   Nano: "🔬"
 };
 
-function StatRow({ icon: Icon, label, value, color = "text-cyan-400", suffix = "" }) {
+function StatRow({ icon: Icon, label, value, color = "text-cyan-400", suffix = "", tooltip = "" }) {
+  const [flash, setFlash] = useState(null);
+  const prevRef = useRef(value);
+
+  useEffect(() => {
+    if (prevRef.current !== value) {
+      const dir = value > prevRef.current ? "up" : "down";
+      setFlash(dir);
+      prevRef.current = value;
+      const t = setTimeout(() => setFlash(null), 1200);
+      return () => clearTimeout(t);
+    }
+  }, [value]);
+
   return (
     <div className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
       <div className="flex items-center gap-2 text-slate-400 text-xs">
         <Icon size={12} className={color} />
         {label}
+        {tooltip && <StatTooltip text={tooltip} />}
       </div>
-      <div className={`text-sm font-mono font-bold ${color}`}>
+      <div
+        className={`text-sm font-mono font-bold ${color} transition-all duration-300 rounded px-1`}
+        style={{
+          boxShadow: flash === "up" ? "0 0 8px 2px rgba(34,197,94,0.5)" : flash === "down" ? "0 0 8px 2px rgba(239,68,68,0.5)" : "none",
+          background: flash === "up" ? "rgba(34,197,94,0.08)" : flash === "down" ? "rgba(239,68,68,0.08)" : "transparent"
+        }}
+      >
         {typeof value === "number" ? value.toLocaleString() : value}{suffix}
       </div>
     </div>
