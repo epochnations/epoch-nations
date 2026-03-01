@@ -74,13 +74,13 @@ export default function NationStatsPanel({ nation }) {
 
       {/* Stats */}
       <div className="space-y-0">
-        <StatRow icon={DollarSign} label="Treasury" value={nation.currency} color="text-green-400" suffix=" cr" />
-        <StatRow icon={TrendingUp} label="GDP" value={nation.gdp} color="text-cyan-400" suffix="" />
-        <StatRow icon={Shield} label="Stability" value={nation.stability} color="text-blue-400" suffix="%" />
-        <StatRow icon={Users} label="Public Trust" value={(nation.public_trust * 100).toFixed(0)} color="text-violet-400" suffix="%" />
-        <StatRow icon={Factory} label="Manufacturing" value={nation.manufacturing} color="text-orange-400" suffix="%" />
-        <StatRow icon={Zap} label="Tech Level" value={nation.tech_level} color="text-yellow-400" suffix={` (${nation.tech_points} TP)`} />
-        <StatRow icon={BookOpen} label="Edu. Spending" value={nation.education_spending} color="text-emerald-400" suffix="%" />
+        <StatRow icon={DollarSign} label="Treasury" value={nation.currency} color="text-green-400" suffix=" cr" tooltip="Your liquid reserve. Spent on tech, wars, and policies. Earned through GDP and budget cycles." />
+        <StatRow icon={TrendingUp} label="GDP" value={nation.gdp} color="text-cyan-400" tooltip="Gross Domestic Product: total economic output. Higher GDP grows your treasury faster each cycle." />
+        <StatRow icon={Shield} label="Stability" value={nation.stability} color="text-blue-400" suffix="%" tooltip="National cohesion (0–100). Low stability causes unrest. Wars and bad policy choices reduce it." />
+        <StatRow icon={Users} label="Public Trust" value={(nation.public_trust * 100).toFixed(0)} color="text-violet-400" suffix="%" tooltip="Citizen confidence multiplier. Affects your stock index. Falls under martial law or poor decisions." />
+        <StatRow icon={Factory} label="Manufacturing" value={nation.manufacturing} color="text-orange-400" suffix="%" tooltip="Industrial output capacity. Boosts GDP growth. Damaged by critical war strikes." />
+        <StatRow icon={Zap} label="Tech Level" value={nation.tech_level} color="text-yellow-400" suffix={` (${nation.tech_points} TP)`} tooltip="Tech Points (TP) come from education spending. Spend TP to unlock technologies and advance epochs." />
+        <StatRow icon={BookOpen} label="Edu. Spending" value={nation.education_spending} color="text-emerald-400" suffix="%" tooltip="% of budget on education. Generates ~0.5 TP per % per cycle. Higher = faster tech progression." />
       </div>
 
       {/* Stock Value */}
