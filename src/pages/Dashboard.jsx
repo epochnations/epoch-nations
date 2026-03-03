@@ -140,52 +140,31 @@ export default function Dashboard() {
         </div>
       </header>
 
-      {/* BENTO GRID */}
-      <main className="relative z-10 p-4 h-[calc(100vh-57px)] grid gap-4"
+      {/* DESKTOP BENTO GRID */}
+      <main className="relative z-10 p-4 hidden lg:grid gap-4 h-[calc(100vh-57px)]"
         style={{
           gridTemplateColumns: "280px 1fr 220px",
           gridTemplateRows: "1fr 200px"
         }}
       >
-        {/* LEFT: Nation Stats */}
-        <div style={{ gridRow: "1 / 3" }}>
-          <NationStatsPanel nation={myNation} />
-        </div>
-
-        {/* CENTER: World Map */}
-        <div style={{ gridRow: "1 / 2" }}>
-          <WorldMap
-            myNation={myNation}
-            onSelectNation={n => setSelectedNation(n)}
-          />
-        </div>
-
-        {/* RIGHT: Stock Ticker */}
-        <div style={{ gridRow: "1 / 2" }}>
-          <StockTicker onSelectStock={s => setSelectedStock(s)} />
-        </div>
-
-        {/* BOTTOM CENTER: Global Ledger */}
-        <div style={{ gridColumn: "2 / 3", gridRow: "2 / 3" }}>
-          <GlobalLedger />
-        </div>
-
-        {/* BOTTOM RIGHT: Quick Actions */}
+        <div style={{ gridRow: "1 / 3" }}><NationStatsPanel nation={myNation} /></div>
+        <div style={{ gridRow: "1 / 2" }}><WorldMap myNation={myNation} onSelectNation={n => setSelectedNation(n)} /></div>
+        <div style={{ gridRow: "1 / 2" }}><StockTicker onSelectStock={s => setSelectedStock(s)} /></div>
+        <div style={{ gridColumn: "2 / 3", gridRow: "2 / 3" }}><GlobalLedger /></div>
         <div style={{ gridColumn: "3 / 4", gridRow: "2 / 3" }}>
           <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-4 h-full flex flex-col justify-between">
             <div className="text-xs font-bold text-slate-300 tracking-widest uppercase mb-3">Quick Actions</div>
             <div className="space-y-2 flex-1">
-              <button onClick={() => setShowIssueStock(true)} className="w-full py-2 rounded-xl text-xs font-bold bg-green-500/10 border border-green-500/20 text-green-400 hover:bg-green-500/20 transition-all flex items-center justify-center gap-1.5">
+              <button onClick={() => setShowIssueStock(true)} className="w-full py-2.5 rounded-xl text-xs font-bold bg-green-500/10 border border-green-500/20 text-green-400 hover:bg-green-500/20 transition-all flex items-center justify-center gap-1.5 min-h-[44px]">
                 <Plus size={12} /> Issue Stock
               </button>
-              <button onClick={() => setShowTechTree(true)} className="w-full py-2 rounded-xl text-xs font-bold bg-violet-500/10 border border-violet-500/20 text-violet-400 hover:bg-violet-500/20 transition-all flex items-center justify-center gap-1.5">
+              <button onClick={() => setShowTechTree(true)} className="w-full py-2.5 rounded-xl text-xs font-bold bg-violet-500/10 border border-violet-500/20 text-violet-400 hover:bg-violet-500/20 transition-all flex items-center justify-center gap-1.5 min-h-[44px]">
                 <Cpu size={12} /> Tech Tree
               </button>
-              <button onClick={() => setShowManagement(true)} className="w-full py-2 rounded-xl text-xs font-bold bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 hover:bg-cyan-500/20 transition-all flex items-center justify-center gap-1.5">
+              <button onClick={() => setShowManagement(true)} className="w-full py-2.5 rounded-xl text-xs font-bold bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 hover:bg-cyan-500/20 transition-all flex items-center justify-center gap-1.5 min-h-[44px]">
                 <Sliders size={12} /> Budget Cycle
               </button>
             </div>
-
             {myNation && (
               <div className="mt-3 rounded-xl bg-white/5 p-2.5 text-center">
                 <div className="text-xs text-slate-500">Allies</div>
@@ -196,17 +175,40 @@ export default function Dashboard() {
         </div>
       </main>
 
-      {/* Responsive mobile bottom bar */}
-      <div className="sm:hidden fixed bottom-0 left-0 right-0 z-20 backdrop-blur-xl bg-black/80 border-t border-white/10 px-4 py-3 flex gap-2">
-        <button onClick={() => setShowIssueStock(true)} className="flex-1 py-2 rounded-xl text-xs font-bold bg-green-500/10 border border-green-500/20 text-green-400">
+      {/* MOBILE LAYOUT */}
+      <main className="relative z-10 lg:hidden flex flex-col pb-24 overflow-y-auto h-[calc(100vh-57px)]">
+        {/* World Map */}
+        <div className="h-52 m-3 rounded-2xl overflow-hidden shrink-0">
+          <WorldMap myNation={myNation} onSelectNation={n => setSelectedNation(n)} />
+        </div>
+        {/* Nation Stats */}
+        <div className="mx-3 mb-3">
+          <NationStatsPanel nation={myNation} />
+        </div>
+        {/* Stock Ticker */}
+        <div className="mx-3 mb-3 h-64 shrink-0">
+          <StockTicker onSelectStock={s => setSelectedStock(s)} />
+        </div>
+        {/* Global Ledger */}
+        <div className="mx-3 mb-3">
+          <GlobalLedger />
+        </div>
+      </main>
+
+      {/* Mobile bottom bar */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-20 backdrop-blur-xl bg-black/90 border-t border-white/10 px-3 py-2 flex gap-2">
+        <button onClick={() => setShowIssueStock(true)} className="flex-1 py-3 rounded-xl text-xs font-bold bg-green-500/10 border border-green-500/20 text-green-400 min-h-[44px]">
           + Stock
         </button>
-        <button onClick={() => setShowTechTree(true)} className="flex-1 py-2 rounded-xl text-xs font-bold bg-violet-500/10 border border-violet-500/20 text-violet-400">
-          Tech
+        <button onClick={() => setShowTechTree(true)} className="flex-1 py-3 rounded-xl text-xs font-bold bg-violet-500/10 border border-violet-500/20 text-violet-400 min-h-[44px]">
+          Tech Tree
         </button>
-        <button onClick={() => setShowManagement(true)} className="flex-1 py-2 rounded-xl text-xs font-bold bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
+        <button onClick={() => setShowManagement(true)} className="flex-1 py-3 rounded-xl text-xs font-bold bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 min-h-[44px]">
           Manage
         </button>
+        <a href={createPageUrl("GlobalChronicles")} className="flex-1 py-3 rounded-xl text-xs font-bold bg-white/5 border border-white/10 text-slate-400 text-center min-h-[44px] flex items-center justify-center">
+          📰 News
+        </a>
       </div>
 
       {/* Modals */}
