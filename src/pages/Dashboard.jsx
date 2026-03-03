@@ -251,6 +251,9 @@ export default function Dashboard() {
         />
       )}
 
+      {/* Economy Engine — 60s market pulse + level degradation */}
+      {myNation && <EconomyEngine nation={myNation} onRefresh={refresh} />}
+
       {/* Dilemma Engine — headless tick scheduler */}
       {myNation && (
         <DilemmaEngine
