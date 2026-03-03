@@ -66,7 +66,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-[#080c14] text-white overflow-hidden relative">
+    <div className="min-h-screen bg-[#080c14] text-white relative">
       {/* Background grid */}
       <div className="fixed inset-0 pointer-events-none"
         style={{
