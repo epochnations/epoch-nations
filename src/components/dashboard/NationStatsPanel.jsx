@@ -83,14 +83,31 @@ export default function NationStatsPanel({ nation }) {
         <StatRow icon={BookOpen} label="Edu. Spending" value={nation.education_spending} color="text-emerald-400" suffix="%" tooltip="% of budget on education. Generates ~0.5 TP per % per cycle. Higher = faster tech progression." />
       </div>
 
+      {/* Tech Level Indicator */}
+      <div className="mt-4 rounded-xl p-3 bg-violet-500/5 border border-violet-500/20">
+        <div className="text-xs text-slate-500 mb-2 flex justify-between">
+          <span>TECH LEVEL</span>
+          <span className="text-violet-400 font-mono font-bold">Lv.{nation.tech_level}</span>
+        </div>
+        <div className="flex gap-1">
+          {Array.from({ length: Math.min(10, Math.max(1, nation.tech_level)) }).map((_, i) => (
+            <div key={i} className="flex-1 h-1.5 rounded-full bg-violet-400" />
+          ))}
+          {Array.from({ length: Math.max(0, 10 - (nation.tech_level || 1)) }).map((_, i) => (
+            <div key={i} className="flex-1 h-1.5 rounded-full bg-white/10" />
+          ))}
+        </div>
+        <div className="text-xs text-slate-600 mt-1">{nation.epoch} Era · {nation.tech_points} TP banked</div>
+      </div>
+
       {/* Stock Value */}
-      <div className="mt-4 rounded-xl p-3" style={{ backgroundColor: "#0f172a" }}>
+      <div className="mt-3 rounded-xl p-3" style={{ backgroundColor: "#0f172a" }}>
         <div className="text-xs text-slate-500 mb-1">NATION STOCK INDEX</div>
         <div className="text-xl font-mono font-black text-cyan-300">
           {stockValue.toFixed(2)} <span className="text-xs font-normal text-slate-400">per unit</span>
         </div>
         <div className="text-xs text-slate-500 mt-1">
-          ({nation.gdp} GDP + {nation.stability} Stability) × {nation.public_trust.toFixed(2)} trust
+          Income: <span className="text-green-400">+{Math.floor(nation.gdp * 0.05)} cr/min</span>
         </div>
       </div>
 
