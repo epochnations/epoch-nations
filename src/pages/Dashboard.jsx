@@ -177,7 +177,7 @@ export default function Dashboard() {
       </main>
 
       {/* MOBILE LAYOUT */}
-      <main className="relative z-10 lg:hidden flex flex-col pb-24 overflow-y-auto h-[calc(100vh-57px)]">
+      <main className="relative z-10 lg:hidden flex flex-col pb-28 overflow-y-auto" style={{ minHeight: "calc(100vh - 57px)" }}>
         {/* World Map */}
         <div className="h-52 m-3 rounded-2xl overflow-hidden shrink-0">
           <WorldMap myNation={myNation} onSelectNation={n => setSelectedNation(n)} />
