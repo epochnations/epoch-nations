@@ -149,25 +149,44 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="w-full max-w-2xl max-h-[90vh] backdrop-blur-xl bg-[#0f172a]/95 border border-white/20 rounded-2xl overflow-hidden flex flex-col">
-        <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between">
+        <div className="px-4 sm:px-6 py-4 border-b border-white/10 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Cpu size={18} className="text-violet-400" />
-            <span className="font-bold text-white">Tech Tree — {nation.epoch} Era</span>
+            <span className="font-bold text-white text-sm sm:text-base">Tech Tree — {nation.epoch} Era</span>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <div className="flex items-center gap-1.5">
               <Zap size={14} className="text-yellow-400" />
               <span className="text-yellow-400 font-mono font-bold">{nation.tech_points} TP</span>
             </div>
-            <button onClick={onClose} className="text-slate-400 hover:text-white text-sm">✕</button>
+            <button onClick={onClose} className="text-slate-400 hover:text-white text-sm p-1">✕</button>
           </div>
         </div>
 
-        <div className="overflow-y-auto p-6 space-y-6">
+        {/* Epoch progress bar */}
+        <div className="px-4 sm:px-6 pt-4 pb-0">
+          <div className="flex items-center gap-2 overflow-x-auto pb-2">
+            {EPOCH_ORDER.map((ep, i) => {
+              const idx = EPOCH_ORDER.indexOf(nation.epoch);
+              const done = i < idx;
+              const current = i === idx;
+              return (
+                <div key={ep} className="flex items-center gap-2 shrink-0">
+                  <div className={`px-3 py-1 rounded-lg text-xs font-bold ${current ? "bg-cyan-400/20 text-cyan-400 border border-cyan-400/40" : done ? "bg-green-400/10 text-green-400" : "text-slate-600"}`}>
+                    {done ? "✓ " : ""}{ep}
+                  </div>
+                  {i < EPOCH_ORDER.length - 1 && <div className={`w-6 h-px ${done ? "bg-green-400/40" : "bg-white/10"}`} />}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="overflow-y-auto p-4 sm:p-6 space-y-6">
           {/* Current epoch techs */}
           <div>
             <div className="text-xs text-slate-400 uppercase tracking-wider mb-3">{nation.epoch} Technologies</div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {currentTechs.map(tech => {
                 const isUnlocked = unlocked.includes(tech.id);
                 const canAfford = nation.tech_points >= tech.cost;
