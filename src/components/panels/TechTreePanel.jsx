@@ -223,20 +223,27 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
           {/* Epoch advancement */}
           {canAdvance && (
             <div className="rounded-xl p-5 border border-cyan-400/30 bg-cyan-400/10">
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
                 <div className="font-bold text-white flex items-center gap-2">
                   <ChevronRight size={16} className="text-cyan-400" />
                   Advance to {EPOCH_ORDER[EPOCH_ORDER.indexOf(nation.epoch) + 1]} Epoch
                 </div>
                 <div className="flex items-center gap-1 text-xs font-mono text-yellow-400">
-                  <Zap size={10} /> {advanceCost} TP
+                  <Zap size={10} /> {advanceCost} TP required
                 </div>
               </div>
-              <div className="text-xs text-slate-400 mb-3">Unlocks higher-tier military units, new stock sectors, and advanced technologies.</div>
+              <div className="text-xs text-slate-400 mb-3">
+                Unlocks new technologies, stock sectors, and advanced military capabilities. 
+                <span className="text-cyan-400"> You have {nation.tech_points} / {advanceCost} TP.</span>
+              </div>
+              {/* Progress bar */}
+              <div className="h-1.5 rounded-full bg-white/10 mb-3">
+                <div className="h-1.5 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 transition-all" style={{ width: `${Math.min(100, (nation.tech_points / advanceCost) * 100)}%` }} />
+              </div>
               <button
                 onClick={advanceEpoch}
                 disabled={nation.tech_points < advanceCost || loading === "advance"}
-                className="w-full py-2.5 rounded-xl font-bold text-sm bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-400 hover:to-blue-500 disabled:opacity-30 transition-all"
+                className="w-full py-3 min-h-[44px] rounded-xl font-bold text-sm bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-400 hover:to-blue-500 disabled:opacity-30 transition-all"
               >
                 {loading === "advance" ? "Advancing..." : nation.tech_points < advanceCost ? `Need ${advanceCost - nation.tech_points} more TP` : "ADVANCE EPOCH 🚀"}
               </button>
