@@ -142,7 +142,7 @@ export default function Dashboard() {
       </header>
 
       {/* DESKTOP BENTO GRID */}
-      <main className="relative z-10 p-4 hidden lg:grid gap-4 h-[calc(100vh-57px)]"
+      <main className="relative z-10 p-4 hidden lg:grid gap-4 overflow-y-auto" style={{ height: "calc(100vh - 57px)" }}
         style={{
           gridTemplateColumns: "280px 1fr 220px",
           gridTemplateRows: "1fr 200px"
