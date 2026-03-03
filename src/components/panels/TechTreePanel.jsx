@@ -87,7 +87,7 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
     await base44.entities.Nation.update(nation.id, {
       epoch: nextEpoch,
       tech_points: nation.tech_points - advanceCost,
-      tech_level: nation.tech_level + 1
+      tech_level: (nation.tech_level || 1) + 2  // +2 levels on epoch advance
     });
 
     // Unlock new stock sector
