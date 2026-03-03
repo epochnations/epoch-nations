@@ -34,34 +34,87 @@ export default function WorldMap({ myNation, onSelectNation }) {
   }
 
   return (
-    <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl overflow-hidden h-full relative">
+    <div className="backdrop-blur-xl bg-[#060d1f] border border-white/10 rounded-2xl overflow-hidden h-full relative">
       {/* Header */}
-      <div className="absolute top-0 left-0 right-0 z-10 px-5 py-3 border-b border-white/10 flex items-center gap-2 backdrop-blur-sm bg-black/20">
+      <div className="absolute top-0 left-0 right-0 z-10 px-5 py-3 border-b border-white/10 flex items-center gap-2 backdrop-blur-sm bg-black/40">
         <Globe size={14} className="text-cyan-400" />
         <span className="text-xs font-bold text-slate-300 tracking-widest uppercase">World Map · {nations.length} Nations</span>
       </div>
 
-      {/* Map background */}
-      <div
-        className="absolute inset-0 opacity-30"
-        style={{
-          backgroundImage: `
-            radial-gradient(ellipse at 30% 60%, rgba(59,130,246,0.15) 0%, transparent 60%),
-            radial-gradient(ellipse at 70% 30%, rgba(16,185,129,0.1) 0%, transparent 50%),
-            linear-gradient(rgba(0,255,255,0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0,255,255,0.03) 1px, transparent 1px)
-          `,
-          backgroundSize: "100% 100%, 100% 100%, 30px 30px, 30px 30px"
-        }}
-      />
+      {/* Ocean gradient */}
+      <div className="absolute inset-0" style={{
+        background: "radial-gradient(ellipse at 50% 50%, #0a1628 0%, #060d1f 100%)"
+      }} />
 
-      {/* Continent blobs */}
-      <svg className="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 100 100" preserveAspectRatio="none">
-        <ellipse cx="25" cy="40" rx="18" ry="25" fill="#334155" />
-        <ellipse cx="52" cy="35" rx="22" ry="20" fill="#334155" />
-        <ellipse cx="78" cy="45" rx="14" ry="18" fill="#334155" />
-        <ellipse cx="40" cy="70" rx="12" ry="14" fill="#334155" />
-        <ellipse cx="65" cy="72" rx="10" ry="10" fill="#334155" />
+      {/* Latitude lines */}
+      <svg className="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice">
+        {[1,2,3,4,5,6,7].map(i => (
+          <line key={i} x1="0" y1={i*60} x2="800" y2={i*60} stroke="#38bdf8" strokeWidth="0.4" strokeDasharray="4,8" />
+        ))}
+        {[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15].map(i => (
+          <line key={i} x1={i*53} y1="0" x2={i*53} y2="450" stroke="#38bdf8" strokeWidth="0.4" strokeDasharray="4,12" />
+        ))}
+        {/* Equator */}
+        <line x1="0" y1="225" x2="800" y2="225" stroke="#22d3ee" strokeWidth="1" strokeDasharray="8,6" opacity="0.3" />
+      </svg>
+
+      {/* Continents SVG - stylized world map */}
+      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="2" result="blur" />
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        {/* North America */}
+        <path d="M 80,60 L 180,50 L 210,80 L 230,140 L 200,180 L 160,200 L 140,230 L 100,250 L 70,200 L 50,150 L 60,100 Z"
+          fill="#1e3a5f" stroke="#2563eb" strokeWidth="0.8" opacity="0.7"/>
+        {/* Central America */}
+        <path d="M 140,230 L 160,200 L 180,220 L 170,260 L 150,255 Z"
+          fill="#1e3a5f" stroke="#2563eb" strokeWidth="0.6" opacity="0.6"/>
+        {/* South America */}
+        <path d="M 160,270 L 210,250 L 240,300 L 250,380 L 210,420 L 170,410 L 140,360 L 130,300 Z"
+          fill="#1a4731" stroke="#059669" strokeWidth="0.8" opacity="0.7"/>
+        {/* Europe */}
+        <path d="M 350,50 L 420,40 L 450,70 L 440,110 L 410,120 L 380,110 L 350,90 Z"
+          fill="#3b2f6b" stroke="#7c3aed" strokeWidth="0.8" opacity="0.7"/>
+        {/* Scandinavia */}
+        <path d="M 390,30 L 420,20 L 430,50 L 410,60 L 385,50 Z"
+          fill="#3b2f6b" stroke="#7c3aed" strokeWidth="0.6" opacity="0.6"/>
+        {/* Africa */}
+        <path d="M 360,130 L 430,120 L 470,160 L 480,250 L 460,340 L 420,380 L 380,370 L 340,300 L 330,200 L 340,150 Z"
+          fill="#3b1f0a" stroke="#d97706" strokeWidth="0.8" opacity="0.7"/>
+        {/* Middle East */}
+        <path d="M 450,110 L 510,100 L 530,140 L 500,160 L 460,155 Z"
+          fill="#3b2505" stroke="#d97706" strokeWidth="0.6" opacity="0.6"/>
+        {/* Russia/Asia */}
+        <path d="M 440,30 L 650,20 L 700,60 L 720,100 L 680,130 L 600,140 L 530,130 L 480,110 L 450,70 Z"
+          fill="#1a2e40" stroke="#0891b2" strokeWidth="0.8" opacity="0.7"/>
+        {/* India */}
+        <path d="M 560,140 L 610,130 L 630,190 L 610,240 L 580,230 L 555,180 Z"
+          fill="#1a2e40" stroke="#0891b2" strokeWidth="0.6" opacity="0.6"/>
+        {/* SE Asia */}
+        <path d="M 650,140 L 720,120 L 750,160 L 730,190 L 680,180 L 650,160 Z"
+          fill="#1a2e40" stroke="#0891b2" strokeWidth="0.6" opacity="0.6"/>
+        {/* China */}
+        <path d="M 590,80 L 690,60 L 720,100 L 700,140 L 650,150 L 600,140 L 580,110 Z"
+          fill="#1a2e40" stroke="#0891b2" strokeWidth="0.7" opacity="0.65"/>
+        {/* Australia */}
+        <path d="M 640,290 L 740,270 L 780,310 L 770,370 L 710,390 L 650,360 L 620,320 Z"
+          fill="#2d1a0e" stroke="#c2410c" strokeWidth="0.8" opacity="0.7"/>
+        {/* Greenland */}
+        <path d="M 240,20 L 290,15 L 300,50 L 270,60 L 240,50 Z"
+          fill="#1e3a5f" stroke="#2563eb" strokeWidth="0.5" opacity="0.4"/>
+        {/* Japan */}
+        <path d="M 735,90 L 750,80 L 760,105 L 748,115 L 736,105 Z"
+          fill="#1a2e40" stroke="#0891b2" strokeWidth="0.5" opacity="0.6"/>
+
+        {/* Ocean shimmer dots */}
+        {[
+          [300,200],[500,300],[200,350],[680,230],[100,300],[750,200],[450,400],[280,120]
+        ].map(([x,y],i) => (
+          <circle key={i} cx={x} cy={y} r="1.5" fill="#38bdf8" opacity="0.15" />
+        ))}
       </svg>
 
       {/* Nation dots */}
