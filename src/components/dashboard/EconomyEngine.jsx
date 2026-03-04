@@ -96,15 +96,24 @@ export default function EconomyEngine({ nation, onRefresh }) {
         nation_flag: "📉",
         nation_color: "#ef4444"
       });
-      // Notify holders
+      // Apply real currency loss to all holders (40% of their position value)
       const holdings = await base44.entities.StockHolding.filter({ stock_id: stock.id });
       for (const h of holdings) {
+        const loss = Math.floor(h.shares_owned * currentPrice * 0.4);
+        if (loss > 0) {
+          const holderNations = await base44.entities.Nation.filter({ id: h.nation_id });
+          if (holderNations[0]) {
+            await base44.entities.Nation.update(h.nation_id, {
+              currency: Math.max(0, holderNations[0].currency - loss)
+            });
+          }
+        }
         await base44.entities.Notification.create({
           target_nation_id: h.nation_id,
-          target_owner_email: h.nation_id, // will be matched by nation_id in panel
+          target_owner_email: h.nation_id,
           type: "stock_drop",
           title: `💥 ${stock.ticker} CRASHED!`,
-          message: `Your holdings in ${stock.company_name} lost 40% of value in a market crash.`,
+          message: `Your holdings in ${stock.company_name} lost 40% value. You lost approximately ${loss} credits from your treasury.`,
           severity: "danger",
           is_read: false
         });
