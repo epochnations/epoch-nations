@@ -65,6 +65,19 @@ export default function StockModal({ stock, myNation, onClose, onRefresh }) {
       description: `${myNation.name} bought ${shares}x ${stock.ticker} @ ${stock.current_price.toFixed(2)}`
     });
 
+    // 3% commission goes to the issuing nation (if different from buyer)
+    if (stock.nation_id && stock.nation_id !== myNation.id) {
+      const commission = Math.floor(totalCost * 0.03);
+      if (commission > 0) {
+        const issuerNations = await base44.entities.Nation.filter({ id: stock.nation_id });
+        if (issuerNations[0]) {
+          await base44.entities.Nation.update(stock.nation_id, {
+            currency: issuerNations[0].currency + commission
+          });
+        }
+      }
+    }
+
     setLoading(false);
     onRefresh?.();
     onClose();
