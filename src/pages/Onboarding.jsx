@@ -27,12 +27,21 @@ export default function Onboarding() {
   }, []);
 
   async function checkExistingNation() {
-    const user = await base44.auth.me();
-    const nations = await base44.entities.Nation.filter({ owner_email: user.email });
-    if (nations.length > 0) {
-      window.location.href = createPageUrl("Dashboard");
-    } else {
-      setCheckingExisting(false);
+    try {
+      const user = await base44.auth.me();
+      const nations = await base44.entities.Nation.filter({ owner_email: user.email });
+      if (nations.length > 0) {
+        window.location.href = createPageUrl("Dashboard");
+      } else {
+        setCheckingExisting(false);
+      }
+    } catch (e) {
+      if (e?.message?.includes("Rate limit")) {
+        // Retry after 2 seconds
+        setTimeout(checkExistingNation, 2000);
+      } else {
+        setCheckingExisting(false);
+      }
     }
   }
 
