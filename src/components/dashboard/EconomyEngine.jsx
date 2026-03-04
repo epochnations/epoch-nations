@@ -63,11 +63,23 @@ export default function EconomyEngine({ nation, onRefresh }) {
     const history = stock.price_history || [];
     let currentPrice = stock.current_price || stock.base_price || 10;
 
-    // Random walk: -8% to +10% per tick with volatility bias
-    const volatility = stock.is_crashed ? 0.04 : 0.06;
-    const drift = stock.is_crashed ? -0.02 : 0.005; // crashed stocks keep falling slightly
+    // Check if issuing nation is at war — increases volatility
+    const nationData = await base44.entities.Nation.filter({ id: stock.nation_id });
+    const issuerNation = nationData[0];
+    const atWar = (issuerNation?.at_war_with || []).length > 0;
+    const lowPerformance = issuerNation && (issuerNation.stability < 30 || issuerNation.gdp < 300);
+
+    // War & low performance = higher volatility, negative drift
+    const volatility = stock.is_crashed ? 0.04 : (atWar ? 0.12 : lowPerformance ? 0.09 : 0.06);
+    const drift = stock.is_crashed ? -0.02 : (atWar ? -0.01 : lowPerformance ? -0.005 : 0.005);
     const change = drift + (Math.random() - 0.45) * volatility;
     let newPrice = Math.max(0.5, currentPrice * (1 + change));
+
+    // Poor nation performance → proportional stock drop
+    if (lowPerformance && !stock.is_crashed) {
+      const performancePenalty = (30 - Math.min(30, issuerNation.stability)) / 30 * 0.03;
+      newPrice = newPrice * (1 - performancePenalty);
+    }
 
     // Random crash event (~3% chance per stock per tick, lower if already crashed)
     let is_crashed = stock.is_crashed;
