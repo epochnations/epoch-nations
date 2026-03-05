@@ -120,7 +120,7 @@ export default function WarRoom({ nation, allNations, onRefresh }) {
           ) : (
             <div className="divide-y divide-white/5">
               {enemies.map(enemy => (
-                <div key={enemy.id} className="px-5 py-3 flex items-center justify-between">
+                <div key={enemy.id} className="px-5 py-3 flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
                     <span className="text-xl">{enemy.flag_emoji}</span>
                     <div>
@@ -128,9 +128,18 @@ export default function WarRoom({ nation, allNations, onRefresh }) {
                       <div className="text-xs text-red-400">⚔ At War</div>
                     </div>
                   </div>
-                  <div className="text-right text-xs">
-                    <div className="text-slate-400">DEF {enemy.defense_level}</div>
-                    <div className="text-slate-500">{enemy.epoch}</div>
+                  <div className="flex items-center gap-2">
+                    <div className="text-right text-xs">
+                      <div className="text-slate-400">DEF {enemy.defense_level}</div>
+                      <div className="text-slate-500">{enemy.epoch}</div>
+                    </div>
+                    <button
+                      onClick={() => setEndWarTarget(enemy)}
+                      className="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500/10 border border-amber-500/30 text-amber-400 hover:bg-amber-500/20 transition-all whitespace-nowrap"
+                    >
+                      <Flag size={10} className="inline mr-1" />
+                      Ceasefire
+                    </button>
                   </div>
                 </div>
               ))}
