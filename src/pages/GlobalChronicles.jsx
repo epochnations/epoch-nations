@@ -43,7 +43,8 @@ export default function GlobalChronicles() {
       base44.entities.Stock.list("-market_cap", 10),
       base44.entities.Nation.list("-gdp", 20)
     ]);
-    setNews(articles);
+    const cutoff = Date.now() - 30 * 60 * 1000;
+    setNews(articles.filter(a => new Date(a.created_date).getTime() > cutoff));
     setStocks(stockData);
     setNations(nationData);
     const myNations = nationData.filter(n => n.owner_email === u.email);
