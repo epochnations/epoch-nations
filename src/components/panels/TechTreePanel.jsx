@@ -1,48 +1,7 @@
 import { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { Cpu, Lock, CheckCircle, ChevronRight, Zap } from "lucide-react";
-
-const TECH_TREE = {
-  Industrial: [
-    { id: "heavy_industry", name: "Heavy Industry", cost: 50, desc: "Manufacturing +20", effect: { manufacturing: 20 } },
-    { id: "rail_network", name: "Rail Networks", cost: 75, desc: "GDP +200, Stability +5", effect: { gdp: 200, stability: 5 } },
-    { id: "conscript_army", name: "Conscript Army", cost: 60, desc: "Unit Power +15, Defense +10", effect: { unit_power: 15, defense_level: 10 } },
-    { id: "national_bank", name: "National Bank", cost: 80, desc: "Public Trust +0.15", effect: { public_trust: 0.15 } },
-    { id: "coal_power", name: "Coal Power Grid", cost: 90, desc: "GDP +150, Manufacturing +10", effect: { gdp: 150, manufacturing: 10 } },
-    { id: "telegraph", name: "Telegraph Network", cost: 65, desc: "Stability +8, Defense +8", effect: { stability: 8, defense_level: 8 } },
-  ],
-  Information: [
-    { id: "cyberwarfare", name: "Cyber Warfare", cost: 120, desc: "Tech Level +1, Unit Power +20", effect: { tech_level: 1, unit_power: 20 } },
-    { id: "ai_economy", name: "AI Economy", cost: 150, desc: "GDP +500, Public Trust +0.2", effect: { gdp: 500, public_trust: 0.2 } },
-    { id: "satellite_grid", name: "Satellite Grid", cost: 100, desc: "Defense +25, Stability +10", effect: { defense_level: 25, stability: 10 } },
-    { id: "digital_finance", name: "Digital Finance", cost: 130, desc: "Currency +2000, GDP +300", effect: { currency: 2000, gdp: 300 } },
-    { id: "drone_fleet", name: "Drone Fleet", cost: 140, desc: "Unit Power +30, Defense +15", effect: { unit_power: 30, defense_level: 15 } },
-    { id: "social_media_ops", name: "Social Media Ops", cost: 110, desc: "Public Trust +0.3, Stability +5", effect: { public_trust: 0.3, stability: 5 } },
-    { id: "green_energy", name: "Green Energy Grid", cost: 120, desc: "GDP +400, Manufacturing +15", effect: { gdp: 400, manufacturing: 15 } },
-    { id: "biotech", name: "Biotech Labs", cost: 160, desc: "Stability +15, Trust +0.15", effect: { stability: 15, public_trust: 0.15 } },
-  ],
-  Nano: [
-    { id: "nanoweapons", name: "Nanoweapons", cost: 250, desc: "Unit Power +50, Defense +20", effect: { unit_power: 50, defense_level: 20 } },
-    { id: "nano_medicine", name: "Nano Medicine", cost: 200, desc: "Stability +20, Public Trust +0.3", effect: { stability: 20, public_trust: 0.3 } },
-    { id: "replicators", name: "Replicators", cost: 300, desc: "Manufacturing +30, GDP +800", effect: { manufacturing: 30, gdp: 800 } },
-    { id: "quantum_finance", name: "Quantum Finance", cost: 280, desc: "Currency +5000, GDP +500", effect: { currency: 5000, gdp: 500 } },
-    { id: "mind_interface", name: "Mind Interface", cost: 350, desc: "Tech Level +2, Trust +0.4", effect: { tech_level: 2, public_trust: 0.4 } },
-    { id: "molecular_forge", name: "Molecular Forge", cost: 320, desc: "Manufacturing +50, GDP +1200", effect: { manufacturing: 50, gdp: 1200 } },
-    { id: "nano_army", name: "Nano Army Swarms", cost: 400, desc: "Unit Power +80, Defense +40", effect: { unit_power: 80, defense_level: 40 } },
-    { id: "nano_shield", name: "Nano Shield Grid", cost: 380, desc: "Defense +60, Stability +15", effect: { defense_level: 60, stability: 15 } },
-  ],
-  Singularity: [
-    { id: "agi_government", name: "AGI Governance Core", cost: 600, desc: "All stats +massive, Tech Level +3", effect: { tech_level: 3, gdp: 3000, stability: 20, public_trust: 0.5 } },
-    { id: "dyson_sphere", name: "Dyson Sphere Fragment", cost: 800, desc: "GDP +8000, Manufacturing +100", effect: { gdp: 8000, manufacturing: 100 } },
-    { id: "time_crystal_bank", name: "Time Crystal Bank", cost: 700, desc: "Currency +25000, GDP +2000", effect: { currency: 25000, gdp: 2000 } },
-    { id: "omnidrone", name: "OmniDrone Network", cost: 650, desc: "Unit Power +150, Defense +100", effect: { unit_power: 150, defense_level: 100 } },
-    { id: "memetic_control", name: "Memetic Control Grid", cost: 550, desc: "Public Trust +0.8, Stability +30", effect: { public_trust: 0.8, stability: 30 } },
-    { id: "post_scarcity", name: "Post-Scarcity Engine", cost: 900, desc: "Manufacturing +200, GDP +5000", effect: { manufacturing: 200, gdp: 5000 } },
-  ]
-};
-
-const EPOCH_ORDER = ["Industrial", "Information", "Nano", "Singularity"];
-const EPOCH_ADVANCE_COST = { Industrial: 200, Information: 500, Nano: 1000 };
+import { Cpu, CheckCircle, ChevronRight, Zap } from "lucide-react";
+import { EPOCHS, EPOCH_ADVANCE_COST, EPOCH_EMOJI, EPOCH_COLOR, TECH_TREE } from "../game/EpochConfig";
 
 export default function TechTreePanel({ nation, onRefresh, onClose }) {
   const [loading, setLoading] = useState(null);
