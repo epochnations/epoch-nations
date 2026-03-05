@@ -65,13 +65,12 @@ export default function EconomyEngine({ nation, onRefresh }) {
     onRefresh?.();
   }
 
-  async function fluctuateStock(stock) {
+  async function fluctuateStock(stock, nationMap) {
     const history = stock.price_history || [];
     let currentPrice = stock.current_price || stock.base_price || 10;
 
-    // Check if issuing nation is at war — increases volatility
-    const nationData = await base44.entities.Nation.filter({ id: stock.nation_id });
-    const issuerNation = nationData[0];
+    // Use pre-fetched nation map instead of per-stock API call
+    const issuerNation = nationMap?.[stock.nation_id];
     const atWar = (issuerNation?.at_war_with || []).length > 0;
     const lowPerformance = issuerNation && (issuerNation.stability < 30 || issuerNation.gdp < 300);
 
