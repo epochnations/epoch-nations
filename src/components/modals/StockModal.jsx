@@ -132,6 +132,29 @@ export default function StockModal({ stock, myNation, onClose, onRefresh }) {
       description: `${myNation.name} sold ${shares}x ${stock.ticker} @ ${stock.current_price.toFixed(2)}`
     });
 
+    // 1.5% royalty to issuing nation on secondary market sales (anti-abuse: skip if selling own nation's stock)
+    if (stock.nation_id && stock.nation_id !== myNation.id) {
+      const royalty = Math.floor(revenue * 0.015);
+      if (royalty > 0) {
+        const issuerNations = await base44.entities.Nation.filter({ id: stock.nation_id });
+        if (issuerNations[0]) {
+          await base44.entities.Nation.update(stock.nation_id, {
+            currency: issuerNations[0].currency + royalty
+          });
+          await base44.entities.Transaction.create({
+            type: "stock_sell",
+            from_nation_id: myNation.id,
+            from_nation_name: myNation.name,
+            to_nation_id: stock.nation_id,
+            to_nation_name: stock.nation_name,
+            stock_ticker: stock.ticker,
+            total_value: royalty,
+            description: `Royalty: ${stock.nation_name} received ${royalty} cr from ${myNation.name}'s sale of ${stock.ticker}`
+          });
+        }
+      }
+    }
+
     setLoading(false);
     onRefresh?.();
     onClose();
