@@ -1,16 +1,18 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
-import { Shield, TrendingUp, Swords, BookOpen, ChevronRight } from "lucide-react";
+import { Shield, TrendingUp, Swords, BookOpen, Globe } from "lucide-react";
 import IdentityHeader from "../components/profile/IdentityHeader.jsx";
 import EconomicLedger from "../components/profile/EconomicLedger.jsx";
 import WarRoom from "../components/profile/WarRoom.jsx";
 import PolicyCenter from "../components/profile/PolicyCenter.jsx";
+import NationWikiPanel from "../components/profile/NationWikiPanel.jsx";
 
 const TABS = [
   { id: "economy", label: "Economic Ledger", icon: TrendingUp },
   { id: "warroom", label: "War Room", icon: Swords },
   { id: "policy", label: "Policy Center", icon: BookOpen },
+  { id: "wiki", label: "Nation Wiki", icon: Globe },
 ];
 
 export default function NationalProfile() {
