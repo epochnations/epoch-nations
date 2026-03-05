@@ -55,8 +55,10 @@ export default function GlobalChronicles() {
   }
 
   async function loadNews() {
-    const articles = await base44.entities.NewsArticle.list("-created_date", 40);
-    setNews(articles);
+    const articles = await base44.entities.NewsArticle.list("-created_date", 80);
+    // Only show last 30 minutes
+    const cutoff = Date.now() - 30 * 60 * 1000;
+    setNews(articles.filter(a => new Date(a.created_date).getTime() > cutoff));
   }
 
   async function loadStocks() {
