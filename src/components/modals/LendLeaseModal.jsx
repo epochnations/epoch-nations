@@ -4,7 +4,12 @@ import { X, Package, Heart } from "lucide-react";
 
 const RESOURCES = [
   { id: "currency", label: "Credits", icon: "💰", field: "currency" },
-  { id: "manufacturing", label: "Manufacturing Boost (+pts)", icon: "🏭", field: "manufacturing" },
+  { id: "res_wood", label: "Wood", icon: "🪵", field: "res_wood" },
+  { id: "res_stone", label: "Stone", icon: "🪨", field: "res_stone" },
+  { id: "res_gold", label: "Gold", icon: "🥇", field: "res_gold" },
+  { id: "res_iron", label: "Iron", icon: "⚙️", field: "res_iron" },
+  { id: "res_oil", label: "Oil", icon: "🛢️", field: "res_oil" },
+  { id: "res_food", label: "Food", icon: "🌾", field: "res_food" },
   { id: "tech_points", label: "Tech Points", icon: "🔬", field: "tech_points" },
 ];
 
@@ -111,7 +116,7 @@ export default function LendLeaseModal({ targetNation, myNation, onClose, onRefr
 
           <div>
             <label className="text-xs text-slate-400 uppercase tracking-wider block mb-2">Resource Type</label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-4 gap-2">
               {RESOURCES.map(r => (
                 <button
                   key={r.id}

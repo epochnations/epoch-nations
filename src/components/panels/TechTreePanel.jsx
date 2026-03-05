@@ -9,6 +9,15 @@ const RESOURCE_LABELS = {
   res_iron: "Iron", res_oil: "Oil", res_food: "Food"
 };
 
+function ReqItem({ met, label, current, max }) {
+  return (
+    <div className={`rounded-lg p-2 border text-xs ${met ? "border-green-400/30 bg-green-400/5" : "border-red-400/20 bg-red-400/5"}`}>
+      <div className={`font-bold ${met ? "text-green-400" : "text-red-400"}`}>{met ? "✅" : "❌"} {label}</div>
+      {current !== undefined && <div className="text-slate-500 mt-0.5">{current}{max !== undefined ? ` / ${max}` : ""}</div>}
+    </div>
+  );
+}
+
 export default function TechTreePanel({ nation, onRefresh, onClose }) {
   const [loading, setLoading] = useState(null);
   const [nationBuildings, setNationBuildings] = useState([]);
@@ -51,7 +60,6 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
   async function unlock(tech) {
     if (unlocked.includes(tech.id) || nation.tech_points < tech.cost) return;
     setLoading(tech.id);
-
     const updates = {
       tech_points: nation.tech_points - tech.cost,
       unlocked_techs: [...unlocked, tech.id],
@@ -59,9 +67,7 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
         Object.entries(tech.effect).map(([k, v]) => [k, (nation[k] || 0) + v])
       )
     };
-    // Cap public_trust at 2.0
     if (updates.public_trust) updates.public_trust = Math.min(2.0, updates.public_trust);
-
     await base44.entities.Nation.update(nation.id, updates);
     await base44.entities.Transaction.create({
       type: "tech_unlock",
@@ -69,7 +75,6 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
       from_nation_name: nation.name,
       description: `${nation.name} unlocked: ${tech.name} (-${tech.cost} TP)`
     });
-
     setLoading(null);
     onRefresh?.();
   }
@@ -78,29 +83,26 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
     if (!allReqsMet) return;
     setLoading("advance");
     const nextEpoch = nextEpochName;
-
     const advanceCost = epochReqs?.tp || 0;
+
     await base44.entities.Nation.update(nation.id, {
       epoch: nextEpoch,
       tech_points: nation.tech_points - advanceCost,
       tech_level: (nation.tech_level || 1) + 1
     });
 
-    // Unlock new stock sector
     await base44.entities.Stock.create({
       company_name: `${nation.name} ${nextEpoch} Corp`,
       ticker: nation.name.substring(0, 2).toUpperCase() + nextEpoch.substring(0, 2).toUpperCase(),
       nation_id: nation.id,
       nation_name: nation.name,
       sector: epochIndex >= 11 ? "Nano" : epochIndex >= 9 ? "Technology" : "Energy",
-      total_shares: 1500,
-      available_shares: 1500,
+      total_shares: 1500, available_shares: 1500,
       base_price: 20 + epochIndex * 5,
       current_price: 20 + epochIndex * 5,
       price_history: [20 + epochIndex * 5],
       market_cap: (20 + epochIndex * 5) * 1500,
-      is_crashed: false,
-      epoch_required: nextEpoch
+      is_crashed: false, epoch_required: nextEpoch
     });
 
     await base44.entities.Notification.create({
@@ -109,11 +111,9 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
       type: "tech_unlocked",
       title: `🚀 Epoch Advanced: ${nextEpoch}!`,
       message: `Your nation has entered the ${nextEpoch}! New technologies and stock sector unlocked!`,
-      severity: "success",
-      is_read: false
+      severity: "success", is_read: false
     });
 
-    // Boost domestic stocks by 15%
     const domesticStocks = await base44.entities.Stock.filter({ nation_id: nation.id });
     for (const s of domesticStocks) {
       const newPrice = parseFloat((s.current_price * 1.15).toFixed(2));
@@ -124,15 +124,11 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
       });
     }
 
-    // Gold-tier global news
     await base44.entities.NewsArticle.create({
       headline: `SCIENTIFIC BREAKTHROUGH: ${nation.name} Enters the ${nextEpoch} Age!`,
-      body: `A NEW ERA BEGINS: ${nation.name} has officially entered the ${nextEpoch} Epoch! Domestic stocks surged 15% on the news as global markets react to this massive shift in power. New units, sectors, and technologies are now available.`,
-      category: "tech",
-      tier: "gold",
-      nation_name: nation.name,
-      nation_flag: nation.flag_emoji,
-      nation_color: nation.flag_color
+      body: `A NEW ERA BEGINS: ${nation.name} has officially entered the ${nextEpoch} Epoch! Domestic stocks surged 15%. New units, sectors, and technologies are now available.`,
+      category: "tech", tier: "gold",
+      nation_name: nation.name, nation_flag: nation.flag_emoji, nation_color: nation.flag_color
     });
 
     setLoading(null);
@@ -141,19 +137,6 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
   }
 
   const currentTechs = TECH_TREE[nation.epoch] || [];
-}
-
-function ReqItem({ met, label, current, max }) {
-  return (
-    <div className={`rounded-lg p-2 border text-xs ${met ? "border-green-400/30 bg-green-400/5" : "border-red-400/20 bg-red-400/5"}`}>
-      <div className={`font-bold ${met ? "text-green-400" : "text-red-400"}`}>{met ? "✅" : "❌"} {label}</div>
-      {current !== undefined && <div className="text-slate-500 mt-0.5">{current}{max !== undefined ? ` / ${max}` : ""}</div>}
-    </div>
-  );
-}
-
-// Dummy export to avoid linting issues — actual component starts above
-function _unused() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
@@ -174,7 +157,7 @@ function _unused() {
 
         {/* Epoch progress bar */}
         <div className="px-4 sm:px-6 pt-4 pb-0">
-          <div className="flex items-center gap-1 overflow-x-auto pb-2 scrollbar-hide">
+          <div className="flex items-center gap-1 overflow-x-auto pb-2">
             {EPOCHS.map((ep, i) => {
               const done = i < epochIndex;
               const current = i === epochIndex;
@@ -199,26 +182,17 @@ function _unused() {
                 const isUnlocked = unlocked.includes(tech.id);
                 const canAfford = nation.tech_points >= tech.cost;
                 return (
-                  <button
-                    key={tech.id}
-                    onClick={() => unlock(tech)}
+                  <button key={tech.id} onClick={() => unlock(tech)}
                     disabled={isUnlocked || !canAfford || loading === tech.id}
                     className={`text-left p-4 rounded-xl border transition-all ${
-                      isUnlocked
-                        ? "border-green-400/30 bg-green-400/10"
-                        : canAfford
-                        ? "border-violet-400/30 bg-violet-400/10 hover:bg-violet-400/20 cursor-pointer"
-                        : "border-white/10 bg-white/5 opacity-50 cursor-not-allowed"
-                    }`}
-                  >
+                      isUnlocked ? "border-green-400/30 bg-green-400/10"
+                      : canAfford ? "border-violet-400/30 bg-violet-400/10 hover:bg-violet-400/20 cursor-pointer"
+                      : "border-white/10 bg-white/5 opacity-50 cursor-not-allowed"
+                    }`}>
                     <div className="flex items-center justify-between mb-2">
                       <span className="font-bold text-sm text-white">{tech.name}</span>
-                      {isUnlocked ? (
-                        <CheckCircle size={14} className="text-green-400" />
-                      ) : (
-                        <div className="flex items-center gap-1 text-xs font-mono text-yellow-400">
-                          <Zap size={10} /> {tech.cost}
-                        </div>
+                      {isUnlocked ? <CheckCircle size={14} className="text-green-400" /> : (
+                        <div className="flex items-center gap-1 text-xs font-mono text-yellow-400"><Zap size={10} /> {tech.cost}</div>
                       )}
                     </div>
                     <div className="text-xs text-slate-400">{tech.desc}</div>
@@ -239,10 +213,9 @@ function _unused() {
                 {allReqsMet && <span className="text-xs font-bold text-cyan-400 bg-cyan-400/10 border border-cyan-400/30 px-2 py-0.5 rounded-xl">✅ Ready!</span>}
               </div>
 
-              {/* Requirements checklist */}
               <div className="grid grid-cols-2 gap-2 mb-4">
-                <ReqItem met={reqsMet.tp} label={`${epochReqs.tp} TP`} current={nation.tech_points} />
-                <ReqItem met={reqsMet.population} label={`${epochReqs.population} Population`} current={nation.population} />
+                <ReqItem met={reqsMet.tp} label={`${epochReqs.tp} TP`} current={nation.tech_points} max={epochReqs.tp} />
+                <ReqItem met={reqsMet.population} label={`${epochReqs.population} Pop`} current={nation.population} max={epochReqs.population} />
                 {Object.entries(epochReqs.buildings || {}).map(([bid, req]) => (
                   <ReqItem key={bid} met={reqsMet.buildings[bid]}
                     label={`${req}× ${BUILDING_MAP[bid]?.name || bid}`}
@@ -261,20 +234,16 @@ function _unused() {
                 </div>
               )}
 
-              <button
-                onClick={advanceEpoch}
-                disabled={!allReqsMet || loading === "advance"}
-                className="w-full py-3 min-h-[44px] rounded-xl font-bold text-sm bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-400 hover:to-blue-500 disabled:opacity-30 transition-all"
-              >
+              <button onClick={advanceEpoch} disabled={!allReqsMet || loading === "advance"}
+                className="w-full py-3 min-h-[44px] rounded-xl font-bold text-sm bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-400 hover:to-blue-500 disabled:opacity-30 transition-all">
                 {loading === "advance" ? "Advancing..." : !allReqsMet ? "Requirements Not Met" : "ADVANCE EPOCH 🚀"}
               </button>
             </div>
           )}
 
-          {/* TP generation note */}
           <div className="rounded-xl bg-white/5 p-4">
             <div className="text-xs text-slate-400">
-              💡 TP is generated by Schools/Universities (buildings), Researchers (workforce), and Education Spending. Build Schools to accelerate progression.
+              💡 TP is generated by Schools/Universities (buildings), Researchers (workforce), and Education Spending. Build Schools in the Construction Hub to accelerate progression.
             </div>
           </div>
         </div>
