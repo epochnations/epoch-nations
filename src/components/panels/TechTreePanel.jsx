@@ -1,18 +1,52 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Cpu, CheckCircle, ChevronRight, Zap } from "lucide-react";
-import { EPOCHS, EPOCH_ADVANCE_COST, EPOCH_EMOJI, EPOCH_COLOR, TECH_TREE } from "../game/EpochConfig";
+import { Cpu, CheckCircle, ChevronRight, Zap, Hammer } from "lucide-react";
+import { EPOCHS, EPOCH_EMOJI, TECH_TREE } from "../game/EpochConfig";
+import { EPOCH_REQUIREMENTS, BUILDING_MAP } from "../game/BuildingConfig";
+
+const RESOURCE_LABELS = {
+  res_wood: "Wood", res_stone: "Stone", res_gold: "Gold",
+  res_iron: "Iron", res_oil: "Oil", res_food: "Food"
+};
 
 export default function TechTreePanel({ nation, onRefresh, onClose }) {
   const [loading, setLoading] = useState(null);
+  const [nationBuildings, setNationBuildings] = useState([]);
+
+  useEffect(() => {
+    if (!nation?.id) return;
+    base44.entities.Building.filter({ nation_id: nation.id }).then(setNationBuildings);
+  }, [nation?.id]);
 
   if (!nation) return null;
 
   const unlocked = nation.unlocked_techs || [];
   const epochIndex = EPOCHS.indexOf(nation.epoch);
   const canAdvance = epochIndex < EPOCHS.length - 1;
-  const advanceCost = EPOCH_ADVANCE_COST[nation.epoch] || 9999;
   const nextEpochName = canAdvance ? EPOCHS[epochIndex + 1] : null;
+  const epochReqs = EPOCH_REQUIREMENTS[nation.epoch];
+
+  function buildingCount(id) {
+    return nationBuildings.filter(b => b.building_type === id && !b.is_destroyed).length;
+  }
+
+  // Check all requirements
+  let reqsMet = { tp: false, population: false, buildings: {}, resources: {} };
+  if (epochReqs) {
+    reqsMet.tp = (nation.tech_points || 0) >= epochReqs.tp;
+    reqsMet.population = (nation.population || 0) >= epochReqs.population;
+    Object.entries(epochReqs.buildings || {}).forEach(([bid, req]) => {
+      reqsMet.buildings[bid] = buildingCount(bid) >= req;
+    });
+    Object.entries(epochReqs.resources || {}).forEach(([res, req]) => {
+      reqsMet.resources[res] = (nation[res] || 0) >= req;
+    });
+  }
+  const allReqsMet = epochReqs
+    ? reqsMet.tp && reqsMet.population
+      && Object.values(reqsMet.buildings).every(Boolean)
+      && Object.values(reqsMet.resources).every(Boolean)
+    : false;
 
   async function unlock(tech) {
     if (unlocked.includes(tech.id) || nation.tech_points < tech.cost) return;
@@ -41,10 +75,11 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
   }
 
   async function advanceEpoch() {
-    if (nation.tech_points < advanceCost) return;
+    if (!allReqsMet) return;
     setLoading("advance");
     const nextEpoch = nextEpochName;
 
+    const advanceCost = epochReqs?.tp || 0;
     await base44.entities.Nation.update(nation.id, {
       epoch: nextEpoch,
       tech_points: nation.tech_points - advanceCost,
@@ -181,31 +216,44 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
           </div>
 
           {/* Epoch advancement */}
-          {canAdvance && (
-            <div className="rounded-xl p-5 border border-cyan-400/30 bg-cyan-400/10">
-              <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+          {canAdvance && epochReqs && (
+            <div className={`rounded-xl p-5 border ${allReqsMet ? "border-cyan-400/50 bg-cyan-400/5" : "border-white/10 bg-white/5"}`}>
+              <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
                 <div className="font-bold text-white flex items-center gap-2">
                   <ChevronRight size={16} className="text-cyan-400" />
                   Advance to {nextEpochName} {EPOCH_EMOJI[nextEpochName]}
                 </div>
-                <div className="flex items-center gap-1 text-xs font-mono text-yellow-400">
-                  <Zap size={10} /> {advanceCost} TP required
+                {allReqsMet && <span className="text-xs font-bold text-cyan-400 bg-cyan-400/10 border border-cyan-400/30 px-2 py-0.5 rounded-xl">✅ Ready!</span>}
+              </div>
+
+              {/* Requirements checklist */}
+              <div className="grid grid-cols-2 gap-2 mb-4">
+                <ReqItem met={reqsMet.tp} label={`${epochReqs.tp} TP`} current={nation.tech_points} />
+                <ReqItem met={reqsMet.population} label={`${epochReqs.population} Population`} current={nation.population} />
+                {Object.entries(epochReqs.buildings || {}).map(([bid, req]) => (
+                  <ReqItem key={bid} met={reqsMet.buildings[bid]}
+                    label={`${req}× ${BUILDING_MAP[bid]?.name || bid}`}
+                    current={buildingCount(bid)} max={req} />
+                ))}
+                {Object.entries(epochReqs.resources || {}).map(([res, req]) => (
+                  <ReqItem key={res} met={reqsMet.resources[res]}
+                    label={`${req} ${RESOURCE_LABELS[res] || res}`}
+                    current={nation[res] || 0} max={req} />
+                ))}
+              </div>
+
+              {!allReqsMet && (
+                <div className="text-xs text-amber-400 mb-3 flex items-center gap-1.5">
+                  <Hammer size={10} /> Build required structures in the Construction Hub first
                 </div>
-              </div>
-              <div className="text-xs text-slate-400 mb-3">
-                Unlocks new technologies, stock sectors, and advanced military capabilities. 
-                <span className="text-cyan-400"> You have {nation.tech_points} / {advanceCost} TP.</span>
-              </div>
-              {/* Progress bar */}
-              <div className="h-1.5 rounded-full bg-white/10 mb-3">
-                <div className="h-1.5 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 transition-all" style={{ width: `${Math.min(100, (nation.tech_points / advanceCost) * 100)}%` }} />
-              </div>
+              )}
+
               <button
                 onClick={advanceEpoch}
-                disabled={nation.tech_points < advanceCost || loading === "advance"}
+                disabled={!allReqsMet || loading === "advance"}
                 className="w-full py-3 min-h-[44px] rounded-xl font-bold text-sm bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-400 hover:to-blue-500 disabled:opacity-30 transition-all"
               >
-                {loading === "advance" ? "Advancing..." : nation.tech_points < advanceCost ? `Need ${advanceCost - nation.tech_points} more TP` : "ADVANCE EPOCH 🚀"}
+                {loading === "advance" ? "Advancing..." : !allReqsMet ? "Requirements Not Met" : "ADVANCE EPOCH 🚀"}
               </button>
             </div>
           )}
@@ -213,7 +261,7 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
           {/* TP generation note */}
           <div className="rounded-xl bg-white/5 p-4">
             <div className="text-xs text-slate-400">
-              💡 Tech Points are generated by Education Spending. Increase it in your nation management panel. You gain roughly <strong className="text-white">{Math.floor(nation.education_spending * 0.5)}</strong> TP per cycle from current {nation.education_spending}% education budget.
+              💡 TP is generated by Schools/Universities (buildings), Researchers (workforce), and Education Spending. Build Schools to accelerate progression.
             </div>
           </div>
         </div>
