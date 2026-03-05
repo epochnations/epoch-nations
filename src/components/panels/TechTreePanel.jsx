@@ -126,17 +126,16 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
 
         {/* Epoch progress bar */}
         <div className="px-4 sm:px-6 pt-4 pb-0">
-          <div className="flex items-center gap-2 overflow-x-auto pb-2">
-            {EPOCH_ORDER.map((ep, i) => {
-              const idx = EPOCH_ORDER.indexOf(nation.epoch);
-              const done = i < idx;
-              const current = i === idx;
+          <div className="flex items-center gap-1 overflow-x-auto pb-2 scrollbar-hide">
+            {EPOCHS.map((ep, i) => {
+              const done = i < epochIndex;
+              const current = i === epochIndex;
               return (
-                <div key={ep} className="flex items-center gap-2 shrink-0">
-                  <div className={`px-3 py-1 rounded-lg text-xs font-bold ${current ? "bg-cyan-400/20 text-cyan-400 border border-cyan-400/40" : done ? "bg-green-400/10 text-green-400" : "text-slate-600"}`}>
-                    {done ? "✓ " : ""}{ep}
+                <div key={ep} className="flex items-center gap-1 shrink-0">
+                  <div className={`px-2 py-1 rounded-lg text-xs font-bold whitespace-nowrap ${current ? "bg-cyan-400/20 text-cyan-400 border border-cyan-400/40" : done ? "bg-green-400/10 text-green-400" : "text-slate-600"}`}>
+                    {EPOCH_EMOJI[ep]} {done ? "✓" : ""}{ep}
                   </div>
-                  {i < EPOCH_ORDER.length - 1 && <div className={`w-6 h-px ${done ? "bg-green-400/40" : "bg-white/10"}`} />}
+                  {i < EPOCHS.length - 1 && <div className={`w-3 h-px shrink-0 ${done ? "bg-green-400/40" : "bg-white/10"}`} />}
                 </div>
               );
             })}
