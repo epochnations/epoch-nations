@@ -116,6 +116,55 @@ export default function NationStatsPanel({ nation }) {
         <div className="text-xs text-slate-600 mt-1">{nation.epoch} Era · {nation.tech_points} TP banked</div>
       </div>
 
+      {/* Ally count — below Tech Level */}
+      <div className="mt-3 rounded-xl p-3 bg-blue-500/5 border border-blue-500/20 flex items-center justify-between">
+        <div className="flex items-center gap-2 text-xs text-slate-400">
+          <Handshake size={12} className="text-blue-400" />
+          Allies
+        </div>
+        <span className="text-blue-400 font-bold font-mono text-sm">{nation.allies?.length || 0}</span>
+      </div>
+
+      {/* Food / Population status */}
+      <div className="mt-3 rounded-xl p-3 bg-green-500/5 border border-green-500/20">
+        <div className="text-xs text-slate-500 uppercase tracking-wider mb-2">Population Status</div>
+        <div className="space-y-1.5">
+          <div className="flex justify-between text-xs">
+            <span className="text-slate-400">Food Production</span>
+            <span className="text-green-400 font-mono font-bold">+{totalFoodProd}/min</span>
+          </div>
+          <div className="flex justify-between text-xs">
+            <span className="text-slate-400">Food Consumption</span>
+            <span className="text-red-400 font-mono font-bold">−{foodCons}/min</span>
+          </div>
+          <div className="border-t border-white/10 pt-1.5 flex justify-between text-xs">
+            <span className="text-slate-400">Net Food</span>
+            <span className={`font-mono font-bold ${netFood >= 0 ? "text-green-400" : "text-red-400"}`}>
+              {netFood >= 0 ? "+" : ""}{netFood}/min
+            </span>
+          </div>
+          <div className="flex justify-between text-xs">
+            <span className="text-slate-400">Housing Cap</span>
+            <span className="text-violet-400 font-mono">{pop} / {nation.housing_capacity || 20}</span>
+          </div>
+          {netFood < 0 && (
+            <div className="text-xs text-red-400 font-bold bg-red-500/10 rounded-lg px-2 py-1 mt-1">
+              ⚠ FAMINE RISK — Assign more farmers!
+            </div>
+          )}
+          {netFood >= 0 && pop < (nation.housing_capacity || 20) && (
+            <div className="text-xs text-green-400 bg-green-500/10 rounded-lg px-2 py-1 mt-1">
+              ✓ Growing — food surplus & housing available
+            </div>
+          )}
+          {pop >= (nation.housing_capacity || 20) && (
+            <div className="text-xs text-amber-400 bg-amber-500/10 rounded-lg px-2 py-1 mt-1">
+              🏠 Housing full — build more to grow
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Stock Value */}
       <div className="mt-3 rounded-xl p-3" style={{ backgroundColor: "#0f172a" }}>
         <div className="text-xs text-slate-500 mb-1">NATION STOCK INDEX</div>
