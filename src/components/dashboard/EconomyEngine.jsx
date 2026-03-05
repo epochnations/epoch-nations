@@ -28,8 +28,14 @@ export default function EconomyEngine({ nation, onRefresh }) {
   async function runTick() {
     // 1. Fluctuate all stocks in the world
     const allStocks = await base44.entities.Stock.list("-updated_date", 100);
+    // Pre-fetch all nations once to avoid per-stock API calls
+    const allNations = await base44.entities.Nation.list();
+    const nationMap = Object.fromEntries(allNations.map(n => [n.id, n]));
+
     for (const stock of allStocks) {
-      await fluctuateStock(stock);
+      await fluctuateStock(stock, nationMap);
+      // Small delay between stock updates to avoid rate limiting
+      await new Promise(r => setTimeout(r, 300));
     }
 
     // 2. Apply GDP income to this player's treasury
