@@ -9,8 +9,10 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
   if (!nation) return null;
 
   const unlocked = nation.unlocked_techs || [];
-  const canAdvance = nation.epoch !== "Nano";
+  const epochIndex = EPOCHS.indexOf(nation.epoch);
+  const canAdvance = epochIndex < EPOCHS.length - 1;
   const advanceCost = EPOCH_ADVANCE_COST[nation.epoch] || 9999;
+  const nextEpochName = canAdvance ? EPOCHS[epochIndex + 1] : null;
 
   async function unlock(tech) {
     if (unlocked.includes(tech.id) || nation.tech_points < tech.cost) return;
