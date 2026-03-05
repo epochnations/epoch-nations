@@ -266,6 +266,17 @@ export default function Dashboard() {
       {/* Economy Engine — 60s market pulse + level degradation */}
       {myNation && <EconomyEngine nation={myNation} onRefresh={refresh} />}
 
+      {/* Resource Engine — 60s resource production + population simulation */}
+      {myNation && <ResourceEngine nation={myNation} onRefresh={refresh} />}
+
+      {showWorkforce && myNation && (
+        <WorkforcePanel
+          nation={myNation}
+          onClose={() => setShowWorkforce(false)}
+          onRefresh={refresh}
+        />
+      )}
+
       {/* Dilemma Engine — headless tick scheduler */}
       {myNation && (
         <DilemmaEngine
