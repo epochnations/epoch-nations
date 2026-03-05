@@ -46,29 +46,27 @@ export default function StockTicker({ onSelectStock }) {
                 <button
                   key={stock.id}
                   onClick={() => onSelectStock?.(stock)}
-                  className="w-full px-5 py-3 flex items-center justify-between hover:bg-white/5 transition-colors text-left"
+                  className="w-full px-4 py-2.5 flex items-center gap-2 hover:bg-white/5 transition-colors text-left"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
-                      <span className="text-xs font-black text-slate-300">{stock.ticker?.substring(0, 2)}</span>
-                    </div>
-                    <div>
-                      <div className="text-sm font-bold text-white">{stock.ticker}</div>
-                      <div className="text-xs text-slate-500 truncate max-w-[120px]">{stock.nation_name}</div>
-                    </div>
+                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
+                    <span className="text-xs font-black text-slate-300">{stock.ticker?.substring(0, 2)}</span>
                   </div>
-
-                  <div className="text-right">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5 flex-nowrap">
+                      <span className="text-sm font-bold text-white shrink-0">{stock.ticker}</span>
+                      {stock.is_crashed && (
+                        <span className="shrink-0 px-1.5 py-0.5 rounded text-xs font-bold bg-red-500/20 text-red-400">CRASH</span>
+                      )}
+                    </div>
+                    <div className="text-xs text-slate-500 truncate">{stock.nation_name} · {stock.sector}</div>
+                  </div>
+                  <div className="text-right shrink-0">
                     <div className="text-sm font-mono font-bold text-white">{stock.current_price?.toFixed(2)}</div>
-                    <div className={`text-xs font-mono flex items-center gap-1 justify-end ${isUp ? "text-green-400" : "text-red-400"}`}>
-                      {isUp ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
+                    <div className={`text-xs font-mono flex items-center gap-0.5 justify-end ${isUp ? "text-green-400" : "text-red-400"}`}>
+                      {isUp ? <TrendingUp size={9} /> : <TrendingDown size={9} />}
                       {isUp ? "+" : ""}{changePct.toFixed(1)}%
                     </div>
                   </div>
-
-                  {stock.is_crashed && (
-                    <div className="ml-2 px-1.5 py-0.5 rounded text-xs font-bold bg-red-500/20 text-red-400">CRASH</div>
-                  )}
                 </button>
               );
             })}
