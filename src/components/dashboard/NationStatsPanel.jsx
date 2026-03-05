@@ -82,19 +82,19 @@ export default function NationStatsPanel({ nation }) {
       {/* Resources */}
       <div className="mt-4 rounded-xl p-3 bg-white/3 border border-white/10">
         <div className="text-xs text-slate-500 uppercase tracking-wider mb-2">Natural Resources</div>
-        <div className="grid grid-cols-2 gap-1.5">
+        <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide">
           {[
             { label: "Wood", value: nation.res_wood, color: "text-amber-600", emoji: "🪵" },
             { label: "Stone", value: nation.res_stone, color: "text-slate-400", emoji: "🪨" },
             { label: "Gold", value: nation.res_gold, color: "text-yellow-400", emoji: "🥇" },
             { label: "Iron", value: nation.res_iron, color: "text-blue-400", emoji: "⚙️" },
             { label: "Oil", value: nation.res_oil, color: "text-gray-400", emoji: "🛢️" },
-            { label: "Food", value: nation.res_food, color: "text-green-400", emoji: "🌾", span: true },
+            { label: "Food", value: nation.res_food, color: "text-green-400", emoji: "🌾" },
           ].map(r => (
-            <div key={r.label} className={`flex items-center gap-1.5 py-1 px-2 rounded-lg bg-white/5 ${r.span ? "col-span-2" : ""}`}>
-              <span className="text-sm">{r.emoji}</span>
-              <span className="text-xs text-slate-400">{r.label}</span>
-              <span className={`ml-auto text-xs font-mono font-bold ${r.color}`}>{(r.value || 0).toLocaleString()}</span>
+            <div key={r.label} className="flex flex-col items-center py-1.5 px-2 rounded-lg bg-white/5 min-w-[46px] shrink-0 flex-1">
+              <span className="text-base leading-none mb-0.5">{r.emoji}</span>
+              <span className="text-[10px] text-slate-500 leading-none mb-0.5">{r.label}</span>
+              <span className={`text-[11px] font-mono font-bold ${r.color} leading-none`}>{(r.value || 0) >= 1000 ? `${Math.floor((r.value||0)/1000)}k` : (r.value || 0)}</span>
             </div>
           ))}
         </div>
