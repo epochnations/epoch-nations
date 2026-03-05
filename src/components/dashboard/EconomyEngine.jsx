@@ -106,10 +106,10 @@ export default function EconomyEngine({ nation, onRefresh }) {
       for (const h of holdings) {
         const loss = Math.floor(h.shares_owned * currentPrice * 0.4);
         if (loss > 0) {
-          const holderNations = await base44.entities.Nation.filter({ id: h.nation_id });
-          if (holderNations[0]) {
+          const holderNation = nationMap?.[h.nation_id];
+          if (holderNation) {
             await base44.entities.Nation.update(h.nation_id, {
-              currency: Math.max(0, holderNations[0].currency - loss)
+              currency: Math.max(0, holderNation.currency - loss)
             });
           }
         }
