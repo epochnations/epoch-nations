@@ -69,15 +69,17 @@ export default function ResourceEngine({ nation, onRefresh }) {
     // --- POPULATION GROWTH / DECLINE ---
     const hasHousingRoom = pop < (fresh.housing_capacity || 20);
     const hasFoodSurplus = netFood > 0;
+    const stability = fresh.stability || 75;
+    const hasGoodStability = stability >= 30;
 
-    if (hasFoodSurplus && hasHousingRoom && Math.random() < 0.3) {
+    if (hasFoodSurplus && hasHousingRoom && hasGoodStability && Math.random() < 0.3) {
       // 30% chance of pop growth each tick when conditions are met
       updates.population = pop + 1;
     } else if (netFood < 0 && newFood === 0) {
       // FAMINE — population shrinks
       if (Math.random() < 0.5) {
         updates.population = Math.max(1, pop - 1);
-        updates.stability = Math.max(0, (fresh.stability || 75) - 3);
+        updates.stability = Math.max(0, stability - 3);
         updates.public_trust = Math.max(0.1, (fresh.public_trust || 1.0) - 0.05);
         notifications.push({
           type: "market_crash",
@@ -87,6 +89,22 @@ export default function ResourceEngine({ nation, onRefresh }) {
           is_read: false
         });
       }
+    } else if (stability < 20 && Math.random() < 0.2) {
+      // Civil unrest — pop decline
+      updates.population = Math.max(1, pop - 1);
+      notifications.push({
+        type: "market_crash",
+        title: "⚡ CIVIL UNREST",
+        message: "Low stability is causing citizens to flee. Raise stability above 20 to halt decline.",
+        severity: "warning",
+        is_read: false
+      });
+    }
+
+    // War reduces population
+    if ((fresh.at_war_with || []).length > 0 && Math.random() < 0.15) {
+      const warPop = updates.population ?? pop;
+      updates.population = Math.max(1, warPop - 1);
     }
 
     // --- GDP from workers ---
