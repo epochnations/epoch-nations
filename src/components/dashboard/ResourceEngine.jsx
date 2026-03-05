@@ -107,6 +107,22 @@ export default function ResourceEngine({ nation, onRefresh }) {
       updates.population = Math.max(1, warPop - 1);
     }
 
+    // --- WAR AUTO-RESET after 30 minutes of inactivity ---
+    if ((fresh.at_war_with || []).length > 0 && fresh.war_started_at) {
+      const warAge = Date.now() - new Date(fresh.war_started_at).getTime();
+      if (warAge > 30 * 60 * 1000) {
+        updates.at_war_with = [];
+        updates.war_started_at = "";
+        notifications.push({
+          type: "war_declared",
+          title: "☮️ WAR EXPIRED",
+          message: "Your conflict has expired after 30 minutes of inactivity. Peace has been restored.",
+          severity: "info",
+          is_read: false
+        });
+      }
+    }
+
     // --- GDP from workers ---
     const industrialBoost = Math.floor((fresh.workers_industrial || 0) * 10 * techMult);
     updates.gdp = Math.min(100000, (fresh.gdp || 500) + industrialBoost + Math.floor((fresh.manufacturing || 50) * 0.005));
