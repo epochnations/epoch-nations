@@ -98,10 +98,15 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
     // Apply defender damage
     await base44.entities.Nation.update(targetNation.id, defenderUpdates);
 
-    // Attacker pays war cost + joins war
+    // Attacker pays war cost + joins war; stamp war start time
+    const now = new Date().toISOString();
     await base44.entities.Nation.update(myNation.id, {
       at_war_with: attackerWarList,
+      war_started_at: now,
       currency: Math.max(0, myNation.currency - warCost)
+    });
+    await base44.entities.Nation.update(targetNation.id, {
+      war_started_at: now
     });
 
     await base44.entities.Transaction.create({
