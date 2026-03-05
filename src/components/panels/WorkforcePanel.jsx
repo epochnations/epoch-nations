@@ -9,7 +9,7 @@ const ROLES = [
   { key: "workers_fishermen", label: "Fishermen", emoji: "🎣", desc: "Produce Food (coastal)" },
   { key: "workers_lumberjacks", label: "Lumberjacks", emoji: "🪵", desc: "Produce Wood" },
   { key: "workers_quarry", label: "Quarry Workers", emoji: "⛏️", desc: "Produce Stone" },
-  { key: "workers_miners", label: "Miners", emoji: "⚒️", desc: "Produce Gold" },
+  { key: "workers_miners", label: "Miners", emoji: "⚒️", desc: "Produce Gold + Iron (Iron Age+)" },
   { key: "workers_oil_engineers", label: "Oil Engineers", emoji: "🛢️", desc: "Produce Oil (Industrial+)" },
   { key: "workers_builders", label: "Builders", emoji: "🔨", desc: "Speed up construction" },
   { key: "workers_soldiers", label: "Soldiers", emoji: "⚔️", desc: "Military power" },
@@ -55,7 +55,9 @@ export default function WorkforcePanel({ nation, onClose, onRefresh }) {
     if (role.key === "workers_fishermen") return `+${Math.floor(count * 6 * techMult)} Food/min`;
     if (role.key === "workers_lumberjacks") return `+${Math.floor(count * 5 * techMult)} Wood/min`;
     if (role.key === "workers_quarry") return `+${Math.floor(count * 4 * techMult)} Stone/min`;
-    if (role.key === "workers_miners") return `+${Math.floor(count * 3 * techMult)} Gold/min`;
+    if (role.key === "workers_miners") return epochIndex >= 3
+      ? `+${Math.floor(count * 2 * techMult)} Gold +${Math.floor(count * 3 * techMult)} Iron/min`
+      : `+${Math.floor(count * 2 * techMult)} Gold/min`;
     if (role.key === "workers_oil_engineers") return epochIndex >= 9 ? `+${Math.floor(count * 6 * techMult)} Oil/min` : "Requires Industrial Age";
     if (role.key === "workers_researchers") return `+${Math.floor(count * 2 * techMult)} TP/min`;
     if (role.key === "workers_industrial") return epochIndex >= 9 ? `+${Math.floor(count * 10 * techMult)} GDP/min` : "Requires Industrial Age";
