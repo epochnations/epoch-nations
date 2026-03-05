@@ -92,19 +92,19 @@ export default function Onboarding() {
     });
 
     await base44.entities.Stock.create({
-      company_name: `${nationName} National Energy Corp`,
-      ticker: nationName.substring(0, 3).toUpperCase() + "E",
+      company_name: `${nationName} Trading Company`,
+      ticker: nationName.substring(0, 3).toUpperCase() + "T",
       nation_id: nation.id,
       nation_name: nationName,
-      sector: "Energy",
-      total_shares: 1000,
-      available_shares: 1000,
-      base_price: 10,
-      current_price: 10,
-      price_history: [10],
-      market_cap: 10000,
+      sector: "Agriculture",
+      total_shares: 500,
+      available_shares: 500,
+      base_price: 5,
+      current_price: 5,
+      price_history: [5],
+      market_cap: 2500,
       is_crashed: false,
-      epoch_required: "Industrial"
+      epoch_required: "Stone Age"
     });
 
     // Show tour before redirect
