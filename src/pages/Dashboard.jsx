@@ -30,6 +30,7 @@ export default function Dashboard() {
   const [showTechTree, setShowTechTree] = useState(false);
   const [showManagement, setShowManagement] = useState(false);
   const [showIssueStock, setShowIssueStock] = useState(false);
+  const [showWorkforce, setShowWorkforce] = useState(false);
   const [activeDilemma, setActiveDilemma] = useState(null);
 
   useEffect(() => {
