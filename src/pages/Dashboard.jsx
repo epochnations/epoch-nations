@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
-import { Cpu, Plus, Sliders, ChevronRight, Users } from "lucide-react";
+import { Cpu, Plus, Sliders, Users, Hammer } from "lucide-react";
 
 import NationStatsPanel from "../components/dashboard/NationStatsPanel";
 import StockTicker from "../components/dashboard/StockTicker";
@@ -137,6 +137,12 @@ export default function Dashboard() {
             className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-400 text-xs font-bold hover:bg-white/10 transition-all"
           >
             📰 News
+          </a>
+          <a
+            href={createPageUrl("ConstructionHub")}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold hover:bg-amber-500/20 transition-all"
+          >
+            <Hammer size={12} /> Build
           </a>
           <a
             href={createPageUrl("NationalProfile")}

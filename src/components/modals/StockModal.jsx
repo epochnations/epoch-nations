@@ -6,6 +6,14 @@ export default function StockModal({ stock, myNation, onClose, onRefresh }) {
   const [shares, setShares] = useState(1);
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState("buy");
+  const [ownedShares, setOwnedShares] = useState(0);
+
+  // Load owned shares on mount and when switching to sell mode
+  useState(() => {
+    if (!stock || !myNation) return;
+    base44.entities.StockHolding.filter({ nation_id: myNation.id, stock_id: stock.id })
+      .then(h => setOwnedShares(h[0]?.shares_owned || 0));
+  }, [stock?.id, myNation?.id]);
 
   if (!stock || !myNation) return null;
 
@@ -202,7 +210,10 @@ export default function StockModal({ stock, myNation, onClose, onRefresh }) {
             <span className="font-mono font-bold text-white text-lg">{totalCost.toFixed(2)} cr</span>
           </div>
 
-          <div className="text-xs text-slate-500">Your treasury: {myNation.currency?.toFixed(0)} cr</div>
+          <div className="flex justify-between text-xs text-slate-500">
+            <span>Your treasury: {myNation.currency?.toFixed(0)} cr</span>
+            {mode === "sell" && <span className="text-amber-400 font-mono">You own: {ownedShares} shares</span>}
+          </div>
 
           {mode === "buy" ? (
             <button
@@ -215,10 +226,10 @@ export default function StockModal({ stock, myNation, onClose, onRefresh }) {
           ) : (
             <button
               onClick={handleSell}
-              disabled={loading}
+              disabled={loading || ownedShares === 0 || shares > ownedShares}
               className="w-full py-3 rounded-xl font-bold text-sm bg-gradient-to-r from-red-500 to-rose-600 text-white hover:from-red-400 hover:to-rose-500 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
             >
-              {loading ? "Processing..." : "EXECUTE SELL ORDER"}
+              {loading ? "Processing..." : ownedShares === 0 ? "No Shares to Sell" : shares > ownedShares ? `Only ${ownedShares} owned` : "EXECUTE SELL ORDER"}
             </button>
           )}
         </div>
