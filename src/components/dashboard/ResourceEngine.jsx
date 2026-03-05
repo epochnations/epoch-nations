@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { EPOCHS } from "../game/EpochConfig";
+import { BUILDING_MAP } from "../game/BuildingConfig";
 
 /**
  * ResourceEngine — headless component
@@ -34,9 +35,14 @@ export default function ResourceEngine({ nation, onRefresh }) {
     const notifications = [];
 
     // --- PRODUCTION ---
+    // Worker-based production
     const woodProd = Math.floor((fresh.workers_lumberjacks || 0) * 5 * techMult);
     const stoneProd = Math.floor((fresh.workers_quarry || 0) * 4 * techMult);
-    const goldProd = Math.floor((fresh.workers_miners || 0) * 3 * techMult);
+    const goldProd = Math.floor((fresh.workers_miners || 0) * 2 * techMult);
+    // Iron: available from Iron Age+
+    const ironProd = epochIndex >= 3
+      ? Math.floor((fresh.workers_miners || 0) * 3 * techMult)
+      : 0;
     const oilProd = epochIndex >= 9 // Industrial Age+
       ? Math.floor((fresh.workers_oil_engineers || 0) * 6 * techMult)
       : 0;
@@ -45,10 +51,23 @@ export default function ResourceEngine({ nation, onRefresh }) {
     const fishFood = Math.floor((fresh.workers_fishermen || 0) * 6 * techMult);
     const totalFoodProd = farmFood + huntFood + fishFood;
 
-    // Tech points from researchers
+    // Tech points from researchers + education + buildings
+    let buildingTpBonus = 0;
+    let buildingFoodBonus = 0;
+    try {
+      const nationBuildings = await base44.entities.Building.filter({ nation_id: fresh.id });
+      for (const b of nationBuildings) {
+        if (b.is_destroyed) continue;
+        const def = BUILDING_MAP[b.building_type];
+        if (def?.benefits?.tpBonus) buildingTpBonus += def.benefits.tpBonus;
+        if (def?.benefits?.farmBonus) buildingFoodBonus += def.benefits.farmBonus;
+      }
+    } catch (_) {}
+
     const techGain = Math.floor(
       (fresh.workers_researchers || 0) * 2 * techMult +
-      (fresh.education_spending || 0) * 0.3
+      (fresh.education_spending || 0) * 0.3 +
+      buildingTpBonus
     );
 
     // --- CONSUMPTION ---
@@ -62,8 +81,9 @@ export default function ResourceEngine({ nation, onRefresh }) {
     updates.res_wood = Math.min(99999, (fresh.res_wood || 0) + woodProd);
     updates.res_stone = Math.min(99999, (fresh.res_stone || 0) + stoneProd);
     updates.res_gold = Math.min(99999, (fresh.res_gold || 0) + goldProd);
+    updates.res_iron = Math.min(99999, (fresh.res_iron || 0) + ironProd);
     updates.res_oil = Math.min(99999, (fresh.res_oil || 0) + oilProd);
-    updates.res_food = newFood;
+    updates.res_food = Math.max(0, newFood + buildingFoodBonus);
     updates.tech_points = Math.min(99999, (fresh.tech_points || 0) + techGain);
 
     // --- POPULATION GROWTH / DECLINE ---
