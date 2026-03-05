@@ -33,6 +33,9 @@ export default function Dashboard() {
   const [showWorkforce, setShowWorkforce] = useState(false);
   const [activeDilemma, setActiveDilemma] = useState(null);
 
+  const refreshDebounceRef = useRef(null);
+  const userEmailRef = useRef(null);
+
   useEffect(() => {
     init();
   }, []);
@@ -40,6 +43,7 @@ export default function Dashboard() {
   async function init() {
     const u = await base44.auth.me();
     setUser(u);
+    userEmailRef.current = u.email;
     await loadMyNation(u.email);
     setLoading(false);
   }
@@ -53,9 +57,13 @@ export default function Dashboard() {
     setMyNation(nations[0]);
   }
 
-  async function refresh() {
-    if (user) await loadMyNation(user.email);
-  }
+  const refresh = useCallback(() => {
+    clearTimeout(refreshDebounceRef.current);
+    refreshDebounceRef.current = setTimeout(async () => {
+      const email = userEmailRef.current;
+      if (email) await loadMyNation(email);
+    }, 2000);
+  }, []);
 
   if (loading) {
     return (
