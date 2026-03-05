@@ -16,6 +16,8 @@ import IssueStockPanel from "../components/panels/IssueStockPanel";
 import DilemmaEngine from "../components/dashboard/DilemmaEngine";
 import CouncilDilemmaModal from "../components/dashboard/CouncilDilemmaModal";
 import EconomyEngine from "../components/dashboard/EconomyEngine";
+import ResourceEngine from "../components/dashboard/ResourceEngine";
+import WorkforcePanel from "../components/panels/WorkforcePanel";
 
 export default function Dashboard() {
   const [myNation, setMyNation] = useState(null);
