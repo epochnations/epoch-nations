@@ -245,7 +245,7 @@ export default function Onboarding() {
                 </div>
                 <div>
                   <div className="font-bold text-white">{nationName || "Your Nation"}</div>
-                  <div className="text-xs text-slate-400">Industrial Epoch · Leader: {leaderName || "TBD"}</div>
+                  <div className="text-xs text-slate-400">Stone Age · Leader: {leaderName || "TBD"}</div>
                 </div>
               </div>
 
@@ -266,7 +266,7 @@ export default function Onboarding() {
         </div>
 
         <p className="text-center text-slate-600 text-xs mt-6">
-          Starting era: Industrial Epoch · Virtual economy only
+          Starting era: Stone Age · Build your civilization from the ground up
         </p>
       </div>
 
