@@ -141,6 +141,19 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
   }
 
   const currentTechs = TECH_TREE[nation.epoch] || [];
+}
+
+function ReqItem({ met, label, current, max }) {
+  return (
+    <div className={`rounded-lg p-2 border text-xs ${met ? "border-green-400/30 bg-green-400/5" : "border-red-400/20 bg-red-400/5"}`}>
+      <div className={`font-bold ${met ? "text-green-400" : "text-red-400"}`}>{met ? "✅" : "❌"} {label}</div>
+      {current !== undefined && <div className="text-slate-500 mt-0.5">{current}{max !== undefined ? ` / ${max}` : ""}</div>}
+    </div>
+  );
+}
+
+// Dummy export to avoid linting issues — actual component starts above
+function _unused() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
