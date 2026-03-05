@@ -11,6 +11,46 @@ export default function WarRoom({ nation, allNations, onRefresh }) {
   const allies = allNations.filter(n => nation.allies?.includes(n.id));
   const enemies = allNations.filter(n => nation.at_war_with?.includes(n.id));
 
+  async function handleEndWar(enemy) {
+    setEndingWar(true);
+    const CEASEFIRE_COST = 50;
+    if (nation.currency < CEASEFIRE_COST) {
+      alert(`You need ${CEASEFIRE_COST} cr to declare a ceasefire.`);
+      setEndingWar(false);
+      setEndWarTarget(null);
+      return;
+    }
+
+    // Remove war from both nations
+    const newMyWars = (nation.at_war_with || []).filter(id => id !== enemy.id);
+    const enemyFresh = (await base44.entities.Nation.filter({ id: enemy.id }))[0];
+    const newEnemyWars = (enemyFresh?.at_war_with || []).filter(id => id !== nation.id);
+
+    await base44.entities.Nation.update(nation.id, {
+      at_war_with: newMyWars,
+      currency: nation.currency - CEASEFIRE_COST,
+      stability: Math.max(0, (nation.stability || 75) - 5),
+      war_started_at: newMyWars.length === 0 ? "" : nation.war_started_at
+    });
+    if (enemyFresh) {
+      await base44.entities.Nation.update(enemy.id, {
+        at_war_with: newEnemyWars,
+        war_started_at: newEnemyWars.length === 0 ? "" : enemyFresh.war_started_at
+      });
+    }
+
+    await base44.entities.NewsArticle.create({
+      headline: `CEASEFIRE: ${nation.name} ends war with ${enemy.name}`,
+      body: `${nation.name} has declared a unilateral ceasefire and ended hostilities with ${enemy.name}. A stability penalty was applied.`,
+      category: "war", tier: "standard",
+      nation_name: nation.name, nation_flag: nation.flag_emoji, nation_color: nation.flag_color
+    });
+
+    setEndingWar(false);
+    setEndWarTarget(null);
+    onRefresh?.();
+  }
+
   const stats = [
     { label: "Manufacturing Capacity", value: `${nation.manufacturing}%`, icon: Factory, color: "text-orange-400" },
     { label: "Unit Power", value: nation.unit_power, icon: Swords, color: "text-red-400" },
