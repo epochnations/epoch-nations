@@ -1,18 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { TrendingUp, Shield, Users, Zap, DollarSign, Factory, BookOpen } from "lucide-react";
+import { TrendingUp, Shield, Users, Zap, DollarSign, Factory, BookOpen, Wheat, TreePine } from "lucide-react";
 import StatTooltip from "../ui/StatTooltip";
-
-const EPOCH_COLORS = {
-  Industrial: "from-amber-500 to-orange-600",
-  Information: "from-cyan-500 to-blue-600",
-  Nano: "from-violet-500 to-purple-600"
-};
-
-const EPOCH_ICONS = {
-  Industrial: "⚙️",
-  Information: "💻",
-  Nano: "🔬"
-};
+import { EPOCH_COLOR, EPOCH_EMOJI } from "../game/EpochConfig";
 
 function StatRow({ icon: Icon, label, value, color = "text-cyan-400", suffix = "", tooltip = "" }) {
   const [flash, setFlash] = useState(null);
@@ -67,8 +56,8 @@ export default function NationStatsPanel({ nation }) {
           <div className="font-bold text-white text-base truncate">{nation.name}</div>
           <div className="text-xs text-slate-400">Leader: {nation.leader}</div>
         </div>
-        <div className={`ml-auto shrink-0 px-2 py-1 rounded-lg text-xs font-bold bg-gradient-to-r ${EPOCH_COLORS[nation.epoch]} text-white`}>
-          {EPOCH_ICONS[nation.epoch]} {nation.epoch}
+        <div className="ml-auto shrink-0 px-2 py-1 rounded-lg text-xs font-bold text-white" style={{ backgroundColor: (EPOCH_COLOR[nation.epoch] || "#3b82f6") + "44", border: `1px solid ${EPOCH_COLOR[nation.epoch] || "#3b82f6"}66` }}>
+          {EPOCH_EMOJI[nation.epoch]} {nation.epoch}
         </div>
       </div>
 
