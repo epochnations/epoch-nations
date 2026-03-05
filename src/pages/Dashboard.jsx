@@ -216,6 +216,9 @@ export default function Dashboard() {
         <button onClick={() => setShowManagement(true)} className="flex-1 py-3 rounded-xl text-xs font-bold bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 min-h-[44px]">
           Manage
         </button>
+        <button onClick={() => setShowWorkforce(true)} className="flex-1 py-3 rounded-xl text-xs font-bold bg-amber-500/10 border border-amber-500/20 text-amber-400 min-h-[44px]">
+          👷 Workers
+        </button>
         <a href={createPageUrl("GlobalChronicles")} className="flex-1 py-3 rounded-xl text-xs font-bold bg-white/5 border border-white/10 text-slate-400 text-center min-h-[44px] flex items-center justify-center">
           📰 News
         </a>
