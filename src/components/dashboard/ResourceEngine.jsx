@@ -1,0 +1,110 @@
+import { useEffect, useRef } from "react";
+import { base44 } from "@/api/base44Client";
+import { EPOCHS } from "../game/EpochConfig";
+
+/**
+ * ResourceEngine — headless component
+ * Runs every 60s to simulate:
+ * 1. Worker-based resource production (wood, stone, gold, oil, food)
+ * 2. Food consumption by population
+ * 3. Population growth / decline based on food surplus & housing
+ * 4. Notifications for famine, shortages
+ */
+export default function ResourceEngine({ nation, onRefresh }) {
+  const intervalRef = useRef(null);
+
+  useEffect(() => {
+    if (!nation?.id) return;
+    const firstTick = setTimeout(() => runTick(), 8000);
+    intervalRef.current = setInterval(() => runTick(), 60_000);
+    return () => {
+      clearTimeout(firstTick);
+      clearInterval(intervalRef.current);
+    };
+  }, [nation?.id]);
+
+  async function runTick() {
+    const fresh = (await base44.entities.Nation.filter({ owner_email: nation.owner_email }))[0];
+    if (!fresh) return;
+
+    const epochIndex = EPOCHS.indexOf(fresh.epoch) || 0;
+    const techMult = 1 + epochIndex * 0.08; // each epoch adds 8% efficiency
+
+    const updates = {};
+    const notifications = [];
+
+    // --- PRODUCTION ---
+    const woodProd = Math.floor((fresh.workers_lumberjacks || 0) * 5 * techMult);
+    const stoneProd = Math.floor((fresh.workers_quarry || 0) * 4 * techMult);
+    const goldProd = Math.floor((fresh.workers_miners || 0) * 3 * techMult);
+    const oilProd = epochIndex >= 9 // Industrial Age+
+      ? Math.floor((fresh.workers_oil_engineers || 0) * 6 * techMult)
+      : 0;
+    const farmFood = Math.floor((fresh.workers_farmers || 0) * 8 * techMult);
+    const huntFood = Math.floor((fresh.workers_hunters || 0) * (3 + Math.random() * 4) * techMult);
+    const fishFood = Math.floor((fresh.workers_fishermen || 0) * 6 * techMult);
+    const totalFoodProd = farmFood + huntFood + fishFood;
+
+    // Tech points from researchers
+    const techGain = Math.floor(
+      (fresh.workers_researchers || 0) * 2 * techMult +
+      (fresh.education_spending || 0) * 0.3
+    );
+
+    // --- CONSUMPTION ---
+    const pop = fresh.population || 1;
+    const foodConsumption = Math.ceil(pop * 1.2); // each person eats 1.2 food/min
+
+    // --- NET FOOD ---
+    const netFood = totalFoodProd - foodConsumption;
+    const newFood = Math.max(0, (fresh.res_food || 0) + netFood);
+
+    updates.res_wood = Math.min(99999, (fresh.res_wood || 0) + woodProd);
+    updates.res_stone = Math.min(99999, (fresh.res_stone || 0) + stoneProd);
+    updates.res_gold = Math.min(99999, (fresh.res_gold || 0) + goldProd);
+    updates.res_oil = Math.min(99999, (fresh.res_oil || 0) + oilProd);
+    updates.res_food = newFood;
+    updates.tech_points = Math.min(99999, (fresh.tech_points || 0) + techGain);
+
+    // --- POPULATION GROWTH / DECLINE ---
+    const hasHousingRoom = pop < (fresh.housing_capacity || 20);
+    const hasFoodSurplus = netFood > 0;
+
+    if (hasFoodSurplus && hasHousingRoom && Math.random() < 0.3) {
+      // 30% chance of pop growth each tick when conditions are met
+      updates.population = pop + 1;
+    } else if (netFood < 0 && newFood === 0) {
+      // FAMINE — population shrinks
+      if (Math.random() < 0.5) {
+        updates.population = Math.max(1, pop - 1);
+        updates.stability = Math.max(0, (fresh.stability || 75) - 3);
+        updates.public_trust = Math.max(0.1, (fresh.public_trust || 1.0) - 0.05);
+        notifications.push({
+          type: "market_crash",
+          title: "🌾 FAMINE WARNING!",
+          message: "Your people are starving. Population declining. Assign more farmers or hunters!",
+          severity: "danger",
+          is_read: false
+        });
+      }
+    }
+
+    // --- GDP from workers ---
+    const industrialBoost = Math.floor((fresh.workers_industrial || 0) * 10 * techMult);
+    updates.gdp = Math.min(100000, (fresh.gdp || 500) + industrialBoost + Math.floor((fresh.manufacturing || 50) * 0.005));
+
+    await base44.entities.Nation.update(fresh.id, updates);
+
+    for (const n of notifications) {
+      await base44.entities.Notification.create({
+        target_owner_email: fresh.owner_email,
+        target_nation_id: fresh.id,
+        ...n
+      });
+    }
+
+    onRefresh?.();
+  }
+
+  return null;
+}
