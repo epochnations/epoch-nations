@@ -43,7 +43,7 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
   async function advanceEpoch() {
     if (nation.tech_points < advanceCost) return;
     setLoading("advance");
-    const nextEpoch = EPOCH_ORDER[EPOCH_ORDER.indexOf(nation.epoch) + 1];
+    const nextEpoch = nextEpochName;
 
     await base44.entities.Nation.update(nation.id, {
       epoch: nextEpoch,
