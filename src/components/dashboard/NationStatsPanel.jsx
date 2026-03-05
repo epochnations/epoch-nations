@@ -86,7 +86,8 @@ export default function NationStatsPanel({ nation }) {
           {[
             { label: "Wood", value: nation.res_wood, color: "text-amber-600", emoji: "🪵" },
             { label: "Stone", value: nation.res_stone, color: "text-slate-400", emoji: "🪨" },
-            { label: "Gold", value: nation.res_gold, color: "text-yellow-400", emoji: "⚱️" },
+            { label: "Gold", value: nation.res_gold, color: "text-yellow-400", emoji: "🥇" },
+            { label: "Iron", value: nation.res_iron, color: "text-blue-400", emoji: "⚙️" },
             { label: "Oil", value: nation.res_oil, color: "text-gray-400", emoji: "🛢️" },
             { label: "Food", value: nation.res_food, color: "text-green-400", emoji: "🌾", span: true },
           ].map(r => (
