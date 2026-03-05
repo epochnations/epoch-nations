@@ -156,6 +156,40 @@ export default function WarRoom({ nation, allNations, onRefresh }) {
           onRefresh={onRefresh}
         />
       )}
+
+      {/* Ceasefire Confirmation Modal */}
+      {endWarTarget && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+          <div className="w-full max-w-sm bg-[#0f172a] border border-amber-500/30 rounded-2xl p-6 shadow-2xl">
+            <div className="text-lg font-bold text-amber-400 mb-2">☮️ Declare Ceasefire?</div>
+            <p className="text-sm text-slate-300 mb-2">
+              End your war with <span className="font-bold text-white">{endWarTarget.name}</span>.
+            </p>
+            <div className="rounded-xl bg-amber-500/10 border border-amber-500/20 p-3 mb-4 text-xs text-amber-300 space-y-1">
+              <div>• Costs <span className="font-bold">50 cr</span> (unilateral penalty)</div>
+              <div>• Your stability decreases by 5%</div>
+              <div>• War damage ticks stop immediately</div>
+              <div>• A news announcement is posted</div>
+            </div>
+            <div className="text-xs text-slate-500 mb-4">Your treasury: <span className="text-white font-mono">{nation.currency?.toFixed(0)} cr</span></div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setEndWarTarget(null)}
+                className="flex-1 py-2.5 rounded-xl text-sm font-bold border border-white/10 text-slate-400 hover:bg-white/5 transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleEndWar(endWarTarget)}
+                disabled={endingWar || nation.currency < 50}
+                className="flex-1 py-2.5 rounded-xl text-sm font-bold bg-amber-500 text-black hover:bg-amber-400 disabled:opacity-40 transition-all"
+              >
+                {endingWar ? "Ending..." : nation.currency < 50 ? "Insufficient cr" : "Confirm Ceasefire"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
