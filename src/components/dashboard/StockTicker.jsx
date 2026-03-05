@@ -4,11 +4,18 @@ import { TrendingUp, TrendingDown } from "lucide-react";
 
 export default function StockTicker({ onSelectStock }) {
   const [stocks, setStocks] = useState([]);
+  const debounceRef = useRef(null);
 
   useEffect(() => {
     loadStocks();
-    const unsub = base44.entities.Stock.subscribe(() => loadStocks());
-    return unsub;
+    const unsub = base44.entities.Stock.subscribe(() => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(() => loadStocks(), 2000);
+    });
+    return () => {
+      unsub();
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
   }, []);
 
   async function loadStocks() {
