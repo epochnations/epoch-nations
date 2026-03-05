@@ -42,7 +42,7 @@ export default function EconomyEngine({ nation, onRefresh }) {
     const freshNation = (await base44.entities.Nation.filter({ owner_email: nation.owner_email }))[0];
     if (!freshNation) return;
 
-    const incomePerTick = Math.floor(freshNation.gdp * 0.05); // 5% of GDP per minute
+    const incomePerTick = Math.max(1, Math.floor(freshNation.gdp * 0.05)); // 5% of GDP per minute
     let updates = { currency: freshNation.currency + incomePerTick };
 
     // 3. Check for stat degradation
