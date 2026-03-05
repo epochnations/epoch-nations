@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { TrendingUp, Shield, Users, Zap, DollarSign } from "lucide-react";
+import { TrendingUp, Shield, Users, Zap, DollarSign, Handshake } from "lucide-react";
 import StatTooltip from "../ui/StatTooltip";
-import { EPOCH_COLOR, EPOCH_EMOJI } from "../game/EpochConfig";
+import { EPOCH_COLOR, EPOCH_EMOJI, EPOCHS } from "../game/EpochConfig";
 
 function StatRow({ icon: Icon, label, value, color = "text-cyan-400", suffix = "", tooltip = "" }) {
   const [flash, setFlash] = useState(null);
