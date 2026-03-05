@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { Swords, Factory, Users, Shield, Package } from "lucide-react";
+import { Swords, Factory, Users, Shield, Package, Flag } from "lucide-react";
 import LendLeaseModal from "../modals/LendLeaseModal";
 
 export default function WarRoom({ nation, allNations, onRefresh }) {
   const [lendTarget, setLendTarget] = useState(null);
+  const [endWarTarget, setEndWarTarget] = useState(null);
+  const [endingWar, setEndingWar] = useState(false);
 
   const allies = allNations.filter(n => nation.allies?.includes(n.id));
   const enemies = allNations.filter(n => nation.at_war_with?.includes(n.id));
