@@ -39,7 +39,7 @@ export default function GlobalChronicles() {
     const u = await base44.auth.me();
     setUser(u);
     const [articles, stockData, nationData] = await Promise.all([
-      base44.entities.NewsArticle.list("-created_date", 40),
+      base44.entities.NewsArticle.list("-created_date", 80),
       base44.entities.Stock.list("-market_cap", 10),
       base44.entities.Nation.list("-gdp", 20)
     ]);
