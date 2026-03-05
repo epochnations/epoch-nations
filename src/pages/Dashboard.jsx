@@ -117,6 +117,12 @@ export default function Dashboard() {
           >
             <Sliders size={12} /> <span className="hidden sm:inline">Manage</span>
           </button>
+          <button
+            onClick={() => setShowWorkforce(true)}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold hover:bg-amber-500/20 transition-all"
+          >
+            <Users size={12} /> Workers
+          </button>
 
           <a
             href={createPageUrl("GlobalChronicles")}
