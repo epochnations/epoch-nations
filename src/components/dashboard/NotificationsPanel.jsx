@@ -24,11 +24,19 @@ export default function NotificationsPanel({ nationId, ownerEmail }) {
   const [unread, setUnread] = useState(0);
   const [open, setOpen] = useState(false);
 
+  const debounceRef = useRef(null);
+
   useEffect(() => {
     if (!ownerEmail) return;
     loadNotifications();
-    const unsub = base44.entities.Notification.subscribe(() => loadNotifications());
-    return unsub;
+    const unsub = base44.entities.Notification.subscribe(() => {
+      clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(() => loadNotifications(), 3000);
+    });
+    return () => {
+      unsub();
+      clearTimeout(debounceRef.current);
+    };
   }, [ownerEmail]);
 
   async function loadNotifications() {
