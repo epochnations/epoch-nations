@@ -151,16 +151,11 @@ export default function Dashboard() {
       </header>
 
       {/* DESKTOP BENTO GRID */}
-      <main className="relative z-10 p-4 hidden lg:grid gap-4 overflow-y-auto" style={{ height: "calc(100vh - 57px)" }}
-        style={{
-          gridTemplateColumns: "280px 1fr 220px",
-          gridTemplateRows: "1fr 200px"
-        }}
-      >
-        <div style={{ gridRow: "1 / 3" }}><NationStatsPanel nation={myNation} /></div>
+      <main className="relative z-10 p-4 hidden lg:grid gap-4 overflow-hidden" style={{ height: "calc(100vh - 57px)", gridTemplateColumns: "300px 1fr 260px", gridTemplateRows: "1fr 220px" }}>
+        <div style={{ gridRow: "1 / 3", overflowY: "auto" }}><NationStatsPanel nation={myNation} /></div>
         <div style={{ gridRow: "1 / 2" }}><WorldMap myNation={myNation} onSelectNation={n => setSelectedNation(n)} /></div>
         <div style={{ gridRow: "1 / 2" }}><StockTicker onSelectStock={s => setSelectedStock(s)} /></div>
-        <div style={{ gridColumn: "2 / 3", gridRow: "2 / 3" }}><GlobalLedger /></div>
+        <div style={{ gridColumn: "2 / 3", gridRow: "2 / 3", minWidth: 0 }}><GlobalLedger /></div>
         <div style={{ gridColumn: "3 / 4", gridRow: "2 / 3" }}>
           <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-4 h-full flex flex-col justify-between">
             <div className="text-xs font-bold text-slate-300 tracking-widest uppercase mb-3">Quick Actions</div>
