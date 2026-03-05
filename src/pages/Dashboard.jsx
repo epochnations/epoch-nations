@@ -299,6 +299,9 @@ export default function Dashboard() {
           onRefresh={refresh}
         />
       )}
+
+      {/* National AI Advisor */}
+      {myNation && <AdvisorPanel nation={myNation} />}
     </div>
   );
 }
