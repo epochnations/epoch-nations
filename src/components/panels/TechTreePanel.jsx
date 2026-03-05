@@ -18,9 +18,17 @@ function ReqItem({ met, label, current, max }) {
   );
 }
 
+const EPOCH_RESET_COOLDOWN_MS = 24 * 60 * 60 * 1000; // 24h cooldown stored in localStorage
+
 export default function TechTreePanel({ nation, onRefresh, onClose }) {
   const [loading, setLoading] = useState(null);
   const [nationBuildings, setNationBuildings] = useState([]);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+
+  const lastResetKey = `epoch_reset_${nation?.id}`;
+  const lastReset = parseInt(localStorage.getItem(lastResetKey) || "0");
+  const cooldownRemaining = Math.max(0, EPOCH_RESET_COOLDOWN_MS - (Date.now() - lastReset));
+  const canReset = cooldownRemaining === 0;
 
   useEffect(() => {
     if (!nation?.id) return;
