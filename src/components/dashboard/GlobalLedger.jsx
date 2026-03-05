@@ -31,39 +31,42 @@ export default function GlobalLedger() {
   }, []);
 
   async function loadTransactions() {
-    const data = await base44.entities.Transaction.list("-created_date", 30);
-    setTransactions(data);
+    const data = await base44.entities.Transaction.list("-created_date", 50);
+    // Filter to last 30 minutes
+    const cutoff = Date.now() - 30 * 60 * 1000;
+    setTransactions(data.filter(tx => new Date(tx.created_date).getTime() > cutoff));
   }
 
   return (
     <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl h-full flex flex-col overflow-hidden">
-      <div className="px-5 py-3 border-b border-white/10 flex items-center gap-2">
+      <div className="px-5 py-3 border-b border-white/10 flex items-center gap-2 shrink-0">
         <ScrollText size={14} className="text-cyan-400" />
-        <span className="text-xs font-bold text-slate-300 tracking-widest uppercase">Global Ledger</span>
+        <span className="text-xs font-bold text-slate-300 tracking-widest uppercase">Global Exchange</span>
+        <span className="ml-auto text-xs text-slate-600">last 30 min</span>
       </div>
 
-      <div className="flex-1 overflow-y-auto divide-y divide-white/5">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden divide-y divide-white/5">
         {transactions.length === 0 ? (
-          <div className="p-6 text-center text-slate-500 text-xs">No transactions yet</div>
+          <div className="p-6 text-center text-slate-500 text-xs">No transactions in the last 30 minutes</div>
         ) : (
           transactions.map((tx) => {
             const cfg = TYPE_CONFIG[tx.type] || TYPE_CONFIG.stock_buy;
             const Icon = cfg.icon;
             return (
-              <div key={tx.id} className="px-4 py-2.5 flex items-start gap-3 hover:bg-white/5 transition-colors">
-                <div className={`mt-0.5 shrink-0 w-7 h-7 rounded-lg flex items-center justify-center ${cfg.bg}`}>
+              <div key={tx.id} className="px-4 py-2.5 flex items-center gap-3 hover:bg-white/5 transition-colors min-w-0">
+                <div className={`shrink-0 w-7 h-7 rounded-lg flex items-center justify-center ${cfg.bg}`}>
                   <Icon size={12} className={cfg.color} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${cfg.bg} ${cfg.color}`}>{cfg.label}</span>
-                    <span className="text-xs text-white truncate">{tx.description || tx.from_nation_name}</span>
+                  <div className="flex items-center gap-2 flex-nowrap">
+                    <span className={`shrink-0 text-xs font-bold px-1.5 py-0.5 rounded ${cfg.bg} ${cfg.color}`}>{cfg.label}</span>
+                    <span className="text-xs text-white whitespace-nowrap overflow-hidden text-ellipsis">{tx.description || tx.from_nation_name}</span>
+                    {tx.total_value > 0 && (
+                      <span className="shrink-0 text-xs font-mono text-slate-400 ml-auto">{tx.total_value.toFixed(0)} cr</span>
+                    )}
                   </div>
-                  {tx.total_value && (
-                    <div className="text-xs font-mono text-slate-400 mt-0.5">{tx.total_value?.toFixed(2)} cr</div>
-                  )}
                 </div>
-                <div className="text-xs text-slate-600 shrink-0 whitespace-nowrap">{timeAgo(tx.created_date)}</div>
+                <div className="text-xs text-slate-600 shrink-0 whitespace-nowrap ml-2">{timeAgo(tx.created_date)}</div>
               </div>
             );
           })
