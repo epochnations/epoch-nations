@@ -48,7 +48,7 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
     await base44.entities.Nation.update(nation.id, {
       epoch: nextEpoch,
       tech_points: nation.tech_points - advanceCost,
-      tech_level: (nation.tech_level || 1) + 2  // +2 levels on epoch advance
+      tech_level: (nation.tech_level || 1) + 1
     });
 
     // Unlock new stock sector
@@ -57,13 +57,13 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
       ticker: nation.name.substring(0, 2).toUpperCase() + nextEpoch.substring(0, 2).toUpperCase(),
       nation_id: nation.id,
       nation_name: nation.name,
-      sector: nextEpoch === "Information" ? "Technology" : "Nano",
+      sector: epochIndex >= 11 ? "Nano" : epochIndex >= 9 ? "Technology" : "Energy",
       total_shares: 1500,
       available_shares: 1500,
-      base_price: 25,
-      current_price: 25,
-      price_history: [25],
-      market_cap: 37500,
+      base_price: 20 + epochIndex * 5,
+      current_price: 20 + epochIndex * 5,
+      price_history: [20 + epochIndex * 5],
+      market_cap: (20 + epochIndex * 5) * 1500,
       is_crashed: false,
       epoch_required: nextEpoch
     });
@@ -73,7 +73,7 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
       target_nation_id: nation.id,
       type: "tech_unlocked",
       title: `🚀 Epoch Advanced: ${nextEpoch}!`,
-      message: `Your nation has entered the ${nextEpoch} Age. New stock sector unlocked!`,
+      message: `Your nation has entered the ${nextEpoch}! New technologies and stock sector unlocked!`,
       severity: "success",
       is_read: false
     });
