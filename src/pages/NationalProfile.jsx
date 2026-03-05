@@ -175,6 +175,12 @@ export default function NationalProfile() {
             onEpochAdvance={triggerEpochTransition}
           />
         )}
+        {activeTab === "wiki" && (
+          <NationWikiPanel
+            nation={myNation}
+            onRefresh={() => loadAll(user?.email)}
+          />
+        )}
       </main>
     </div>
   );
