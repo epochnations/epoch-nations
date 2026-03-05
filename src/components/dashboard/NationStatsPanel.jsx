@@ -63,13 +63,31 @@ export default function NationStatsPanel({ nation }) {
 
       {/* Stats */}
       <div className="space-y-0">
-        <StatRow icon={DollarSign} label="Treasury" value={nation.currency} color="text-green-400" suffix=" cr" tooltip="Your liquid reserve. Spent on tech, wars, and policies. Earned through GDP and budget cycles." />
-        <StatRow icon={TrendingUp} label="GDP" value={nation.gdp} color="text-cyan-400" tooltip="Gross Domestic Product: total economic output. Higher GDP grows your treasury faster each cycle." />
-        <StatRow icon={Shield} label="Stability" value={nation.stability} color="text-blue-400" suffix="%" tooltip="National cohesion (0–100). Low stability causes unrest. Wars and bad policy choices reduce it." />
-        <StatRow icon={Users} label="Public Trust" value={(nation.public_trust * 100).toFixed(0)} color="text-violet-400" suffix="%" tooltip="Citizen confidence multiplier. Affects your stock index. Falls under martial law or poor decisions." />
-        <StatRow icon={Factory} label="Manufacturing" value={nation.manufacturing} color="text-orange-400" suffix="%" tooltip="Industrial output capacity. Boosts GDP growth. Damaged by critical war strikes." />
-        <StatRow icon={Zap} label="Tech Level" value={nation.tech_level} color="text-yellow-400" suffix={` (${nation.tech_points} TP)`} tooltip="Tech Points (TP) come from education spending. Spend TP to unlock technologies and advance epochs." />
-        <StatRow icon={BookOpen} label="Edu. Spending" value={nation.education_spending} color="text-emerald-400" suffix="%" tooltip="% of budget on education. Generates ~0.5 TP per % per cycle. Higher = faster tech progression." />
+        <StatRow icon={DollarSign} label="Treasury" value={nation.currency} color="text-green-400" tooltip="Your liquid reserve. Spent on tech, wars, and policies." />
+        <StatRow icon={TrendingUp} label="GDP" value={nation.gdp} color="text-cyan-400" tooltip="Total economic output. Higher GDP grows treasury faster." />
+        <StatRow icon={Shield} label="Stability" value={nation.stability} color="text-blue-400" suffix="%" tooltip="National cohesion (0–100). Wars and bad policy reduce it." />
+        <StatRow icon={Users} label="Population" value={nation.population} color="text-violet-400" tooltip="Total citizens. Grows with food surplus and housing." />
+        <StatRow icon={Zap} label="Tech Level" value={nation.tech_level} color="text-yellow-400" suffix={` (${nation.tech_points} TP)`} tooltip="Spend TP to unlock technologies and advance epochs." />
+      </div>
+
+      {/* Resources */}
+      <div className="mt-4 rounded-xl p-3 bg-white/3 border border-white/10">
+        <div className="text-xs text-slate-500 uppercase tracking-wider mb-2">Natural Resources</div>
+        <div className="grid grid-cols-2 gap-1.5">
+          {[
+            { label: "Wood", value: nation.res_wood, color: "text-amber-600", emoji: "🪵" },
+            { label: "Stone", value: nation.res_stone, color: "text-slate-400", emoji: "🪨" },
+            { label: "Gold", value: nation.res_gold, color: "text-yellow-400", emoji: "⚱️" },
+            { label: "Oil", value: nation.res_oil, color: "text-gray-400", emoji: "🛢️" },
+            { label: "Food", value: nation.res_food, color: "text-green-400", emoji: "🌾", span: true },
+          ].map(r => (
+            <div key={r.label} className={`flex items-center gap-1.5 py-1 px-2 rounded-lg bg-white/5 ${r.span ? "col-span-2" : ""}`}>
+              <span className="text-sm">{r.emoji}</span>
+              <span className="text-xs text-slate-400">{r.label}</span>
+              <span className={`ml-auto text-xs font-mono font-bold ${r.color}`}>{(r.value || 0).toLocaleString()}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Tech Level Indicator */}
