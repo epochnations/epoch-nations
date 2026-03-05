@@ -186,7 +186,7 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
               <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
                 <div className="font-bold text-white flex items-center gap-2">
                   <ChevronRight size={16} className="text-cyan-400" />
-                  Advance to {EPOCH_ORDER[EPOCH_ORDER.indexOf(nation.epoch) + 1]} Epoch
+                  Advance to {nextEpochName} {EPOCH_EMOJI[nextEpochName]}
                 </div>
                 <div className="flex items-center gap-1 text-xs font-mono text-yellow-400">
                   <Zap size={10} /> {advanceCost} TP required
