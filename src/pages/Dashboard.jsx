@@ -175,12 +175,9 @@ export default function Dashboard() {
                 <Sliders size={12} /> Budget Cycle
               </button>
             </div>
-            {myNation && (
-              <div className="mt-3 rounded-xl bg-white/5 p-2.5 text-center">
-                <div className="text-xs text-slate-500">Allies</div>
-                <div className="font-bold font-mono text-blue-400">{myNation.allies?.length || 0}</div>
-              </div>
-            )}
+            <button onClick={() => setShowWorkforce(true)} className="w-full py-2.5 rounded-xl text-xs font-bold bg-amber-500/10 border border-amber-500/20 text-amber-400 hover:bg-amber-500/20 transition-all flex items-center justify-center gap-1.5 min-h-[44px]">
+              <Users size={12} /> Workforce
+            </button>
           </div>
         </div>
       </main>
