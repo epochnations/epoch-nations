@@ -41,9 +41,18 @@ export default function NationStatsPanel({ nation }) {
   if (!nation) return null;
 
   const stockValue = (nation.gdp + nation.stability) * nation.public_trust;
+  const epochIndex = Math.max(0, EPOCHS.indexOf(nation.epoch));
+  const techMult = 1 + epochIndex * 0.08;
+  const pop = nation.population || 1;
+  const farmFood = Math.floor((nation.workers_farmers || 0) * 8 * techMult);
+  const huntFood = Math.floor((nation.workers_hunters || 0) * 5 * techMult);
+  const fishFood = Math.floor((nation.workers_fishermen || 0) * 6 * techMult);
+  const totalFoodProd = farmFood + huntFood + fishFood;
+  const foodCons = Math.ceil(pop * 1.2);
+  const netFood = totalFoodProd - foodCons;
 
   return (
-    <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-5 h-full">
+    <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-5 h-full overflow-y-auto">
       {/* Nation Header */}
       <div className="flex items-center gap-3 mb-5">
         <div
