@@ -179,9 +179,9 @@ export default function EconomyEngine({ nation, onRefresh }) {
       updates.currency = Math.max(0, (n.currency || 0) - n.at_war_with.length * 50); // war costs
     }
 
-    // GDP naturally grows with manufacturing
-    const mfgBoost = Math.floor((n.manufacturing || 100) * 0.005);
-    updates.gdp = Math.min(100000, (n.gdp || 1000) + mfgBoost);
+    // GDP naturally grows with manufacturing (ResourceEngine handles this more accurately now)
+    const mfgBoost = Math.floor((n.manufacturing || 20) * 0.005);
+    updates.gdp = Math.min(100000, (n.gdp || 200) + mfgBoost);
 
     // Stability slowly recovers if at peace and trust is OK
     if ((n.at_war_with || []).length === 0 && (n.public_trust || 1.0) >= 0.7 && (n.stability || 75) < 100) {
