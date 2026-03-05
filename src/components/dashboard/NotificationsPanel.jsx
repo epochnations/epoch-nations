@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { Bell, X, AlertTriangle, TrendingDown, Package, Swords, Zap, CheckCircle } from "lucide-react";
 
