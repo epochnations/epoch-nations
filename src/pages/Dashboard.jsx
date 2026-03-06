@@ -171,24 +171,8 @@ export default function Dashboard() {
         <div style={{ gridRow: "1 / 2", overflow: "hidden" }}><WorldMap myNation={myNation} onSelectNation={n => setSelectedNation(n)} /></div>
         <div style={{ gridRow: "1 / 2", overflowY: "auto" }}><StockTicker onSelectStock={s => setSelectedStock(s)} /></div>
         <div style={{ gridColumn: "2 / 3", gridRow: "2 / 3", minWidth: 0, overflowY: "auto" }}><GlobalLedger /></div>
-        <div style={{ gridColumn: "3 / 4", gridRow: "2 / 3" }}>
-          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-4 h-full flex flex-col justify-between">
-            <div className="text-xs font-bold text-slate-300 tracking-widest uppercase mb-3">Quick Actions</div>
-            <div className="space-y-2 flex-1">
-              <button onClick={() => setShowIssueStock(true)} className="w-full py-2.5 rounded-xl text-xs font-bold bg-green-500/10 border border-green-500/20 text-green-400 hover:bg-green-500/20 transition-all flex items-center justify-center gap-1.5 min-h-[44px]">
-                <Plus size={12} /> Issue Stock
-              </button>
-              <button onClick={() => setShowTechTree(true)} className="w-full py-2.5 rounded-xl text-xs font-bold bg-violet-500/10 border border-violet-500/20 text-violet-400 hover:bg-violet-500/20 transition-all flex items-center justify-center gap-1.5 min-h-[44px]">
-                <Cpu size={12} /> Tech Tree
-              </button>
-              <button onClick={() => setShowManagement(true)} className="w-full py-2.5 rounded-xl text-xs font-bold bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 hover:bg-cyan-500/20 transition-all flex items-center justify-center gap-1.5 min-h-[44px]">
-                <Sliders size={12} /> Budget Cycle
-              </button>
-            </div>
-            <button onClick={() => setShowWorkforce(true)} className="w-full py-2.5 rounded-xl text-xs font-bold bg-amber-500/10 border border-amber-500/20 text-amber-400 hover:bg-amber-500/20 transition-all flex items-center justify-center gap-1.5 min-h-[44px]">
-              <Users size={12} /> Workforce
-            </button>
-          </div>
+        <div style={{ gridColumn: "3 / 4", gridRow: "2 / 3", minHeight: 0, overflow: "hidden" }}>
+          {myNation && <NationalAdvisorPanel nation={myNation} />}
         </div>
       </main>
 
