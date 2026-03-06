@@ -8,6 +8,8 @@ import NewsCategorySection from "../components/news/NewsCategorySection";
 import NewsArticleModal from "../components/news/NewsArticleModal";
 import NewsWeatherWidget from "../components/news/NewsWeatherWidget";
 import NewsApprovalWidget from "../components/news/NewsApprovalWidget";
+import NewsJokesWidget from "../components/news/NewsJokesWidget";
+import NewsHoroscopeWidget from "../components/news/NewsHoroscopeWidget";
 import { CATEGORY_META, pickWeather } from "../components/news/NewsEventConfig";
 
 const CATEGORY_ORDER = ["government","economy","weather","crime","education","business","international","classifieds","science","military"];
