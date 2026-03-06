@@ -2,10 +2,10 @@ import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 import { Search, X, ChevronUp, ChevronDown, ArrowLeft, Globe, Flag, TrendingUp, TrendingDown, Zap, BarChart2, AlertTriangle } from "lucide-react";
-import ExchangeStockTable from "../components/exchange/ExchangeStockTable";
-import ExchangeTransactionLog from "../components/exchange/ExchangeTransactionLog";
-import ExchangeSellModal from "../components/exchange/ExchangeSellModal";
-import StockModal from "../components/modals/StockModal";
+import ExchangeStockTable from "@/components/exchange/ExchangeStockTable";
+import ExchangeTransactionLog from "@/components/exchange/ExchangeTransactionLog";
+import ExchangeSellModal from "@/components/exchange/ExchangeSellModal";
+import StockModal from "@/components/modals/StockModal";
 
 const SORT_OPTIONS = [
   { value: "market_cap", label: "Market Cap" },
