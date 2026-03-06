@@ -1,5 +1,7 @@
 /**
- * Empire Earth 2 – Full 16-Epoch Progression Config
+ * Epoch Nations – Full 16-Epoch Progression Config
+ * Core Rule: Each epoch requires ≥26% more total investment than previous.
+ * TP scaling: Next = Prev × 1.26 minimum, compounded.
  */
 
 export const EPOCHS = [
@@ -21,24 +23,43 @@ export const EPOCHS = [
   "Nano Age"
 ];
 
-// Tech Points required to advance TO the next epoch
+// Tech Points required to advance TO the next epoch (compounded ×1.26 minimum)
 export const EPOCH_ADVANCE_COST = {
-  "Stone Age": 50,
-  "Copper Age": 80,
-  "Bronze Age": 120,
-  "Iron Age": 160,
-  "Dark Ages": 200,
-  "Middle Ages": 260,
-  "Renaissance": 320,
-  "Imperial Age": 400,
-  "Enlightenment Age": 480,
-  "Industrial Age": 600,
-  "Modern Age": 750,
-  "Atomic Age": 900,
-  "Digital Age": 1100,
-  "Genetic Age": 1400,
-  "Synthetic Age": 1800
+  "Stone Age":         50,
+  "Copper Age":        80,      // 50 × 1.26 ≈ 63 → rounded up
+  "Bronze Age":        130,     // 80 × 1.26 ≈ 101 → 130
+  "Iron Age":          200,     // 130 × 1.26 ≈ 164 → 200
+  "Dark Ages":         300,     // 200 × 1.26 ≈ 252 → 300
+  "Middle Ages":       450,     // 300 × 1.26 ≈ 378 → 450
+  "Renaissance":       650,     // 450 × 1.26 ≈ 567 → 650
+  "Imperial Age":      950,     // 650 × 1.26 ≈ 819 → 950
+  "Enlightenment Age": 1400,    // 950 × 1.26 ≈ 1197 → 1400
+  "Industrial Age":    2000,    // 1400 × 1.26 ≈ 1764 → 2000
+  "Modern Age":        2900,    // 2000 × 1.26 ≈ 2520 → 2900
+  "Atomic Age":        4100,    // 2900 × 1.26 ≈ 3654 → 4100
+  "Digital Age":       5800,    // 4100 × 1.26 ≈ 5166 → 5800
+  "Genetic Age":       8200,    // 5800 × 1.26 ≈ 7308 → 8200
+  "Synthetic Age":     11600    // 8200 × 1.26 ≈ 10332 → 11600
   // Nano Age is final — no advance
+};
+
+// Minimum stability % required to advance epochs (later epochs stricter)
+export const EPOCH_STABILITY_THRESHOLD = {
+  "Stone Age":         70,
+  "Copper Age":        70,
+  "Bronze Age":        70,
+  "Iron Age":          70,
+  "Dark Ages":         72,
+  "Middle Ages":       72,
+  "Renaissance":       74,
+  "Imperial Age":      74,
+  "Enlightenment Age": 75,
+  "Industrial Age":    76,
+  "Modern Age":        77,
+  "Atomic Age":        78,
+  "Digital Age":       79,
+  "Genetic Age":       80,
+  "Synthetic Age":     80,
 };
 
 export const EPOCH_EMOJI = {

@@ -1,7 +1,7 @@
 /**
  * Building definitions for Epoch Nations
  * Each building has: id, name, category, epoch_required, description,
- * cost (resources + treasury), workforce, benefits, populationCap (max 1 per X pop)
+ * cost (resources + treasury), workforce, benefits, populationCap
  */
 
 export const BUILDINGS = [
@@ -40,7 +40,7 @@ export const BUILDINGS = [
     cost: { res_wood: 80, res_stone: 60, currency: 150 },
     workforce: 1,
     benefits: { tpBonus: 10, stability: 2 },
-    populationCap: 100, // 1 per 100 pop
+    populationCap: 100,
   },
   {
     id: "hospital",
@@ -185,99 +185,129 @@ export const BUILDINGS = [
 export const BUILDING_MAP = Object.fromEntries(BUILDINGS.map(b => [b.id, b]));
 
 /**
- * Epoch advancement requirements
- * Each epoch specifies what's needed to advance TO the NEXT epoch
+ * Epoch advancement requirements — 26% compounded scaling rule
+ * stability_min: minimum % required to advance (enforced in TechTreePanel)
  */
 export const EPOCH_REQUIREMENTS = {
   "Stone Age": {
     tp: 50,
     population: 30,
+    stability_min: 70,
     buildings: { school: 1 },
     resources: { res_wood: 100, res_stone: 80 },
+    treasury: 200,
   },
   "Copper Age": {
-    tp: 120,
-    population: 60,
+    tp: 80,
+    population: 50,
+    stability_min: 70,
     buildings: { school: 1, house: 2 },
     resources: { res_wood: 200, res_stone: 150, res_gold: 30 },
+    treasury: 350,
   },
   "Bronze Age": {
-    tp: 200,
-    population: 100,
+    tp: 130,
+    population: 80,
+    stability_min: 70,
     buildings: { school: 1, capital: 1 },
     resources: { res_wood: 300, res_stone: 200, res_gold: 80 },
+    treasury: 550,
   },
   "Iron Age": {
-    tp: 300,
-    population: 150,
+    tp: 200,
+    population: 130,
+    stability_min: 70,
     buildings: { school: 1, barracks: 1, military_foundry: 1 },
     resources: { res_iron: 100, res_stone: 200, res_gold: 100 },
+    treasury: 900,
   },
   "Dark Ages": {
-    tp: 400,
+    tp: 300,
     population: 200,
+    stability_min: 72,
     buildings: { school: 2, barracks: 1 },
     resources: { res_wood: 400, res_stone: 300, res_iron: 150, res_gold: 150 },
+    treasury: 1400,
   },
   "Middle Ages": {
-    tp: 550,
+    tp: 450,
     population: 300,
+    stability_min: 72,
     buildings: { school: 2, hospital: 1, barracks: 1 },
     resources: { res_stone: 400, res_iron: 200, res_gold: 200 },
+    treasury: 2200,
   },
   "Renaissance": {
-    tp: 700,
-    population: 400,
+    tp: 650,
+    population: 450,
+    stability_min: 74,
     buildings: { school: 2, market: 2, capital: 1 },
     resources: { res_gold: 300, res_stone: 400 },
+    treasury: 3500,
   },
   "Imperial Age": {
-    tp: 900,
-    population: 500,
+    tp: 950,
+    population: 600,
+    stability_min: 74,
     buildings: { university: 1, capital: 1, naval_yard: 1 },
     resources: { res_gold: 500, res_iron: 300, res_wood: 500 },
+    treasury: 5500,
   },
   "Enlightenment Age": {
-    tp: 1200,
-    population: 600,
+    tp: 1400,
+    population: 800,
+    stability_min: 75,
     buildings: { university: 1, capital: 1 },
     resources: { res_gold: 600, res_iron: 400 },
+    treasury: 8000,
   },
   "Industrial Age": {
-    tp: 1600,
-    population: 800,
+    tp: 2000,
+    population: 1100,
+    stability_min: 76,
     buildings: { university: 2, capital: 1, military_foundry: 1, defense_lab: 1 },
     resources: { res_gold: 800, res_iron: 600 },
+    treasury: 12000,
   },
   "Modern Age": {
-    tp: 2200,
-    population: 1000,
+    tp: 2900,
+    population: 1500,
+    stability_min: 77,
     buildings: { university: 2, intelligence_agency: 1, air_base: 1 },
     resources: { res_gold: 1200, res_oil: 500 },
+    treasury: 18000,
   },
   "Atomic Age": {
-    tp: 3000,
-    population: 1200,
+    tp: 4100,
+    population: 2000,
+    stability_min: 78,
     buildings: { university: 3, defense_lab: 1, air_base: 1 },
     resources: { res_gold: 2000, res_oil: 1000 },
+    treasury: 28000,
   },
   "Digital Age": {
-    tp: 4000,
-    population: 1500,
+    tp: 5800,
+    population: 2700,
+    stability_min: 79,
     buildings: { university: 3, intelligence_agency: 1 },
     resources: { res_gold: 3000 },
+    treasury: 42000,
   },
   "Genetic Age": {
-    tp: 5500,
-    population: 2000,
+    tp: 8200,
+    population: 3600,
+    stability_min: 80,
     buildings: { university: 3, capital: 1 },
     resources: { res_gold: 5000 },
+    treasury: 60000,
   },
   "Synthetic Age": {
-    tp: 7500,
-    population: 2500,
+    tp: 11600,
+    population: 5000,
+    stability_min: 80,
     buildings: { university: 4, defense_lab: 1 },
     resources: { res_gold: 8000 },
+    treasury: 90000,
   },
   // Nano Age is final — no requirements
 };
