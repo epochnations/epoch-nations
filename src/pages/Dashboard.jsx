@@ -255,7 +255,7 @@ export default function Dashboard() {
         />
       )}
       {showManagement && (
-        <NationManagement
+        <BudgetCyclePanel
           nation={myNation}
           onRefresh={refresh}
           onClose={() => setShowManagement(false)}
