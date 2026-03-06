@@ -305,14 +305,6 @@ export default function ConstructionHub() {
           })}
         </div>
 
-        {/* Market Sell Panel — visible only if 1+ active market exists */}
-        {(() => {
-          const marketCount = buildings.filter(b => b.building_type === "market" && !b.is_destroyed).length;
-          return marketCount > 0 ? (
-            <MarketSellPanel nation={nation} marketCount={marketCount} onRefresh={init} />
-          ) : null;
-        })()}
-
         {/* Existing buildings summary */}
         {buildings.length > 0 && (
           <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-5">
