@@ -233,7 +233,7 @@ export default function NationalAdvisorPanel({ nation }) {
       >
         <div className="flex items-center gap-2">
           <span className="text-base">🧠</span>
-          <span className="text-xs font-bold text-white tracking-wide uppercase">National AV Advisor</span>
+          <span className="text-xs font-bold text-white tracking-wide uppercase">National Advisor</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex gap-1">
