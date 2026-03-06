@@ -166,15 +166,19 @@ export default function Dashboard() {
         </div>
       </header>
 
-      {/* DESKTOP BENTO GRID */}
-      <main className="relative z-10 p-4 hidden lg:grid gap-4" style={{ height: "calc(100vh - 57px)", gridTemplateColumns: "300px 1fr 300px", gridTemplateRows: "1fr 280px", overflow: "hidden" }}>
+      {/* DESKTOP BENTO GRID — 4 cols: [Nation Stats] [World Map] [National Advisor] [Activities] */}
+      <main className="relative z-10 p-4 hidden lg:grid gap-4" style={{ height: "calc(100vh - 57px)", gridTemplateColumns: "280px 1fr 340px 220px", gridTemplateRows: "1fr 260px", overflow: "hidden" }}>
+        {/* Col 1: Nation Stats — full height */}
         <div style={{ gridRow: "1 / 3", overflowY: "auto" }}><NationStatsPanel nation={myNation} /></div>
+        {/* Col 2: World Map top, empty bottom */}
         <div style={{ gridRow: "1 / 2", overflow: "hidden" }}><WorldMap myNation={myNation} onSelectNation={n => setSelectedNation(n)} /></div>
-        <div style={{ gridRow: "1 / 2", overflowY: "auto" }}><StockTicker onSelectStock={s => setSelectedStock(s)} /></div>
         <div style={{ gridColumn: "2 / 3", gridRow: "2 / 3", minWidth: 0, overflowY: "auto" }}><GlobalLedger /></div>
-        <div style={{ gridColumn: "3 / 4", gridRow: "2 / 3", minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+        {/* Col 3: National Advisor — full height, expanded */}
+        <div style={{ gridRow: "1 / 3", minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
           {myNation && <NationalAdvisorPanel nation={myNation} />}
         </div>
+        {/* Col 4: Stock Ticker (narrow activities feed) — full height */}
+        <div style={{ gridRow: "1 / 3", overflowY: "auto" }}><StockTicker onSelectStock={s => setSelectedStock(s)} /></div>
       </main>
 
       {/* MOBILE LAYOUT */}
