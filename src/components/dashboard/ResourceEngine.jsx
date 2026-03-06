@@ -16,8 +16,8 @@ export default function ResourceEngine({ nation, onRefresh }) {
 
   useEffect(() => {
     if (!nation?.id) return;
-    const firstTick = setTimeout(() => runTick(), 8000);
-    intervalRef.current = setInterval(() => runTick(), 60_000);
+    const firstTick = setTimeout(() => runTick(), 20_000);
+    intervalRef.current = setInterval(() => runTick(), 90_000);
     return () => {
       clearTimeout(firstTick);
       clearInterval(intervalRef.current);
