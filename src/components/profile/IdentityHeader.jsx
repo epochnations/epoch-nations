@@ -31,7 +31,7 @@ export default function IdentityHeader({ nation, theme, onRefresh }) {
     await base44.entities.Nation.update(nation.id, { name: trimmed });
 
     // Propagate nation_name to all related entities in parallel
-    const [stocks, buildings, tradeRoutes, tradeAgreementsA, tradeAgreementsB, holdings, dilemmas, policies, newsEvents] = await Promise.all([
+    const [stocks, buildings, tradeRoutes, tradeAgreementsA, tradeAgreementsB, holdings, dilemmas, policies] = await Promise.all([
       base44.entities.Stock.filter({ nation_id: nation.id }),
       base44.entities.Building.filter({ nation_id: nation.id }),
       base44.entities.TradeRoute.filter({ from_nation_id: nation.id }),
@@ -40,7 +40,6 @@ export default function IdentityHeader({ nation, theme, onRefresh }) {
       base44.entities.StockHolding.filter({ nation_id: nation.id }),
       base44.entities.CouncilDilemma.filter({ nation_id: nation.id }),
       base44.entities.Policy.filter({ nation_id: nation.id }),
-      base44.entities.NewsEvent.filter({ nation_id: nation.id }),
     ]);
 
     const updates = [];
@@ -52,7 +51,6 @@ export default function IdentityHeader({ nation, theme, onRefresh }) {
     for (const h of holdings)         updates.push(base44.entities.StockHolding.update(h.id, { nation_name: trimmed }));
     for (const d of dilemmas)         updates.push(base44.entities.CouncilDilemma.update(d.id, { nation_name: trimmed }));
     for (const p of policies)         updates.push(base44.entities.Policy.update(p.id, { nation_name: trimmed }));
-    for (const e of newsEvents)       updates.push(base44.entities.NewsEvent.update(e.id, { city_name: e.city_name })); // skip, city_name is not nation
 
     await Promise.all(updates);
 
