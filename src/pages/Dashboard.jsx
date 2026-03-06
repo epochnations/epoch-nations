@@ -191,20 +191,20 @@ export default function Dashboard() {
         <div className="mx-3 mb-3">
           <NationStatsPanel nation={myNation} />
         </div>
-        {/* Stock Ticker */}
-        <div className="mx-3 mb-3 h-64 shrink-0">
-          <StockTicker onSelectStock={s => setSelectedStock(s)} />
-        </div>
-        {/* Global Ledger */}
-        <div className="mx-3 mb-3">
-          <GlobalLedger />
-        </div>
-        {/* National AV Advisor — mobile collapsible */}
+        {/* National Advisor — mobile: appears before activities */}
         {myNation && (
           <div className="mx-3 mb-3">
             <NationalAdvisorPanel nation={myNation} />
           </div>
         )}
+        {/* Global Ledger */}
+        <div className="mx-3 mb-3">
+          <GlobalLedger />
+        </div>
+        {/* Stock Ticker */}
+        <div className="mx-3 mb-3 h-64 shrink-0">
+          <StockTicker onSelectStock={s => setSelectedStock(s)} />
+        </div>
       </main>
 
       {/* Mobile bottom bar — horizontally scrollable */}
