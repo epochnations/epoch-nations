@@ -1,23 +1,57 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { X, Plus } from "lucide-react";
+import { EPOCHS } from "../game/EpochConfig";
 
 const SECTORS_BY_EPOCH = {
-  Industrial: ["Energy", "Defense", "Agriculture", "Finance"],
-  Information: ["Energy", "Defense", "Technology", "Finance", "Agriculture"],
-  Nano: ["Energy", "Defense", "Technology", "Finance", "Agriculture", "Nano"],
+  "Stone Age": ["Agriculture"],
+  "Copper Age": ["Agriculture", "Energy"],
+  "Bronze Age": ["Agriculture", "Energy", "Defense"],
+  "Iron Age": ["Agriculture", "Energy", "Defense"],
+  "Dark Ages": ["Agriculture", "Energy", "Defense", "Finance"],
+  "Middle Ages": ["Agriculture", "Energy", "Defense", "Finance"],
+  "Renaissance": ["Agriculture", "Energy", "Defense", "Finance"],
+  "Imperial Age": ["Agriculture", "Energy", "Defense", "Finance", "Technology"],
+  "Enlightenment Age": ["Agriculture", "Energy", "Defense", "Finance", "Technology"],
+  "Industrial Age": ["Energy", "Defense", "Technology", "Finance", "Agriculture"],
+  "Modern Age": ["Energy", "Defense", "Technology", "Finance", "Agriculture"],
+  "Atomic Age": ["Energy", "Defense", "Technology", "Finance", "Agriculture"],
+  "Digital Age": ["Energy", "Defense", "Technology", "Finance", "Agriculture"],
+  "Genetic Age": ["Energy", "Defense", "Technology", "Finance", "Agriculture", "Nano"],
+  "Synthetic Age": ["Energy", "Defense", "Technology", "Finance", "Agriculture", "Nano"],
+  "Nano Age": ["Energy", "Defense", "Technology", "Finance", "Agriculture", "Nano"],
 };
+
+// Stock cap by epoch index
+function getStockCap(epochIndex) {
+  if (epochIndex <= 0) return 1;          // Stone Age
+  if (epochIndex <= 3) return 2;          // Copper–Iron
+  if (epochIndex <= 6) return 3;          // Dark–Renaissance
+  if (epochIndex <= 9) return 5;          // Imperial–Industrial
+  return 8;                               // Modern+
+}
 
 export default function IssueStockPanel({ nation, onClose, onRefresh }) {
   const [companyName, setCompanyName] = useState("");
   const [ticker, setTicker] = useState("");
-  const [sector, setSector] = useState("Energy");
+  const [sector, setSector] = useState("Agriculture");
   const [shares, setShares] = useState(1000);
   const [price, setPrice] = useState(10);
   const [loading, setLoading] = useState(false);
+  const [existingCount, setExistingCount] = useState(0);
+
+  const epochIndex = EPOCHS.indexOf(nation?.epoch) || 0;
+  const stockCap = getStockCap(epochIndex);
+  const maxShares = Math.floor((nation?.gdp || 500) * (2 + epochIndex * 0.5));
+  const atCap = existingCount >= stockCap;
+
+  useEffect(() => {
+    if (!nation?.id) return;
+    base44.entities.Stock.filter({ nation_id: nation.id }).then(s => setExistingCount(s.length));
+  }, [nation?.id]);
 
   if (!nation) return null;
-  const sectors = SECTORS_BY_EPOCH[nation.epoch] || SECTORS_BY_EPOCH.Industrial;
+  const sectors = SECTORS_BY_EPOCH[nation.epoch] || ["Agriculture", "Energy"];
 
   async function issue() {
     if (!companyName || !ticker) return;
