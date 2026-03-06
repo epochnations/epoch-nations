@@ -113,14 +113,14 @@ export default function NationwideNews() {
         </div>
       </header>
 
-      <main className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 py-6 space-y-5">
+      <main className="relative z-10 w-full px-3 md:px-5 py-6 space-y-5">
         {/* News Header */}
         <NewsHeader nation={nation} weather={weather} edition={edition} breakingEvent={breakingEvent} />
 
-        {/* Category filter pills */}
-        <div className="flex gap-2 flex-wrap">
+        {/* Category filter pills — single scrollable row */}
+        <div className="flex gap-1.5 overflow-x-auto pb-1" style={{ scrollbarWidth:"none" }}>
           <button onClick={() => setActiveFilter("all")}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${activeFilter === "all" ? "bg-white/15 border-white/25 text-white" : "bg-white/5 border-white/10 text-slate-400 hover:bg-white/10"}`}>
+            className={`shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${activeFilter === "all" ? "bg-white/15 border-white/25 text-white" : "bg-white/5 border-white/10 text-slate-400 hover:bg-white/10"}`}>
             🗞 All
           </button>
           {CATEGORY_ORDER.map(cat => {
@@ -128,18 +128,27 @@ export default function NationwideNews() {
             const count = events.filter(e => e.category === cat && !e.is_resolved).length;
             return (
               <button key={cat} onClick={() => setActiveFilter(cat)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all flex items-center gap-1 ${activeFilter === cat ? "bg-white/15 border-white/25 text-white" : "bg-white/5 border-white/10 text-slate-400 hover:bg-white/10"}`}>
-                {meta.emoji} <span className="hidden sm:inline">{meta.label}</span>
+                className={`shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all flex items-center gap-1 ${activeFilter === cat ? "bg-white/15 border-white/25 text-white" : "bg-white/5 border-white/10 text-slate-400 hover:bg-white/10"}`}>
+                <span>{meta.emoji}</span>
+                <span>{meta.label}</span>
                 {count > 0 && <span className="w-4 h-4 rounded-full bg-red-500 text-white text-[9px] flex items-center justify-center font-black">{count}</span>}
               </button>
             );
           })}
         </div>
 
-        {/* Main 2-col layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-5">
-          {/* Feed */}
-          <div className="space-y-6">
+        {/* Main 3-col layout: left sidebar | feed | right sidebar */}
+        <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr_240px] xl:grid-cols-[260px_1fr_260px] gap-4">
+
+          {/* LEFT SIDEBAR — Jokes, Horoscope */}
+          <div className="space-y-4 order-2 lg:order-1">
+            <NewsJokesWidget />
+            <NewsHoroscopeWidget />
+            <NewsWeatherWidget weather={weather} />
+          </div>
+
+          {/* CENTER FEED */}
+          <div className="space-y-5 order-1 lg:order-2">
             {events.length === 0 && (
               <div className="rounded-2xl border border-white/10 bg-white/5 p-10 text-center text-slate-500">
                 <div className="text-3xl mb-3">📡</div>
@@ -152,12 +161,9 @@ export default function NationwideNews() {
             ))}
           </div>
 
-          {/* Sidebar */}
-          <div className="space-y-4">
-            <NewsWeatherWidget weather={weather} />
+          {/* RIGHT SIDEBAR — Stats, Approval, Decisions */}
+          <div className="space-y-4 order-3">
             <NewsApprovalWidget nation={nation} events={events} />
-
-            {/* Quick stats */}
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
               <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">📈 Nation At A Glance</div>
               <div className="space-y-2">
@@ -176,16 +182,14 @@ export default function NationwideNews() {
                 ))}
               </div>
             </div>
-
-            {/* Recent resolved */}
             {events.filter(e => e.is_resolved).length > 0 && (
               <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
                 <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">✅ Recent Decisions</div>
                 <div className="space-y-2">
-                  {events.filter(e => e.is_resolved).slice(0, 4).map(e => (
+                  {events.filter(e => e.is_resolved).slice(0, 5).map(e => (
                     <div key={e.id} className="text-xs">
                       <div className="text-slate-400 line-clamp-1">{e.headline}</div>
-                      <div className="text-slate-600">{e.chosen_option}</div>
+                      <div className="text-slate-600 text-[10px]">{e.chosen_option}</div>
                     </div>
                   ))}
                 </div>
