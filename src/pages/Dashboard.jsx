@@ -195,6 +195,12 @@ export default function Dashboard() {
         <div className="mx-3 mb-3">
           <GlobalLedger />
         </div>
+        {/* National AV Advisor — mobile collapsible */}
+        {myNation && (
+          <div className="mx-3 mb-3">
+            <NationalAdvisorPanel nation={myNation} />
+          </div>
+        )}
       </main>
 
       {/* Mobile bottom bar — horizontally scrollable */}
