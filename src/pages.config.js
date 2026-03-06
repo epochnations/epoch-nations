@@ -50,9 +50,9 @@
 import ConstructionHub from './pages/ConstructionHub';
 import Dashboard from './pages/Dashboard';
 import GlobalChronicles from './pages/GlobalChronicles';
+import GlobalExchange from './pages/GlobalExchange';
 import NationalProfile from './pages/NationalProfile';
 import Onboarding from './pages/Onboarding';
-import GlobalExchange from './pages/GlobalExchange';
 import __Layout from './Layout.jsx';
 
 
@@ -60,9 +60,9 @@ export const PAGES = {
     "ConstructionHub": ConstructionHub,
     "Dashboard": Dashboard,
     "GlobalChronicles": GlobalChronicles,
+    "GlobalExchange": GlobalExchange,
     "NationalProfile": NationalProfile,
     "Onboarding": Onboarding,
-    "GlobalExchange": GlobalExchange,
 }
 
 export const pagesConfig = {
