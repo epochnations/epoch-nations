@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
-import { Hammer, CheckCircle, AlertCircle, Users, Zap, X } from "lucide-react";
+import { Hammer, CheckCircle, AlertCircle, Users, Zap } from "lucide-react";
 import { BUILDINGS, BUILDING_MAP, EPOCH_REQUIREMENTS } from "../components/game/BuildingConfig";
 import { EPOCHS } from "../components/game/EpochConfig";
+import MarketSellPanel from "../components/panels/MarketSellPanel";
 
 const CATEGORY_LABELS = { civilian: "🏘️ Civilian", military: "⚔️ Military", government: "🏛️ Government" };
 const CATEGORY_ORDER = ["civilian", "military", "government"];
