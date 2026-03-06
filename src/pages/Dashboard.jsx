@@ -16,7 +16,7 @@ import IssueStockPanel from "../components/panels/IssueStockPanel";
 import DilemmaEngine from "../components/dashboard/DilemmaEngine";
 import CouncilDilemmaModal from "../components/dashboard/CouncilDilemmaModal";
 import EconomyEngine from "../components/dashboard/EconomyEngine";
-import AdvisorPanel from "../components/dashboard/AdvisorPanel";
+import NationalAdvisorPanel from "../components/dashboard/NationalAdvisorPanel";
 import ResourceEngine from "../components/dashboard/ResourceEngine";
 import WorkforcePanel from "../components/panels/WorkforcePanel";
 
