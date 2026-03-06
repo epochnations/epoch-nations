@@ -2,34 +2,62 @@ import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 import MarketSellPanel from "../components/panels/MarketSellPanel";
+import TradeRoutePanel from "../components/marketplace/TradeRoutePanel";
+import TradeAgreementPanel from "../components/marketplace/TradeAgreementPanel";
+import ImportPanel from "../components/marketplace/ImportPanel";
+
+const TABS = [
+  { id: "sell",       label: "🏪 Sell",         desc: "Sell resources for treasury" },
+  { id: "routes",     label: "🗺️ Trade Routes",  desc: "Establish ongoing trade channels" },
+  { id: "agreements", label: "📜 Agreements",    desc: "Tariffs & trade pacts" },
+  { id: "import",     label: "📥 Import",        desc: "Buy from global market" },
+];
 
 export default function Marketplace() {
   const [nation, setNation] = useState(null);
+  const [allNations, setAllNations] = useState([]);
   const [buildings, setBuildings] = useState([]);
+  const [agreements, setAgreements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [tab, setTab] = useState("sell");
 
   useEffect(() => { init(); }, []);
 
   async function init() {
     const u = await base44.auth.me();
     setUser(u);
-    const nations = await base44.entities.Nation.filter({ owner_email: u.email });
+    const [nations, allN] = await Promise.all([
+      base44.entities.Nation.filter({ owner_email: u.email }),
+      base44.entities.Nation.list("-gdp", 50),
+    ]);
     if (!nations[0]) { window.location.href = createPageUrl("Onboarding"); return; }
-    setNation(nations[0]);
-    const bldgs = await base44.entities.Building.filter({ nation_id: nations[0].id });
+    const nation = nations[0];
+    setNation(nation);
+    setAllNations(allN);
+    const [bldgs, ags1, ags2] = await Promise.all([
+      base44.entities.Building.filter({ nation_id: nation.id }),
+      base44.entities.TradeAgreement.filter({ nation_a_id: nation.id }),
+      base44.entities.TradeAgreement.filter({ nation_b_id: nation.id }),
+    ]);
     setBuildings(bldgs);
+    setAgreements([...ags1, ...ags2.filter(a => a.nation_a_id !== nation.id)].filter(a => a.status === "active"));
     setLoading(false);
   }
 
   async function refresh() {
-    if (!user) return;
-    const [nations, bldgs] = await Promise.all([
+    if (!user || !nation) return;
+    const [nations, allN, bldgs, ags1, ags2] = await Promise.all([
       base44.entities.Nation.filter({ owner_email: user.email }),
-      nation ? base44.entities.Building.filter({ nation_id: nation.id }) : Promise.resolve([])
+      base44.entities.Nation.list("-gdp", 50),
+      base44.entities.Building.filter({ nation_id: nation.id }),
+      base44.entities.TradeAgreement.filter({ nation_a_id: nation.id }),
+      base44.entities.TradeAgreement.filter({ nation_b_id: nation.id }),
     ]);
     setNation(nations[0]);
+    setAllNations(allN);
     setBuildings(bldgs);
+    setAgreements([...ags1, ...ags2.filter(a => a.nation_a_id !== nation.id)].filter(a => a.status === "active"));
   }
 
   const marketCount = buildings.filter(b => b.building_type === "market" && !b.is_destroyed).length;
@@ -59,37 +87,75 @@ export default function Marketplace() {
         </a>
       </header>
 
-      <main className="relative z-10 max-w-3xl mx-auto px-4 py-6 space-y-6">
+      <main className="relative z-10 max-w-4xl mx-auto px-4 py-6 space-y-5">
         {/* Nation quick stats */}
         <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-4 grid grid-cols-3 sm:grid-cols-6 gap-3 text-center text-xs">
           {[
-            { label: "🪵 Wood",  val: nation?.res_wood  || 0 },
-            { label: "🪨 Stone", val: nation?.res_stone || 0 },
-            { label: "🥇 Gold",  val: nation?.res_gold  || 0 },
-            { label: "⚙️ Iron",  val: nation?.res_iron  || 0 },
-            { label: "🛢️ Oil",   val: nation?.res_oil   || 0 },
-            { label: "💰 Treasury", val: Math.floor(nation?.currency || 0) },
-          ].map(({ label, val }) => (
+            { label: "🪵 Wood",  val: nation?.res_wood  || 0, low: (nation?.res_wood  || 0) < 100 },
+            { label: "🪨 Stone", val: nation?.res_stone || 0, low: (nation?.res_stone || 0) < 100 },
+            { label: "🥇 Gold",  val: nation?.res_gold  || 0, low: (nation?.res_gold  || 0) < 50  },
+            { label: "⚙️ Iron",  val: nation?.res_iron  || 0, low: (nation?.res_iron  || 0) < 50  },
+            { label: "🛢️ Oil",   val: nation?.res_oil   || 0, low: (nation?.res_oil   || 0) < 50  },
+            { label: "💰 Treasury", val: Math.floor(nation?.currency || 0), low: false },
+          ].map(({ label, val, low }) => (
             <div key={label}>
               <div className="text-slate-400">{label}</div>
-              <div className="font-mono font-bold text-white">{val.toLocaleString()}</div>
+              <div className={`font-mono font-bold ${low ? "text-orange-400" : "text-white"}`}>{val.toLocaleString()}{low ? " ⚠" : ""}</div>
             </div>
           ))}
         </div>
 
-        {/* Market status banner */}
-        {marketCount === 0 ? (
-          <div className="rounded-2xl border border-red-400/30 bg-red-400/5 p-6 text-center">
-            <div className="text-2xl mb-2">🏪</div>
-            <div className="font-bold text-red-400 mb-1">No Active Market</div>
-            <p className="text-sm text-slate-400">
-              You need at least 1 active Market building to sell resources. Build one in the{" "}
-              <a href={createPageUrl("ConstructionHub")} className="text-amber-400 underline hover:text-amber-300">Construction Hub</a>.
-            </p>
+        {/* Agreements active badge */}
+        {agreements.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {agreements.map(ag => (
+              <div key={ag.id} className="text-xs px-2.5 py-1 rounded-full border border-yellow-400/20 bg-yellow-400/5 text-yellow-300">
+                {ag.agreement_type === "free_trade" ? "🤝" : ag.agreement_type === "embargo" ? "🚫" : "📉"}{" "}
+                {ag.agreement_type.replace("_", " ")} w/ {ag.nation_a_id === nation.id ? ag.nation_b_name : ag.nation_a_name} · {ag.cycles_remaining} cycles left
+              </div>
+            ))}
           </div>
-        ) : (
-          <MarketSellPanel nation={nation} marketCount={marketCount} onRefresh={refresh} />
         )}
+
+        {/* Tabs */}
+        <div className="flex gap-2 flex-wrap">
+          {TABS.map(t => (
+            <button key={t.id} onClick={() => setTab(t.id)}
+              className={`px-4 py-2 rounded-xl text-xs font-bold border transition-all ${tab === t.id
+                ? "bg-white/15 border-white/25 text-white"
+                : "bg-white/5 border-white/10 text-slate-400 hover:bg-white/10 hover:text-white"
+              }`}>
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Tab Content */}
+        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-5">
+          {tab === "sell" && (
+            marketCount === 0 ? (
+              <div className="text-center py-6">
+                <div className="text-2xl mb-2">🏪</div>
+                <div className="font-bold text-red-400 mb-1">No Active Market</div>
+                <p className="text-sm text-slate-400">
+                  Build a Market in the{" "}
+                  <a href={createPageUrl("ConstructionHub")} className="text-amber-400 underline">Construction Hub</a> to unlock selling.
+                </p>
+              </div>
+            ) : (
+              <MarketSellPanel nation={nation} marketCount={marketCount} onRefresh={refresh} />
+            )
+          )}
+          {tab === "routes" && (
+            <TradeRoutePanel nation={nation} allNations={allNations} agreements={agreements} onRefresh={refresh} />
+          )}
+          {tab === "agreements" && (
+            <TradeAgreementPanel nation={nation} allNations={allNations} onRefresh={refresh} />
+          )}
+          {tab === "import" && (
+            <ImportPanel nation={nation} agreements={agreements} onRefresh={refresh} />
+          )}
+        </div>
       </main>
     </div>
   );
