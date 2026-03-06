@@ -48,10 +48,13 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
   }
 
   // Check all requirements
-  let reqsMet = { tp: false, population: false, buildings: {}, resources: {} };
+  const stabilityThreshold = EPOCH_STABILITY_THRESHOLD[nation.epoch] || 70;
+  let reqsMet = { tp: false, population: false, stability: false, buildings: {}, resources: {}, treasury: false };
   if (epochReqs) {
     reqsMet.tp = (nation.tech_points || 0) >= epochReqs.tp;
     reqsMet.population = (nation.population || 0) >= epochReqs.population;
+    reqsMet.stability = (nation.stability || 0) >= stabilityThreshold;
+    reqsMet.treasury = (nation.currency || 0) >= (epochReqs.treasury || 0);
     Object.entries(epochReqs.buildings || {}).forEach(([bid, req]) => {
       reqsMet.buildings[bid] = buildingCount(bid) >= req;
     });
@@ -60,7 +63,7 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
     });
   }
   const allReqsMet = epochReqs
-    ? reqsMet.tp && reqsMet.population
+    ? reqsMet.tp && reqsMet.population && reqsMet.stability && reqsMet.treasury
       && Object.values(reqsMet.buildings).every(Boolean)
       && Object.values(reqsMet.resources).every(Boolean)
     : false;
