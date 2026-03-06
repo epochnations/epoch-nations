@@ -305,8 +305,8 @@ export default function Dashboard() {
         />
       )}
 
-      {/* National AI Advisor */}
-      {myNation && <AdvisorPanel nation={myNation} />}
+      {/* National AV Advisor — desktop sidebar slot */}
+      
     </div>
   );
 }
