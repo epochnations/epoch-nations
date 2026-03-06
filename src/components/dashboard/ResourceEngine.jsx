@@ -147,6 +147,21 @@ export default function ResourceEngine({ nation, onRefresh }) {
     const industrialBoost = Math.floor((fresh.workers_industrial || 0) * 10 * techMult);
     updates.gdp = Math.min(100000, (fresh.gdp || 500) + industrialBoost + Math.floor((fresh.manufacturing || 50) * 0.005));
 
+    // --- TREASURY INCOME ACCUMULATION (fix: actually add income each tick) ---
+    const incomePerMin = Math.floor((updates.gdp || fresh.gdp || 500) * 0.05);
+    // Tick runs every 90s ≈ 1.5 min, so multiply income accordingly
+    const tickIncome = Math.round(incomePerMin * 1.5);
+    // Spending deduction: education + military spending drains treasury
+    const spendingDrain = Math.round(
+      ((fresh.education_spending || 20) + (fresh.military_spending || 20)) * 0.5
+    );
+    updates.currency = Math.max(0, (fresh.currency || 500) + tickIncome - spendingDrain);
+
+    // --- WAR STABILITY DRAIN (gradual: −1% per tick while at war) ---
+    if ((fresh.at_war_with || []).length > 0) {
+      updates.stability = Math.max(0, (updates.stability ?? (fresh.stability || 75)) - 1);
+    }
+
     await base44.entities.Nation.update(fresh.id, updates);
 
     for (const n of notifications) {
