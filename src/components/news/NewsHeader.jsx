@@ -72,10 +72,13 @@ export default function NewsHeader({ nation, weather, edition, breakingEvent }) 
               <div className="font-mono font-black text-base text-green-400">{(nation?.currency || 0).toLocaleString()}</div>
               <div className="text-slate-500">Treasury</div>
             </div>
-            <div className="bg-black/30 rounded-xl px-3 py-2 text-center min-w-[80px]">
-              <div className="text-base">{weatherEmoji}</div>
-              <div className="text-slate-500">{weather}</div>
-              {weatherFx.food !== 0 && <div className={`text-[10px] ${weatherFx.food > 0 ? "text-green-400" : "text-red-400"}`}>{weatherFx.food > 0 ? "+" : ""}{weatherFx.food} food</div>}
+            <div className="bg-black/30 rounded-xl px-3 py-2 text-center min-w-[90px]">
+              <div className="flex items-center justify-center gap-1">
+                <span className="text-base leading-none">{weatherEmoji}</span>
+                <span className="text-slate-300 text-sm font-bold leading-none">{weather}</span>
+              </div>
+              {weatherFx.food !== 0 && <div className={`text-[10px] mt-0.5 ${weatherFx.food > 0 ? "text-green-400" : "text-red-400"}`}>{weatherFx.food > 0 ? "+" : ""}{weatherFx.food} food</div>}
+              {!weatherFx.food && <div className="text-[10px] text-slate-500 mt-0.5">No impact</div>}
             </div>
           </div>
         </div>
