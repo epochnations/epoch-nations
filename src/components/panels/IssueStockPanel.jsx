@@ -95,8 +95,8 @@ export default function IssueStockPanel({ nation, onClose, onRefresh }) {
       from_nation_id: nation.id,
       from_nation_name: nation.name,
       stock_ticker: ticker.toUpperCase(),
-      total_value: finalPrice * shares,
-      description: `${nation.name} listed ${companyName} (${ticker.toUpperCase()}) — ${shares} shares @ ${finalPrice}`
+      total_value: finalPrice * cappedShares,
+      description: `${nation.name} listed ${companyName} (${ticker.toUpperCase()}) — ${cappedShares} shares @ ${finalPrice} (IPO cost: ${issueCost} cr)`
     });
 
     setLoading(false);
