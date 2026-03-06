@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Cpu, CheckCircle, ChevronRight, Zap, Hammer } from "lucide-react";
-import { EPOCHS, EPOCH_EMOJI, TECH_TREE } from "../game/EpochConfig";
+import { EPOCHS, EPOCH_EMOJI, TECH_TREE, EPOCH_STABILITY_THRESHOLD } from "../game/EpochConfig";
 import { EPOCH_REQUIREMENTS, BUILDING_MAP } from "../game/BuildingConfig";
 
 const RESOURCE_LABELS = {
