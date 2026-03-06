@@ -74,7 +74,7 @@ export default function NationStatsPanel({ nation }) {
       <div className="space-y-0">
         <StatRow icon={DollarSign} label="Treasury" value={nation.currency} color="text-green-400" tooltip="Your liquid reserve. Spent on tech, wars, and policies." />
         <StatRow icon={TrendingUp} label="GDP" value={nation.gdp} color="text-cyan-400" tooltip="Total economic output. Higher GDP grows treasury faster." />
-        <StatRow icon={Shield} label="Stability" value={nation.stability} color="text-blue-400" suffix="%" tooltip="National cohesion (0–100). Wars and bad policy reduce it." />
+        <StatRow icon={Shield} label="Stability" value={Math.round(nation.stability || 0)} color="text-blue-400" suffix="%" tooltip="National cohesion (0–100). Wars and bad policy reduce it." />
         <StatRow icon={Users} label="Population" value={nation.population} color="text-violet-400" tooltip="Total citizens. Grows with food surplus and housing." />
         <StatRow icon={Zap} label="Tech Level" value={nation.tech_level} color="text-yellow-400" suffix={` (${nation.tech_points} TP)`} tooltip="Spend TP to unlock technologies and advance epochs." />
       </div>
