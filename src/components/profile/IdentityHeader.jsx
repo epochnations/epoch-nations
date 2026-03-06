@@ -27,19 +27,22 @@ export default function IdentityHeader({ nation, theme, onRefresh }) {
     if (!trimmed || trimmed === nation.name) { setEditing(false); return; }
     setSaving(true);
 
-    // Update the nation itself
+    // Update the nation itself first
     await base44.entities.Nation.update(nation.id, { name: trimmed });
 
-    // Propagate nation_name to all related entities in parallel
-    const [stocks, buildings, tradeRoutes, tradeAgreementsA, tradeAgreementsB, holdings, dilemmas, policies] = await Promise.all([
+    // Close the editor immediately so the user isn't stuck waiting
+    setSaving(false);
+    setEditing(false);
+    onRefresh?.();
+
+    // Propagate nation_name to related entities in the background (fire-and-forget)
+    const [stocks, buildings, tradeRoutes, tradeAgreementsA, tradeAgreementsB, holdings] = await Promise.all([
       base44.entities.Stock.filter({ nation_id: nation.id }),
       base44.entities.Building.filter({ nation_id: nation.id }),
       base44.entities.TradeRoute.filter({ from_nation_id: nation.id }),
       base44.entities.TradeAgreement.filter({ nation_a_id: nation.id }),
       base44.entities.TradeAgreement.filter({ nation_b_id: nation.id }),
       base44.entities.StockHolding.filter({ nation_id: nation.id }),
-      base44.entities.CouncilDilemma.filter({ nation_id: nation.id }),
-      base44.entities.Policy.filter({ nation_id: nation.id }),
     ]);
 
     const updates = [];
@@ -49,14 +52,7 @@ export default function IdentityHeader({ nation, theme, onRefresh }) {
     for (const a of tradeAgreementsA) updates.push(base44.entities.TradeAgreement.update(a.id, { nation_a_name: trimmed }));
     for (const a of tradeAgreementsB) updates.push(base44.entities.TradeAgreement.update(a.id, { nation_b_name: trimmed }));
     for (const h of holdings)         updates.push(base44.entities.StockHolding.update(h.id, { nation_name: trimmed }));
-    for (const d of dilemmas)         updates.push(base44.entities.CouncilDilemma.update(d.id, { nation_name: trimmed }));
-    for (const p of policies)         updates.push(base44.entities.Policy.update(p.id, { nation_name: trimmed }));
-
     await Promise.all(updates);
-
-    setSaving(false);
-    setEditing(false);
-    onRefresh?.();
   }
 
   async function uploadFlag(e) {
