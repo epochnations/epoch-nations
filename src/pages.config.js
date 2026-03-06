@@ -53,6 +53,7 @@ import GlobalChronicles from './pages/GlobalChronicles';
 import GlobalExchange from './pages/GlobalExchange';
 import NationalProfile from './pages/NationalProfile';
 import Onboarding from './pages/Onboarding';
+import Marketplace from './pages/Marketplace';
 import __Layout from './Layout.jsx';
 
 
@@ -63,6 +64,7 @@ export const PAGES = {
     "GlobalExchange": GlobalExchange,
     "NationalProfile": NationalProfile,
     "Onboarding": Onboarding,
+    "Marketplace": Marketplace,
 }
 
 export const pagesConfig = {
