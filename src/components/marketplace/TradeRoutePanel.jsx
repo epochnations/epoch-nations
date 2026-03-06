@@ -3,8 +3,8 @@ import { base44 } from "@/api/base44Client";
 import { Plus, Trash2, Pause, Play, ArrowRight, ArrowLeft } from "lucide-react";
 
 const RESOURCE_META = {
-  res_wood:  { label: "Wood",  emoji: "🪵", color: "text-amber-400" },
-  res_stone: { label: "Stone", emoji: "🪨", color: "text-slate-300" },
+  res_wood:  { label: "Wood",  emoji: "🌲", color: "text-amber-400" },
+  res_stone: { label: "Stone", emoji: "⛏", color: "text-slate-300" },
   res_iron:  { label: "Iron",  emoji: "⚙️", color: "text-blue-400" },
   res_oil:   { label: "Oil",   emoji: "🛢️", color: "text-gray-400" },
   res_gold:  { label: "Gold",  emoji: "🥇", color: "text-yellow-400" },

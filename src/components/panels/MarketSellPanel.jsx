@@ -3,8 +3,8 @@ import { base44 } from "@/api/base44Client";
 import { EPOCHS } from "../game/EpochConfig";
 
 const RESOURCE_BASE = {
-  res_wood:  { label: "🪵 Wood",  base: 40 },
-  res_stone: { label: "🪨 Stone", base: 60 },
+  res_wood:  { label: "🌲 Wood",  base: 40 },
+  res_stone: { label: "⛏ Stone", base: 60 },
   res_iron:  { label: "⚙️ Iron",  base: 100 },
   res_oil:   { label: "🛢️ Oil",   base: 160 },
   res_gold:  { label: "🥇 Gold",  base: 250 },

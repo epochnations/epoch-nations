@@ -4,8 +4,8 @@ import { ShoppingCart } from "lucide-react";
 import { EPOCHS } from "../game/EpochConfig";
 
 const RESOURCE_META = {
-  res_wood:  { label: "Wood",  emoji: "🪵", base: 40 },
-  res_stone: { label: "Stone", emoji: "🪨", base: 60 },
+  res_wood:  { label: "Wood",  emoji: "🌲", base: 40 },
+  res_stone: { label: "Stone", emoji: "⛏", base: 60 },
   res_iron:  { label: "Iron",  emoji: "⚙️", base: 100 },
   res_oil:   { label: "Oil",   emoji: "🛢️", base: 160 },
   res_gold:  { label: "Gold",  emoji: "🥇", base: 250 },
