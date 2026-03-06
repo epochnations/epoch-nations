@@ -47,17 +47,19 @@ export default function NewsJokesWidget() {
   return (
     <div className="rounded-2xl border border-yellow-500/20 bg-yellow-500/5 p-4">
       <div className="text-xs font-bold text-yellow-400 uppercase tracking-widest mb-3">😄 Citizen Corner — Daily Joke</div>
-      <p className="text-sm text-slate-300 mb-2 leading-relaxed">{joke.setup}</p>
-      {revealed ? (
-        <p className="text-sm text-yellow-300 font-semibold italic mb-3">{joke.punchline}</p>
-      ) : (
-        <button
-          onClick={() => setRevealed(true)}
-          className="text-xs text-yellow-500 hover:text-yellow-300 underline mb-3 block transition-colors"
-        >
-          Reveal punchline...
-        </button>
-      )}
+      <div className="w-full">
+        <p className="text-sm text-slate-300 mb-2 leading-relaxed break-words whitespace-normal overflow-hidden">{joke.setup}</p>
+        {revealed ? (
+          <p className="text-sm text-yellow-300 font-semibold italic mb-3 break-words whitespace-normal overflow-hidden">{joke.punchline}</p>
+        ) : (
+          <button
+            onClick={() => setRevealed(true)}
+            className="text-xs text-yellow-500 hover:text-yellow-300 underline mb-3 block transition-colors"
+          >
+            Reveal punchline...
+          </button>
+        )}
+      </div>
       <button
         onClick={nextJoke}
         className="w-full py-1.5 rounded-xl text-xs font-bold border border-yellow-500/20 text-yellow-500 hover:bg-yellow-500/10 transition-all"
