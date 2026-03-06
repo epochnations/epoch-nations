@@ -15,8 +15,8 @@ export default function NewsEngine({ nation, onRefresh }) {
   useEffect(() => {
     if (!nation?.id) return;
 
-    // Initial run after 5s
-    const first = setTimeout(() => runTick(), 5000);
+    // Initial run after 2s
+    const first = setTimeout(() => runTick(), 2000);
     intervalRef.current = setInterval(() => runTick(), TICK_MS);
 
     return () => {

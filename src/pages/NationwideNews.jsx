@@ -25,6 +25,17 @@ export default function NationwideNews() {
 
   useEffect(() => { init(); }, []);
 
+  // Real-time subscription to new events
+  useEffect(() => {
+    if (!nation?.id) return;
+    const unsub = base44.entities.NewsEvent.subscribe((evt) => {
+      if (evt.data?.nation_id !== nation.id) return;
+      if (evt.type === "create") setEvents(prev => [evt.data, ...prev].slice(0, 30));
+      else if (evt.type === "update") setEvents(prev => prev.map(e => e.id === evt.id ? evt.data : e));
+    });
+    return unsub;
+  }, [nation?.id]);
+
   async function init() {
     const u = await base44.auth.me();
     setUser(u);
