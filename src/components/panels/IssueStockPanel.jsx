@@ -162,16 +162,25 @@ export default function IssueStockPanel({ nation, onClose, onRefresh }) {
             </div>
           </div>
 
-          <div className="rounded-xl bg-white/5 p-3 text-xs text-slate-400">
-            Final IPO price will be adjusted by your Nation Stock Index: ({nation.gdp} + {nation.stability}) × {nation.public_trust.toFixed(2)}
+          <div className="rounded-xl bg-white/5 p-3 text-xs text-slate-400 space-y-1">
+            <div>Final IPO price adjusted by Nation Stock Index: ({nation.gdp} + {nation.stability}) × {(nation.public_trust||1).toFixed(2)}</div>
+            <div className="text-amber-400">📋 Stock cap for {nation.epoch}: <b>{existingCount}/{stockCap}</b> issued</div>
+            <div>Max shares at current GDP: <b>{maxShares.toLocaleString()}</b></div>
+            <div className="text-cyan-400">💰 IPO listing cost (5%): ~<b>{Math.round((price + (nation.gdp + nation.stability) * (nation.public_trust||1) * 0.01) * Math.min(shares, maxShares) * 0.05)} cr</b></div>
           </div>
+
+          {atCap && (
+            <div className="rounded-xl bg-red-500/10 border border-red-500/30 p-3 text-xs text-red-400 font-bold">
+              ⛔ Stock cap reached ({stockCap}/{stockCap}) for {nation.epoch}. Advance your epoch to issue more.
+            </div>
+          )}
 
           <button
             onClick={issue}
-            disabled={loading || !companyName || !ticker}
+            disabled={loading || !companyName || !ticker || atCap}
             className="w-full py-3 rounded-xl font-bold text-sm bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-400 hover:to-emerald-500 disabled:opacity-30 transition-all"
           >
-            {loading ? "Listing..." : "LIST ON EXCHANGE 📈"}
+            {loading ? "Listing..." : atCap ? "STOCK CAP REACHED" : "LIST ON EXCHANGE 📈"}
           </button>
         </div>
       </div>
