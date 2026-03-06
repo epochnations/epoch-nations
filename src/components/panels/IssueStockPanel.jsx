@@ -54,11 +54,20 @@ export default function IssueStockPanel({ nation, onClose, onRefresh }) {
   const sectors = SECTORS_BY_EPOCH[nation.epoch] || ["Agriculture", "Energy"];
 
   async function issue() {
-    if (!companyName || !ticker) return;
+    if (!companyName || !ticker || atCap) return;
     setLoading(true);
 
+    const cappedShares = Math.min(shares, maxShares);
     const stockValue = (nation.gdp + nation.stability) * nation.public_trust;
     const finalPrice = parseFloat(((price + stockValue * 0.01)).toFixed(2));
+
+    // Treasury cost: 5% of total IPO value
+    const issueCost = Math.round(finalPrice * cappedShares * 0.05);
+    if ((nation.currency || 0) < issueCost) {
+      alert(`Insufficient treasury. IPO listing costs ${issueCost} cr (5% of IPO value).`);
+      setLoading(false);
+      return;
+    }
 
     await base44.entities.Stock.create({
       company_name: companyName,
@@ -66,14 +75,19 @@ export default function IssueStockPanel({ nation, onClose, onRefresh }) {
       nation_id: nation.id,
       nation_name: nation.name,
       sector,
-      total_shares: shares,
-      available_shares: shares,
+      total_shares: cappedShares,
+      available_shares: cappedShares,
       base_price: finalPrice,
       current_price: finalPrice,
       price_history: [finalPrice],
-      market_cap: parseFloat((finalPrice * shares).toFixed(2)),
+      market_cap: parseFloat((finalPrice * cappedShares).toFixed(2)),
       is_crashed: false,
       epoch_required: nation.epoch
+    });
+
+    // Deduct IPO cost from treasury
+    await base44.entities.Nation.update(nation.id, {
+      currency: Math.max(0, (nation.currency || 0) - issueCost)
     });
 
     await base44.entities.Transaction.create({
