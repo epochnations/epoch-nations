@@ -91,8 +91,8 @@ export default function Marketplace() {
         {/* Nation quick stats */}
         <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-4 grid grid-cols-3 sm:grid-cols-6 gap-3 text-center text-xs">
           {[
-            { label: "🪵 Wood",  val: nation?.res_wood  || 0, low: (nation?.res_wood  || 0) < 100 },
-            { label: "🪨 Stone", val: nation?.res_stone || 0, low: (nation?.res_stone || 0) < 100 },
+            { label: "🌲 Wood",  val: nation?.res_wood  || 0, low: (nation?.res_wood  || 0) < 100 },
+            { label: "⛏ Stone", val: nation?.res_stone || 0, low: (nation?.res_stone || 0) < 100 },
             { label: "🥇 Gold",  val: nation?.res_gold  || 0, low: (nation?.res_gold  || 0) < 50  },
             { label: "⚙️ Iron",  val: nation?.res_iron  || 0, low: (nation?.res_iron  || 0) < 50  },
             { label: "🛢️ Oil",   val: nation?.res_oil   || 0, low: (nation?.res_oil   || 0) < 50  },
