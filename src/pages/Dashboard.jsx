@@ -212,23 +212,28 @@ export default function Dashboard() {
         </div>
       </main>
 
-      {/* Mobile bottom bar */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-20 backdrop-blur-xl bg-black/90 border-t border-white/10 px-3 py-2 flex gap-2">
-        <button onClick={() => setShowIssueStock(true)} className="flex-1 py-3 rounded-xl text-xs font-bold bg-green-500/10 border border-green-500/20 text-green-400 min-h-[44px]">
-          + Stock
-        </button>
-        <button onClick={() => setShowTechTree(true)} className="flex-1 py-3 rounded-xl text-xs font-bold bg-violet-500/10 border border-violet-500/20 text-violet-400 min-h-[44px]">
-          Tech Tree
-        </button>
-        <button onClick={() => setShowManagement(true)} className="flex-1 py-3 rounded-xl text-xs font-bold bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 min-h-[44px]">
-          Manage
-        </button>
-        <button onClick={() => setShowWorkforce(true)} className="flex-1 py-3 rounded-xl text-xs font-bold bg-amber-500/10 border border-amber-500/20 text-amber-400 min-h-[44px]">
-          👷 Workers
-        </button>
-        <a href={createPageUrl("GlobalChronicles")} className="flex-1 py-3 rounded-xl text-xs font-bold bg-white/5 border border-white/10 text-slate-400 text-center min-h-[44px] flex items-center justify-center">
-          📰 News
-        </a>
+      {/* Mobile bottom bar — horizontally scrollable */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-20 backdrop-blur-xl bg-black/90 border-t border-white/10 py-2">
+        <div className="flex gap-2 px-3 overflow-x-auto snap-x snap-mandatory pb-1" style={{ scrollbarWidth: "none" }}>
+          <a href={createPageUrl("ConstructionHub")} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-amber-500/10 border border-amber-500/20 text-amber-400 min-h-[44px] flex items-center gap-1.5">
+            🏗 Build
+          </a>
+          <button onClick={() => setShowIssueStock(true)} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-green-500/10 border border-green-500/20 text-green-400 min-h-[44px]">
+            + Stock
+          </button>
+          <button onClick={() => setShowTechTree(true)} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-violet-500/10 border border-violet-500/20 text-violet-400 min-h-[44px]">
+            🔬 Tech
+          </button>
+          <button onClick={() => setShowManagement(true)} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 min-h-[44px]">
+            📊 Manage
+          </button>
+          <button onClick={() => setShowWorkforce(true)} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-amber-500/10 border border-amber-500/20 text-amber-400 min-h-[44px]">
+            👷 Workers
+          </button>
+          <a href={createPageUrl("GlobalChronicles")} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-white/5 border border-white/10 text-slate-400 min-h-[44px] flex items-center gap-1.5">
+            📰 News
+          </a>
+        </div>
       </div>
 
       {/* Modals */}
