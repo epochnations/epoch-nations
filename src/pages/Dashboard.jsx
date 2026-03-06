@@ -135,6 +135,12 @@ export default function Dashboard() {
           </button>
 
           <a
+            href={createPageUrl("GlobalExchange")}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-bold hover:bg-green-500/20 transition-all"
+          >
+            📊 Exchange
+          </a>
+          <a
             href={createPageUrl("GlobalChronicles")}
             className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-400 text-xs font-bold hover:bg-white/10 transition-all"
           >
