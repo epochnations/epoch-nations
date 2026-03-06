@@ -157,7 +157,7 @@ export default function NationwideNews() {
         </div>
 
         {/* 3-col layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr_260px] gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr_300px] gap-4">
 
           {/* LEFT SIDEBAR */}
           <div className="space-y-4 order-2 lg:order-1 min-w-0">
