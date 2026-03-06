@@ -10,8 +10,8 @@ export default function EconomyEngine({ nation, onRefresh }) {
 
   useEffect(() => {
     if (!nation?.id) return;
-    const firstTick = setTimeout(() => runTick(), 12000);
-    intervalRef.current = setInterval(() => runTick(), 60_000);
+    const firstTick = setTimeout(() => runTick(), 40_000);
+    intervalRef.current = setInterval(() => runTick(), 120_000);
     return () => {
       clearTimeout(firstTick);
       clearInterval(intervalRef.current);
