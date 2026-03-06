@@ -97,14 +97,7 @@ export default function Dashboard() {
           <div className="text-xl font-black tracking-tighter bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
             EPOCH NATIONS
           </div>
-          {myNation && (
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-lg bg-white/5 border border-white/10">
-              <span>{myNation.flag_emoji}</span>
-              <span className="text-sm font-bold text-white">{myNation.name}</span>
-              <span className="text-xs text-slate-500">·</span>
-              <span className="text-xs text-slate-400">{myNation.epoch} Era</span>
-            </div>
-          )}
+
         </div>
 
         <div className="flex items-center gap-2">
