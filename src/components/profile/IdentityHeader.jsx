@@ -23,9 +23,39 @@ export default function IdentityHeader({ nation, theme, onRefresh }) {
   const epochColor = EPOCH_COLORS[nation.epoch] || EPOCH_COLORS.Industrial;
 
   async function saveName() {
-    if (!newName.trim() || newName.trim() === nation.name) { setEditing(false); return; }
+    const trimmed = newName.trim();
+    if (!trimmed || trimmed === nation.name) { setEditing(false); return; }
     setSaving(true);
-    await base44.entities.Nation.update(nation.id, { name: newName.trim() });
+
+    // Update the nation itself
+    await base44.entities.Nation.update(nation.id, { name: trimmed });
+
+    // Propagate nation_name to all related entities in parallel
+    const [stocks, buildings, tradeRoutes, tradeAgreementsA, tradeAgreementsB, holdings, dilemmas, policies, newsEvents] = await Promise.all([
+      base44.entities.Stock.filter({ nation_id: nation.id }),
+      base44.entities.Building.filter({ nation_id: nation.id }),
+      base44.entities.TradeRoute.filter({ from_nation_id: nation.id }),
+      base44.entities.TradeAgreement.filter({ nation_a_id: nation.id }),
+      base44.entities.TradeAgreement.filter({ nation_b_id: nation.id }),
+      base44.entities.StockHolding.filter({ nation_id: nation.id }),
+      base44.entities.CouncilDilemma.filter({ nation_id: nation.id }),
+      base44.entities.Policy.filter({ nation_id: nation.id }),
+      base44.entities.NewsEvent.filter({ nation_id: nation.id }),
+    ]);
+
+    const updates = [];
+    for (const s of stocks)           updates.push(base44.entities.Stock.update(s.id, { nation_name: trimmed }));
+    for (const b of buildings)        updates.push(base44.entities.Building.update(b.id, { nation_name: trimmed }));
+    for (const r of tradeRoutes)      updates.push(base44.entities.TradeRoute.update(r.id, { from_nation_name: trimmed }));
+    for (const a of tradeAgreementsA) updates.push(base44.entities.TradeAgreement.update(a.id, { nation_a_name: trimmed }));
+    for (const a of tradeAgreementsB) updates.push(base44.entities.TradeAgreement.update(a.id, { nation_b_name: trimmed }));
+    for (const h of holdings)         updates.push(base44.entities.StockHolding.update(h.id, { nation_name: trimmed }));
+    for (const d of dilemmas)         updates.push(base44.entities.CouncilDilemma.update(d.id, { nation_name: trimmed }));
+    for (const p of policies)         updates.push(base44.entities.Policy.update(p.id, { nation_name: trimmed }));
+    for (const e of newsEvents)       updates.push(base44.entities.NewsEvent.update(e.id, { city_name: e.city_name })); // skip, city_name is not nation
+
+    await Promise.all(updates);
+
     setSaving(false);
     setEditing(false);
     onRefresh?.();
