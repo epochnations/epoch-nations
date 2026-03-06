@@ -227,6 +227,10 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
               <div className="grid grid-cols-2 gap-2 mb-4">
                 <ReqItem met={reqsMet.tp} label={`${epochReqs.tp} TP`} current={nation.tech_points} max={epochReqs.tp} />
                 <ReqItem met={reqsMet.population} label={`${epochReqs.population} Pop`} current={nation.population} max={epochReqs.population} />
+                <ReqItem met={reqsMet.stability} label={`${stabilityThreshold}% Stability`} current={Math.round(nation.stability || 0)} max={stabilityThreshold} />
+                {epochReqs.treasury > 0 && (
+                  <ReqItem met={reqsMet.treasury} label={`${epochReqs.treasury.toLocaleString()} cr Treasury`} current={Math.round(nation.currency || 0)} max={epochReqs.treasury} />
+                )}
                 {Object.entries(epochReqs.buildings || {}).map(([bid, req]) => (
                   <ReqItem key={bid} met={reqsMet.buildings[bid]}
                     label={`${req}× ${BUILDING_MAP[bid]?.name || bid}`}
@@ -238,6 +242,11 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
                     current={nation[res] || 0} max={req} />
                 ))}
               </div>
+              {!reqsMet.stability && (
+                <div className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg p-2 mb-3 font-bold">
+                  ⚠ Stability below {stabilityThreshold}% — advancement blocked until restored. Invest in welfare, food surplus, or peace.
+                </div>
+              )}
 
               {!allReqsMet && (
                 <div className="text-xs text-amber-400 mb-3 flex items-center gap-1.5">
