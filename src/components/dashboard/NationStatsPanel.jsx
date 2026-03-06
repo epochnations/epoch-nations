@@ -172,7 +172,7 @@ export default function NationStatsPanel({ nation }) {
         <div className="text-xl font-mono font-black text-cyan-300">
           {stockValue.toFixed(2)} <span className="text-xs font-normal text-slate-400">per unit</span>
         </div>
-        <div className="text-xs text-slate-500 mt-1 flex justify-between">
+        <div className="text-xs text-slate-500 mt-1 flex flex-wrap gap-x-3 gap-y-1">
           <span>Income: <span className="text-green-400">+{Math.floor(nation.gdp * 0.05)} cr/min</span></span>
           <span>Spending: <span className="text-red-400">−{Math.round(((nation.education_spending||20)+(nation.military_spending||20))*0.5)} cr/min</span></span>
         </div>
