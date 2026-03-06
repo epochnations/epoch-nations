@@ -41,7 +41,7 @@ export default function GlobalLedger() {
     <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl h-full flex flex-col overflow-hidden">
       <div className="px-5 py-3 border-b border-white/10 flex items-center gap-2 shrink-0">
         <ScrollText size={14} className="text-cyan-400" />
-        <span className="text-xs font-bold text-slate-300 tracking-widest uppercase">Global Exchange</span>
+        <span className="text-xs font-bold text-slate-300 tracking-widest uppercase">Global Activities</span>
         <span className="ml-auto text-xs text-slate-600">last 30 min</span>
       </div>
 
