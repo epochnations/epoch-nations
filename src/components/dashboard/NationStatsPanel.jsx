@@ -56,10 +56,13 @@ export default function NationStatsPanel({ nation }) {
       {/* Nation Header */}
       <div className="flex items-center gap-3 mb-5">
         <div
-          className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0"
+          className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0 overflow-hidden"
           style={{ backgroundColor: (nation.flag_color || "#3b82f6") + "33" }}
         >
-          {nation.flag_emoji || "🏴"}
+          {nation.flag_image_url
+            ? <img src={nation.flag_image_url} alt="flag" className="w-full h-full object-cover" />
+            : <span>{nation.flag_emoji || "🏴"}</span>
+          }
         </div>
         <div className="min-w-0">
           <div className="font-bold text-white text-base truncate">{nation.name}</div>
@@ -84,8 +87,8 @@ export default function NationStatsPanel({ nation }) {
         <div className="text-xs text-slate-500 uppercase tracking-wider mb-2">Natural Resources</div>
         <div className="grid grid-cols-3 gap-1.5">
           {[
-            { label: "Wood", value: nation.res_wood, color: "text-amber-500", emoji: "🪵" },
-            { label: "Stone", value: nation.res_stone, color: "text-slate-400", emoji: "🪨" },
+            { label: "Wood", value: nation.res_wood, color: "text-amber-500", emoji: "🌲" },
+            { label: "Stone", value: nation.res_stone, color: "text-slate-300", emoji: "⛏" },
             { label: "Gold", value: nation.res_gold, color: "text-yellow-400", emoji: "🥇" },
             { label: "Iron", value: nation.res_iron, color: "text-blue-400", emoji: "⚙️" },
             { label: "Oil", value: nation.res_oil, color: "text-gray-400", emoji: "🛢️" },

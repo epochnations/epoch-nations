@@ -51,9 +51,9 @@ import ConstructionHub from './pages/ConstructionHub';
 import Dashboard from './pages/Dashboard';
 import GlobalChronicles from './pages/GlobalChronicles';
 import GlobalExchange from './pages/GlobalExchange';
+import Marketplace from './pages/Marketplace';
 import NationalProfile from './pages/NationalProfile';
 import Onboarding from './pages/Onboarding';
-import Marketplace from './pages/Marketplace';
 import __Layout from './Layout.jsx';
 
 
@@ -62,9 +62,9 @@ export const PAGES = {
     "Dashboard": Dashboard,
     "GlobalChronicles": GlobalChronicles,
     "GlobalExchange": GlobalExchange,
+    "Marketplace": Marketplace,
     "NationalProfile": NationalProfile,
     "Onboarding": Onboarding,
-    "Marketplace": Marketplace,
 }
 
 export const pagesConfig = {
