@@ -13,7 +13,6 @@ import NewsApprovalWidget from "../components/news/NewsApprovalWidget";
 import NewsJokesWidget from "../components/news/NewsJokesWidget";
 import NewsHoroscopeWidget from "../components/news/NewsHoroscopeWidget";
 import CityNewsStream from "../components/news/CityNewsStream";
-import LiveStockTickerTab from "../components/news/LiveStockTickerTab";
 import CitizenEngagementWidget from "../components/news/CitizenEngagementWidget";
 import { CATEGORY_META, pickWeather } from "../components/news/NewsEventConfig";
 import { getCitiesForNation } from "../components/news/CityConfig";
