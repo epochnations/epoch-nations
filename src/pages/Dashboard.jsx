@@ -2,6 +2,9 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 import { Cpu, Plus, Sliders, Users, Hammer } from "lucide-react";
+import { useTheme } from "../components/theme/ThemeProvider";
+import ThemeSelector from "../components/theme/ThemeSelector";
+import GameClock from "../components/theme/GameClock";
 
 
 import NationStatsPanel from "../components/dashboard/NationStatsPanel";
