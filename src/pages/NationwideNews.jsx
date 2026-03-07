@@ -2,6 +2,9 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 import { RefreshCw } from "lucide-react";
+import { useTheme } from "../components/theme/ThemeProvider";
+import ThemeSelector from "../components/theme/ThemeSelector";
+import GameClock from "../components/theme/GameClock";
 
 import NewsHeader from "../components/news/NewsHeader";
 import NewsEngine from "../components/news/NewsEngine";
