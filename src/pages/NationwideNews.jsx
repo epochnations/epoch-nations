@@ -223,8 +223,8 @@ export default function NationwideNews() {
                   </div>
                 )}
 
-                {/* City live feed strip */}
-                {cityEvents.filter(e => !e.is_resolved).length > 0 && (
+                {/* City live feed strip — only on the All tab */}
+                {activeTab === "cities" && cityEvents.filter(e => !e.is_resolved).length > 0 && (
                   <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-3">
                     <div className="flex items-center justify-between mb-2">
                       <div className="text-xs font-bold text-amber-400 uppercase tracking-widest">🏙️ City Live Feed</div>
