@@ -234,28 +234,35 @@ export default function NationwideNews() {
                   <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-3">
                     <div className="flex items-center justify-between mb-2">
                       <div className="text-xs font-bold text-amber-400 uppercase tracking-widest">🏙️ City Live Feed</div>
-                      <button onClick={() => setActiveTab("cities")} className="text-[10px] text-amber-500 hover:text-amber-300 underline">
-                        See All Cities →
-                      </button>
+                      <div className="flex items-center gap-3">
+                        <button onClick={() => setActiveTab("cities")} className="text-[10px] text-amber-500 hover:text-amber-300 underline">
+                          See All Cities →
+                        </button>
+                        <button onClick={() => setCityFeedCollapsed(c => !c)} className="text-[10px] text-slate-400 hover:text-white transition-colors">
+                          {cityFeedCollapsed ? "▼ Expand" : "▲ Collapse"}
+                        </button>
+                      </div>
                     </div>
-                    <div className="space-y-2">
-                      {cityEvents.filter(e => !e.is_resolved).slice(0, 4).map(ev => {
-                        const sev = { critical:"text-red-400", warning:"text-yellow-400", opportunity:"text-blue-400", info:"text-emerald-400" }[ev.severity] || "text-slate-400";
-                        return (
-                          <button key={ev.id} onClick={() => setSelectedEvent(ev)}
-                            className="w-full text-left flex items-start gap-2 hover:bg-white/5 rounded-xl px-2 py-1.5 transition-all group">
-                            <div className="w-1.5 h-1.5 rounded-full mt-1.5 animate-pulse shrink-0" style={{ backgroundColor: ev.city_color || "#64748b" }} />
-                            <div className="min-w-0 flex-1">
-                              <div className="flex items-center gap-1.5 flex-wrap">
-                                <span className="text-[10px] font-bold" style={{ color: ev.city_color || "#94a3b8" }}>{ev.city_emoji} {ev.city_name}</span>
-                                <span className={`text-[10px] font-bold uppercase ${sev}`}>{ev.severity}</span>
+                    {!cityFeedCollapsed && (
+                      <div className="space-y-2">
+                        {cityEvents.filter(e => !e.is_resolved).slice(0, 4).map(ev => {
+                          const sev = { critical:"text-red-400", warning:"text-yellow-400", opportunity:"text-blue-400", info:"text-emerald-400" }[ev.severity] || "text-slate-400";
+                          return (
+                            <button key={ev.id} onClick={() => setSelectedEvent(ev)}
+                              className="w-full text-left flex items-start gap-2 hover:bg-white/5 rounded-xl px-2 py-1.5 transition-all group">
+                              <div className="w-1.5 h-1.5 rounded-full mt-1.5 animate-pulse shrink-0" style={{ backgroundColor: ev.city_color || "#64748b" }} />
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <span className="text-[10px] font-bold" style={{ color: ev.city_color || "#94a3b8" }}>{ev.city_emoji} {ev.city_name}</span>
+                                  <span className={`text-[10px] font-bold uppercase ${sev}`}>{ev.severity}</span>
+                                </div>
+                                <div className="text-xs text-white group-hover:text-cyan-300 transition-colors line-clamp-1">{ev.headline}</div>
                               </div>
-                              <div className="text-xs text-white group-hover:text-cyan-300 transition-colors line-clamp-1">{ev.headline}</div>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                 )}
 
