@@ -127,7 +127,7 @@ export default function NationwideNews() {
 
       <main className="relative z-10 w-full px-3 md:px-5 py-5 space-y-4">
         {/* News Header */}
-        <NewsHeader nation={nation} weather={weather} edition={edition} breakingEvent={breakingEvent} onClickBreaking={setSelectedEvent} />
+        <NewsHeader nation={nation} weather={weather} edition={edition} breakingEvent={breakingEvent} onClickBreaking={setSelectedEvent} onClickStock={() => window.location.href = createPageUrl("GlobalExchange")} />
 
         {/* Category filter tabs — single non-wrapping row */}
         <div className="flex gap-1.5 overflow-x-auto pb-1" style={{ scrollbarWidth:"none" }}>
