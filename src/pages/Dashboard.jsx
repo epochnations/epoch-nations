@@ -98,15 +98,16 @@ export default function Dashboard() {
       <div className="fixed bottom-0 right-1/4 w-96 h-96 rounded-full blur-3xl pointer-events-none" style={{ background: palette.glow, transition: "background 3s ease-in-out" }} />
 
       {/* TOP NAV */}
-      <header className="relative z-20 border-b border-white/10 backdrop-blur-xl bg-black/30 px-6 py-3 flex items-center justify-between">
+      <header className="relative z-20 border-b backdrop-blur-xl px-6 py-3 flex items-center justify-between" style={{ borderColor: palette.border, background: `${palette.panel}cc`, transition: "all 3s ease-in-out" }}>
         <div className="flex items-center gap-4">
           <div className="text-xl font-black tracking-tighter bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
             EPOCH NATIONS
           </div>
-
+          <GameClock />
         </div>
 
         <div className="flex items-center gap-2">
+          <ThemeSelector />
           {/* Quick actions */}
           <button
             onClick={() => setShowIssueStock(true)}
