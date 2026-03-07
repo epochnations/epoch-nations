@@ -93,7 +93,7 @@ export default function NationalProfile() {
   const theme = EPOCH_THEME[myNation.epoch] || EPOCH_THEME.Industrial;
 
   return (
-    <div className="min-h-screen bg-[#080c14] text-white relative">
+    <div className="min-h-screen text-white relative" style={{ background: isDark ? "#080c14" : "#1e293b" }}>
       {/* Epoch Transition Overlay */}
       {showEpochTransition && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center backdrop-blur-2xl bg-black/80">
