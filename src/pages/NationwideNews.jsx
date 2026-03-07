@@ -131,15 +131,6 @@ export default function NationwideNews() {
 
         {/* Category filter tabs — single non-wrapping row */}
         <div className="flex gap-1.5 overflow-x-auto pb-1" style={{ scrollbarWidth:"none" }}>
-          <button onClick={() => setActiveTab("all")}
-            className={`shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${activeTab === "all" ? "bg-white/15 border-white/25 text-white" : "bg-white/5 border-white/10 text-slate-400 hover:bg-white/10"}`}>
-            🗞 All
-          </button>
-          {/* Live Stock tab */}
-          <button onClick={() => setActiveTab("live")}
-            className={`shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all flex items-center gap-1.5 ${activeTab === "live" ? "bg-green-500/20 border-green-500/30 text-green-300" : "bg-white/5 border-white/10 text-slate-400 hover:bg-white/10"}`}>
-            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />📈 Live Markets
-          </button>
           {CATEGORY_ORDER.map(cat => {
             const meta = CATEGORY_META[cat];
             const count = nationalEvents.filter(e => e.category === cat && !e.is_resolved).length;
@@ -151,10 +142,10 @@ export default function NationwideNews() {
               </button>
             );
           })}
-          {/* Cities tab */}
+          {/* All tab (renamed from Cities) */}
           <button onClick={() => setActiveTab("cities")}
             className={`shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all flex items-center gap-1 ${activeTab === "cities" ? "bg-amber-500/20 border-amber-500/30 text-amber-300" : "bg-white/5 border-white/10 text-slate-400 hover:bg-white/10"}`}>
-            🏙️ <span>Cities</span>
+            🏙️ <span>All</span>
             {cityEvents.filter(e => !e.is_resolved).length > 0 && (
               <span className="w-4 h-4 rounded-full bg-amber-500 text-white text-[9px] flex items-center justify-center font-black">
                 {cityEvents.filter(e => !e.is_resolved).length}
