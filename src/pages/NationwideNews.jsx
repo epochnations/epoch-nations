@@ -140,7 +140,7 @@ export default function NationwideNews() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#080c14] flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: palette.bg }}>
         <div className="text-center space-y-3">
           <div className="w-10 h-10 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin mx-auto" />
           <div className="text-slate-400 text-xs tracking-widest uppercase">Loading National Feed...</div>
