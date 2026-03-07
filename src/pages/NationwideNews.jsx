@@ -30,6 +30,7 @@ export default function NationwideNews() {
   const [activeTab, setActiveTab] = useState("all");
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [cityFeedCollapsed, setCityFeedCollapsed] = useState(false);
   const [edition] = useState(String(Math.floor(Math.random() * 900 + 100)).padStart(4, "0"));
 
   useEffect(() => { init(); }, []);
