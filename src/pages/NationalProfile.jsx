@@ -87,7 +87,7 @@ export default function NationalProfile() {
     Information: { bg: "bg-blue-900/20", border: "border-blue-500/30", accent: "text-blue-400", label: "💻 Information" },
     Nano: { bg: "bg-violet-900/20", border: "border-violet-500/30", accent: "text-violet-400", label: "🔬 Nano" },
   };
-  const epochTheme = EPOCH_THEME[myNation.epoch] || EPOCH_THEME.Industrial;
+  const epochTheme = EPOCH_THEME[myNation.epoch] || EPOCH_THEME.Industrial; // renamed from 'theme' to avoid conflict with useTheme()
 
   return (
     <div className={`min-h-screen relative ${theme === "realistic" ? "epoch-realistic" : ""}`}
