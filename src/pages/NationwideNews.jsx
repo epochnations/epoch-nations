@@ -19,7 +19,6 @@ import { CATEGORY_META, pickWeather } from "../components/news/NewsEventConfig";
 import { getCitiesForNation } from "../components/news/CityConfig";
 
 const CATEGORY_ORDER = ["government","economy","weather","crime","education","business","international","classifieds","science","military"];
-const FEED_TABS = ["all", ...CATEGORY_ORDER, "cities"];
 
 export default function NationwideNews() {
   const [nation, setNation] = useState(null);
