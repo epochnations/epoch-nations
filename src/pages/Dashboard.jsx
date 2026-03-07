@@ -84,17 +84,18 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-[#080c14] text-white relative">
+    <div className={`min-h-screen text-white relative ${theme === "realistic" ? "epoch-realistic" : ""}`} style={{ background: palette.bg, color: palette.text, transition: "background 3s ease-in-out, color 3s ease-in-out" }}>
       {/* Background grid */}
       <div className="fixed inset-0 pointer-events-none"
         style={{
-          backgroundImage: "linear-gradient(rgba(0,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,255,0.02) 1px, transparent 1px)",
-          backgroundSize: "60px 60px"
+          backgroundImage: `linear-gradient(${palette.gridLine} 1px, transparent 1px), linear-gradient(90deg, ${palette.gridLine} 1px, transparent 1px)`,
+          backgroundSize: "60px 60px",
+          transition: "all 3s ease-in-out"
         }}
       />
       {/* Glow effects */}
-      <div className="fixed top-0 left-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-violet-500/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="fixed top-0 left-1/4 w-96 h-96 rounded-full blur-3xl pointer-events-none" style={{ background: palette.glow, transition: "background 3s ease-in-out" }} />
+      <div className="fixed bottom-0 right-1/4 w-96 h-96 rounded-full blur-3xl pointer-events-none" style={{ background: palette.glow, transition: "background 3s ease-in-out" }} />
 
       {/* TOP NAV */}
       <header className="relative z-20 border-b border-white/10 backdrop-blur-xl bg-black/30 px-6 py-3 flex items-center justify-between">
