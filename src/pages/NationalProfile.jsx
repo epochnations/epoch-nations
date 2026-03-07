@@ -26,6 +26,13 @@ export default function NationalProfile() {
   const [activeTab, setActiveTab] = useState("economy");
   const [showEpochTransition, setShowEpochTransition] = useState(false);
   const [newEpoch, setNewEpoch] = useState(null);
+  const [isDark, setIsDark] = useState(() => localStorage.getItem("theme") !== "light");
+
+  useEffect(() => {
+    document.documentElement.style.setProperty("--page-bg", isDark ? "#080c14" : "#f1f5f9");
+    document.body.style.background = isDark ? "#080c14" : "#f1f5f9";
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+  }, [isDark]);
 
   useEffect(() => {
     init();
