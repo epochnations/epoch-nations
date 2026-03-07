@@ -134,6 +134,11 @@ export default function NationwideNews() {
             className={`shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${activeTab === "all" ? "bg-white/15 border-white/25 text-white" : "bg-white/5 border-white/10 text-slate-400 hover:bg-white/10"}`}>
             🗞 All
           </button>
+          {/* Live Stock tab */}
+          <button onClick={() => setActiveTab("live")}
+            className={`shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all flex items-center gap-1.5 ${activeTab === "live" ? "bg-green-500/20 border-green-500/30 text-green-300" : "bg-white/5 border-white/10 text-slate-400 hover:bg-white/10"}`}>
+            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />📈 Live Markets
+          </button>
           {CATEGORY_ORDER.map(cat => {
             const meta = CATEGORY_META[cat];
             const count = nationalEvents.filter(e => e.category === cat && !e.is_resolved).length;
@@ -188,16 +193,39 @@ export default function NationwideNews() {
 
           {/* CENTER FEED */}
           <div className="space-y-5 order-1 lg:order-2 min-w-0">
-            {activeTab === "cities" ? (
-              <CityNewsStream cities={cities} events={cityEvents} onSelect={setSelectedEvent} />
-            ) : activeTab === "all" && (
-              /* Latest News strip — only on "All" tab */
-              false
-            ) || activeTab === "live" ? (
+            {activeTab === "live" ? (
               <LiveStockTickerTab />
+            ) : activeTab === "cities" ? (
+              <CityNewsStream cities={cities} events={cityEvents} onSelect={setSelectedEvent} />
             ) : (
               <>
-                {/* City live stream (compact) always shown on non-city tabs if city events exist */}
+                {/* Latest News — 5 most recent unresolved national events */}
+                {events.filter(e => !e.city_tag && !e.is_resolved).length > 0 && (
+                  <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                      <div className="text-xs font-bold text-cyan-400 uppercase tracking-widest">⚡ Latest News</div>
+                    </div>
+                    <div className="space-y-1.5">
+                      {events.filter(e => !e.city_tag && !e.is_resolved).slice(0, 5).map(ev => {
+                        const sev = { critical:"text-red-400", warning:"text-yellow-400", opportunity:"text-blue-400", info:"text-emerald-400" }[ev.severity] || "text-slate-400";
+                        const catMeta = CATEGORY_META[ev.category] || { emoji: "📰" };
+                        return (
+                          <button key={ev.id} onClick={() => setSelectedEvent(ev)}
+                            className="w-full text-left flex items-start gap-2 hover:bg-white/5 rounded-xl px-2 py-1.5 transition-all group">
+                            <span className="text-sm shrink-0 mt-0.5">{catMeta.emoji}</span>
+                            <div className="min-w-0 flex-1">
+                              <div className="text-xs text-white group-hover:text-cyan-300 transition-colors line-clamp-1 font-semibold">{ev.headline}</div>
+                              <span className={`text-[10px] font-bold uppercase ${sev}`}>{ev.severity}</span>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* City live feed strip */}
                 {cityEvents.filter(e => !e.is_resolved).length > 0 && (
                   <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-3">
                     <div className="flex items-center justify-between mb-2">
@@ -227,7 +255,7 @@ export default function NationwideNews() {
                   </div>
                 )}
 
-                {/* National events */}
+                {/* National events by category */}
                 {Object.entries(grouped).length === 0 && (
                   <div className="rounded-2xl border border-white/10 bg-white/5 p-10 text-center text-slate-500">
                     <div className="text-3xl mb-3">📡</div>
@@ -246,25 +274,6 @@ export default function NationwideNews() {
           <div className="space-y-4 order-3 min-w-0">
             <WeatherForecastWidget weather={weather} nation={nation} />
             <NewsApprovalWidget nation={nation} events={events} />
-            {/* Quick stats */}
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">📈 Nation At A Glance</div>
-              <div className="space-y-2">
-                {[
-                  { label:"GDP",        val:`${(nation?.gdp||0).toLocaleString()} cr`,    color:"text-cyan-400" },
-                  { label:"Treasury",   val:`${(nation?.currency||0).toLocaleString()} cr`, color:"text-green-400" },
-                  { label:"Epoch",      val:nation?.epoch || "—",                          color:"text-violet-400" },
-                  { label:"Tech Level", val:`Lv. ${nation?.tech_level || 1}`,              color:"text-yellow-400" },
-                  { label:"Cities",     val:`${cities.length}`,                            color:"text-amber-400" },
-                  { label:"At War",     val:`${nation?.at_war_with?.length || 0}`,         color:nation?.at_war_with?.length ? "text-red-400" : "text-slate-500" },
-                ].map(s => (
-                  <div key={s.label} className="flex justify-between text-xs">
-                    <span className="text-slate-400">{s.label}</span>
-                    <span className={`font-mono font-bold ${s.color}`}>{s.val}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
             {/* Recent decisions */}
             {events.filter(e => e.is_resolved).length > 0 && (
               <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
