@@ -3,8 +3,8 @@ import { base44 } from "@/api/base44Client";
 import { JOURNALISTS, EDITION_ADJECTIVES } from "./NewsEventConfig";
 import { getCitiesForNation, generateCityEvents } from "./CityConfig";
 
-const CITY_TICK_MS = 90_000; // 90s per city tick
-const MAX_CITY_ACTIVE = 3;   // max unresolved per city
+const CITY_TICK_MS = 45_000; // 45s per city tick (faster)
+const MAX_CITY_ACTIVE = 4;   // max unresolved per city
 
 export default function CityNewsEngine({ nation, onRefresh }) {
   const intervalRef = useRef(null);
@@ -25,9 +25,9 @@ export default function CityNewsEngine({ nation, onRefresh }) {
     if (!fresh) return;
 
     const cities = getCitiesForNation(fresh);
-    // Pick 1-2 random cities to generate events for this tick
+    // Pick 2-3 random cities to generate events for this tick
     const shuffled = [...cities].sort(() => Math.random() - 0.5);
-    const activeCities = shuffled.slice(0, 2);
+    const activeCities = shuffled.slice(0, 3);
 
     for (const city of activeCities) {
       const existing = await base44.entities.NewsEvent.filter({

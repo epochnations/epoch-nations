@@ -20,10 +20,10 @@ export const MAYOR_NAMES = [
   "Mayor Selin Özkan", "Mayor Tobias Ferrara", "Mayor Amara Diallo", "Mayor Noor Al-Rashid",
 ];
 
-// Returns 3–4 cities for a given nation, seeded by name
+// Returns 5–6 cities for a given nation, seeded by name
 export function getCitiesForNation(nation) {
   const seed = (nation?.name || "").split("").reduce((a, c) => a + c.charCodeAt(0), 0);
-  const count = 3 + (seed % 2); // 3 or 4 cities
+  const count = 5 + (seed % 2); // 5 or 6 cities
   const picked = [];
   const indices = new Set();
   let i = seed;
