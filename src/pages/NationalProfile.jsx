@@ -74,7 +74,7 @@ export default function NationalProfile() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#080c14] flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: palette.bg }}>
         <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
       </div>
     );
