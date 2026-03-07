@@ -81,10 +81,40 @@ export default function NewsHeader({ nation, weather, edition, breakingEvent, on
           </div>
         </div>
 
-        {/* Ticker marquee (non-breaking) */}
-        {!breakingEvent && (
-          <div className="mt-3 pt-3 border-t border-white/5 text-xs text-slate-400 font-mono overflow-hidden">
-            <span className="inline-block transition-all duration-700">{breakingText}</span>
+        {/* Live stock ticker strip */}
+        {stocks.length > 0 && (
+          <div className="mt-3 pt-3 border-t border-white/5 relative overflow-hidden h-7 flex items-center">
+            <div className="absolute left-0 top-0 bottom-0 w-14 z-10 flex items-center gap-1 bg-[#080c14]/80">
+              <span className="text-[9px] font-black text-green-400 tracking-widest">LIVE</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+            </div>
+            <div
+              className="ml-14 flex items-center whitespace-nowrap"
+              style={{ animation: `headerTickerScroll ${Math.max(25, stocks.length * 5)}s linear infinite` }}
+            >
+              {[...stocks, ...stocks].map((stock, i) => {
+                const history = stock.price_history || [];
+                const prev = history.length > 1 ? history[history.length - 2] : stock.base_price;
+                const change = stock.current_price - prev;
+                const changePct = prev > 0 ? (change / prev) * 100 : 0;
+                const isUp = change >= 0;
+                return (
+                  <button
+                    key={`${stock.id}-${i}`}
+                    onClick={() => onClickStock && onClickStock(stock)}
+                    className="inline-flex items-center gap-1.5 px-4 border-r border-white/10 h-7 hover:bg-white/10 transition-colors shrink-0"
+                  >
+                    <span className="font-mono font-black text-white text-[11px]">{stock.ticker}</span>
+                    <span className="font-mono text-[11px] text-slate-300">{stock.current_price?.toFixed(2)}</span>
+                    <span className={`inline-flex items-center gap-0.5 text-[11px] font-mono ${isUp ? "text-green-400" : "text-red-400"}`}>
+                      {isUp ? <TrendingUp size={9} /> : <TrendingDown size={9} />}
+                      {isUp ? "+" : ""}{changePct.toFixed(1)}%
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+            <style>{`@keyframes headerTickerScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }`}</style>
           </div>
         )}
       </div>
