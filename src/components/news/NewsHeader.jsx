@@ -16,12 +16,6 @@ export default function NewsHeader({ nation, weather, edition, breakingEvent, on
   const weatherEmoji = WEATHER_EMOJIS[weather] || "☀️";
   const weatherFx = WEATHER_EFFECTS[weather] || {};
 
-  const breakingTexts = breakingEvent
-    ? [`⚡ BREAKING: ${breakingEvent.headline}`, `📍 Severity: ${breakingEvent.severity?.toUpperCase()}`, `🗞 Read full story below`]
-    : ["📡 Live National Feed Active", `🌐 ${nation?.name || "..."} Nationwide News Network`, `📰 Edition #${edition}`];
-
-  const breakingText = breakingTexts[tick % breakingTexts.length];
-
   const stability = nation?.stability || 75;
   const stabilityColor = stability > 70 ? "text-emerald-400" : stability > 40 ? "text-yellow-400" : "text-red-400";
 
