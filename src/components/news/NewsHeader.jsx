@@ -3,12 +3,11 @@ import { Wifi, TrendingUp, TrendingDown } from "lucide-react";
 import { WEATHER_EMOJIS, WEATHER_EFFECTS } from "./NewsEventConfig";
 import { base44 } from "@/api/base44Client";
 
-export default function NewsHeader({ nation, weather, edition, breakingEvent, onClickBreaking }) {
-  const [tick, setTick] = useState(0);
+export default function NewsHeader({ nation, weather, edition, breakingEvent, onClickBreaking, onClickStock }) {
+  const [stocks, setStocks] = useState([]);
 
   useEffect(() => {
-    const t = setInterval(() => setTick(x => x + 1), 3000);
-    return () => clearInterval(t);
+    base44.entities.Stock.list("-updated_date", 40).then(setStocks);
   }, []);
 
   const now = new Date();
