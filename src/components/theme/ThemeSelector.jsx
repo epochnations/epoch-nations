@@ -5,9 +5,7 @@ export default function ThemeSelector() {
   const { theme, setTheme } = useTheme();
 
   const options = [
-    { value: "dark",      label: "Dark",      IconComp: Moon  },
-    { value: "light",     label: "Light",     IconComp: Sun   },
-    { value: "realistic", label: "Realistic", IconComp: Globe },
+    { value: "dark", label: "Dark", IconComp: Moon },
   ];
 
   return (
