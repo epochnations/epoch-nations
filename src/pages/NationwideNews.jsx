@@ -194,9 +194,7 @@ export default function NationwideNews() {
 
           {/* CENTER FEED */}
           <div className="space-y-5 order-1 lg:order-2 min-w-0">
-            {activeTab === "live" ? (
-              <LiveStockTickerTab />
-            ) : activeTab === "cities" ? (
+            {activeTab === "cities" ? (
               <CityNewsStream cities={cities} events={cityEvents} onSelect={setSelectedEvent} />
             ) : (
               <>
