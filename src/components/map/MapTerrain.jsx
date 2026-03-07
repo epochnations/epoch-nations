@@ -46,7 +46,7 @@ const RIVERS = [
 ];
 
 // City dots (named positions)
-const CITIES = [
+export const CITIES = [
   { name:"New York",    x:390,  y:185, size:5 },
   { name:"London",      x:720,  y:145, size:5 },
   { name:"Paris",       x:745,  y:170, size:4 },
