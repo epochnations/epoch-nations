@@ -56,9 +56,46 @@ export default function NationwideNews() {
     setLoading(false);
   }
 
-  async function loadEvents(nationId) {
-    const evs = await base44.entities.NewsEvent.filter({ nation_id: nationId }, "-created_date", 60);
+  async function loadEvents(nationId, nation) {
+    const evs = await base44.entities.NewsEvent.filter({ nation_id: nationId }, "-created_date", 80);
     setEvents(evs);
+
+    // If very few events exist, seed all categories immediately so players see content right away
+    const national = evs.filter(e => !e.city_tag && !e.is_resolved);
+    if (national.length < 15) {
+      await seedInitialEvents(nation || { id: nationId });
+      const fresh = await base44.entities.NewsEvent.filter({ nation_id: nationId }, "-created_date", 80);
+      setEvents(fresh);
+    }
+  }
+
+  async function seedInitialEvents(n) {
+    const adjectives = EDITION_ADJECTIVES;
+    // Seed 3 events per category from national templates
+    for (const cat of CATEGORY_ORDER) {
+      const catTemplates = EVENT_TEMPLATES.filter(t => t.category === cat);
+      const picks = catTemplates.slice(0, 3);
+      for (const tpl of picks) {
+        const author = JOURNALISTS[Math.floor(Math.random() * JOURNALISTS.length)];
+        const edAdj = adjectives[Math.floor(Math.random() * adjectives.length)];
+        await base44.entities.NewsEvent.create({
+          nation_id: n.id,
+          owner_email: n.owner_email,
+          category: tpl.category,
+          severity: tpl.severity || "info",
+          headline: tpl.headline,
+          body: tpl.body,
+          author,
+          edition: `${edAdj} Edition #${Math.floor(Math.random() * 900 + 100)}`,
+          weather_type: "",
+          options: tpl.options || [],
+          is_resolved: false,
+          is_disaster: tpl.is_disaster || false,
+          chosen_option: "",
+          stat_preview: tpl.effects || {},
+        });
+      }
+    }
   }
 
   const refresh = useCallback(async () => {
