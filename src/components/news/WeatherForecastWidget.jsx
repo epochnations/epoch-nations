@@ -81,8 +81,8 @@ export default function WeatherForecastWidget({ weather, nation }) {
       {/* Header */}
       <div className="px-4 pt-4 pb-2">
         <div className="flex items-center justify-between mb-2">
-          <div className="text-xs font-bold text-cyan-400 uppercase tracking-widest">🌦 Weather Forecast</div>
-          <div className="flex rounded-xl overflow-hidden border border-white/10 text-[10px] font-bold">
+          <div className="text-xs font-bold text-cyan-400 uppercase tracking-widest whitespace-nowrap">🌦 Weather Forecast</div>
+          <div className="flex rounded-xl overflow-hidden border border-white/10 text-[10px] font-bold shrink-0">
             <button onClick={() => setView("hourly")}
               className={`px-3 py-1.5 transition-all ${view==="hourly" ? "bg-cyan-500/30 text-cyan-200" : "bg-white/5 text-slate-400 hover:bg-white/10"}`}>
               Hourly

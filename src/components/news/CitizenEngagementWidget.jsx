@@ -42,7 +42,7 @@ export default function CitizenEngagementWidget({ cities }) {
       >
         <div className="flex items-center gap-2">
           <span className="text-base">👥</span>
-          <span className="text-xs font-bold text-slate-300 uppercase tracking-widest">Citizen Engagement</span>
+          <span className="text-xs font-bold text-slate-300 uppercase tracking-widest whitespace-nowrap">Citizen Engagement</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs font-mono font-bold" style={{ color: tier.color }}>{tier.icon} {avgEngagement}%</span>
