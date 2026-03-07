@@ -175,6 +175,8 @@ export default function NationwideNews() {
                 {[
                   { label:"GDP",        val:`${(nation?.gdp||0).toLocaleString()} cr`,    color:"text-cyan-400" },
                   { label:"Treasury",   val:`${(nation?.currency||0).toLocaleString()} cr`, color:"text-green-400" },
+                  { label:"Stability",  val:`${Math.round(nation?.stability||0)}%`,         color: (nation?.stability||0) > 70 ? "text-emerald-400" : (nation?.stability||0) > 40 ? "text-yellow-400" : "text-red-400" },
+                  { label:"Population", val:(nation?.population||0).toLocaleString(),       color:"text-violet-400" },
                   { label:"Epoch",      val:nation?.epoch || "—",                          color:"text-violet-400" },
                   { label:"Tech Level", val:`Lv. ${nation?.tech_level || 1}`,              color:"text-yellow-400" },
                   { label:"Cities",     val:`${cities.length}`,                            color:"text-amber-400" },
