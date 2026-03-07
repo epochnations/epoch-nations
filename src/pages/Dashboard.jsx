@@ -26,6 +26,7 @@ import ResourceEngine from "../components/dashboard/ResourceEngine";
 import WorkforcePanel from "../components/panels/WorkforcePanel";
 
 export default function Dashboard() {
+  const { palette, theme } = useTheme();
   const [myNation, setMyNation] = useState(null);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
