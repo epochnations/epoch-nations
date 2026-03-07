@@ -125,13 +125,22 @@ export default function NationalProfile() {
         <div className="text-xl font-black tracking-tighter bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
           EPOCH NATIONS
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           <a href={createPageUrl("GlobalChronicles")} className="px-3 py-1.5 rounded-xl text-xs font-bold border border-white/10 text-slate-400 hover:bg-white/5 transition-all">
             📰 News
           </a>
           <a href={createPageUrl("Dashboard")} className="px-3 py-1.5 rounded-xl text-xs font-bold border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 transition-all">
             → Dashboard
           </a>
+          {/* Dark / Light toggle */}
+          <button
+            onClick={() => setIsDark(d => !d)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border border-white/10 text-slate-400 hover:bg-white/10 transition-all"
+            title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          >
+            {isDark ? <Sun size={13} /> : <Moon size={13} />}
+            {isDark ? "Light" : "Dark"}
+          </button>
         </div>
       </header>
 
