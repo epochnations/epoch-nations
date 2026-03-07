@@ -14,6 +14,7 @@ import NewsJokesWidget from "../components/news/NewsJokesWidget";
 import NewsHoroscopeWidget from "../components/news/NewsHoroscopeWidget";
 import CityNewsStream from "../components/news/CityNewsStream";
 import LiveStockTickerTab from "../components/news/LiveStockTickerTab";
+import CitizenEngagementWidget from "../components/news/CitizenEngagementWidget";
 import { CATEGORY_META, pickWeather } from "../components/news/NewsEventConfig";
 import { getCitiesForNation } from "../components/news/CityConfig";
 
@@ -274,6 +275,7 @@ export default function NationwideNews() {
           <div className="space-y-4 order-3 min-w-0">
             <WeatherForecastWidget weather={weather} nation={nation} />
             <NewsApprovalWidget nation={nation} events={events} />
+            {cities.length > 0 && <CitizenEngagementWidget cities={cities} />}
             {/* Recent decisions */}
             {events.filter(e => e.is_resolved).length > 0 && (
               <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
