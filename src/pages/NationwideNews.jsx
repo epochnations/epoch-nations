@@ -197,8 +197,8 @@ export default function NationwideNews() {
               <CityNewsStream cities={cities} events={cityEvents} onSelect={setSelectedEvent} />
             ) : (
               <>
-                {/* Latest News — 5 most recent unresolved national events */}
-                {events.filter(e => !e.city_tag && !e.is_resolved).length > 0 && (
+                {/* Latest News — only on the All tab */}
+                {activeTab === "cities" && events.filter(e => !e.city_tag && !e.is_resolved).length > 0 && (
                   <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-3">
                     <div className="flex items-center gap-2 mb-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
