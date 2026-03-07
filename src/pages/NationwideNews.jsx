@@ -14,8 +14,8 @@ import NewsJokesWidget from "../components/news/NewsJokesWidget";
 import NewsHoroscopeWidget from "../components/news/NewsHoroscopeWidget";
 import CityNewsStream from "../components/news/CityNewsStream";
 import CitizenEngagementWidget from "../components/news/CitizenEngagementWidget";
-import { CATEGORY_META, pickWeather } from "../components/news/NewsEventConfig";
-import { getCitiesForNation } from "../components/news/CityConfig";
+import { CATEGORY_META, pickWeather, EVENT_TEMPLATES, JOURNALISTS, EDITION_ADJECTIVES } from "../components/news/NewsEventConfig";
+import { getCitiesForNation, CITY_TEMPLATES } from "../components/news/CityConfig";
 
 const CATEGORY_ORDER = ["government","economy","weather","crime","education","business","international","classifieds","science","military"];
 
