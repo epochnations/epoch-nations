@@ -1,18 +1,18 @@
 import { Sun, Moon, Globe } from "lucide-react";
 import { useTheme } from "./ThemeProvider";
 
-const OPTIONS = [
-  { value: "dark",      label: "Dark",      icon: Moon,  desc: "Deep navy UI" },
-  { value: "light",     label: "Light",     icon: Sun,   desc: "True white" },
-  { value: "realistic", label: "Realistic", icon: Globe, desc: "Day/night cycle" },
-];
-
 export default function ThemeSelector() {
   const { theme, setTheme } = useTheme();
 
+  const options = [
+    { value: "dark",      label: "Dark",      IconComp: Moon  },
+    { value: "light",     label: "Light",     IconComp: Sun   },
+    { value: "realistic", label: "Realistic", IconComp: Globe },
+  ];
+
   return (
     <div className="flex items-center gap-1">
-      {OPTIONS.map(({ value, label, icon: Icon }) => (
+      {options.map(({ value, label, IconComp }) => (
         <button
           key={value}
           onClick={() => setTheme(value)}
@@ -23,7 +23,7 @@ export default function ThemeSelector() {
               : "bg-white/5 border-white/10 text-slate-400 hover:bg-white/10 hover:text-white"
           }`}
         >
-          <Icon size={12} />
+          <IconComp size={12} />
           <span className="hidden sm:inline">{label}</span>
         </button>
       ))}
