@@ -13,6 +13,7 @@ import NewsApprovalWidget from "../components/news/NewsApprovalWidget";
 import NewsJokesWidget from "../components/news/NewsJokesWidget";
 import NewsHoroscopeWidget from "../components/news/NewsHoroscopeWidget";
 import CityNewsStream from "../components/news/CityNewsStream";
+import LiveStockTickerTab from "../components/news/LiveStockTickerTab";
 import { CATEGORY_META, pickWeather } from "../components/news/NewsEventConfig";
 import { getCitiesForNation } from "../components/news/CityConfig";
 
@@ -159,8 +160,28 @@ export default function NationwideNews() {
         {/* 3-col layout */}
         <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr_300px] gap-4">
 
-          {/* LEFT SIDEBAR */}
+          {/* LEFT SIDEBAR — Citizen Corner */}
           <div className="space-y-4 order-2 lg:order-1 min-w-0">
+            {/* Nation At A Glance — moved here, top of Citizen Corner */}
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">📈 Nation At A Glance</div>
+              <div className="space-y-2">
+                {[
+                  { label:"GDP",        val:`${(nation?.gdp||0).toLocaleString()} cr`,    color:"text-cyan-400" },
+                  { label:"Treasury",   val:`${(nation?.currency||0).toLocaleString()} cr`, color:"text-green-400" },
+                  { label:"Epoch",      val:nation?.epoch || "—",                          color:"text-violet-400" },
+                  { label:"Tech Level", val:`Lv. ${nation?.tech_level || 1}`,              color:"text-yellow-400" },
+                  { label:"Cities",     val:`${cities.length}`,                            color:"text-amber-400" },
+                  { label:"At War",     val:`${nation?.at_war_with?.length || 0}`,         color:nation?.at_war_with?.length ? "text-red-400" : "text-slate-500" },
+                ].map(s => (
+                  <div key={s.label} className="flex justify-between text-xs">
+                    <span className="text-slate-400">{s.label}</span>
+                    <span className={`font-mono font-bold ${s.color}`}>{s.val}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* Citizen Corner */}
             <NewsJokesWidget />
             <NewsHoroscopeWidget />
           </div>
@@ -169,6 +190,11 @@ export default function NationwideNews() {
           <div className="space-y-5 order-1 lg:order-2 min-w-0">
             {activeTab === "cities" ? (
               <CityNewsStream cities={cities} events={cityEvents} onSelect={setSelectedEvent} />
+            ) : activeTab === "all" && (
+              /* Latest News strip — only on "All" tab */
+              false
+            ) || activeTab === "live" ? (
+              <LiveStockTickerTab />
             ) : (
               <>
                 {/* City live stream (compact) always shown on non-city tabs if city events exist */}
