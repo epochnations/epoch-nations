@@ -8,6 +8,12 @@ export const CITY_TEMPLATES = [
   { name: "New Solis",  emoji: "🌇", tag: "SOL", color: "#8b5cf6", region: "Capital District" },
   { name: "Valcrest",   emoji: "🏔️",  tag: "VAL", color: "#10b981", region: "Mountain Territory" },
   { name: "Dunmore",    emoji: "🏚️",  tag: "DUN", color: "#dc2626", region: "Eastern Borderlands" },
+  { name: "Harborgate", emoji: "🚢", tag: "HAR", color: "#0ea5e9", region: "Western Shore" },
+  { name: "Embervale",  emoji: "🔥", tag: "EMB", color: "#f97316", region: "Southern Highlands" },
+  { name: "Coldfen",    emoji: "❄️",  tag: "COL", color: "#7dd3fc", region: "Frozen North" },
+  { name: "Greenveil",  emoji: "🌿", tag: "GRN", color: "#22c55e", region: "Forest Canton" },
+  { name: "Ashford",    emoji: "🏛️",  tag: "ASH", color: "#a78bfa", region: "Central Province" },
+  { name: "Rivenmoor",  emoji: "🌊", tag: "RIV", color: "#38bdf8", region: "River Delta" },
 ];
 
 export const POLITICAL_LEANINGS = [
