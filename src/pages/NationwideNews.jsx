@@ -2,9 +2,6 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 import { RefreshCw } from "lucide-react";
-import { useTheme } from "../components/theme/ThemeProvider";
-import ThemeSelector from "../components/theme/ThemeSelector";
-import GameClock from "../components/theme/GameClock";
 
 import NewsHeader from "../components/news/NewsHeader";
 import NewsEngine from "../components/news/NewsEngine";
@@ -23,7 +20,6 @@ import { getCitiesForNation, CITY_TEMPLATES } from "../components/news/CityConfi
 const CATEGORY_ORDER = ["government","economy","weather","crime","education","business","international","classifieds","science","military"];
 
 export default function NationwideNews() {
-  const { palette, theme } = useTheme();
   const [nation, setNation] = useState(null);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -140,7 +136,7 @@ export default function NationwideNews() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: palette.bg }}>
+      <div className="min-h-screen bg-[#080c14] flex items-center justify-center">
         <div className="text-center space-y-3">
           <div className="w-10 h-10 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin mx-auto" />
           <div className="text-slate-400 text-xs tracking-widest uppercase">Loading National Feed...</div>
@@ -150,22 +146,20 @@ export default function NationwideNews() {
   }
 
   return (
-    <div className={`min-h-screen relative ${theme === "realistic" ? "epoch-realistic" : ""}`} style={{ background: palette.bg, color: palette.text, transition: "background 3s ease-in-out, color 3s ease-in-out" }}>
+    <div className="min-h-screen bg-[#080c14] text-white relative">
       <div className="fixed inset-0 pointer-events-none"
-        style={{ backgroundImage: `linear-gradient(${palette.gridLine} 1px, transparent 1px), linear-gradient(90deg, ${palette.gridLine} 1px, transparent 1px)`, backgroundSize: "50px 50px", transition: "all 3s ease-in-out" }} />
+        style={{ backgroundImage: "linear-gradient(rgba(0,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,255,0.015) 1px, transparent 1px)", backgroundSize: "50px 50px" }} />
 
       {/* Nav */}
-      <header className="relative z-20 border-b backdrop-blur-xl px-4 md:px-6 py-3 flex items-center justify-between" style={{ borderColor: palette.border, background: `${palette.panel}cc`, transition: "all 3s ease-in-out" }}>
+      <header className="relative z-20 border-b border-white/10 backdrop-blur-xl bg-black/30 px-4 md:px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="text-xl font-black tracking-tighter bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">EPOCH NATIONS</div>
           <span className="text-slate-500 hidden sm:inline">·</span>
           <span className="text-sm font-bold text-amber-400 hidden sm:inline">📰 Nationwide News</span>
-          <GameClock />
         </div>
         <div className="flex items-center gap-2">
-          <ThemeSelector />
           <button onClick={refresh} disabled={refreshing}
-            className="p-2 rounded-xl border text-slate-400 hover:text-white transition-all" style={{ background: "rgba(255,255,255,0.05)", borderColor: palette.border }}>
+            className="p-2 rounded-xl bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 transition-all">
             <RefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
           </button>
           <a href={createPageUrl("Dashboard")} className="px-3 py-1.5 rounded-xl text-xs font-bold border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 transition-all">

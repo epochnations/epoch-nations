@@ -1,15 +1,12 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
-import { TrendingUp, Swords, BookOpen, Globe } from "lucide-react";
+import { Shield, TrendingUp, Swords, BookOpen, Globe, Sun, Moon } from "lucide-react";
 import IdentityHeader from "../components/profile/IdentityHeader.jsx";
 import EconomicLedger from "../components/profile/EconomicLedger.jsx";
 import WarRoom from "../components/profile/WarRoom.jsx";
 import PolicyCenter from "../components/profile/PolicyCenter.jsx";
 import NationWikiPanel from "../components/profile/NationWikiPanel.jsx";
-import { useTheme } from "../components/theme/ThemeProvider";
-import ThemeSelector from "../components/theme/ThemeSelector";
-import GameClock from "../components/theme/GameClock";
 
 const TABS = [
   { id: "economy", label: "Economic Ledger", icon: TrendingUp },
@@ -26,10 +23,16 @@ export default function NationalProfile() {
   const [allNations, setAllNations] = useState([]);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { palette, theme } = useTheme();
   const [activeTab, setActiveTab] = useState("economy");
   const [showEpochTransition, setShowEpochTransition] = useState(false);
   const [newEpoch, setNewEpoch] = useState(null);
+  const [isDark, setIsDark] = useState(() => localStorage.getItem("theme") !== "light");
+
+  useEffect(() => {
+    document.documentElement.style.setProperty("--page-bg", isDark ? "#080c14" : "#f1f5f9");
+    document.body.style.background = isDark ? "#080c14" : "#f1f5f9";
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+  }, [isDark]);
 
   useEffect(() => {
     init();
@@ -74,7 +77,7 @@ export default function NationalProfile() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: palette.bg }}>
+      <div className="min-h-screen bg-[#080c14] flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
       </div>
     );
@@ -87,11 +90,10 @@ export default function NationalProfile() {
     Information: { bg: "bg-blue-900/20", border: "border-blue-500/30", accent: "text-blue-400", label: "💻 Information" },
     Nano: { bg: "bg-violet-900/20", border: "border-violet-500/30", accent: "text-violet-400", label: "🔬 Nano" },
   };
-  const epochTheme = EPOCH_THEME[myNation.epoch] || EPOCH_THEME.Industrial; // renamed from 'theme' to avoid conflict with useTheme()
+  const theme = EPOCH_THEME[myNation.epoch] || EPOCH_THEME.Industrial;
 
   return (
-    <div className={`min-h-screen relative ${theme === "realistic" ? "epoch-realistic" : ""}`}
-      style={{ background: palette.bg, color: palette.text, transition: "background 3s ease-in-out, color 3s ease-in-out" }}>
+    <div className="min-h-screen text-white relative" style={{ background: isDark ? "#080c14" : "#1e293b" }}>
       {/* Epoch Transition Overlay */}
       {showEpochTransition && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center backdrop-blur-2xl bg-black/80">
@@ -116,30 +118,35 @@ export default function NationalProfile() {
 
       {/* Background */}
       <div className="fixed inset-0 pointer-events-none"
-        style={{ backgroundImage: `linear-gradient(${palette.gridLine} 1px, transparent 1px), linear-gradient(90deg, ${palette.gridLine} 1px, transparent 1px)`, backgroundSize: "50px 50px", transition: "all 3s ease-in-out" }} />
+        style={{ backgroundImage: "linear-gradient(rgba(0,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,255,0.015) 1px, transparent 1px)", backgroundSize: "50px 50px" }} />
 
       {/* Nav */}
-      <header className="relative z-20 border-b backdrop-blur-xl px-4 md:px-8 py-3 flex items-center justify-between" style={{ borderColor: palette.border, background: `${palette.panel}cc`, transition: "all 3s ease-in-out" }}>
-        <div className="flex items-center gap-3">
-          <div className="text-xl font-black tracking-tighter bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-            EPOCH NATIONS
-          </div>
-          <GameClock />
+      <header className="relative z-20 border-b border-white/10 backdrop-blur-xl bg-black/30 px-4 md:px-8 py-3 flex items-center justify-between">
+        <div className="text-xl font-black tracking-tighter bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+          EPOCH NATIONS
         </div>
         <div className="flex gap-2 items-center">
-          <ThemeSelector />
           <a href={createPageUrl("GlobalChronicles")} className="px-3 py-1.5 rounded-xl text-xs font-bold border border-white/10 text-slate-400 hover:bg-white/5 transition-all">
             📰 News
           </a>
           <a href={createPageUrl("Dashboard")} className="px-3 py-1.5 rounded-xl text-xs font-bold border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 transition-all">
             → Dashboard
           </a>
+          {/* Dark / Light toggle */}
+          <button
+            onClick={() => setIsDark(d => !d)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border border-white/10 text-slate-400 hover:bg-white/10 transition-all"
+            title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          >
+            {isDark ? <Sun size={13} /> : <Moon size={13} />}
+            {isDark ? "Light" : "Dark"}
+          </button>
         </div>
       </header>
 
       <main className="relative z-10 max-w-6xl mx-auto px-4 md:px-8 py-6 space-y-6">
         {/* Identity Header */}
-        <IdentityHeader nation={myNation} theme={epochTheme} onRefresh={() => loadAll(user?.email)} />
+        <IdentityHeader nation={myNation} theme={theme} onRefresh={() => loadAll(user?.email)} />
 
         {/* Tabs */}
         <div className="flex gap-1 border-b border-white/10 overflow-x-auto">

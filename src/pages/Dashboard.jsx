@@ -2,9 +2,6 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 import { Cpu, Plus, Sliders, Users, Hammer } from "lucide-react";
-import { useTheme } from "../components/theme/ThemeProvider";
-import ThemeSelector from "../components/theme/ThemeSelector";
-import GameClock from "../components/theme/GameClock";
 
 
 import NationStatsPanel from "../components/dashboard/NationStatsPanel";
@@ -26,7 +23,6 @@ import ResourceEngine from "../components/dashboard/ResourceEngine";
 import WorkforcePanel from "../components/panels/WorkforcePanel";
 
 export default function Dashboard() {
-  const { palette, theme } = useTheme();
   const [myNation, setMyNation] = useState(null);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -74,7 +70,7 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: palette.bg }}>
+      <div className="min-h-screen bg-[#080c14] flex items-center justify-center">
         <div className="text-center space-y-3">
           <div className="w-10 h-10 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin mx-auto" />
           <div className="text-slate-400 text-sm tracking-widest uppercase">Loading Command Center...</div>
@@ -84,30 +80,28 @@ export default function Dashboard() {
   }
 
   return (
-    <div className={`min-h-screen text-white relative ${theme === "realistic" ? "epoch-realistic" : ""}`} style={{ background: palette.bg, color: palette.text, transition: "background 3s ease-in-out, color 3s ease-in-out" }}>
+    <div className="min-h-screen bg-[#080c14] text-white relative">
       {/* Background grid */}
       <div className="fixed inset-0 pointer-events-none"
         style={{
-          backgroundImage: `linear-gradient(${palette.gridLine} 1px, transparent 1px), linear-gradient(90deg, ${palette.gridLine} 1px, transparent 1px)`,
-          backgroundSize: "60px 60px",
-          transition: "all 3s ease-in-out"
+          backgroundImage: "linear-gradient(rgba(0,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,255,0.02) 1px, transparent 1px)",
+          backgroundSize: "60px 60px"
         }}
       />
       {/* Glow effects */}
-      <div className="fixed top-0 left-1/4 w-96 h-96 rounded-full blur-3xl pointer-events-none" style={{ background: palette.glow, transition: "background 3s ease-in-out" }} />
-      <div className="fixed bottom-0 right-1/4 w-96 h-96 rounded-full blur-3xl pointer-events-none" style={{ background: palette.glow, transition: "background 3s ease-in-out" }} />
+      <div className="fixed top-0 left-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-violet-500/5 rounded-full blur-3xl pointer-events-none" />
 
       {/* TOP NAV */}
-      <header className="relative z-20 border-b backdrop-blur-xl px-6 py-3 flex items-center justify-between" style={{ borderColor: palette.border, background: `${palette.panel}cc`, transition: "all 3s ease-in-out" }}>
+      <header className="relative z-20 border-b border-white/10 backdrop-blur-xl bg-black/30 px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="text-xl font-black tracking-tighter bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
             EPOCH NATIONS
           </div>
-          <GameClock />
+
         </div>
 
         <div className="flex items-center gap-2">
-          <ThemeSelector />
           {/* Quick actions */}
           <button
             onClick={() => setShowIssueStock(true)}
