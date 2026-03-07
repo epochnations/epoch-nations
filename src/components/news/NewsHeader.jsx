@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { Wifi, Wind } from "lucide-react";
+import { Wifi, TrendingUp, TrendingDown } from "lucide-react";
 import { WEATHER_EMOJIS, WEATHER_EFFECTS } from "./NewsEventConfig";
+import { base44 } from "@/api/base44Client";
 
 export default function NewsHeader({ nation, weather, edition, breakingEvent, onClickBreaking }) {
   const [tick, setTick] = useState(0);
