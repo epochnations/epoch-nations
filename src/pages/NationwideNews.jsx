@@ -23,6 +23,7 @@ import { getCitiesForNation, CITY_TEMPLATES } from "../components/news/CityConfi
 const CATEGORY_ORDER = ["government","economy","weather","crime","education","business","international","classifieds","science","military"];
 
 export default function NationwideNews() {
+  const { palette, theme } = useTheme();
   const [nation, setNation] = useState(null);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
