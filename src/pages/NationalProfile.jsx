@@ -138,7 +138,7 @@ export default function NationalProfile() {
 
       <main className="relative z-10 max-w-6xl mx-auto px-4 md:px-8 py-6 space-y-6">
         {/* Identity Header */}
-        <IdentityHeader nation={myNation} theme={theme} onRefresh={() => loadAll(user?.email)} />
+        <IdentityHeader nation={myNation} theme={epochTheme} onRefresh={() => loadAll(user?.email)} />
 
         {/* Tabs */}
         <div className="flex gap-1 border-b border-white/10 overflow-x-auto">
