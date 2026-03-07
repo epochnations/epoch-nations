@@ -1,27 +1,37 @@
-import { useState, useEffect } from "react";
+/**
+ * WorldMap – interactive Google Maps-style strategy map.
+ * Replaces the old static dot map.
+ */
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
-import { Swords, Heart, Globe } from "lucide-react";
+import { Globe, Wifi } from "lucide-react";
 
-const EPOCH_RING = {
-  Industrial: "border-amber-400",
-  Information: "border-cyan-400",
-  Nano: "border-violet-400"
+import { useMapEngine } from "../map/MapEngine";
+import MapTerrain, { MAP_W, MAP_H, nationPos, CITIES } from "../map/MapTerrain";
+import MapOverlays from "../map/MapOverlays";
+import MapNationIcon from "../map/MapNationIcon";
+import MapSearchBar from "../map/MapSearchBar";
+import MapControls from "../map/MapControls";
+import MapCityPanel from "../map/MapCityPanel";
+
+const DEFAULT_LAYERS = {
+  wars: true, battles: true, tradeRoutes: true, danger: true, resources: false
 };
 
-// Grid positions for nations (deterministic by nation id hash)
-function getPosition(id, index) {
-  const positions = [
-    { x: 15, y: 20 }, { x: 40, y: 15 }, { x: 65, y: 25 }, { x: 85, y: 15 },
-    { x: 25, y: 50 }, { x: 50, y: 45 }, { x: 72, y: 55 }, { x: 10, y: 70 },
-    { x: 35, y: 72 }, { x: 60, y: 75 }, { x: 80, y: 65 }, { x: 45, y: 85 },
-  ];
-  return positions[index % positions.length];
-}
-
 export default function WorldMap({ myNation, onSelectNation }) {
-  const [nations, setNations] = useState([]);
-  const [hovered, setHovered] = useState(null);
+  const containerRef = useRef(null);
+  const { zoom, pan, setZoom, setPan, smoothPanTo, handlers } = useMapEngine(containerRef);
 
+  const [nations, setNations] = useState([]);
+  const [mode, setMode] = useState("global");
+  const [layers, setLayers] = useState(DEFAULT_LAYERS);
+  const [showLayerPanel, setShowLayerPanel] = useState(false);
+  const [hoveredNation, setHoveredNation] = useState(null);
+  const [selectedNation, setSelectedNation] = useState(null);
+  const [selectedCity, setSelectedCity] = useState(null);
+  const [live, setLive] = useState(true);
+
+  // Load nations
   useEffect(() => {
     loadNations();
     const unsub = base44.entities.Nation.subscribe(() => loadNations());
@@ -29,146 +39,224 @@ export default function WorldMap({ myNation, onSelectNation }) {
   }, []);
 
   async function loadNations() {
-    const data = await base44.entities.Nation.list("-gdp", 50);
+    const data = await base44.entities.Nation.list("-gdp", 60);
     setNations(data);
   }
 
+  // Map from nation id → sorted index (stable)
+  const nationIndexMap = useMemo(() => {
+    const sorted = [...nations].sort((a, b) => a.id.localeCompare(b.id));
+    const map = {};
+    sorted.forEach((n, i) => { map[n.id] = i; });
+    return map;
+  }, [nations]);
+
+  // National mode: focus on player's nation
+  useEffect(() => {
+    if (mode === "national" && myNation) {
+      const idx = nationIndexMap[myNation.id] ?? 0;
+      const { x, y } = nationPos(idx);
+      setZoom(2.5);
+      smoothPanTo(x, y, 2.5);
+    } else if (mode === "global") {
+      setZoom(0.85);
+      setPan({ x: 0, y: 0 });
+    }
+  }, [mode, myNation, nationIndexMap]);
+
+  // Focus on a selected nation
+  const focusNation = useCallback((nation) => {
+    const idx = nationIndexMap[nation.id] ?? 0;
+    const { x, y } = nationPos(idx);
+    const newZoom = Math.max(zoom, 1.8);
+    setZoom(newZoom);
+    smoothPanTo(x, y, newZoom);
+    setSelectedNation(nation);
+    onSelectNation?.(nation);
+  }, [nationIndexMap, zoom, smoothPanTo, onSelectNation]);
+
+  // Focus on a city
+  const focusCity = useCallback((city) => {
+    const newZoom = Math.max(zoom, 2.5);
+    setZoom(newZoom);
+    smoothPanTo(city.x, city.y, newZoom);
+    setSelectedCity(city);
+  }, [zoom, smoothPanTo]);
+
+  function toggleLayer(key) {
+    setLayers(l => ({ ...l, [key]: !l[key] }));
+  }
+
+  function resetView() {
+    setZoom(0.85);
+    setPan({ x: 0, y: 0 });
+    setSelectedNation(null);
+    setSelectedCity(null);
+  }
+
+  // Clickable cities (only shown on SVG as native click targets)
+  const cityClickTargets = useMemo(() => {
+    if (zoom < 1.5) return [];
+    return CITIES;
+  }, [zoom]);
+
+  const displayNations = mode === "national" && myNation
+    ? nations.filter(n =>
+        n.id === myNation.id ||
+        (myNation.allies||[]).includes(n.id) ||
+        (myNation.at_war_with||[]).includes(n.id)
+      )
+    : nations;
+
   return (
-    <div className="backdrop-blur-xl bg-[#060d1f] border border-white/10 rounded-2xl overflow-hidden h-full relative">
-      {/* Header */}
-      <div className="absolute top-0 left-0 right-0 z-10 px-5 py-3 border-b border-white/10 flex items-center gap-2 backdrop-blur-sm bg-black/40">
-        <Globe size={14} className="text-cyan-400" />
-        <span className="text-xs font-bold text-slate-300 tracking-widest uppercase">World Map · {nations.length} Nations</span>
+    <div
+      ref={containerRef}
+      className="relative w-full h-full bg-[#071326] rounded-2xl overflow-hidden select-none"
+      style={{ cursor: "grab" }}
+      {...handlers}
+    >
+      {/* ── Top Bar ── */}
+      <div className="absolute top-0 left-0 right-0 z-30 flex items-center gap-2 px-3 py-2 bg-black/60 backdrop-blur-sm border-b border-white/10">
+        <Globe size={13} className="text-cyan-400 shrink-0"/>
+        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">
+          {mode === "global" ? `World · ${nations.length} Nations` : `National View · ${myNation?.name || ""}`}
+        </span>
+        <div className="flex-1"/>
+        <MapSearchBar
+          nations={nations}
+          onSelectNation={focusNation}
+          onSelectCity={focusCity}
+        />
+        <div className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold ${live ? "text-green-400 bg-green-400/10" : "text-slate-500"}`}>
+          <Wifi size={10}/> {live ? "LIVE" : "PAUSED"}
+        </div>
       </div>
 
-      {/* Ocean gradient */}
-      <div className="absolute inset-0" style={{
-        background: "radial-gradient(ellipse at 50% 50%, #0a1628 0%, #060d1f 100%)"
-      }} />
+      {/* ── Map Canvas ── */}
+      <div
+        className="absolute inset-0 pt-9"
+        style={{ overflow: "hidden" }}
+      >
+        <svg
+          width="100%" height="100%"
+          style={{
+            transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+            transformOrigin: "0 0",
+            willChange: "transform",
+            transition: "none",
+          }}
+          viewBox={`0 0 ${MAP_W} ${MAP_H}`}
+          preserveAspectRatio="xMidYMid meet"
+        >
+          {/* Terrain */}
+          <MapTerrain zoom={zoom} />
 
-      {/* Latitude lines */}
-      <svg className="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice">
-        {[1,2,3,4,5,6,7].map(i => (
-          <line key={i} x1="0" y1={i*60} x2="800" y2={i*60} stroke="#38bdf8" strokeWidth="0.4" strokeDasharray="4,8" />
-        ))}
-        {[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15].map(i => (
-          <line key={i} x1={i*53} y1="0" x2={i*53} y2="450" stroke="#38bdf8" strokeWidth="0.4" strokeDasharray="4,12" />
-        ))}
-        {/* Equator */}
-        <line x1="0" y1="225" x2="800" y2="225" stroke="#22d3ee" strokeWidth="1" strokeDasharray="8,6" opacity="0.3" />
-      </svg>
+          {/* Overlays (wars, trade, etc.) */}
+          <MapOverlays
+            nations={nations}
+            myNation={myNation}
+            layers={layers}
+            selectedNation={selectedNation}
+            nationIndexMap={nationIndexMap}
+          />
 
-      {/* Continents SVG - stylized world map */}
-      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice">
-        <defs>
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="2" result="blur" />
-            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-        </defs>
-        {/* North America */}
-        <path d="M 80,60 L 180,50 L 210,80 L 230,140 L 200,180 L 160,200 L 140,230 L 100,250 L 70,200 L 50,150 L 60,100 Z"
-          fill="#1e3a5f" stroke="#2563eb" strokeWidth="0.8" opacity="0.7"/>
-        {/* Central America */}
-        <path d="M 140,230 L 160,200 L 180,220 L 170,260 L 150,255 Z"
-          fill="#1e3a5f" stroke="#2563eb" strokeWidth="0.6" opacity="0.6"/>
-        {/* South America */}
-        <path d="M 160,270 L 210,250 L 240,300 L 250,380 L 210,420 L 170,410 L 140,360 L 130,300 Z"
-          fill="#1a4731" stroke="#059669" strokeWidth="0.8" opacity="0.7"/>
-        {/* Europe */}
-        <path d="M 350,50 L 420,40 L 450,70 L 440,110 L 410,120 L 380,110 L 350,90 Z"
-          fill="#3b2f6b" stroke="#7c3aed" strokeWidth="0.8" opacity="0.7"/>
-        {/* Scandinavia */}
-        <path d="M 390,30 L 420,20 L 430,50 L 410,60 L 385,50 Z"
-          fill="#3b2f6b" stroke="#7c3aed" strokeWidth="0.6" opacity="0.6"/>
-        {/* Africa */}
-        <path d="M 360,130 L 430,120 L 470,160 L 480,250 L 460,340 L 420,380 L 380,370 L 340,300 L 330,200 L 340,150 Z"
-          fill="#3b1f0a" stroke="#d97706" strokeWidth="0.8" opacity="0.7"/>
-        {/* Middle East */}
-        <path d="M 450,110 L 510,100 L 530,140 L 500,160 L 460,155 Z"
-          fill="#3b2505" stroke="#d97706" strokeWidth="0.6" opacity="0.6"/>
-        {/* Russia/Asia */}
-        <path d="M 440,30 L 650,20 L 700,60 L 720,100 L 680,130 L 600,140 L 530,130 L 480,110 L 450,70 Z"
-          fill="#1a2e40" stroke="#0891b2" strokeWidth="0.8" opacity="0.7"/>
-        {/* India */}
-        <path d="M 560,140 L 610,130 L 630,190 L 610,240 L 580,230 L 555,180 Z"
-          fill="#1a2e40" stroke="#0891b2" strokeWidth="0.6" opacity="0.6"/>
-        {/* SE Asia */}
-        <path d="M 650,140 L 720,120 L 750,160 L 730,190 L 680,180 L 650,160 Z"
-          fill="#1a2e40" stroke="#0891b2" strokeWidth="0.6" opacity="0.6"/>
-        {/* China */}
-        <path d="M 590,80 L 690,60 L 720,100 L 700,140 L 650,150 L 600,140 L 580,110 Z"
-          fill="#1a2e40" stroke="#0891b2" strokeWidth="0.7" opacity="0.65"/>
-        {/* Australia */}
-        <path d="M 640,290 L 740,270 L 780,310 L 770,370 L 710,390 L 650,360 L 620,320 Z"
-          fill="#2d1a0e" stroke="#c2410c" strokeWidth="0.8" opacity="0.7"/>
-        {/* Greenland */}
-        <path d="M 240,20 L 290,15 L 300,50 L 270,60 L 240,50 Z"
-          fill="#1e3a5f" stroke="#2563eb" strokeWidth="0.5" opacity="0.4"/>
-        {/* Japan */}
-        <path d="M 735,90 L 750,80 L 760,105 L 748,115 L 736,105 Z"
-          fill="#1a2e40" stroke="#0891b2" strokeWidth="0.5" opacity="0.6"/>
+          {/* Clickable cities */}
+          {cityClickTargets.map(city => (
+            <g key={city.name} style={{ cursor: "pointer" }}
+              onClick={(e) => { e.stopPropagation(); focusCity(city); }}>
+              <circle cx={city.x} cy={city.y} r={8} fill="transparent"/>
+            </g>
+          ))}
 
-        {/* Ocean shimmer dots */}
+          {/* Nation icons */}
+          {displayNations.map((nation, _) => {
+            const idx = nationIndexMap[nation.id] ?? 0;
+            const { x, y } = nationPos(idx);
+            const isMe = myNation?.id === nation.id;
+            const isAlly = myNation?.allies?.includes(nation.id);
+            const isEnemy = myNation?.at_war_with?.includes(nation.id);
+            const isSelected = selectedNation?.id === nation.id;
+
+            return (
+              <MapNationIcon
+                key={nation.id}
+                nation={nation}
+                x={x} y={y}
+                zoom={zoom}
+                isMe={isMe}
+                isAlly={isAlly}
+                isEnemy={isEnemy}
+                isSelected={isSelected}
+                onClick={focusNation}
+                onHover={setHoveredNation}
+                onLeave={() => setHoveredNation(null)}
+              />
+            );
+          })}
+        </svg>
+      </div>
+
+      {/* ── Controls (right side) ── */}
+      <MapControls
+        zoom={zoom}
+        onZoomIn={() => setZoom(z => Math.min(6, z + 0.4))}
+        onZoomOut={() => setZoom(z => Math.max(0.35, z - 0.4))}
+        onReset={resetView}
+        mode={mode}
+        onModeChange={setMode}
+        layers={layers}
+        onLayerToggle={toggleLayer}
+        showLayerPanel={showLayerPanel}
+        onToggleLayerPanel={() => setShowLayerPanel(p => !p)}
+      />
+
+      {/* ── Hover Tooltip ── */}
+      {hoveredNation && !selectedCity && (
+        <div className="absolute bottom-14 left-4 z-40 min-w-[160px] max-w-[200px] bg-black/85 border border-white/20 rounded-xl p-3 backdrop-blur-xl pointer-events-none animate-fadeIn">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-xl">{hoveredNation.flag_emoji || "🏴"}</span>
+            <div>
+              <div className="text-xs font-bold text-white">{hoveredNation.name}</div>
+              <div className="text-[10px] text-slate-500">{hoveredNation.epoch}</div>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-1 text-[10px]">
+            <div className="text-slate-500">GDP</div><div className="text-green-400 font-mono">{hoveredNation.gdp}</div>
+            <div className="text-slate-500">Stability</div><div className="text-cyan-400 font-mono">{hoveredNation.stability}%</div>
+            <div className="text-slate-500">Tech Lvl</div><div className="text-violet-400 font-mono">T{hoveredNation.tech_level}</div>
+            {(hoveredNation.at_war_with||[]).length > 0 && (
+              <><div className="text-slate-500">Status</div><div className="text-red-400 font-bold">⚔ At War</div></>
+            )}
+          </div>
+          {myNation && (
+            <div className={`mt-2 text-[10px] font-bold ${
+              myNation.id === hoveredNation.id ? "text-cyan-400" :
+              myNation.at_war_with?.includes(hoveredNation.id) ? "text-red-400" :
+              myNation.allies?.includes(hoveredNation.id) ? "text-green-400" : "text-slate-500"
+            }`}>
+              {myNation.id === hoveredNation.id ? "🫵 Your nation" :
+               myNation.at_war_with?.includes(hoveredNation.id) ? "⚔ Enemy" :
+               myNation.allies?.includes(hoveredNation.id) ? "🤝 Ally" : "Neutral"}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── City Panel ── */}
+      {selectedCity && (
+        <MapCityPanel city={selectedCity} onClose={() => setSelectedCity(null)} />
+      )}
+
+      {/* ── Legend ── */}
+      <div className="absolute bottom-3 left-3 z-20 flex flex-wrap gap-2">
         {[
-          [300,200],[500,300],[200,350],[680,230],[100,300],[750,200],[450,400],[280,120]
-        ].map(([x,y],i) => (
-          <circle key={i} cx={x} cy={y} r="1.5" fill="#38bdf8" opacity="0.15" />
-        ))}
-      </svg>
-
-      {/* Nation dots */}
-      <div className="absolute inset-0 pt-12">
-        {nations.map((nation, index) => {
-          const pos = getPosition(nation.id, index);
-          const isMe = myNation && nation.id === myNation.id;
-          const isAlly = myNation?.allies?.includes(nation.id);
-          const isEnemy = myNation?.at_war_with?.includes(nation.id);
-
-          return (
-            <button
-              key={nation.id}
-              className="absolute transform -translate-x-1/2 -translate-y-1/2 z-20 group"
-              style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
-              onMouseEnter={() => setHovered(nation)}
-              onMouseLeave={() => setHovered(null)}
-              onClick={() => onSelectNation?.(nation)}
-            >
-              {/* Pulse for me */}
-              {isMe && (
-                <div className="absolute inset-0 rounded-full animate-ping opacity-40" style={{ backgroundColor: nation.flag_color }} />
-              )}
-              <div
-                className={`relative w-9 h-9 rounded-xl flex items-center justify-center text-lg border-2 transition-transform group-hover:scale-125 shadow-lg ${EPOCH_RING[nation.epoch]}`}
-                style={{ backgroundColor: (nation.flag_color || "#3b82f6") + "33" }}
-              >
-                {nation.flag_emoji || "🏴"}
-                {isEnemy && <div className="absolute -top-1 -right-1 text-xs">⚔️</div>}
-                {isAlly && <div className="absolute -top-1 -right-1 text-xs">🤝</div>}
-              </div>
-
-              {/* Tooltip */}
-              {hovered?.id === nation.id && (
-                <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 z-30 min-w-[140px] backdrop-blur-xl bg-black/80 border border-white/20 rounded-xl p-3 pointer-events-none">
-                  <div className="font-bold text-white text-xs mb-1">{nation.name}</div>
-                  <div className="text-slate-400 text-xs">{nation.epoch} · T{nation.tech_level}</div>
-                  <div className="text-green-400 text-xs font-mono">GDP: {nation.gdp}</div>
-                  <div className={`text-xs ${isEnemy ? "text-red-400" : isAlly ? "text-blue-400" : "text-slate-500"}`}>
-                    {isMe ? "🫵 Your nation" : isEnemy ? "⚔ At war" : isAlly ? "🤝 Ally" : "Neutral"}
-                  </div>
-                </div>
-              )}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Legend */}
-      <div className="absolute bottom-3 left-3 flex gap-3 z-10">
-        {[["Industrial", "border-amber-400"], ["Information", "border-cyan-400"], ["Nano", "border-violet-400"]].map(([era, cls]) => (
-          <div key={era} className="flex items-center gap-1">
-            <div className={`w-3 h-3 rounded border-2 ${cls}`} />
-            <span className="text-xs text-slate-500">{era}</span>
+          { color: "bg-red-500", label: "At War" },
+          { color: "bg-green-500", label: "Ally" },
+          { color: "bg-amber-400", label: "Danger" },
+        ].map(({ color, label }) => (
+          <div key={label} className="flex items-center gap-1 bg-black/60 rounded-lg px-2 py-1 backdrop-blur-sm">
+            <div className={`w-2 h-2 rounded-full ${color}`}/>
+            <span className="text-[10px] text-slate-400">{label}</span>
           </div>
         ))}
       </div>
