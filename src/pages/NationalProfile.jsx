@@ -90,7 +90,8 @@ export default function NationalProfile() {
   const epochTheme = EPOCH_THEME[myNation.epoch] || EPOCH_THEME.Industrial;
 
   return (
-    <div className={`min-h-screen relative ${theme === "realistic" ? "epoch-realistic" : ""}`} style={{ background: palette.bg, color: palette.text, transition: "background 3s ease-in-out, color 3s ease-in-out" }}>
+    <div className={`min-h-screen relative ${theme === "realistic" ? "epoch-realistic" : ""}`}
+      style={{ background: palette.bg, color: palette.text, transition: "background 3s ease-in-out, color 3s ease-in-out" }}>
       {/* Epoch Transition Overlay */}
       {showEpochTransition && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center backdrop-blur-2xl bg-black/80">
