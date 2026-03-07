@@ -179,10 +179,10 @@ export default function Dashboard() {
       </header>
 
       {/* DESKTOP BENTO GRID — 4 cols: [Nation Stats] [World Map] [National Advisor] [Activities] */}
-      <main className="relative z-10 p-4 hidden lg:grid gap-4" style={{ height: "calc(100vh - 57px)", gridTemplateColumns: "340px 1fr 340px 200px", gridTemplateRows: "1fr 260px", overflow: "hidden" }}>
+      <main className="relative z-10 p-4 hidden lg:grid gap-4" style={{ height: "calc(100vh - 57px)", gridTemplateColumns: "340px 1fr 420px 150px", gridTemplateRows: "1fr 260px", overflow: "hidden" }}>
         {/* Col 1: Nation Stats — full height */}
         <div style={{ gridRow: "1 / 3", overflowY: "auto" }}><NationStatsPanel nation={myNation} /></div>
-        {/* Col 2: World Map top, empty bottom */}
+        {/* Col 2: World Map top, Global Ledger bottom */}
         <div style={{ gridRow: "1 / 2", overflow: "hidden" }}><WorldMap myNation={myNation} onSelectNation={n => setSelectedNation(n)} /></div>
         <div style={{ gridColumn: "2 / 3", gridRow: "2 / 3", minWidth: 0, overflowY: "auto" }}><GlobalLedger /></div>
         {/* Col 3: National Advisor — full height, expanded */}
