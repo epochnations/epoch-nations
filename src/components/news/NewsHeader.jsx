@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Wifi, Wind } from "lucide-react";
 import { WEATHER_EMOJIS, WEATHER_EFFECTS } from "./NewsEventConfig";
 
-export default function NewsHeader({ nation, weather, edition, breakingEvent }) {
+export default function NewsHeader({ nation, weather, edition, breakingEvent, onClickBreaking }) {
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
@@ -29,16 +29,20 @@ export default function NewsHeader({ nation, weather, edition, breakingEvent }) 
     <div className="space-y-3">
       {/* Breaking ticker */}
       {breakingEvent && (
-        <div className="relative overflow-hidden rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-2.5 flex items-center gap-3">
-          <div className="shrink-0 w-20 text-xs font-black text-red-400 tracking-wider uppercase animate-pulse">BREAKING</div>
+        <button
+          onClick={() => onClickBreaking && onClickBreaking(breakingEvent)}
+          className="w-full relative overflow-hidden rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-2.5 flex items-center gap-3 hover:bg-red-500/20 hover:border-red-500/60 transition-all group cursor-pointer"
+        >
+          <div className="shrink-0 w-20 text-xs font-black text-red-400 tracking-wider uppercase animate-pulse text-left">BREAKING</div>
           <div className="flex-1 overflow-hidden">
-            <div className="text-sm text-red-200 font-semibold whitespace-nowrap animate-[marquee_18s_linear_infinite]">
+            <div className="text-sm text-red-200 font-semibold whitespace-nowrap animate-[marquee_32s_linear_infinite]">
               {breakingEvent.headline} — {breakingEvent.body?.slice(0, 120)}...
             </div>
           </div>
+          <span className="shrink-0 text-[10px] font-bold text-red-300 border border-red-500/40 rounded-lg px-2 py-0.5 group-hover:bg-red-500/20 transition-all whitespace-nowrap">READ &amp; RESPOND →</span>
           <Wifi size={14} className="text-red-400 shrink-0 animate-pulse" />
           <style>{`@keyframes marquee { from{transform:translateX(100%)} to{transform:translateX(-200%)} }`}</style>
-        </div>
+        </button>
       )}
 
       {/* Main header card */}
