@@ -81,14 +81,21 @@ export default function NationwideNews() {
   const nationalEvents = events.filter(e => !e.city_tag);
   const cityEvents = events.filter(e => e.city_tag);
 
-  const filteredNational = activeTab === "all" || activeTab === "cities"
+  // When a specific category is selected, only show that category's events
+  const filteredNational = activeTab === "cities"
     ? nationalEvents
     : nationalEvents.filter(e => e.category === activeTab);
 
   const grouped = {};
-  for (const cat of CATEGORY_ORDER) {
-    const catEvents = filteredNational.filter(e => e.category === cat);
-    if (catEvents.length > 0) grouped[cat] = catEvents;
+  if (activeTab === "cities") {
+    // show all categories when on "All" tab
+    for (const cat of CATEGORY_ORDER) {
+      const catEvents = nationalEvents.filter(e => e.category === cat);
+      if (catEvents.length > 0) grouped[cat] = catEvents;
+    }
+  } else {
+    const catEvents = filteredNational;
+    if (catEvents.length > 0) grouped[activeTab] = catEvents;
   }
 
   if (loading) {
