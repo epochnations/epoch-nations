@@ -52,7 +52,7 @@ export default function NationwideNews() {
     const n = nations[0];
     setNation(n);
     setWeather(pickWeather(n));
-    await loadEvents(n.id);
+    await loadEvents(n.id, n);
     setLoading(false);
   }
 
