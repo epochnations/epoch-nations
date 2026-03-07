@@ -5,8 +5,8 @@ import {
   DISASTER_TEMPLATES, pickWeightedEvent
 } from "./NewsEventConfig";
 
-const TICK_MS = 120_000; // generate new events every 2 minutes
-const MAX_ACTIVE = 3;    // max pending (unresolved) events at once
+const TICK_MS = 90_000;  // generate new events every 90 seconds
+const MAX_ACTIVE = 30;   // max pending (unresolved) events at once
 
 export default function NewsEngine({ nation, onRefresh }) {
   const intervalRef = useRef(null);
@@ -50,8 +50,8 @@ export default function NewsEngine({ nation, onRefresh }) {
       await base44.entities.Nation.update(fresh.id, weatherUpdates);
     }
 
-    // Rare disaster (3% chance per tick)
-    const isDisasterTick = Math.random() < 0.03;
+    // Rare disaster (12% chance per tick — more frequent breaking news)
+    const isDisasterTick = Math.random() < 0.12;
 
     editionRef.current += 1;
     const editionAdj = EDITION_ADJECTIVES[Math.floor(Math.random() * EDITION_ADJECTIVES.length)];
