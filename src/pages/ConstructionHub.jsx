@@ -64,7 +64,8 @@ export default function ConstructionHub() {
       category: bdef.category,
       level: 1,
       is_destroyed: false,
-      workers_assigned: bdef.workforce
+      workers_assigned: bdef.workforce,
+      has_insurance: addInsurance
     });
 
     await base44.entities.NewsArticle.create({
