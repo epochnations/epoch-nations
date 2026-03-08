@@ -4,10 +4,10 @@ import { createPageUrl } from "@/utils";
 import { Cpu, Plus, Sliders, Users, Hammer } from "lucide-react";
 
 
-import NationStatsPanel from "../components/dashboard/NationStatsPanel";
-import StockTicker from "../components/dashboard/StockTicker";
-import WorldMap from "../components/dashboard/WorldMap";
-import GlobalLedger from "../components/dashboard/GlobalLedger";
+import NationStatsPanel from "../components/dashboard/NationStatsPanel.jsx";
+import StockTicker from "../components/dashboard/StockTicker.jsx";
+import WorldMap from "../components/dashboard/WorldMap.jsx";
+import GlobalLedger from "../components/dashboard/GlobalLedger.jsx";
 import NotificationsPanel from "../components/dashboard/NotificationsPanel";
 import StockModal from "../components/modals/StockModal";
 import NationModal from "../components/modals/NationModal";
@@ -18,7 +18,7 @@ import IssueStockPanel from "../components/panels/IssueStockPanel";
 import DilemmaEngine from "../components/dashboard/DilemmaEngine";
 import CouncilDilemmaModal from "../components/dashboard/CouncilDilemmaModal";
 import EconomyEngine from "../components/dashboard/EconomyEngine";
-import NationalAdvisorPanel from "../components/dashboard/NationalAdvisorPanel";
+import NationalAdvisorPanel from "../components/dashboard/NationalAdvisorPanel.jsx";
 import ResourceEngine from "../components/dashboard/ResourceEngine";
 import WorkforcePanel from "../components/panels/WorkforcePanel";
 
