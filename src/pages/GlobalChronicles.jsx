@@ -26,6 +26,7 @@ export default function GlobalChronicles() {
   const [user, setUser] = useState(null);
   const [showPropaganda, setShowPropaganda] = useState(false);
   const [filter, setFilter] = useState("all");
+  const [selectedArticle, setSelectedArticle] = useState(null);
 
   useEffect(() => {
     init();
@@ -112,7 +113,7 @@ export default function GlobalChronicles() {
               className="ep-btn-lift px-4 py-2 rounded-xl text-xs font-bold"
               style={{ background: "rgba(6,182,212,0.1)", border: "1px solid rgba(6,182,212,0.3)", color: "#22d3ee" }}
             >
-              → Command Center
+              ← Dashboard
             </a>
           </div>
         </div>
@@ -148,17 +149,23 @@ export default function GlobalChronicles() {
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {/* Featured / Gold tier first */}
             {filteredNews.filter(n => n.tier === "gold" || n.tier === "breaking").map(article => (
-              <div key={article.id} className={article.tier === "gold" ? "md:col-span-2 xl:col-span-3" : "md:col-span-2"}>
+              <div key={article.id} className={article.tier === "gold" ? "md:col-span-2 xl:col-span-3" : "md:col-span-2"} onClick={() => setSelectedArticle(article)}>
                 <NewsCard article={article} featured={true} />
               </div>
             ))}
             {/* Standard news */}
             {filteredNews.filter(n => n.tier === "standard").map(article => (
-              <NewsCard key={article.id} article={article} featured={false} />
+              <div key={article.id} onClick={() => setSelectedArticle(article)}>
+                <NewsCard article={article} featured={false} />
+              </div>
             ))}
           </div>
         )}
       </main>
+
+      {selectedArticle && (
+        <GlobalArticleModal article={selectedArticle} onClose={() => setSelectedArticle(null)} />
+      )}
 
       {showPropaganda && myNation && (
         <PropagandaModal
