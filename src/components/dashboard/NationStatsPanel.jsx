@@ -1,0 +1,268 @@
+import { EPOCHS } from "../game/EpochConfig";
+import { getCitiesForNation } from "../news/CityConfig";
+
+const RESOURCE_DEFS = [
+  { key: "res_wood",  label: "Wood",  color: "#a78bfa", symbol: "🪵" },
+  { key: "res_stone", label: "Stone", color: "#94a3b8", symbol: "🪨" },
+  { key: "res_gold",  label: "Gold",  color: "#fbbf24", symbol: "💰" },
+  { key: "res_iron",  label: "Iron",  color: "#64748b", symbol: "⚙️" },
+  { key: "res_oil",   label: "Oil",   color: "#6ee7b7", symbol: "🛢️" },
+  { key: "res_food",  label: "Food",  color: "#4ade80", symbol: "🌾" },
+];
+
+const CORE_METRICS = [
+  { key: "stability",       label: "Stability",      max: 100, color: "#22d3ee" },
+  { key: "public_trust",    label: "Public Trust",   max: 1,   color: "#a78bfa", format: v => `${Math.round(v * 100)}%` },
+  { key: "manufacturing",   label: "Manufacturing",  max: 200, color: "#34d399" },
+  { key: "defense_level",   label: "Defense",        max: 200, color: "#f87171" },
+  { key: "unit_power",      label: "Unit Power",     max: 200, color: "#fb923c" },
+];
+
+function Bar({ value, max, color }) {
+  const pct = Math.min(100, Math.round((value / max) * 100));
+  return (
+    <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
+      <div
+        className="h-full rounded-full transition-all duration-700"
+        style={{ width: `${pct}%`, background: `linear-gradient(90deg, ${color}aa, ${color})`, boxShadow: `0 0 6px ${color}55` }}
+      />
+    </div>
+  );
+}
+
+export default function NationStatsPanel({ nation }) {
+  if (!nation) return (
+    <div className="ep-card p-4 h-full flex items-center justify-center">
+      <div className="w-6 h-6 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+
+  const epochIndex   = EPOCHS.indexOf(nation.epoch);
+  const epochPct     = Math.round(((epochIndex + 1) / EPOCHS.length) * 100);
+  const allies       = nation.allies || [];
+  const allyCount    = allies.length;
+  const cityCount    = getCitiesForNation(nation).length;
+
+  // Income / expense calculations (matching ResourceEngine logic)
+  const incomePerMin   = Math.floor((nation.gdp || 0) * 0.05);
+  const spendingPerMin = Math.round(((nation.education_spending || 20) + (nation.military_spending || 20)) * 0.5);
+  const netPerMin      = incomePerMin - spendingPerMin;
+
+  // Food calculations (matching ResourceEngine)
+  const epochMult = 1 + Math.max(0, epochIndex) * 0.08;
+  const farmFood  = Math.floor((nation.workers_farmers    || 0) * 8 * epochMult);
+  const huntFood  = Math.floor((nation.workers_hunters    || 0) * 3 * epochMult);  // avg
+  const fishFood  = Math.floor((nation.workers_fishermen  || 0) * 6 * epochMult);
+  const foodProd  = farmFood + huntFood + fishFood;
+  const foodCons  = Math.ceil((nation.population || 1) * 1.2);
+  const foodNet   = foodProd - foodCons;
+
+  return (
+    <div
+      className="flex flex-col gap-3 p-4 rounded-2xl h-full overflow-y-auto"
+      style={{
+        background: "linear-gradient(160deg, rgba(6,182,212,0.05) 0%, rgba(4,8,16,0.97) 60%)",
+        border: "1px solid rgba(6,182,212,0.14)",
+        backdropFilter: "blur(20px)",
+      }}
+    >
+      {/* ── Nation identity ── */}
+      <div className="flex items-center gap-3 shrink-0">
+        <div className="relative shrink-0">
+          <div
+            className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl"
+            style={{
+              background: `radial-gradient(circle at 40% 40%, ${nation.flag_color || "#3b82f6"}33, ${nation.flag_color || "#3b82f6"}11)`,
+              border: `1.5px solid ${nation.flag_color || "#3b82f6"}55`,
+              boxShadow: `0 0 18px ${nation.flag_color || "#3b82f6"}33`,
+            }}
+          >
+            {nation.flag_image_url
+              ? <img src={nation.flag_image_url} alt="" className="w-10 h-10 rounded-xl object-cover" />
+              : nation.flag_emoji || "🏴"}
+          </div>
+          <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full border-2 border-[#080c14]" style={{ background: "#4ade80", boxShadow: "0 0 6px #4ade8088" }} />
+        </div>
+        <div className="min-w-0">
+          <h2 className="text-base font-black text-white leading-tight truncate">{nation.name}</h2>
+          <div className="text-[13px] text-slate-400 truncate">{nation.leader}</div>
+          <div className="text-[12px] font-bold mt-0.5" style={{ color: "#22d3ee" }}>{nation.epoch}</div>
+        </div>
+      </div>
+
+      {/* ── Epoch progress ── */}
+      <div className="shrink-0">
+        <div className="flex justify-between text-[12px] mb-1.5">
+          <span className="text-slate-500 ep-mono font-bold">EPOCH PROGRESS</span>
+          <span className="ep-mono font-black text-cyan-400">{epochPct}%</span>
+        </div>
+        <div className="w-full h-2.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
+          <div
+            className="h-full rounded-full transition-all duration-700"
+            style={{ width: `${epochPct}%`, background: "linear-gradient(90deg, #06b6d4, #818cf8)", boxShadow: "0 0 8px rgba(6,182,212,0.5)" }}
+          />
+        </div>
+        <div className="flex justify-between text-[11px] mt-1 text-slate-600 ep-mono">
+          <span>Epoch {epochIndex + 1}/{EPOCHS.length}</span>
+          <span>Tech LVL {nation.tech_level || 1}</span>
+        </div>
+      </div>
+
+      {/* ── Top 3 quick stats: Allies | Cities | Pop ── */}
+      <div className="grid grid-cols-3 gap-2 shrink-0">
+        {/* Allies */}
+        <div className="rounded-xl p-2.5 flex flex-col items-center gap-0.5"
+          style={{ background: "rgba(34,211,238,0.07)", border: "1px solid rgba(34,211,238,0.15)" }}>
+          <span className="text-[11px] text-slate-500 font-bold ep-mono uppercase">Allies</span>
+          <span className="text-xl font-black ep-mono text-cyan-400">{allyCount}</span>
+        </div>
+        {/* Cities */}
+        <div className="rounded-xl p-2.5 flex flex-col items-center gap-0.5"
+          style={{ background: "rgba(251,146,60,0.07)", border: "1px solid rgba(251,146,60,0.15)" }}>
+          <span className="text-[11px] text-slate-500 font-bold ep-mono uppercase">Cities</span>
+          <span className="text-xl font-black ep-mono" style={{ color: "#fb923c" }}>{cityCount}</span>
+        </div>
+        {/* Population */}
+        <div className="rounded-xl p-2.5 flex flex-col items-center gap-0.5"
+          style={{ background: "rgba(167,139,250,0.07)", border: "1px solid rgba(167,139,250,0.15)" }}>
+          <span className="text-[11px] text-slate-500 font-bold ep-mono uppercase">Pop</span>
+          <span className="text-xl font-black ep-mono text-violet-400">{nation.population || 0}</span>
+        </div>
+      </div>
+
+      {/* ── Treasury ── */}
+      <div className="rounded-xl px-3 py-2.5 shrink-0 flex items-center justify-between"
+        style={{ background: "rgba(251,191,36,0.06)", border: "1px solid rgba(251,191,36,0.14)" }}>
+        <div>
+          <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase">Treasury</div>
+          <div className="text-lg font-black ep-mono text-amber-400">⚙ {(nation.currency || 0).toLocaleString()}</div>
+        </div>
+        <div className="text-right">
+          <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase">GDP</div>
+          <div className="text-lg font-black ep-mono text-green-400">{(nation.gdp || 0).toLocaleString()}</div>
+        </div>
+      </div>
+
+      {/* ── Income / Expense per min ── */}
+      <div className="rounded-xl px-3 py-2.5 shrink-0" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+        <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase mb-2">ECONOMY / MIN</div>
+        <div className="grid grid-cols-3 gap-2 text-center">
+          <div>
+            <div className="text-[11px] text-slate-500">Income</div>
+            <div className="text-[14px] font-black ep-mono text-green-400">+{incomePerMin}</div>
+          </div>
+          <div>
+            <div className="text-[11px] text-slate-500">Expense</div>
+            <div className="text-[14px] font-black ep-mono text-red-400">-{spendingPerMin}</div>
+          </div>
+          <div>
+            <div className="text-[11px] text-slate-500">Net</div>
+            <div className={`text-[14px] font-black ep-mono ${netPerMin >= 0 ? "text-cyan-400" : "text-red-400"}`}>
+              {netPerMin >= 0 ? "+" : ""}{netPerMin}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Food production / consumption per min ── */}
+      <div className="rounded-xl px-3 py-2.5 shrink-0" style={{ background: "rgba(74,222,128,0.04)", border: "1px solid rgba(74,222,128,0.10)" }}>
+        <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase mb-2">FOOD / MIN</div>
+        <div className="grid grid-cols-3 gap-2 text-center">
+          <div>
+            <div className="text-[11px] text-slate-500">Produce</div>
+            <div className="text-[14px] font-black ep-mono text-green-400">+{foodProd}</div>
+          </div>
+          <div>
+            <div className="text-[11px] text-slate-500">Consume</div>
+            <div className="text-[14px] font-black ep-mono text-red-400">-{foodCons}</div>
+          </div>
+          <div>
+            <div className="text-[11px] text-slate-500">Net</div>
+            <div className={`text-[14px] font-black ep-mono ${foodNet >= 0 ? "text-green-400" : "text-red-400"}`}>
+              {foodNet >= 0 ? "+" : ""}{foodNet}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Core Metrics ── */}
+      <div className="shrink-0">
+        <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase mb-2">CORE METRICS</div>
+        <div className="space-y-2.5">
+          {CORE_METRICS.map(({ key, label, max, color, format }) => {
+            const val = nation[key] ?? 0;
+            const display = format ? format(val) : Math.round(val);
+            return (
+              <div key={key}>
+                <div className="flex justify-between text-[12px] mb-1">
+                  <span className="text-slate-400 font-medium">{label}</span>
+                  <span className="ep-mono font-bold" style={{ color }}>{display}</span>
+                </div>
+                <Bar value={key === "public_trust" ? val * 100 : val} max={key === "public_trust" ? 100 : max} color={color} />
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ── Military ── */}
+      <div className="rounded-xl px-3 py-2.5 shrink-0 grid grid-cols-2 gap-3"
+        style={{ background: "rgba(248,113,113,0.05)", border: "1px solid rgba(248,113,113,0.12)" }}>
+        <div>
+          <div className="text-[11px] text-slate-500 ep-mono uppercase">Spending</div>
+          <div className="text-[14px] font-black ep-mono text-red-400">{nation.military_spending || 20}%</div>
+        </div>
+        <div>
+          <div className="text-[11px] text-slate-500 ep-mono uppercase">Education</div>
+          <div className="text-[14px] font-black ep-mono text-blue-400">{nation.education_spending || 20}%</div>
+        </div>
+      </div>
+
+      {/* ── Technology ── */}
+      <div className="shrink-0">
+        <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase mb-2">TECHNOLOGY</div>
+        <div className="grid grid-cols-2 gap-2">
+          <div className="rounded-xl px-2.5 py-2 text-center" style={{ background: "rgba(139,92,246,0.07)", border: "1px solid rgba(139,92,246,0.15)" }}>
+            <div className="text-[11px] text-slate-500 ep-mono">Tech Points</div>
+            <div className="text-[15px] font-black ep-mono text-violet-400">{(nation.tech_points || 0).toLocaleString()}</div>
+          </div>
+          <div className="rounded-xl px-2.5 py-2 text-center" style={{ background: "rgba(139,92,246,0.07)", border: "1px solid rgba(139,92,246,0.15)" }}>
+            <div className="text-[11px] text-slate-500 ep-mono">Techs</div>
+            <div className="text-[15px] font-black ep-mono text-violet-400">{(nation.unlocked_techs || []).length}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Natural Resources ── */}
+      <div className="shrink-0">
+        <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase mb-2">NATURAL RESOURCES</div>
+        <div className="grid grid-cols-3 gap-1.5">
+          {RESOURCE_DEFS.map(({ key, label, color, symbol }) => (
+            <div key={key}
+              className="rounded-xl p-2 flex flex-col items-center gap-0.5"
+              style={{ background: `${color}0d`, border: `1px solid ${color}22` }}>
+              <span className="text-base leading-none">{symbol}</span>
+              <span className="text-[10px] text-slate-500 ep-mono">{label}</span>
+              <span className="text-[13px] font-black ep-mono" style={{ color }}>
+                {(nation[key] || 0).toLocaleString()}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Nation Stock Index ── */}
+      {(nation.gdp || 0) > 0 && (
+        <div className="rounded-xl px-3 py-2.5 shrink-0"
+          style={{ background: "rgba(34,211,238,0.04)", border: "1px solid rgba(34,211,238,0.10)" }}>
+          <div className="flex justify-between items-center">
+            <span className="text-[11px] text-slate-500 font-bold ep-mono uppercase">Nation Stock Index</span>
+            <span className="text-[15px] font-black ep-mono text-cyan-400 ep-glow-cyan">
+              {Math.round((nation.gdp || 0) * (nation.stability || 75) / 100 * (nation.public_trust || 1)).toLocaleString()}
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
