@@ -21,8 +21,6 @@ import EconomyEngine from "../components/dashboard/EconomyEngine";
 import NationalAdvisorPanel from "../components/dashboard/NationalAdvisorPanel.jsx";
 import ResourceEngine from "../components/dashboard/ResourceEngine";
 import WorkforcePanel from "../components/panels/WorkforcePanel";
-import ResourceEngine from "../components/dashboard/ResourceEngine";
-import WorkforcePanel from "../components/panels/WorkforcePanel";
 
 export default function Dashboard() {
   const [myNation, setMyNation] = useState(null);
