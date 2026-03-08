@@ -183,19 +183,20 @@ export default function Dashboard() {
         </div>
       </header>
 
-      {/* DESKTOP BENTO GRID — 4 cols: [Nation Stats] [World Map] [National Advisor] [Activities] */}
-      <main className="relative z-10 p-4 hidden lg:grid gap-4" style={{ height: "calc(100vh - 57px)", gridTemplateColumns: "340px 1fr 320px 220px", gridTemplateRows: "1fr 260px", overflow: "hidden" }}>
+      {/* DESKTOP BENTO GRID — 3 cols: [Nation Stats] [World Map + Ledger] [Stock Ticker + National Advisor] */}
+      <main className="relative z-10 p-4 hidden lg:grid gap-4" style={{ height: "calc(100vh - 57px)", gridTemplateColumns: "340px 1fr 360px", gridTemplateRows: "1fr 50% 1px", overflow: "hidden" }}>
         {/* Col 1: Nation Stats — full height */}
-        <div style={{ gridRow: "1 / 3", overflowY: "auto" }}><NationStatsPanel nation={myNation} /></div>
-        {/* Col 2: World Map top, Global Ledger bottom */}
+        <div style={{ gridRow: "1 / 4", overflowY: "auto" }}><NationStatsPanel nation={myNation} /></div>
+        {/* Col 2 row 1: World Map */}
         <div style={{ gridRow: "1 / 2", overflow: "hidden" }}><WorldMap myNation={myNation} onSelectNation={n => setSelectedNation(n)} /></div>
-        <div style={{ gridColumn: "2 / 3", gridRow: "2 / 3", minWidth: 0, overflowY: "auto" }}><GlobalLedger /></div>
-        {/* Col 3: National Advisor — bottom row only, same height as Global Activities */}
-        <div style={{ gridRow: "2 / 3", minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+        {/* Col 2 row 2+3: Global Ledger */}
+        <div style={{ gridColumn: "2 / 3", gridRow: "2 / 4", minWidth: 0, overflowY: "auto" }}><GlobalLedger /></div>
+        {/* Col 3 row 1: Stock Ticker (Market Feed) */}
+        <div style={{ gridRow: "1 / 2", overflowY: "auto" }}><StockTicker onSelectStock={s => setSelectedStock(s)} /></div>
+        {/* Col 3 row 2: National Advisor — half-screen height matching World Map bottom half */}
+        <div style={{ gridRow: "2 / 4", minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
           {myNation && <NationalAdvisorPanel nation={myNation} />}
         </div>
-        {/* Col 4: Stock Ticker — full height */}
-        <div style={{ gridRow: "1 / 3", overflowY: "auto" }}><StockTicker onSelectStock={s => setSelectedStock(s)} /></div>
       </main>
 
       {/* MOBILE LAYOUT */}
