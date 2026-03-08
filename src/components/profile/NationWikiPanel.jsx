@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { Save, Upload, Music, FileText, Scale, Globe, Building } from "lucide-react";
+import { Save, Upload, Music, FileText, Scale, Globe, Building, DollarSign, Percent } from "lucide-react";
+import CurrencyTaxPanel from "./CurrencyTaxPanel";
 
 const TABS = [
   { id: "overview", label: "Overview", icon: Globe },
@@ -8,6 +9,7 @@ const TABS = [
   { id: "laws", label: "Laws", icon: Scale },
   { id: "culture", label: "Culture", icon: Music },
   { id: "media", label: "Media", icon: FileText },
+  { id: "currency_tax", label: "Currency & Tax", icon: DollarSign },
 ];
 
 export default function NationWikiPanel({ nation, onRefresh }) {
@@ -123,6 +125,10 @@ export default function NationWikiPanel({ nation, onRefresh }) {
 
         {activeTab === "culture" && (
           <TextArea field="culture_notes" label="Culture & Society" placeholder="Describe your nation's culture, traditions, values, cuisine, art, and way of life..." rows={10} />
+        )}
+
+        {activeTab === "currency_tax" && (
+          <CurrencyTaxPanel nation={nation} onRefresh={onRefresh} />
         )}
 
         {activeTab === "media" && (
