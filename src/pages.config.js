@@ -48,25 +48,25 @@
  * The mainPage value must match a key in the PAGES object exactly.
  */
 import ConstructionHub from './pages/ConstructionHub';
-import Dashboard from './pages/Dashboard';
 import GlobalChronicles from './pages/GlobalChronicles';
 import GlobalExchange from './pages/GlobalExchange';
 import Marketplace from './pages/Marketplace';
 import NationalProfile from './pages/NationalProfile';
 import NationwideNews from './pages/NationwideNews';
 import Onboarding from './pages/Onboarding';
+import Dashboard from './pages/Dashboard';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "ConstructionHub": ConstructionHub,
-    "Dashboard": Dashboard,
     "GlobalChronicles": GlobalChronicles,
     "GlobalExchange": GlobalExchange,
     "Marketplace": Marketplace,
     "NationalProfile": NationalProfile,
     "NationwideNews": NationwideNews,
     "Onboarding": Onboarding,
+    "Dashboard": Dashboard,
 }
 
 export const pagesConfig = {
