@@ -8,8 +8,19 @@ import NationStatsPanel from "../components/dashboard/NationStatsPanel";
 import StockTicker from "../components/dashboard/StockTicker";
 import WorldMap from "../components/dashboard/WorldMap";
 import GlobalLedger from "../components/dashboard/GlobalLedger";
-...
-import NationalAdvisorPanel from "../components/dashboard/NationalAdvisorPanel";
+import NotificationsPanel from "../components/dashboard/NotificationsPanel";
+import StockModal from "../components/modals/StockModal";
+import NationModal from "../components/modals/NationModal";
+import TechTreePanel from "../components/panels/TechTreePanel";
+import NationManagement from "../components/panels/NationManagement";
+import BudgetCyclePanel from "../components/panels/BudgetCyclePanel";
+import IssueStockPanel from "../components/panels/IssueStockPanel";
+import DilemmaEngine from "../components/dashboard/DilemmaEngine";
+import CouncilDilemmaModal from "../components/dashboard/CouncilDilemmaModal";
+import EconomyEngine from "../components/dashboard/EconomyEngine";
+import NationalAdvisorPanel from "../components/dashboard/NationalAdvisorPanel.jsx";
+import ResourceEngine from "../components/dashboard/ResourceEngine";
+import WorkforcePanel from "../components/panels/WorkforcePanel";
 import ResourceEngine from "../components/dashboard/ResourceEngine";
 import WorkforcePanel from "../components/panels/WorkforcePanel";
 
