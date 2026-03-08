@@ -140,11 +140,20 @@ export default function DilemmaEngine({ nation, onDilemmaReady }) {
     const tenMinsAgo = Date.now() - 10 * 60 * 1000;
     if (!lastArticle || new Date(lastArticle.created_date).getTime() < tenMinsAgo) {
       const event = NPC_EVENTS[Math.floor(Math.random() * NPC_EVENTS.length)];
+      // Generate an image for the article
+      let image_url = "";
+      try {
+        const imgResult = await base44.integrations.Core.GenerateImage({
+          prompt: `News article illustration for: "${event.headline}". ${event.body}. Cinematic, dramatic, editorial style, no text.`
+        });
+        image_url = imgResult.url || "";
+      } catch (_) {}
       await base44.entities.NewsArticle.create({
         ...event,
         nation_name: "Global Press Agency",
         nation_flag: "🌍",
-        nation_color: "#64748b"
+        nation_color: "#64748b",
+        image_url
       });
     }
   }
