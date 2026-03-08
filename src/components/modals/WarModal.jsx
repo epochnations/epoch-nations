@@ -196,6 +196,13 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
       is_read: false
     });
 
+    let annexImageUrl = "";
+    try {
+      const imgRes = await base44.integrations.Core.GenerateImage({
+        prompt: `Historic military conquest and annexation, victorious army, fallen empire, dramatic cinematic illustration. No text.`
+      });
+      annexImageUrl = imgRes.url || "";
+    } catch (_) {}
     await base44.entities.NewsArticle.create({
       headline: `💀 NATION HAS FALLEN: ${targetNation.name} Annexed by ${myNation.name}!`,
       body: `In a historic military victory, ${myNation.name} has completely defeated and annexed ${targetNation.name}. The winning nation absorbed ${treasuryCut} credits and a significant portion of the defeated nation's economy. All stocks of the fallen nation collapsed 50%. The name "${targetNation.name}" is permanently reserved for its original leader.`,
@@ -203,7 +210,8 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
       tier: "gold",
       nation_name: myNation.name,
       nation_flag: myNation.flag_emoji,
-      nation_color: myNation.flag_color
+      nation_color: myNation.flag_color,
+      image_url: annexImageUrl
     });
   }
 
