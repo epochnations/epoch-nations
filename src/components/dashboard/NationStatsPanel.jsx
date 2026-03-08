@@ -131,15 +131,24 @@ export default function NationStatsPanel({ nation }) {
       </div>
 
       {/* ── Treasury ── */}
-      <div className="rounded-xl px-3 py-2.5 shrink-0 flex items-center justify-between"
+      <div className="rounded-xl px-3 py-2.5 shrink-0"
         style={{ background: "rgba(251,191,36,0.06)", border: "1px solid rgba(251,191,36,0.14)" }}>
-        <div>
-          <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase">Treasury</div>
-          <div className="text-lg font-black ep-mono text-amber-400">⚙ {(nation.currency || 0).toLocaleString()}</div>
+        <div className="flex items-center justify-between mb-2">
+          <div>
+            <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase">Treasury</div>
+            <div className="text-lg font-black ep-mono text-amber-400">{(nation.currency || 0).toLocaleString()} <span className="text-[11px] text-amber-600">{nation.currency_name || "Credits"}</span></div>
+          </div>
+          <div className="text-right">
+            <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase">GDP</div>
+            <div className="text-lg font-black ep-mono text-green-400">{(nation.gdp || 0).toLocaleString()}</div>
+          </div>
         </div>
-        <div className="text-right">
-          <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase">GDP</div>
-          <div className="text-lg font-black ep-mono text-green-400">{(nation.gdp || 0).toLocaleString()}</div>
+        {/* Nation Stock Index — placed directly under Treasury */}
+        <div className="flex justify-between items-center pt-2 border-t border-amber-500/10">
+          <span className="text-[11px] text-slate-500 font-bold ep-mono uppercase">Stock Index</span>
+          <span className="text-[15px] font-black ep-mono text-cyan-400 ep-glow-cyan">
+            {Math.round((nation.gdp || 0) * (nation.stability || 75) / 100 * (nation.public_trust || 1)).toLocaleString()}
+          </span>
         </div>
       </div>
 
