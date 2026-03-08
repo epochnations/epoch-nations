@@ -31,11 +31,37 @@ function StatRow({ icon: Icon, label, value, color, sub }) {
 }
 
 export default function NationStatsPanel({ nation }) {
+  const [cityCount, setCityCount] = useState(0);
+
+  useEffect(() => {
+    if (!nation?.id) return;
+    base44.entities.Building.filter({ nation_id: nation.id, is_destroyed: false })
+      .then(buildings => {
+        // Count unique city-level buildings (government + civilian non-destroyed)
+        const govCount = buildings.filter(b => b.category === "government").length;
+        setCityCount(Math.max(1, govCount));
+      });
+  }, [nation?.id]);
+
   if (!nation) return (
     <div className="rounded-2xl p-4 ep-card h-full flex items-center justify-center">
       <div className="text-slate-600 text-xs">No nation data</div>
     </div>
   );
+
+  // Income/expense estimates (per minute approximation)
+  const gdpIncome = Math.round((nation.gdp || 0) * 0.002);
+  const militaryExpense = Math.round((nation.military_spending || 0) * 0.3);
+  const educationExpense = Math.round((nation.education_spending || 0) * 0.2);
+  const netIncome = gdpIncome - militaryExpense - educationExpense;
+
+  // Food production vs consumption per minute
+  const farmers = nation.workers_farmers || 0;
+  const hunters = nation.workers_hunters || 0;
+  const fishermen = nation.workers_fishermen || 0;
+  const foodProduction = Math.round((farmers * 3 + hunters * 2 + fishermen * 2));
+  const foodConsumption = Math.round((nation.population || 0) * 1.5);
+  const foodNet = foodProduction - foodConsumption;
 
   const epochColors = {
     "Stone Age": "#a8a29e", "Copper Age": "#b45309", "Bronze Age": "#92400e",
