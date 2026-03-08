@@ -23,7 +23,7 @@ export default function NewsCard({ article, featured }) {
     : "";
 
   return (
-    <div className={`rounded-2xl border p-5 backdrop-blur-sm transition-all hover:scale-[1.01] ${tierStyle} ${featured ? "p-6 md:p-8" : ""}`}>
+    <div className={`rounded-2xl border p-5 backdrop-blur-sm transition-all hover:scale-[1.01] cursor-pointer hover:brightness-110 ${tierStyle} ${featured ? "p-6 md:p-8" : ""}`}>
       {/* Top row */}
       <div className="flex items-center justify-between mb-3 gap-2">
         <div className="flex items-center gap-2">
