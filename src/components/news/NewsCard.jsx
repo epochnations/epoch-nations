@@ -46,6 +46,13 @@ export default function NewsCard({ article, featured }) {
         <span className="text-slate-600 text-xs shrink-0">{timeAgo}</span>
       </div>
 
+      {/* Article image */}
+      {article.image_url && (
+        <div className={`w-full overflow-hidden rounded-xl mb-3 ${featured ? "h-48 md:h-64" : "h-32"}`}>
+          <img src={article.image_url} alt={article.headline} className="w-full h-full object-cover" />
+        </div>
+      )}
+
       {/* Headline */}
       <h2 className={`font-black leading-tight text-white mb-2 ${featured ? "text-2xl md:text-3xl" : "text-base"}`}>
         {article.headline}
