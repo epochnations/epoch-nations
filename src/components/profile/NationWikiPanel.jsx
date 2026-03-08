@@ -150,7 +150,7 @@ export default function NationWikiPanel({ nation, onRefresh }) {
           </div>
         )}
 
-        {activeTab !== "media" && (
+        {activeTab !== "media" && activeTab !== "currency_tax" && (
           <button
             onClick={save}
             disabled={saving}
