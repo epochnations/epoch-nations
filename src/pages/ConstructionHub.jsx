@@ -327,24 +327,7 @@ export default function ConstructionHub() {
           })}
         </div>
 
-        {/* Existing buildings summary */}
-        {buildings.length > 0 && (
-          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-5">
-            <div className="text-sm font-bold text-white mb-3 flex items-center gap-2">
-              <CheckCircle size={14} className="text-green-400" /> Built Structures ({buildings.filter(b => !b.is_destroyed).length})
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {buildings.filter(b => !b.is_destroyed).map(b => {
-                const def = BUILDING_MAP[b.building_type];
-                return (
-                  <span key={b.id} className="px-3 py-1.5 rounded-xl text-xs bg-white/10 text-slate-300 font-medium">
-                    {def?.emoji} {def?.name || b.building_type}
-                  </span>
-                );
-              })}
-            </div>
-          </div>
-        )}
+
       </main>
     </div>
   );
