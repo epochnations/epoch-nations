@@ -44,9 +44,11 @@ export default function ConstructionHub() {
     if (!nation || building) return;
     setBuilding(bdef.id);
 
-    // Deduct resources
+    // Deduct resources (+ insurance cost if selected)
+    const insuranceCost = addInsurance ? 200 : 0;
+    const costWithInsurance = { ...bdef.cost, currency: (bdef.cost.currency || 0) + insuranceCost };
     const updates = { ...Object.fromEntries(
-      Object.entries(bdef.cost).map(([k, v]) => [k, Math.max(0, (nation[k] || 0) - v)])
+      Object.entries(costWithInsurance).map(([k, v]) => [k, Math.max(0, (nation[k] || 0) - v)])
     ) };
 
     // Apply benefits
