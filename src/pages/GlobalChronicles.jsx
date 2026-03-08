@@ -77,17 +77,21 @@ export default function GlobalChronicles() {
       <LiveStockBar stocks={stocks} />
 
       {/* Masthead */}
-      <header className="border-b border-white/10 bg-black/60 backdrop-blur-xl px-4 md:px-8 py-4">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+      <header className="border-b px-4 md:px-8 py-5"
+        style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(4,8,16,0.7) 100%)", backdropFilter: "blur(24px)", borderColor: "rgba(255,255,255,0.07)" }}>
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <Radio size={14} className="text-red-400 animate-pulse" />
-              <span className="text-red-400 text-xs tracking-widest font-bold uppercase">Live • Global Chronicles</span>
+            <div className="flex items-center gap-2 mb-1.5">
+              <Radio size={13} className="text-red-400" style={{ filter: "drop-shadow(0 0 6px rgba(239,68,68,0.7))" }} />
+              <span className="text-red-400 text-[10px] tracking-[0.25em] font-black uppercase ep-mono">
+                ● LIVE BROADCAST · GLOBAL CHRONICLES
+              </span>
             </div>
-            <h1 className="text-3xl md:text-4xl font-black tracking-tighter bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
+            <h1 className="text-3xl md:text-5xl font-black tracking-tighter ep-glow-cyan"
+              style={{ background: "linear-gradient(90deg, #ffffff 0%, #94a3b8 60%, #22d3ee 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
               THE GLOBAL CHRONICLES
             </h1>
-            <p className="text-slate-500 text-xs tracking-widest uppercase mt-0.5">
+            <p className="text-slate-600 text-[10px] tracking-[0.3em] uppercase mt-1 ep-mono">
               Epoch Nations · Galactic Press Agency · Est. Year 1
             </p>
           </div>
@@ -96,14 +100,16 @@ export default function GlobalChronicles() {
             {myNation && (
               <button
                 onClick={() => setShowPropaganda(true)}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-violet-500/40 bg-violet-500/10 text-violet-400 text-xs font-bold hover:bg-violet-500/20 transition-all"
+                className="ep-btn-lift flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold"
+                style={{ background: "rgba(139,92,246,0.12)", border: "1px solid rgba(139,92,246,0.35)", color: "#a78bfa" }}
               >
                 <Edit3 size={12} /> Publish Propaganda
               </button>
             )}
             <a
               href={createPageUrl("Dashboard")}
-              className="px-4 py-2 rounded-xl border border-cyan-500/40 bg-cyan-500/10 text-cyan-400 text-xs font-bold hover:bg-cyan-500/20 transition-all"
+              className="ep-btn-lift px-4 py-2 rounded-xl text-xs font-bold"
+              style={{ background: "rgba(6,182,212,0.1)", border: "1px solid rgba(6,182,212,0.3)", color: "#22d3ee" }}
             >
               → Command Center
             </a>
@@ -112,19 +118,19 @@ export default function GlobalChronicles() {
       </header>
 
       {/* Filter Bar */}
-      <div className="border-b border-white/5 bg-black/40 backdrop-blur-sm px-4 md:px-8 py-2">
-        <div className="max-w-7xl mx-auto flex gap-2 overflow-x-auto pb-1">
+      <div className="border-b px-4 md:px-8 py-2.5" style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(12px)", borderColor: "rgba(255,255,255,0.05)" }}>
+        <div className="max-w-7xl mx-auto flex gap-1.5 overflow-x-auto pb-0.5" style={{ scrollbarWidth: "none" }}>
           {["all", "war", "economy", "tech", "policy", "milestone", "propaganda"].map(f => (
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${
-                filter === f
-                  ? "bg-white/10 text-white border border-white/20"
-                  : "text-slate-500 hover:text-slate-300"
-              }`}
+              className="px-3 py-1.5 rounded-lg text-[10px] font-black whitespace-nowrap transition-all ep-mono ep-btn-lift"
+              style={filter === f
+                ? { background: "rgba(255,255,255,0.1)", color: "white", border: "1px solid rgba(255,255,255,0.18)" }
+                : { background: "transparent", color: "#64748b", border: "1px solid transparent" }
+              }
             >
-              {f === "all" ? "ALL NEWS" : (CATEGORY_STYLE[f]?.icon + " " + f.toUpperCase())}
+              {f === "all" ? "⬡ ALL" : (CATEGORY_STYLE[f]?.icon + " " + f.toUpperCase())}
             </button>
           ))}
         </div>
