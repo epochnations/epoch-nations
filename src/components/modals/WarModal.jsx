@@ -119,7 +119,14 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
       total_value: damageDealt
     });
 
-    // Global news alert
+    // Global news alert — generate image
+    let warImageUrl = "";
+    try {
+      const imgRes = await base44.integrations.Core.GenerateImage({
+        prompt: `Epic war scene between two nations, ${crashTriggered ? "massive destruction, market collapse, explosions" : "armies clashing, flags waving"}. Cinematic, dramatic, no text.`
+      });
+      warImageUrl = imgRes.url || "";
+    } catch (_) {}
     await base44.entities.NewsArticle.create({
       headline: crashTriggered
         ? `⚔ INVASION: ${myNation.name} Launches Critical Strike on ${targetNation.name}! Markets Crash!`
@@ -129,7 +136,8 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
       tier: crashTriggered ? "gold" : "breaking",
       nation_name: myNation.name,
       nation_flag: myNation.flag_emoji,
-      nation_color: myNation.flag_color
+      nation_color: myNation.flag_color,
+      image_url: warImageUrl
     });
 
     // Check defeat conditions: stability < 10 AND gdp < 200
