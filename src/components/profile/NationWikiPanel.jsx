@@ -113,13 +113,7 @@ export default function NationWikiPanel({ nation, onRefresh }) {
         )}
 
         {activeTab === "government" && (
-          <div className="space-y-5">
-            <TextArea field="government_structure" label="Government Structure" placeholder="Describe your government type, branches, leadership, and political system..." rows={8} />
-            <div className="border-t border-white/10 pt-5">
-              <div className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-4">⚙️ Economic Governance</div>
-              <CurrencyTaxPanel nation={nation} onRefresh={onRefresh} />
-            </div>
-          </div>
+          <TextArea field="government_structure" label="Government Structure" placeholder="Describe your government type, branches, leadership, and political system..." rows={8} />
         )}
 
         {activeTab === "laws" && (

@@ -6,6 +6,7 @@ import PropagandaModal from "../components/news/PropagandaModal";
 import WorldTensionGauge from "../components/news/WorldTensionGauge";
 import NewsCard from "../components/news/NewsCard";
 import LiveStockBar from "../components/news/LiveStockBar";
+import GlobalArticleModal from "../components/news/GlobalArticleModal";
 
 const CATEGORY_STYLE = {
   war: { color: "text-red-400", border: "border-red-500/40", bg: "bg-red-500/10", label: "WAR REPORT", icon: "⚔️" },

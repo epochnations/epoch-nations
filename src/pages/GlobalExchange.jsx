@@ -174,8 +174,8 @@ export default function GlobalExchange() {
       <header className="border-b px-4 md:px-6 py-3 flex items-center justify-between gap-3 shrink-0"
         style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(4,8,16,0.7) 100%)", backdropFilter: "blur(24px)", borderColor: "rgba(6,182,212,0.15)" }}>
         <div className="flex items-center gap-3">
-          <a href={createPageUrl("Dashboard")} className="text-slate-500 hover:text-cyan-400 transition-colors ep-btn-lift">
-            <ArrowLeft size={16} />
+          <a href={createPageUrl("Dashboard")} className="flex items-center gap-1.5 text-slate-500 hover:text-cyan-400 transition-colors ep-btn-lift text-xs font-bold">
+            <ArrowLeft size={16} /> Dashboard
           </a>
           <div className="flex items-center gap-2">
             <BarChart2 size={16} className="text-cyan-400" style={{ filter: "drop-shadow(0 0 6px rgba(6,182,212,0.6))" }} />
