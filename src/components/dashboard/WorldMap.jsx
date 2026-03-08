@@ -129,14 +129,16 @@ export default function WorldMap({ myNation, onSelectNation }) {
       {/* Map Canvas */}
       <div className="absolute inset-0 pt-9" style={{ overflow: "hidden" }}>
         <svg
-          width="100%" height="100%"
+          width={MAP_W}
+          height={MAP_H}
           style={{
             transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
             transformOrigin: "0 0",
             willChange: "transform",
+            imageRendering: "crisp-edges",
+            shapeRendering: "geometricPrecision",
           }}
           viewBox={`0 0 ${MAP_W} ${MAP_H}`}
-          preserveAspectRatio="xMidYMid meet"
         >
           <MapTerrain zoom={zoom} />
 
