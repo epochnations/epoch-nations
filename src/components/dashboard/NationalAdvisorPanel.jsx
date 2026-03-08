@@ -155,12 +155,18 @@ export default function NationalAdvisorPanel({ nation }) {
 
   return (
     <div
-      className="flex flex-col backdrop-blur-xl bg-[#0a0f1e]/90 border border-white/10 rounded-2xl overflow-hidden transition-all duration-200"
-      style={{ height: collapsed ? "auto" : "100%" }}
+      className="flex flex-col overflow-hidden transition-all duration-200 rounded-2xl"
+      style={{
+        height: collapsed ? "auto" : "100%",
+        background: "linear-gradient(160deg, rgba(139,92,246,0.06) 0%, rgba(4,8,16,0.97) 50%)",
+        border: "1px solid rgba(139,92,246,0.18)",
+        backdropFilter: "blur(20px)"
+      }}
     >
       {/* Header */}
       <div
-        className="px-4 py-3 border-b border-white/10 flex items-center justify-between cursor-pointer shrink-0 bg-gradient-to-r from-violet-900/30 to-blue-900/30"
+        className="px-4 py-3 border-b border-white/6 flex items-center justify-between cursor-pointer shrink-0"
+        style={{ background: "linear-gradient(90deg, rgba(139,92,246,0.12) 0%, rgba(59,130,246,0.06) 100%)" }}
         onClick={() => setCollapsed(c => !c)}
       >
         <div className="flex items-center gap-2">

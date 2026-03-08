@@ -82,21 +82,26 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-[#080c14] text-white relative">
       {/* Background grid */}
-      <div className="fixed inset-0 pointer-events-none"
-        style={{
-          backgroundImage: "linear-gradient(rgba(0,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,255,0.02) 1px, transparent 1px)",
-          backgroundSize: "60px 60px"
-        }}
-      />
-      {/* Glow effects */}
-      <div className="fixed top-0 left-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-violet-500/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="fixed inset-0 pointer-events-none ep-grid-bg" />
+      {/* Ambient glows */}
+      <div className="fixed top-0 left-1/4 w-[500px] h-[500px] rounded-full blur-3xl pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(6,182,212,0.06) 0%, transparent 70%)" }} />
+      <div className="fixed bottom-0 right-1/4 w-[400px] h-[400px] rounded-full blur-3xl pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(139,92,246,0.06) 0%, transparent 70%)" }} />
+      <div className="fixed top-1/2 left-0 w-[300px] h-[300px] rounded-full blur-3xl pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(59,130,246,0.04) 0%, transparent 70%)" }} />
 
       {/* TOP NAV */}
-      <header className="relative z-20 border-b border-white/10 backdrop-blur-xl bg-black/30 px-6 py-3 flex items-center justify-between">
+      <header className="relative z-20 border-b px-6 py-3 flex items-center justify-between"
+        style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.88) 0%, rgba(4,8,16,0.72) 100%)", backdropFilter: "blur(24px)", borderColor: "rgba(6,182,212,0.12)" }}>
         <div className="flex items-center gap-4">
-          <div className="text-xl font-black tracking-tighter bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+          <div className="text-xl font-black tracking-tighter ep-glow-cyan"
+            style={{ background: "linear-gradient(90deg, #22d3ee, #818cf8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
             EPOCH NATIONS
+          </div>
+          <div className="hidden md:flex items-center gap-1 ep-mono text-[10px] text-slate-600">
+            <span className="ep-live-dot" />
+            <span className="text-green-400 font-bold ml-1">LIVE</span>
           </div>
 
         </div>
