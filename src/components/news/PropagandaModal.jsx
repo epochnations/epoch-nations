@@ -15,6 +15,15 @@ export default function PropagandaModal({ myNation, myPolicy, onClose, onPublish
     if (!canPublish || !headline.trim()) return;
     setLoading(true);
 
+    // Generate image for propaganda article
+    let image_url = "";
+    try {
+      const imgResult = await base44.integrations.Core.GenerateImage({
+        prompt: `Propaganda poster or editorial illustration for: "${headline.trim()}". Bold, dramatic, political art style, no text overlay.`
+      });
+      image_url = imgResult.url || "";
+    } catch (_) {}
+
     await base44.entities.NewsArticle.create({
       headline: headline.trim(),
       body: body.trim(),
@@ -24,7 +33,8 @@ export default function PropagandaModal({ myNation, myPolicy, onClose, onPublish
       nation_flag: myNation.flag_emoji,
       nation_color: myNation.flag_color,
       is_propaganda: true,
-      author_email: myNation.owner_email
+      author_email: myNation.owner_email,
+      image_url
     });
 
     // Deduct influence points and mark used today
