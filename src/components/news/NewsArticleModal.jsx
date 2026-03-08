@@ -75,6 +75,13 @@ export default function NewsArticleModal({ event, nation, onClose, onResolved })
         </div>
 
         <div className="p-5 space-y-4">
+          {/* Article image */}
+          {event.image_url && (
+            <div className="w-full h-44 overflow-hidden rounded-xl">
+              <img src={event.image_url} alt={event.headline} className="w-full h-full object-cover" />
+            </div>
+          )}
+
           {/* Byline */}
           <div className="flex items-center gap-3 text-xs text-slate-500">
             <div className="flex items-center gap-1"><User size={10} /> {event.author}</div>
