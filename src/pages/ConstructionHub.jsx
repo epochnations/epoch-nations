@@ -291,15 +291,35 @@ export default function ConstructionHub() {
                   </div>
                 )}
 
+                {/* Insurance option */}
+                {unlocked && buildable && (
+                  <div
+                    className={`mb-3 rounded-xl border px-3 py-2 flex items-center gap-3 cursor-pointer transition-all ${addInsurance ? "border-blue-400/40 bg-blue-500/10" : "border-white/10 bg-white/5"}`}
+                    onClick={() => setAddInsurance(v => !v)}
+                  >
+                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${addInsurance ? "border-blue-400 bg-blue-400" : "border-slate-600"}`}>
+                      {addInsurance && <div className="w-2 h-2 rounded-full bg-white" />}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-1.5">
+                        <ShieldCheck size={11} className="text-blue-400" />
+                        <span className="text-xs font-bold text-white">Add Building Insurance</span>
+                        <span className="text-[10px] text-blue-400 font-bold ep-mono">+200 cr</span>
+                      </div>
+                      <div className="text-[10px] text-slate-500 mt-0.5">Protects against crime damage & weather disasters</div>
+                    </div>
+                  </div>
+                )}
+
                 <button
                   onClick={() => construct(bdef)}
-                  disabled={!unlocked || !affordable || !buildable || !!building}
+                  disabled={!unlocked || !affordable || !buildable || !!building || (addInsurance && (nation.currency || 0) < ((bdef.cost.currency || 0) + 200))}
                   className="w-full py-2.5 rounded-xl text-xs font-bold min-h-[40px] transition-all bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:from-amber-400 hover:to-orange-500 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isBuilding ? (
                     <><div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin" /> Building...</>
                   ) : (
-                    <><Hammer size={12} /> {!unlocked ? "Locked" : !buildable ? "At Capacity" : !affordable ? "Insufficient Resources" : "Construct"}</>
+                    <><Hammer size={12} /> {!unlocked ? "Locked" : !buildable ? "At Capacity" : !affordable ? "Insufficient Resources" : `Construct${addInsurance ? " + Insure" : ""}`}</>
                   )}
                 </button>
               </div>
