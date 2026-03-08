@@ -63,6 +63,16 @@ export default function NewsEngine({ nation, onRefresh }) {
 
     for (const tpl of templates) {
       const author = JOURNALISTS[Math.floor(Math.random() * JOURNALISTS.length)];
+      // Generate image for disaster events or high-severity events
+      let image_url = "";
+      if (tpl.is_disaster || tpl.severity === "critical") {
+        try {
+          const imgRes = await base44.integrations.Core.GenerateImage({
+            prompt: `News illustration for: "${tpl.headline}". ${tpl.body || ""}. Editorial, cinematic, dramatic photo-realistic style. No text overlay.`
+          });
+          image_url = imgRes.url || "";
+        } catch (_) {}
+      }
       await base44.entities.NewsEvent.create({
         nation_id: fresh.id,
         owner_email: fresh.owner_email,
@@ -78,6 +88,7 @@ export default function NewsEngine({ nation, onRefresh }) {
         is_disaster: tpl.is_disaster || false,
         chosen_option: "",
         stat_preview: tpl.effects || {},
+        image_url,
       });
     }
 
