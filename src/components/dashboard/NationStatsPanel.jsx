@@ -260,18 +260,7 @@ export default function NationStatsPanel({ nation }) {
         </div>
       </div>
 
-      {/* ── Nation Stock Index ── */}
-      {(nation.gdp || 0) > 0 && (
-        <div className="rounded-xl px-3 py-2.5 shrink-0"
-          style={{ background: "rgba(34,211,238,0.04)", border: "1px solid rgba(34,211,238,0.10)" }}>
-          <div className="flex justify-between items-center">
-            <span className="text-[11px] text-slate-500 font-bold ep-mono uppercase">Nation Stock Index</span>
-            <span className="text-[15px] font-black ep-mono text-cyan-400 ep-glow-cyan">
-              {Math.round((nation.gdp || 0) * (nation.stability || 75) / 100 * (nation.public_trust || 1)).toLocaleString()}
-            </span>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 }
