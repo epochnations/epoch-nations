@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { TrendingUp, TrendingDown, Shield, Users, Zap, Coins, Star } from "lucide-react";
+import { useState, useEffect } from "react";
+import { TrendingUp, Shield, Users, Zap } from "lucide-react";
+import { base44 } from "@/api/base44Client";
 
 function StatBar({ value, max = 100, color = "#22d3ee" }) {
   const pct = Math.min(100, Math.max(0, (value / max) * 100));
