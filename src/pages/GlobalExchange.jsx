@@ -169,22 +169,26 @@ export default function GlobalExchange() {
   }
 
   return (
-    <div className="min-h-screen bg-[#050810] text-white flex flex-col" style={{ fontFamily: "'Inter', sans-serif" }}>
+    <div className="min-h-screen bg-[#040810] text-white flex flex-col ep-grid-bg" style={{ fontFamily: "'Inter', sans-serif" }}>
       {/* Header */}
-      <header className="border-b border-cyan-500/20 bg-black/70 backdrop-blur-xl px-4 md:px-6 py-3 flex items-center justify-between gap-3 shrink-0">
+      <header className="border-b px-4 md:px-6 py-3 flex items-center justify-between gap-3 shrink-0"
+        style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(4,8,16,0.7) 100%)", backdropFilter: "blur(24px)", borderColor: "rgba(6,182,212,0.15)" }}>
         <div className="flex items-center gap-3">
-          <a href={createPageUrl("Dashboard")} className="text-slate-400 hover:text-white transition-colors">
+          <a href={createPageUrl("Dashboard")} className="text-slate-500 hover:text-cyan-400 transition-colors ep-btn-lift">
             <ArrowLeft size={16} />
           </a>
           <div className="flex items-center gap-2">
-            <BarChart2 size={16} className="text-cyan-400" />
-            <span className="font-black text-white tracking-tight text-sm md:text-base">GLOBAL EXCHANGE</span>
-            <span className="hidden md:block text-xs text-slate-500 font-mono">· LIVE TERMINAL</span>
+            <BarChart2 size={16} className="text-cyan-400" style={{ filter: "drop-shadow(0 0 6px rgba(6,182,212,0.6))" }} />
+            <span className="font-black tracking-tight text-sm md:text-base ep-glow-cyan"
+              style={{ background: "linear-gradient(90deg, #22d3ee, #818cf8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+              GLOBAL EXCHANGE
+            </span>
+            <span className="hidden md:block text-[10px] text-slate-600 ep-mono">· LIVE TERMINAL</span>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-          <span className="text-xs text-green-400 font-mono hidden md:block">LIVE</span>
+          <span className="ep-live-dot" />
+          <span className="text-xs text-green-400 ep-mono hidden md:block font-bold">LIVE</span>
           {myNation && (
             <div className="text-xs font-mono text-slate-400 hidden md:block">
               Treasury: <span className="text-green-400 font-bold">{Math.round(myNation.currency).toLocaleString()} cr</span>

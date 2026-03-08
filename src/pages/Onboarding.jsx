@@ -137,18 +137,21 @@ export default function Onboarding() {
   }
 
   return (
-    <div className="min-h-screen bg-[#080c14] flex items-center justify-center p-6 relative overflow-hidden">
-      {/* Background grid */}
-      <div className="absolute inset-0 opacity-10"
-        style={{ backgroundImage: "linear-gradient(rgba(0,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,255,0.1) 1px, transparent 1px)", backgroundSize: "50px 50px" }} />
+    <div className="min-h-screen bg-[#040810] flex items-center justify-center p-6 relative overflow-hidden ep-grid-bg">
+      {/* Ambient glows */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full blur-3xl pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(6,182,212,0.08) 0%, transparent 70%)" }} />
+      <div className="absolute bottom-1/4 right-1/4 w-72 h-72 rounded-full blur-3xl pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(139,92,246,0.07) 0%, transparent 70%)" }} />
 
       <div className="relative z-10 w-full max-w-lg">
         {/* Header */}
         <div className="text-center mb-10">
-          <div className="text-5xl font-black tracking-tighter bg-gradient-to-r from-cyan-400 via-blue-400 to-violet-500 bg-clip-text text-transparent mb-2">
+          <div className="text-5xl font-black tracking-tighter mb-2"
+            style={{ background: "linear-gradient(90deg, #22d3ee 0%, #818cf8 50%, #a78bfa 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", textShadow: "none", filter: "drop-shadow(0 0 30px rgba(34,211,238,0.3))" }}>
             EPOCH NATIONS
           </div>
-          <p className="text-slate-400 text-sm tracking-widest uppercase">Grand Strategy Simulator</p>
+          <p className="text-slate-500 text-xs tracking-[0.35em] uppercase ep-mono">Grand Strategy Simulator</p>
         </div>
 
         {/* Skip tutorial button */}
