@@ -167,7 +167,8 @@ export default function Onboarding() {
         )}
 
         {/* Card */}
-        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-8 shadow-2xl">
+        <div className="rounded-2xl p-8 shadow-2xl ep-glow-anim"
+          style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(4,8,16,0.95) 100%)", border: "1px solid rgba(6,182,212,0.2)", backdropFilter: "blur(24px)" }}>
           {step === 1 && (
             <div className="space-y-6">
               <div>

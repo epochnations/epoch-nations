@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { TrendingUp, Shield, Users, Zap, DollarSign, Handshake, AlertTriangle } from "lucide-react";
+import { TrendingUp, Shield, Users, Zap, Handshake, AlertTriangle } from "lucide-react";
 import StatTooltip from "../ui/StatTooltip";
 import { EPOCH_COLOR, EPOCH_EMOJI, EPOCHS } from "../game/EpochConfig";
 
