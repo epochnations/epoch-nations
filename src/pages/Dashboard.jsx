@@ -161,6 +161,12 @@ export default function Dashboard() {
             📜 Chronicle
           </a>
           <a
+            href={createPageUrl("HexWorldMap")}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-bold hover:bg-cyan-500/20 transition-all duration-150"
+          >
+            🗺 World Map
+          </a>
+          <a
             href={createPageUrl("ConstructionHub")}
             className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold hover:bg-amber-500/20 transition-all duration-150"
           >
