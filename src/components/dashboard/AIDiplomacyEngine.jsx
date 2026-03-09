@@ -259,7 +259,7 @@ export default function AIDiplomacyEngine({ myNation }) {
         sender_nation_name: aiNation.name,
         sender_flag: aiNation.flag_emoji || "🏴",
         sender_color: aiNation.flag_color || "#64748b",
-        sender_role: "player", // ← CRITICAL: always "player", never "ai"
+        sender_role: "ai", // ← AI nations are labelled "ai" — never impersonate a human player
         content,
       });
     } catch (_) {}
