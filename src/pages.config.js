@@ -56,6 +56,7 @@ import NationalProfile from './pages/NationalProfile';
 import NationwideNews from './pages/NationwideNews';
 import Onboarding from './pages/Onboarding';
 import WorldChronicle from './pages/WorldChronicle';
+import HexWorldMap from './pages/HexWorldMap';
 import __Layout from './Layout.jsx';
 
 
@@ -69,6 +70,7 @@ export const PAGES = {
     "NationwideNews": NationwideNews,
     "Onboarding": Onboarding,
     "WorldChronicle": WorldChronicle,
+    "HexWorldMap": HexWorldMap,
 }
 
 export const pagesConfig = {
