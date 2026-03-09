@@ -281,27 +281,32 @@ export function applyThreadBoost(score, nationId, topic) {
  * @returns {Array} ordered array of { nation, personality, delay }
  */
 export function selectResponders(aiNations, analysis, rawText, getPersonality, cooldownMap) {
+  if (!aiNations.length) return [];
+
   const threshold = responseThreshold(analysis);
   const max       = maxResponders(analysis);
 
-  const scored = aiNations
-    .filter(n => isOffCooldown(n.id, cooldownMap))
-    .map(n => {
-      const personality = getPersonality(n);
-      let score = scoreNationRelevance(n, analysis, rawText, personality);
-      score = applyThreadBoost(score, n.id, analysis.topic);
+  // Score all nations (regardless of cooldown first, so we have a fallback pool)
+  const allScored = aiNations.map(n => {
+    const personality = getPersonality(n);
+    let score = scoreNationRelevance(n, analysis, rawText, personality);
+    score = applyThreadBoost(score, n.id, analysis.topic);
+    if (analysis.targetNation &&
+        (n.name || "").toLowerCase().includes(analysis.targetNation.toLowerCase()))
+      score += 100;
+    return { nation: n, personality, score };
+  }).sort((a, b) => b.score - a.score);
 
-      // If this nation is the direct target, guarantee it leads
-      if (analysis.targetNation &&
-          (n.name || "").toLowerCase().includes(analysis.targetNation.toLowerCase()))
-        score += 100;
-
-      return { nation: n, personality, score };
-    })
-    .filter(s => s.score >= threshold)
-    .sort((a, b) => b.score - a.score)
+  // Prefer nations that are off cooldown AND above threshold
+  let selected = allScored
+    .filter(s => isOffCooldown(s.nation.id, cooldownMap) && s.score >= threshold)
     .slice(0, max);
 
+  // GUARANTEE: if none qualify, force the highest-scored nation regardless of cooldown
+  if (selected.length === 0) {
+    selected = [allScored[0]];
+  }
+
   // Attach staggered delays
-  return scored.map((s, i) => ({ ...s, delay: responseDelay(i) }));
+  return selected.map((s, i) => ({ ...s, delay: responseDelay(i) }));
 }
