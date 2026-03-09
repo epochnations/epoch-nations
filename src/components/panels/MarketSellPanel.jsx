@@ -121,10 +121,22 @@ export default function MarketSellPanel({ nation, marketCount, onRefresh }) {
                        "✓ Competitive price"}
                     </div>
                   </div>
-                  {/* Quantity slider */}
+                  {/* Quantity slider + text input */}
                   <div className="mb-3">
                     <label className="text-xs text-slate-500 mb-1 flex justify-between">
-                      <span>Quantity</span><span className="font-mono text-white">{qty}</span>
+                      <span>Quantity</span>
+                      <input
+                        type="number"
+                        min={10}
+                        max={Math.max(10, maxQty)}
+                        step={10}
+                        value={qty}
+                        onChange={e => {
+                          const v = Math.max(10, Math.min(Math.max(10, maxQty), Number(e.target.value) || 10));
+                          setQuantities(q => ({ ...q, [key]: v }));
+                        }}
+                        className="w-20 bg-white/5 border border-white/10 rounded-lg px-2 py-0.5 text-xs text-white font-mono text-right"
+                      />
                     </label>
                     <input type="range" min={10} max={Math.max(10, maxQty)} step={10} value={qty}
                       onChange={e => setQuantities(q => ({ ...q, [key]: Number(e.target.value) }))}
