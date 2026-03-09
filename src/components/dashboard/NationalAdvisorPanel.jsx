@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { EPOCHS } from "../game/EpochConfig";
 import ReactMarkdown from "react-markdown";
-import { Send, ChevronDown, ChevronUp } from "lucide-react";
+import { Send, ChevronDown, ChevronUp, X } from "lucide-react";
 
 function buildAdvisories(nation) {
   const epochIndex = Math.max(0, EPOCHS.indexOf(nation.epoch));
@@ -36,7 +36,7 @@ const SEV = {
   info:     { border: "rgba(96,165,250,0.25)", bg: "rgba(96,165,250,0.06)", badge: "rgba(96,165,250,0.2)", badgeText: "#93c5fd", dot: "#60a5fa" },
 };
 
-export default function NationalAdvisorPanel({ nation }) {
+export default function NationalAdvisorPanel({ nation, onClose }) {
   const [collapsed, setCollapsed]   = useState(false);
   const [conversation, setConversation] = useState(null);
   const [messages, setMessages]     = useState([]);
@@ -107,7 +107,7 @@ export default function NationalAdvisorPanel({ nation }) {
         onClick={() => setCollapsed(c => !c)}
       >
         <div className="flex items-center gap-2">
-          <span className="text-base" style={{ filter: "drop-shadow(0 0 8px rgba(139,92,246,0.7))" }}>🧠</span>
+          <span className="text-base" style={{ filter: "drop-shadow(0 0 8px rgba(139,92,246,0.7))" }}>⚡</span>
           <span className="text-xs font-black text-white tracking-widest uppercase ep-mono">National Advisor</span>
           {criticalCount > 0 && (
             <span className="px-1.5 py-0.5 rounded-full text-[9px] font-black ep-mono animate-pulse"

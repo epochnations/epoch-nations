@@ -15,19 +15,9 @@ export default function NationalAdvisorModal({ nation, onClose }) {
           backdropFilter: "blur(24px)",
         }}
         onClick={e => e.stopPropagation()}>
-        {/* Header */}
-        <div className="flex items-center gap-3 px-5 py-3.5 border-b shrink-0"
-          style={{ borderColor: "rgba(139,92,246,0.15)", background: "linear-gradient(90deg, rgba(139,92,246,0.1) 0%, transparent 100%)" }}>
-          <span className="text-lg">🧠</span>
-          <span className="font-black text-white text-sm tracking-wide">National Advisor</span>
-          <span className="text-xs text-slate-500 ep-mono">{nation.name}</span>
-          <button onClick={onClose} className="ml-auto p-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors">
-            <X size={14} />
-          </button>
-        </div>
         {/* Content */}
         <div className="flex-1 overflow-hidden p-0">
-          <NationalAdvisorPanel nation={nation} />
+          <NationalAdvisorPanel nation={nation} onClose={onClose} />
         </div>
       </div>
     </div>
