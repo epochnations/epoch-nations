@@ -335,6 +335,9 @@ export default function Dashboard() {
       {/* World Event Broadcaster — pipes NewsEvents, Transactions & debates into chat */}
       {myNation && <WorldEventBroadcaster myNation={myNation} />}
 
+      {/* World Simulation Engine — AI strategic ticks, global events, faction pressure, chronicle */}
+      {myNation && <WorldSimulationEngine myNation={myNation} />}
+
       {/* National Advisor Modal */}
       {showAdvisor && myNation && (
         <NationalAdvisorModal nation={myNation} onClose={() => setShowAdvisor(false)} />
