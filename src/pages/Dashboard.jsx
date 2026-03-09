@@ -332,9 +332,6 @@ export default function Dashboard() {
         />
       )}
 
-      {/* AI Diplomacy Engine — headless, manages AI nation chat participation */}
-      {myNation && <AIDiplomacyEngine myNation={myNation} />}
-
       {/* World Event Broadcaster — pipes NewsEvents, Transactions & debates into chat */}
       {myNation && <WorldEventBroadcaster myNation={myNation} />}
 
