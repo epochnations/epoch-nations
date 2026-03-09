@@ -296,8 +296,9 @@ export default function WorldEventBroadcaster({ myNation }) {
 
     // 2–4 AI nations respond over the next 30s
     const allNations = await base44.entities.Nation.list("-gdp", 15);
+    const userEmails = userEmailsRef.current;
     const candidates = allNations
-      .filter(n => n.id !== myNation?.id && n.owner_email !== myNation?.owner_email)
+      .filter(n => n.id !== myNation?.id && n.owner_email !== myNation?.owner_email && (userEmails.size === 0 || !userEmails.has(n.owner_email)))
       .sort(() => Math.random() - 0.5)
       .slice(0, 3 + Math.floor(Math.random() * 2));
 
