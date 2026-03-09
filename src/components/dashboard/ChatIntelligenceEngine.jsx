@@ -19,6 +19,48 @@ export const RESPONSE_DELAY_MIN = 2000;
 export const RESPONSE_DELAY_MAX = 6000;
 
 // ─────────────────────────────────────────────────────────────────────────────
+// LEADER NAME RECOGNITION
+// Detects if a player is addressing a specific nation by name or leader name
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Scan a message for nation names or leader name fragments.
+ * Returns the matching nation object (full), or null.
+ *
+ * @param {string} message
+ * @param {Array}  nations  — full nation objects with name + optional leader_name
+ * @param {Function} getLeaderDisplay — (nation) => "Title First Last"
+ */
+export function detectAddressedNation(message, nations, getLeaderDisplay) {
+  const lower = message.toLowerCase();
+  let bestMatch = null;
+  let bestLen = 0;
+
+  for (const nation of nations) {
+    // Check nation name
+    const nName = (nation.name || "").toLowerCase();
+    if (nName && lower.includes(nName) && nName.length > bestLen) {
+      bestMatch = nation;
+      bestLen = nName.length;
+    }
+
+    // Check leader display name fragments (first name, last name, full)
+    const leaderDisplay = getLeaderDisplay ? getLeaderDisplay(nation) : "";
+    if (leaderDisplay) {
+      const parts = leaderDisplay.toLowerCase().split(/[\s–-]+/).filter(p => p.length > 2);
+      for (const part of parts) {
+        if (lower.includes(part) && part.length > bestLen) {
+          bestMatch = nation;
+          bestLen = part.length;
+        }
+      }
+    }
+  }
+
+  return bestMatch;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // MESSAGE ANALYZER
 // Extracts: intent, topic, tone, targetNation, importance, isQuestion
 // ─────────────────────────────────────────────────────────────────────────────
