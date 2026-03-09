@@ -268,11 +268,88 @@ export default function WorldChat({ myNation, user }) {
       });
       return;
     }
+
     if ((cmd === "/mute" || cmd === "/unmute") && isMod) {
-      // handled inline via message hover — command form is informational
+      return; // handled via hover controls
+    }
+
+    // ── Diplomatic commands ────────────────────────────────────────────────
+    if (cmd === "/trade" && myNation) {
+      const [, targetNation, resource, amount] = parts;
+      if (!targetNation) return;
+      const res = resource || "resources";
+      const amt = amount || "unspecified";
+      await base44.entities.ChatMessage.create({
+        channel,
+        sender_nation_id: myNation.id,
+        sender_nation_name: myNation.name,
+        sender_flag: myNation.flag_emoji || "🏴",
+        sender_color: myNation.flag_color || "#3b82f6",
+        sender_role: myRole,
+        content: `[DIPLOMATIC ACTION] 🤝 Trade Proposal — ${myNation.name} offers ${amt} units of ${res} to ${targetNation}. Nations may accept or counter.`,
+      });
       return;
     }
-    // Unknown command — send as regular message so user sees it
+
+    if (cmd === "/diplomacy" && myNation) {
+      const action = parts[1] || "propose";
+      const subj = parts.slice(2).join(" ") || "unknown nation";
+      await base44.entities.ChatMessage.create({
+        channel,
+        sender_nation_id: myNation.id,
+        sender_nation_name: myNation.name,
+        sender_flag: myNation.flag_emoji || "🏴",
+        sender_color: myNation.flag_color || "#3b82f6",
+        sender_role: myRole,
+        content: `[DIPLOMATIC ACTION] 🏛️ ${myNation.name} formally ${action}s: ${subj}. All parties are invited to respond.`,
+      });
+      return;
+    }
+
+    if (cmd === "/sanction" && myNation) {
+      const target = parts.slice(1).join(" ") || "unknown nation";
+      await base44.entities.ChatMessage.create({
+        channel,
+        sender_nation_id: myNation.id,
+        sender_nation_name: myNation.name,
+        sender_flag: myNation.flag_emoji || "🏴",
+        sender_color: myNation.flag_color || "#3b82f6",
+        sender_role: myRole,
+        content: `[DIPLOMATIC ACTION] ⛔ ${myNation.name} announces economic sanctions against ${target}. Trade relations suspended pending review.`,
+      });
+      return;
+    }
+
+    if (cmd === "/spy" && myNation) {
+      const target = parts.slice(1).join(" ") || "unknown nation";
+      await base44.entities.ChatMessage.create({
+        channel: "system",
+        sender_nation_name: "INTEL AGENCY",
+        sender_flag: "🔍",
+        sender_color: "#94a3b8",
+        sender_role: "system",
+        content: `🔍 COVERT OPERATION\n${myNation.name} has initiated intelligence gathering on ${target}. Results pending field report.`,
+      });
+      return;
+    }
+
+    if (cmd === "/aid" && myNation) {
+      const [, targetNation, amount] = parts;
+      if (!targetNation) return;
+      const amt = amount || "unspecified";
+      await base44.entities.ChatMessage.create({
+        channel,
+        sender_nation_id: myNation.id,
+        sender_nation_name: myNation.name,
+        sender_flag: myNation.flag_emoji || "🏴",
+        sender_color: myNation.flag_color || "#3b82f6",
+        sender_role: myRole,
+        content: `[DIPLOMATIC ACTION] 🤲 ${myNation.name} pledges humanitarian aid of ${amt} credits to ${targetNation}. Aid package dispatched.`,
+      });
+      return;
+    }
+
+    // Unknown command → send as regular message
     return false;
   }
 
