@@ -242,7 +242,7 @@ export default function WorldEventBroadcaster({ myNation }) {
             sender_nation_name: nation.name,
             sender_flag: nation.flag_emoji || "🏴",
             sender_color: nation.flag_color || "#64748b",
-            sender_role: "player",
+            sender_role: "ai",
             content,
           });
         }
