@@ -689,7 +689,10 @@ export default function WorldChat({ myNation, user }) {
             </button>
           </div>
           <div className="mt-1.5 flex items-center gap-2 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
-            {["/trade", "/diplomacy", "/sanction", "/spy", "/aid"].map(cmd => (
+            {(isMod
+              ? ["/trade", "/diplomacy", "/blockword", "/mute", "/warn"]
+              : ["/trade", "/diplomacy", "/sanction", "/spy", "/aid"]
+            ).map(cmd => (
               <button key={cmd} onClick={() => { setInput(cmd + " "); inputRef.current?.focus(); }}
                 className="shrink-0 text-[9px] font-bold ep-mono px-1.5 py-0.5 rounded-md border border-white/10 text-slate-600 hover:text-cyan-400 hover:border-cyan-500/30 transition-colors">
                 {cmd}
