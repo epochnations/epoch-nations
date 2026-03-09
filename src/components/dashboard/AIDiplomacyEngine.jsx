@@ -571,6 +571,29 @@ export default function AIDiplomacyEngine({ myNation, onReady }) {
       updatePersonaDrift(msg.sender_nation_name, "", analysis.diplomaticEvent);
     }
 
+    // Record diplomacy proposals to DiplomacyAgreement entity
+    const dipContent = (msg.content || "").toLowerCase();
+    if (/\b(propose|offer|suggest|accept|agree).{0,20}(alliance|pact|treaty|trade agreement|defense|sanction)\b/.test(dipContent) && analysis.targetNation) {
+      const targetNations = allNations.filter(n => n.name.toLowerCase() === analysis.targetNation.toLowerCase());
+      if (targetNations[0]) {
+        const agrType = /alliance/.test(dipContent) ? "alliance"
+          : /defense/.test(dipContent) ? "defense_treaty"
+          : /pact/.test(dipContent) ? "non_aggression_pact"
+          : /sanction/.test(dipContent) ? "sanctions"
+          : "trade_agreement";
+        base44.entities.DiplomacyAgreement.create({
+          nation_a_id:   msg.sender_nation_id || "",
+          nation_a_name: msg.sender_nation_name || "",
+          nation_b_id:   targetNations[0].id,
+          nation_b_name: targetNations[0].name,
+          agreement_type: agrType,
+          status: "proposed",
+          proposed_by: msg.sender_nation_name || "",
+          terms: msg.content.slice(0, 300),
+        }).catch(() => {});
+      }
+    }
+
     const userEmails = userEmailsRef.current;
     const aiNations  = allNations.filter(n =>
       n.id !== myNation?.id &&
