@@ -235,6 +235,7 @@ export default function WorldChat({ myNation, user }) {
   const [showPrivate, setShowPrivate] = useState(false);
   const bottomRef = useRef(null);
   const inputRef  = useRef(null);
+  const aiTriggerRef = useRef(null);
 
   const userRole = user?.role || "player";
   const isAdmin  = userRole === "admin" || userRole === "developer";
