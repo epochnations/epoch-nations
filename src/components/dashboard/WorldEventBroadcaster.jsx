@@ -7,6 +7,7 @@
  */
 import { useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
+import { leaderDisplayName, getPersonality } from "./AIDiplomacyEngine";
 
 // Tension delta from emoji reactions
 const TENSION_EMOJI_DELTA = {
