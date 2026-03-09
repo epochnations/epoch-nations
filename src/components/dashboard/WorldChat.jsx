@@ -241,15 +241,21 @@ export default function WorldChat({ myNation, user }) {
     return unsub;
   }, [loadMessages]);
 
-  // Slash command suggestions
+  // Slash command suggestions — show player commands to everyone, mod/admin commands to elevated roles
   useEffect(() => {
     if (input.startsWith("/")) {
-      const relevant = COMMANDS.filter(c => c.cmd.startsWith(input.split(" ")[0]) && (isMod || c.role === "player"));
+      const relevant = COMMANDS.filter(c => {
+        if (!c.cmd.startsWith(input.split(" ")[0])) return false;
+        if (c.role === "player") return true;
+        if (c.role === "moderator") return isMod;
+        if (c.role === "admin") return isAdmin;
+        return false;
+      });
       setCmdSuggestions(relevant);
     } else {
       setCmdSuggestions([]);
     }
-  }, [input, isMod]);
+  }, [input, isMod, isAdmin]);
 
   async function handleCommand(raw) {
     const parts = raw.trim().split(/\s+/);
