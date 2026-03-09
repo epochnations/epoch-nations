@@ -11,11 +11,19 @@ import { useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import {
   analyzeMessage,
-  selectResponders,
   recordThreadParticipation,
-  detectAddressedNation,
-  buildConversationHistory,
+  scoreNationRelevance,
 } from "./ChatIntelligenceEngine";
+import {
+  detectDirectAddress,
+  selectDirectedResponders,
+  buildDirectorPrompt,
+  buildHistory,
+  validateResponse,
+  repairResponse,
+  getDiplomaticPersonality,
+  FALLBACK_RESPONSE,
+} from "./ConversationDirector";
 import { getCulture, getStrategicGoal } from "./WorldSimulationEngine";
 
 // ─────────────────────────────────────────────────────────────────────────────
