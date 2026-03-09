@@ -333,8 +333,10 @@ export default function Dashboard() {
         />
       )}
 
-      {/* National AV Advisor — desktop sidebar slot */}
-      
+      {/* National Advisor Modal */}
+      {showAdvisor && myNation && (
+        <NationalAdvisorModal nation={myNation} onClose={() => setShowAdvisor(false)} />
+      )}
     </div>
   );
 }
