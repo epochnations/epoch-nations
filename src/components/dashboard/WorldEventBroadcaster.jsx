@@ -79,6 +79,7 @@ export default function WorldEventBroadcaster({ myNation }) {
   const tensionRef          = useRef(50); // 0–100 internal tracker
   const lastDebateRef       = useRef(0);
   const lastIntelRef        = useRef(0);
+  const userEmailsRef       = useRef(new Set());
 
   useEffect(() => {
     if (!myNation) return;
