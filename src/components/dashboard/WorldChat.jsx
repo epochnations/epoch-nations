@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { Send, Shield, Trash2, VolumeX, Reply, X, MessageSquare, Volume2, Megaphone, Lock } from "lucide-react";
 import PrivateChatPanel from "./PrivateChatPanel";
+import AIDiplomacyEngine from "./AIDiplomacyEngine";
 
 const CHANNELS = [
   { id: "global", label: "🌐 Global", color: "#22d3ee" },
