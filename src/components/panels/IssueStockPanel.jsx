@@ -24,12 +24,12 @@ const SECTORS_BY_EPOCH = {
 
 // Stock cap by epoch index
 function getStockCap(epochIndex) {
-  if (epochIndex <= 0) return 2;          // Stone Age
-  if (epochIndex <= 3) return 4;          // Copper–Iron
-  if (epochIndex <= 6) return 6;          // Dark–Renaissance
-  if (epochIndex <= 9) return 8;          // Imperial–Industrial
-  if (epochIndex <= 12) return 12;        // Modern–Digital
-  return 16;                              // Genetic Age+
+  if (epochIndex <= 0) return 17;         // Stone Age
+  if (epochIndex <= 3) return 19;         // Copper–Iron
+  if (epochIndex <= 6) return 21;         // Dark–Renaissance
+  if (epochIndex <= 9) return 23;         // Imperial–Industrial
+  if (epochIndex <= 12) return 27;        // Modern–Digital
+  return 31;                              // Genetic Age+
 }
 
 // Stock shares: 15 per epoch index (baseline 500 + 15 * epochIndex)
