@@ -222,9 +222,11 @@ export default function WorldEventBroadcaster({ myNation }) {
   // ── Let one AI nation react to a headline ─────────────────────────────────
   async function triggerAIEventReaction(headline, eventType) {
     const allNations = await base44.entities.Nation.list("-gdp", 20);
+    const userEmails = userEmailsRef.current;
     const candidates = allNations.filter(n =>
       n.id !== myNation?.id &&
-      n.owner_email !== myNation?.owner_email
+      n.owner_email !== myNation?.owner_email &&
+      (userEmails.size === 0 || !userEmails.has(n.owner_email)) // only AI nations
     );
     if (!candidates.length) return;
 
