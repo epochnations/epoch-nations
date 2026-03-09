@@ -16,6 +16,7 @@ import {
   detectAddressedNation,
   buildConversationHistory,
 } from "./ChatIntelligenceEngine";
+import { getCulture, getStrategicGoal } from "./WorldSimulationEngine";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // LEADER GENERATION (deterministic per nation name)
