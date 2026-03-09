@@ -362,7 +362,11 @@ function buildReplyPrompt(aiNation, personality, leader, senderName, playerMsg, 
   const histCtx = conversationHistory
     ? `\nRECENT CONVERSATION:\n${conversationHistory}`
     : "";
-  const gameCtx = buildGameStateContext(aiNation);
+  const gameCtx    = buildGameStateContext(aiNation);
+  const culture    = getCulture(aiNation);
+  const stratGoal  = getStrategicGoal(aiNation);
+  const cultureCtx = `\nCULTURE: ${culture.label} — ${culture.traits}`;
+  const goalCtx    = `\nSTRATEGIC GOAL: ${stratGoal.label}`;
 
   // Detect if this is a resource/war/specific data question — add tailored instruction
   const resourceQueried = detectResourceQuery(playerMsg);
