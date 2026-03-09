@@ -122,13 +122,12 @@ export default function NationalAdvisorPanel({ nation, onClose }) {
             </span>
           )}
         </div>
-        <div className="flex items-center gap-2">
-          <div className="flex gap-1">
-            {advisories.slice(0, 5).map((a, i) => (
-              <div key={i} className="w-2 h-2 rounded-full"
-                style={{ background: SEV[a.severity].dot, boxShadow: `0 0 5px ${SEV[a.severity].dot}` }} />
-            ))}
-          </div>
+        <div className="ml-auto flex items-center gap-2">
+          {onClose && (
+            <button onClick={onClose} className="p-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors">
+              <X size={13} />
+            </button>
+          )}
           {collapsed
             ? <ChevronDown size={13} className="text-slate-500" />
             : <ChevronUp size={13} className="text-slate-500" />}
