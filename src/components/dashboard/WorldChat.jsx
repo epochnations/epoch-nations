@@ -555,12 +555,21 @@ export default function WorldChat({ myNation, user }) {
           </button>
         </div>
 
-        {isMod && (
-          <div className="mt-1 flex items-center gap-1">
-            <Shield size={8} className="text-orange-400/50" />
-            <span className="text-[9px] text-orange-400/40 ep-mono">Mod active — hover messages to manage</span>
-          </div>
-        )}
+        <div className="mt-1.5 flex items-center gap-2 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+          {["/trade", "/diplomacy", "/sanction", "/spy", "/aid"].map(cmd => (
+            <button key={cmd} onClick={() => { setInput(cmd + " "); inputRef.current?.focus(); }}
+              className="shrink-0 text-[9px] font-bold ep-mono px-1.5 py-0.5 rounded-md border border-white/10 text-slate-600 hover:text-cyan-400 hover:border-cyan-500/30 transition-colors">
+              {cmd}
+            </button>
+          ))}
+          {isMod && (
+            <>
+              <div className="w-px h-3 bg-white/10 shrink-0" />
+              <Shield size={8} className="text-orange-400/50 shrink-0" />
+              <span className="text-[9px] text-orange-400/40 ep-mono shrink-0">Mod active</span>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
