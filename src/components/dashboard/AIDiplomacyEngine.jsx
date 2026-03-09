@@ -371,34 +371,37 @@ function buildReplyPrompt(aiNation, personality, leader, senderName, playerMsg, 
   // Detect if this is a resource/war/specific data question — add tailored instruction
   const resourceQueried = detectResourceQuery(playerMsg);
   const isWarQuery = /\b(war|conflict|battle|fighting|at war|peace)\b/i.test(playerMsg);
+  const isDiploQuery = /\b(ally|alliance|pact|treaty|trade agreement|sanction|defense pact)\b/i.test(playerMsg);
 
   let dataInstruction = "";
   if (resourceQueried && resourceQueried !== "energy") {
     const resKey = `res_${resourceQueried}`;
     const resVal = aiNation[resKey];
     const hasResource = resVal !== undefined && resVal > 0;
-    const tradeHint = hasResource && Math.random() < 0.3
-      ? ` Consider offering to trade if it benefits ${aiNation.name}.`
+    const tradeHint = hasResource && Math.random() < 0.35
+      ? ` If it aligns with your strategic goal, consider proposing a trade for ${resourceQueried}.`
       : "";
     dataInstruction = `\nDATA TASK: The player asked about ${resourceQueried}. Your ${resourceQueried} value is ${resVal ?? 0}. State this truthfully.${tradeHint}`;
   } else if (isWarQuery) {
     const wars = (aiNation.at_war_with || []);
     dataInstruction = `\nDATA TASK: The player asked about war status. ${wars.length ? `You are at war with: ${wars.join(", ")}.` : "You are currently at peace."} State this truthfully.`;
+  } else if (isDiploQuery) {
+    dataInstruction = `\nDATA TASK: The player is raising a diplomatic topic. Respond based on your strategic goal ("${stratGoal.label}") and cultural values (${culture.label}). Be specific about what terms or conditions you would require.`;
   }
 
   const modeHint =
     analysis.intent === "greeting"             ? "Reply briefly in your nation's style. Max 1 sentence."
     : analysis.intent === "question"           ? "Give your genuine national position using your game data above. 1–2 sentences."
     : analysis.intent === "accusation"         ? "Defend or deflect firmly. Reference past from memory if relevant. 1–2 sentences."
-    : analysis.intent === "trade_offer"        ? "React based on your actual economic resources above. 1–2 sentences."
+    : analysis.intent === "trade_offer"        ? "React based on your actual economic resources and strategic goal. 1–2 sentences."
     : analysis.intent === "military_discussion"? "Respond as a statesperson on military matters using your real stats. 1–2 sentences."
-    : analysis.intent === "diplomatic_statement"?"Respond diplomatically. Reference world history if truly relevant. 1–2 sentences."
-    : "Respond naturally and in character using your game data. 1–2 sentences.";
+    : analysis.intent === "diplomatic_statement"?"Respond diplomatically in line with your culture and strategic goal. 1–2 sentences."
+    : "Respond naturally and in character using your game data and strategic goal. 1–2 sentences.";
 
   return `You are ${leader.display}, leader of "${aiNation.name}" in the ${aiNation.epoch} era, on a GLOBAL DIPLOMATIC CHANNEL.
 
 PERSONALITY: ${personality.type} — ${personality.traits}
-STYLE: ${personality.style}${driftNote}
+STYLE: ${personality.style}${driftNote}${cultureCtx}${goalCtx}
 
 YOUR NATION'S REAL GAME DATA (use these exact numbers):
 ${gameCtx}
@@ -418,7 +421,8 @@ RULES:
 - Sound like a real head of state — concise, politically authentic
 - Max 2 sentences
 - NEVER invent resource numbers — use only the exact values from YOUR NATION'S REAL GAME DATA above
-- If the conversation history shows you previously spoke with ${senderName}, acknowledge the continuity naturally`;
+- Let your cultural identity (${culture.label}) and strategic goal shape your priorities
+- If the conversation history shows you previously spoke with ${senderName}, acknowledge it naturally`;
 }
 
 function buildPrivateReplyPrompt(aiNation, personality, leader, senderNation, playerMsg, nationMem, relation, worldEvents) {
