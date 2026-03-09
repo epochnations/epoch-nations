@@ -1,0 +1,323 @@
+/**
+ * WorldSimulationEngine — Headless background component
+ *
+ * Drives the living geopolitical world:
+ * - AI Strategic Decision ticks (alliances, trade proposals, war threats)
+ * - Global Event Generator (disasters, crises, breakthroughs)
+ * - World Chronicle recording
+ * - AI faction pressure messages
+ * - Diplomatic agreement monitoring
+ */
+import { useEffect, useRef } from "react";
+import { base44 } from "@/api/base44Client";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CULTURAL IDENTITY SYSTEM
+// Deterministic per nation name
+// ─────────────────────────────────────────────────────────────────────────────
+const CULTURES = [
+  { id: "military_empire",       label: "Military Empire",       traits: "values strength, expansion, and strategic dominance",        diplomacyBias: "aggressive" },
+  { id: "economic_powerhouse",   label: "Economic Powerhouse",   traits: "trade-focused, values GDP, negotiates through leverage",     diplomacyBias: "trade" },
+  { id: "technological_society", label: "Technological Society", traits: "innovation-driven, believes in science and progress",         diplomacyBias: "cooperative" },
+  { id: "environmental_coalition",label:"Environmental Coalition","traits": "sustainability-focused, anti-fossil-fuel, seeks green alliances", diplomacyBias: "cooperative" },
+  { id: "religious_state",       label: "Religious State",       traits: "values ideology, morality in politics, cautious of outsiders", diplomacyBias: "isolationist" },
+  { id: "mercantile_republic",   label: "Mercantile Republic",   traits: "trade guilds run policy, profit-driven foreign relations",    diplomacyBias: "trade" },
+  { id: "warrior_clans",         label: "Warrior Clans",         traits: "honor-bound, martial culture, respect earned through strength", diplomacyBias: "aggressive" },
+];
+
+export function getCulture(nation) {
+  let h = 0;
+  for (const c of (nation.name || "X")) h = (h * 17 + c.charCodeAt(0)) & 0xffff;
+  return CULTURES[h % CULTURES.length];
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// STRATEGIC GOALS SYSTEM
+// ─────────────────────────────────────────────────────────────────────────────
+const STRATEGIC_GOALS = [
+  { id: "dominate_oil",       label: "Dominate the global oil market",          relevantIf: n => (n.res_oil || 0) > 50 },
+  { id: "expand_military",    label: "Expand military strength",                relevantIf: n => (n.unit_power || 0) > 15 },
+  { id: "economic_growth",    label: "Achieve rapid economic growth",           relevantIf: n => (n.gdp || 0) > 300 },
+  { id: "secure_food",        label: "Secure food supply for population",       relevantIf: n => (n.res_food || 0) < 100 },
+  { id: "tech_advancement",   label: "Advance technological capabilities",      relevantIf: n => (n.tech_level || 1) > 2 },
+  { id: "forge_alliances",    label: "Build a coalition of allied nations",     relevantIf: n => (n.allies || []).length < 2 },
+  { id: "resource_security",  label: "Secure critical resource supply chains",  relevantIf: () => true },
+  { id: "global_influence",   label: "Project global political influence",      relevantIf: n => (n.gdp || 0) > 500 },
+];
+
+export function getStrategicGoal(nation) {
+  let h = 0;
+  for (const c of (nation.name || "X")) h = (h * 13 + c.charCodeAt(0)) & 0xffff;
+  // Prefer relevant goals
+  const relevant = STRATEGIC_GOALS.filter(g => g.relevantIf(nation));
+  const pool = relevant.length ? relevant : STRATEGIC_GOALS;
+  return pool[h % pool.length];
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// INTERNAL FACTION PRESSURES
+// ─────────────────────────────────────────────────────────────────────────────
+const FACTIONS = [
+  { id: "military_council",   label: "Military Council",     message: (n) => `The Military Council of ${n.name} demands increased defense spending to counter regional threats.` },
+  { id: "industrial_sector",  label: "Industrial Sector",    message: (n) => `${n.name}'s Industrial Sector urges trade expansion and resource acquisition.` },
+  { id: "science_ministry",   label: "Science Ministry",     message: (n) => `${n.name}'s Science Ministry is pushing for accelerated technological research funding.` },
+  { id: "political_hardliners",label:"Political Hardliners", message: (n) => `Hardline factions within ${n.name} are pressuring leadership to take a stronger stance on foreign policy.` },
+  { id: "economic_reformers", label: "Economic Reformers",   message: (n) => `Economic reformers in ${n.name} are calling for tax restructuring and reduced military spending.` },
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// GLOBAL EVENTS POOL
+// ─────────────────────────────────────────────────────────────────────────────
+const GLOBAL_EVENTS = [
+  { type: "disaster",    importance: "high",   title: "Major Earthquake",         template: (n) => `A devastating earthquake has struck ${n.name}, causing widespread infrastructure damage and humanitarian crisis.` },
+  { type: "crisis",      importance: "high",   title: "Energy Shortage",          template: (n) => `A severe energy shortage is gripping ${n.name}, driving up global fuel prices.` },
+  { type: "tech",        importance: "medium", title: "Technological Breakthrough",template: (n) => `${n.name}'s research division has announced a major breakthrough in renewable energy technology.` },
+  { type: "revolution",  importance: "critical",title: "Political Revolution",    template: (n) => `A political revolution is underway in ${n.name}. The government's stability is under severe threat.` },
+  { type: "crisis",      importance: "high",   title: "Famine Warning",           template: (n) => `${n.name} is facing a catastrophic famine warning as food reserves fall below critical levels.` },
+  { type: "crisis",      importance: "medium", title: "Market Collapse",          template: (n) => `Financial markets in ${n.name} have collapsed, sending shockwaves through the global economy.` },
+  { type: "tech",        importance: "medium", title: "Military Advancement",     template: (n) => `${n.name} has successfully tested a new generation of military technology, raising regional tensions.` },
+  { type: "disaster",    importance: "high",   title: "Severe Flooding",          template: (n) => `Catastrophic flooding has devastated agricultural regions of ${n.name}, threatening food supply chains.` },
+  { type: "narrative",   importance: "medium", title: "Population Boom",          template: (n) => `${n.name} is experiencing unprecedented population growth, straining infrastructure and resources.` },
+  { type: "crisis",      importance: "high",   title: "Diplomatic Incident",      template: (n) => `A serious diplomatic incident involving ${n.name} is escalating tensions across the region.` },
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// WORLD CHRONICLE HELPER
+// ─────────────────────────────────────────────────────────────────────────────
+async function recordChronicle({ event_type, title, summary, actors = [], importance = "medium", era_tag = "" }) {
+  try {
+    await base44.entities.WorldChronicle.create({ event_type, title, summary, actors, importance, era_tag });
+  } catch { /* non-blocking */ }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AI STRATEGIC DECISION TICK
+// Runs periodically — AI nations take proactive actions
+// ─────────────────────────────────────────────────────────────────────────────
+async function runStrategicTick(myNationId) {
+  try {
+    const allNations = await base44.entities.Nation.list("-gdp", 30);
+    const users = await base44.entities.User.list();
+    const userEmails = new Set(users.map(u => u.email));
+
+    const aiNations = allNations.filter(n =>
+      n.id !== myNationId &&
+      n.owner_email &&
+      !userEmails.has(n.owner_email)
+    );
+
+    if (!aiNations.length) return;
+
+    // Pick 1–2 AI nations to act this tick
+    const shuffled = [...aiNations].sort(() => Math.random() - 0.5).slice(0, 2);
+
+    for (const nation of shuffled) {
+      const goal = getStrategicGoal(nation);
+      const culture = getCulture(nation);
+      const action = pickStrategicAction(nation, goal, culture, allNations);
+      if (!action) continue;
+
+      // Small delay between actions
+      await new Promise(r => setTimeout(r, 1500 + Math.random() * 2000));
+      await executeStrategicAction(nation, action, goal, allNations);
+    }
+  } catch { /* non-blocking */ }
+}
+
+function pickStrategicAction(nation, goal, culture, allNations) {
+  const roll = Math.random();
+
+  // War-related (rare, only when at conflict or high military)
+  const isAtWar = (nation.at_war_with || []).length > 0;
+  if (isAtWar && roll < 0.15) return "war_statement";
+
+  // Trade/alliance proposals
+  if (goal.id === "forge_alliances" && roll < 0.4) return "propose_alliance";
+  if (goal.id === "dominate_oil" && (nation.res_oil || 0) > 30 && roll < 0.35) return "oil_trade_offer";
+  if (goal.id === "economic_growth" && roll < 0.3) return "trade_proposal";
+  if (goal.id === "expand_military" && roll < 0.25) return "military_posture";
+  if (goal.id === "secure_food" && (nation.res_food || 0) < 80 && roll < 0.4) return "request_food_aid";
+
+  // General diplomacy
+  if (roll < 0.2) return "diplomatic_statement";
+  return null;
+}
+
+async function executeStrategicAction(nation, action, goal, allNations) {
+  const culture = getCulture(nation);
+
+  let content = null;
+  let systemMsg = null;
+
+  // Pick a target nation for bilateral messages
+  const others = allNations.filter(n => n.id !== nation.id && n.name !== nation.name);
+  const target = others[Math.floor(Math.random() * others.length)];
+
+  const prompt = buildStrategicPrompt(nation, action, goal, culture, target);
+
+  try {
+    const res = await base44.integrations.Core.InvokeLLM({ prompt });
+    content = typeof res === "string" ? res : res?.response || res?.text || String(res);
+    content = content?.trim().replace(/^["']|["']$/g, "").slice(0, 300);
+    if (!content || content.length < 5) return;
+  } catch { return; }
+
+  // Post as a chat message from this AI nation
+  const { leaderDisplayName } = await import("./AIDiplomacyEngine");
+  await base44.entities.ChatMessage.create({
+    channel: "global",
+    sender_nation_id:   nation.id,
+    sender_nation_name: leaderDisplayName(nation),
+    sender_flag:        nation.flag_emoji || "🏴",
+    sender_color:       nation.flag_color || "#64748b",
+    sender_role:        "ai",
+    content,
+    reply_to_id:   "",
+    reply_to_name: "",
+  });
+
+  // Record in chronicle for high-importance actions
+  if (["propose_alliance", "oil_trade_offer", "war_statement"].includes(action)) {
+    await recordChronicle({
+      event_type: action === "propose_alliance" ? "alliance" : action === "war_statement" ? "war" : "trade",
+      title: `${nation.name}: ${goal.label}`,
+      summary: content.slice(0, 200),
+      actors: [nation.name, target?.name].filter(Boolean),
+      importance: action === "war_statement" ? "high" : "medium",
+      era_tag: nation.epoch || "",
+    });
+  }
+}
+
+function buildStrategicPrompt(nation, action, goal, culture, target) {
+  const gameCtx = `
+Nation: ${nation.name} | Era: ${nation.epoch || "Stone Age"}
+Culture: ${culture.label} — ${culture.traits}
+Strategic Goal: ${goal.label}
+Resources: Oil=${nation.res_oil || 0}, Food=${nation.res_food || 0}, Iron=${nation.res_iron || 0}, Gold=${nation.res_gold || 0}
+GDP: ${nation.gdp || 0} | Military: ${nation.unit_power || 0} | Stability: ${Math.round(nation.stability || 75)}%
+At War: ${(nation.at_war_with || []).join(", ") || "No"}
+Allies: ${(nation.allies || []).join(", ") || "None"}
+Target nation for message: ${target?.name || "the global community"}`.trim();
+
+  const actionPrompts = {
+    propose_alliance: `You are the leader of ${nation.name}. Propose a formal alliance or coalition to ${target?.name || "other nations"} on the world stage. Reference your strategic goal: "${goal.label}". Be diplomatic but self-interested. 1–2 sentences only, no prefix or quotes.`,
+    oil_trade_offer:  `You are the leader of ${nation.name}. You have ${nation.res_oil} oil reserves. Publicly offer oil trade to interested nations. Include a brief terms suggestion. 1–2 sentences, no prefix.`,
+    trade_proposal:   `You are the leader of ${nation.name}. Make a strategic trade proposal to ${target?.name || "the world"} based on your economic goals. Reference actual resource values. 1–2 sentences, no prefix.`,
+    military_posture: `You are the leader of ${nation.name}. Make a strong but measured statement about your military capabilities and strategic interests. Warn without direct threats. 1–2 sentences, no prefix.`,
+    request_food_aid: `You are the leader of ${nation.name}. Your food reserves are critically low (${nation.res_food}). Formally request humanitarian food assistance from the international community. Be dignified but urgent. 1–2 sentences, no prefix.`,
+    war_statement:    `You are the leader of ${nation.name}, currently at war with ${(nation.at_war_with || []).join(", ")}. Make a brief wartime public statement on the global channel. Assertive, determined. 1 sentence, no prefix.`,
+    diplomatic_statement: `You are the leader of ${nation.name}. Make a brief, authentic diplomatic statement on the world stage that reflects your culture (${culture.label}) and current strategic goal. 1–2 sentences, no prefix.`,
+  };
+
+  return `${gameCtx}\n\n${actionPrompts[action] || actionPrompts.diplomatic_statement}`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// GLOBAL EVENT GENERATOR
+// ─────────────────────────────────────────────────────────────────────────────
+async function generateGlobalEvent() {
+  try {
+    const allNations = await base44.entities.Nation.list("-gdp", 20);
+    if (!allNations.length) return;
+
+    // Pick a random nation + event
+    const nation = allNations[Math.floor(Math.random() * allNations.length)];
+    const event  = GLOBAL_EVENTS[Math.floor(Math.random() * GLOBAL_EVENTS.length)];
+    const body   = event.template(nation);
+
+    // Post as system message
+    await base44.entities.ChatMessage.create({
+      channel: "system",
+      sender_nation_name: "WORLD EVENTS",
+      sender_flag: "🌍",
+      sender_color: "#f59e0b",
+      sender_role: "system",
+      content: `🌐 ${event.title.toUpperCase()}\n${body}`,
+    });
+
+    // Record in chronicle
+    await recordChronicle({
+      event_type: event.type,
+      title: `${event.title}: ${nation.name}`,
+      summary: body,
+      actors: [nation.name],
+      importance: event.importance,
+      era_tag: nation.epoch || "",
+    });
+  } catch { /* non-blocking */ }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FACTION PRESSURE GENERATOR
+// Occasional internal politics messages
+// ─────────────────────────────────────────────────────────────────────────────
+async function generateFactionPressure(myNationId) {
+  try {
+    const allNations = await base44.entities.Nation.list("-gdp", 20);
+    const users = await base44.entities.User.list();
+    const userEmails = new Set(users.map(u => u.email));
+
+    const aiNations = allNations.filter(n =>
+      n.id !== myNationId &&
+      n.owner_email &&
+      !userEmails.has(n.owner_email)
+    );
+    if (!aiNations.length) return;
+
+    const nation  = aiNations[Math.floor(Math.random() * aiNations.length)];
+    const faction = FACTIONS[Math.floor(Math.random() * FACTIONS.length)];
+    const msg     = faction.message(nation);
+
+    await base44.entities.ChatMessage.create({
+      channel: "system",
+      sender_nation_name: "INTEL DISPATCH",
+      sender_flag: "📡",
+      sender_color: "#8b5cf6",
+      sender_role: "system",
+      content: `🏛 INTERNAL REPORT — ${nation.name}\n${msg}`,
+    });
+  } catch { /* non-blocking */ }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COMPONENT
+// ─────────────────────────────────────────────────────────────────────────────
+export default function WorldSimulationEngine({ myNation }) {
+  const tickRef       = useRef(null);
+  const eventRef      = useRef(null);
+  const factionRef    = useRef(null);
+  const initializedRef = useRef(false);
+
+  useEffect(() => {
+    if (!myNation?.id || initializedRef.current) return;
+    initializedRef.current = true;
+
+    // Strategic AI tick: every 4–6 minutes
+    const stratInterval = 4 * 60 * 1000 + Math.random() * 2 * 60 * 1000;
+    tickRef.current = setInterval(() => {
+      runStrategicTick(myNation.id);
+    }, stratInterval);
+
+    // Global events: every 8–12 minutes
+    const eventInterval = 8 * 60 * 1000 + Math.random() * 4 * 60 * 1000;
+    eventRef.current = setInterval(() => {
+      generateGlobalEvent();
+    }, eventInterval);
+
+    // Faction pressure: every 12–18 minutes
+    const factionInterval = 12 * 60 * 1000 + Math.random() * 6 * 60 * 1000;
+    factionRef.current = setInterval(() => {
+      generateFactionPressure(myNation.id);
+    }, factionInterval);
+
+    return () => {
+      clearInterval(tickRef.current);
+      clearInterval(eventRef.current);
+      clearInterval(factionRef.current);
+      initializedRef.current = false;
+    };
+  }, [myNation?.id]);
+
+  return null;
+}
