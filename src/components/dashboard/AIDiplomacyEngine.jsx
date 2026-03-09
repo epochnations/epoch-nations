@@ -457,9 +457,9 @@ export default function AIDiplomacyEngine({ myNation }) {
     );
     if (!aiNations.length) return;
 
-    // Use ChatIntelligenceEngine to select responders
+    // Use ChatIntelligenceEngine to select responders (always returns at least 1)
     const responders = selectResponders(aiNations, analysis, msg.content, getPersonality, cooldownsRef.current);
-    if (!responders.length) return;
+    if (!responders.length) return; // only skips if zero AI nations exist at all
 
     for (const { nation, personality, delay } of responders) {
       setTimeout(async () => {
