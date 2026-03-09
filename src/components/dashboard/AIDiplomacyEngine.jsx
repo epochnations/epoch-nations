@@ -13,6 +13,8 @@ import {
   analyzeMessage,
   selectResponders,
   recordThreadParticipation,
+  detectAddressedNation,
+  buildConversationHistory,
 } from "./ChatIntelligenceEngine";
 
 // ─────────────────────────────────────────────────────────────────────────────
