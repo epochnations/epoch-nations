@@ -1,16 +1,17 @@
 /**
  * AIDiplomacyEngine — Headless background component
  *
- * Manages AI nation personalities, cooldowns, and chat participation.
- * AI messages are posted as "player" role — indistinguishable from human nations.
+ * - AI nations only chat as AI (owner_email starts with "ai@" or no real user)
+ * - Real player nations are NEVER impersonated
+ * - Slower cooldowns: 3–6 min between messages per nation
+ * - Responds to private messages directed at AI nations
  */
 import { useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 
-const AI_CHAT_COOLDOWN_MIN = 60000;  // 60 seconds
-const AI_CHAT_COOLDOWN_MAX = 120000; // 120 seconds
+const AI_COOLDOWN_MIN = 180000; // 3 minutes
+const AI_COOLDOWN_MAX = 360000; // 6 minutes
 
-// Personality profiles: determines LLM prompt tone
 const PERSONALITY_TYPES = [
   {
     type: "aggressive_nationalist",
@@ -50,14 +51,12 @@ const PERSONALITY_TYPES = [
   },
 ];
 
-// Nation-to-personality assignment (deterministic from name hash)
 function getPersonality(nation) {
   let hash = 0;
   for (const c of (nation.name || "")) hash = (hash * 31 + c.charCodeAt(0)) & 0xffff;
   return PERSONALITY_TYPES[hash % PERSONALITY_TYPES.length];
 }
 
-// Classify what kind of event a message text represents
 function classifyEvent(text) {
   const t = text.toLowerCase();
   if (/war|attack|invad|bomb|military|troops|army/.test(t)) return "war";
@@ -70,8 +69,7 @@ function classifyEvent(text) {
   return "general";
 }
 
-// Whether this personality is likely to react to this event type
-function shouldReact(personality, eventType, aggressiveness) {
+function shouldReact(personality, eventType) {
   const reacts = {
     war: ["aggressive_nationalist", "expansionist"],
     sanctions: ["aggressive_nationalist", "economic_strategist", "isolationist"],
@@ -80,25 +78,24 @@ function shouldReact(personality, eventType, aggressiveness) {
     threat: ["aggressive_nationalist", "expansionist"],
     diplomacy: ["diplomatic_mediator", "technocratic_state"],
     economic: ["economic_strategist", "technocratic_state"],
-    general: null, // any can respond
+    general: null,
   };
   const interested = reacts[eventType];
-  if (!interested) return Math.random() < 0.3; // 30% chance for general
-  return interested.includes(personality.type) && Math.random() < 0.65;
+  if (!interested) return Math.random() < 0.2; // 20% for general
+  return interested.includes(personality.type) && Math.random() < 0.5;
 }
 
-function buildPrompt(aiNation, personality, context, channel) {
+function buildGlobalPrompt(aiNation, personality, context, channel) {
   const eventType = classifyEvent(context.triggerText || "");
   const allies = (aiNation.allies || []).join(", ") || "none";
   const enemies = (aiNation.at_war_with || []).join(", ") || "none";
-
   return `You are the leader of "${aiNation.name}", a geopolitical nation in the ${aiNation.epoch} era.
 
 YOUR PERSONALITY: ${personality.type} — ${personality.traits}
 YOUR COMMUNICATION STYLE: ${personality.style}
 YOUR ALLIES: ${allies}
 YOUR ENEMIES: ${enemies}
-YOUR GDP: ${aiNation.gdp || 0} | STABILITY: ${aiNation.stability || 75} | MILITARY: ${aiNation.unit_power || 10}
+YOUR GDP: ${aiNation.gdp || 0} | STABILITY: ${Math.round(aiNation.stability || 75)} | MILITARY: ${aiNation.unit_power || 10}
 CHANNEL: ${channel === "allies" ? "Speaking to your allies only" : "Global diplomatic channel"}
 
 ${context.triggerNation ? `${context.triggerNation} just said: "${context.triggerText}"` : `Situation: ${context.triggerText || "Initiate a relevant diplomatic statement."}`}
@@ -108,36 +105,77 @@ EVENT TYPE DETECTED: ${eventType}
 Respond as this world leader — one or two short sentences maximum. No quotation marks. No emojis. No AI indicators. Sound like a real statesperson. Be ${personality.type === "aggressive_nationalist" ? "direct and assertive" : personality.type === "economic_strategist" ? "analytical" : "measured"}.`;
 }
 
+function buildPrivateReplyPrompt(aiNation, personality, playerNation, playerMessage) {
+  const allies = (aiNation.allies || []).join(", ") || "none";
+  const enemies = (aiNation.at_war_with || []).join(", ") || "none";
+  const isAlly = (aiNation.allies || []).includes(playerNation?.id);
+  const isEnemy = (aiNation.at_war_with || []).includes(playerNation?.id);
+  const relation = isAlly ? "allied nation" : isEnemy ? "enemy nation" : "neutral nation";
+
+  return `You are the leader of "${aiNation.name}", a geopolitical nation in the ${aiNation.epoch} era.
+You have received a PRIVATE diplomatic message from ${playerNation?.name || "another nation"} (${relation}).
+
+YOUR PERSONALITY: ${personality.type} — ${personality.traits}
+YOUR COMMUNICATION STYLE: ${personality.style}
+YOUR ALLIES: ${allies}
+YOUR ENEMIES: ${enemies}
+YOUR NATION STATS: GDP ${aiNation.gdp || 0}, Stability ${Math.round(aiNation.stability || 75)}, Military Power ${aiNation.unit_power || 10}
+
+THE MESSAGE YOU RECEIVED: "${playerMessage}"
+
+Write a private diplomatic reply DIRECTLY responding to what they said. Reference their specific message content. 2-3 sentences max. No quotation marks. No emojis. Sound authentic and human. React naturally to what they said — if they threaten you, respond with appropriate tension; if they propose trade, consider it in character.`;
+}
+
+// Determine if a nation is AI-controlled (no real user behind it)
+function isAINation(nation, allUserEmails) {
+  if (!nation.owner_email) return true;
+  return !allUserEmails.has(nation.owner_email);
+}
+
 export default function AIDiplomacyEngine({ myNation }) {
-  const cooldownsRef = useRef({}); // nationId → last spoke timestamp
-  const initDoneRef  = useRef(false);
-  const timerRef     = useRef(null);
+  const cooldownsRef    = useRef({});
+  const initDoneRef     = useRef(false);
+  const timerRef        = useRef(null);
+  const pmCooldownsRef  = useRef({}); // per room_id → last replied timestamp
+  const userEmailsRef   = useRef(new Set());
 
   useEffect(() => {
     if (!myNation) return;
 
-    // Subscribe to new chat messages to trigger reactive responses
-    const unsub = base44.entities.ChatMessage.subscribe((event) => {
+    // Load all real user emails once so we never impersonate them
+    base44.entities.User.list().then(users => {
+      userEmailsRef.current = new Set(users.map(u => u.email));
+    }).catch(() => {});
+
+    // Subscribe to global chat — AI reactive responses
+    const unsubChat = base44.entities.ChatMessage.subscribe((event) => {
       if (event.type !== "create") return;
       const msg = event.data;
       if (!msg || msg.is_deleted) return;
-      // Don't react to system channel
       if (msg.channel === "system") return;
-      // Don't react to our own player's nation messages
       if (msg.sender_nation_id === myNation?.id) return;
-      // Schedule a potential AI response
+      // Only react to messages from REAL players (not other AI)
+      if (msg.sender_role === "ai") return;
       scheduleReactiveResponse(msg);
     });
 
-    // Periodic initiator — AI nations occasionally start conversations
-    // Interval kept at 90–150s so combined with per-nation cooldown it stays calm
+    // Subscribe to private messages — AI responds when messaged
+    const unsubPM = base44.entities.PrivateMessage.subscribe((event) => {
+      if (event.type !== "create") return;
+      const pm = event.data;
+      if (!pm) return;
+      // Only handle if the recipient is an AI nation
+      handlePrivateMessage(pm);
+    });
+
+    // Periodic spontaneous initiator — much slower now
     timerRef.current = setInterval(() => {
       maybeInitiateConversation();
-    }, 90000 + Math.random() * 60000); // every 90–150s
+    }, 240000 + Math.random() * 120000); // every 4–6 min
 
     // Staggered first initiation
-    const initDelay = 12000 + Math.random() * 8000;
     if (!initDoneRef.current) {
+      const initDelay = 30000 + Math.random() * 30000; // 30–60s after load
       setTimeout(() => {
         initDoneRef.current = true;
         maybeInitiateConversation();
@@ -145,14 +183,15 @@ export default function AIDiplomacyEngine({ myNation }) {
     }
 
     return () => {
-      unsub();
+      unsubChat();
+      unsubPM();
       clearInterval(timerRef.current);
     };
   }, [myNation?.id]);
 
   function isCooledDown(nationId) {
     const last = cooldownsRef.current[nationId] || 0;
-    const cooldown = AI_CHAT_COOLDOWN_MIN + Math.random() * (AI_CHAT_COOLDOWN_MAX - AI_CHAT_COOLDOWN_MIN);
+    const cooldown = AI_COOLDOWN_MIN + Math.random() * (AI_COOLDOWN_MAX - AI_COOLDOWN_MIN);
     return Date.now() - last > cooldown;
   }
 
@@ -160,38 +199,94 @@ export default function AIDiplomacyEngine({ myNation }) {
     cooldownsRef.current[nationId] = Date.now();
   }
 
+  async function handlePrivateMessage(pm) {
+    // Only respond if the recipient is an AI nation (not a real player)
+    const recipientId = pm.recipient_nation_id;
+    if (!recipientId) return;
+
+    // Don't respond to our own player's messages
+    if (pm.sender_nation_id === myNation?.id) return;
+
+    // PM cooldown per room (1 message per 8s to feel like typing)
+    const roomId = pm.room_id;
+    const lastReply = pmCooldownsRef.current[roomId] || 0;
+    if (Date.now() - lastReply < 8000) return;
+
+    // Load the recipient nation to confirm it's AI-controlled
+    const allNations = await base44.entities.Nation.list();
+    const recipientNation = allNations.find(n => n.id === recipientId);
+    if (!recipientNation) return;
+
+    // Check it's not a real player's nation
+    const userEmails = userEmailsRef.current;
+    if (userEmails.size > 0 && userEmails.has(recipientNation.owner_email)) return;
+
+    // Find sender nation for context
+    const senderNation = allNations.find(n => n.id === pm.sender_nation_id);
+
+    const personality = getPersonality(recipientNation);
+    const prompt = buildPrivateReplyPrompt(recipientNation, personality, senderNation, pm.content);
+
+    // Simulate typing delay (3–7s)
+    const delay = 3000 + Math.random() * 4000;
+    pmCooldownsRef.current[roomId] = Date.now();
+
+    setTimeout(async () => {
+      try {
+        const res = await base44.integrations.Core.InvokeLLM({ prompt });
+        const raw = typeof res === "string" ? res : res?.response || res?.text || String(res);
+        const content = raw.trim().replace(/^["']|["']$/g, "").slice(0, 300);
+        if (!content || content.length < 5) return;
+
+        await base44.entities.PrivateMessage.create({
+          room_id: roomId,
+          sender_nation_id: recipientNation.id,
+          sender_nation_name: recipientNation.name,
+          sender_flag: recipientNation.flag_emoji || "🏴",
+          sender_color: recipientNation.flag_color || "#64748b",
+          recipient_nation_id: pm.sender_nation_id,
+          recipient_nation_name: pm.sender_nation_name,
+          content,
+        });
+      } catch (_) {}
+    }, delay);
+  }
+
   async function scheduleReactiveResponse(triggerMsg) {
-    // Random delay 3–12s to feel natural
-    const delay = 3000 + Math.random() * 9000;
+    // Longer delay 15–40s to feel natural, not spammy
+    const delay = 15000 + Math.random() * 25000;
     setTimeout(async () => {
       await reactToMessage(triggerMsg);
     }, delay);
   }
 
   async function reactToMessage(triggerMsg) {
-    const allNations = await base44.entities.Nation.list("-gdp", 25);
+    const allNations = await base44.entities.Nation.list("-gdp", 30);
+    const userEmails = userEmailsRef.current;
+
+    // Only pick AI-controlled nations
     const candidates = allNations.filter(n =>
       n.id !== myNation?.id &&
       n.owner_email !== myNation?.owner_email &&
-      isCooledDown(n.id)
+      isCooledDown(n.id) &&
+      (userEmails.size === 0 || !userEmails.has(n.owner_email)) // not a real player
     );
     if (!candidates.length) return;
 
-    // Pick a nation whose personality aligns with the event
     const eventType = classifyEvent(triggerMsg.content || "");
     const personality_matches = candidates.filter(n => {
       const p = getPersonality(n);
-      return shouldReact(p, eventType, n.unit_power || 10);
+      return shouldReact(p, eventType);
     });
 
     const pool = personality_matches.length ? personality_matches : candidates;
-    const aiNation = pool[Math.floor(Math.random() * Math.min(pool.length, 4))];
+    // Only pick 1 AI to respond per trigger
+    const aiNation = pool[Math.floor(Math.random() * Math.min(pool.length, 3))];
     if (!aiNation) return;
 
     const personality = getPersonality(aiNation);
     const channel = triggerMsg.channel || "global";
 
-    // For allies channel, only allied nations respond
     if (channel === "allies") {
       const triggerAllies = triggerMsg.sender_nation_id ? [triggerMsg.sender_nation_id] : [];
       const isAlly = (aiNation.allies || []).some(a => triggerAllies.includes(a)) ||
@@ -199,7 +294,7 @@ export default function AIDiplomacyEngine({ myNation }) {
       if (!isAlly) return;
     }
 
-    const prompt = buildPrompt(aiNation, personality, {
+    const prompt = buildGlobalPrompt(aiNation, personality, {
       triggerNation: triggerMsg.sender_nation_name,
       triggerText: triggerMsg.content,
     }, channel);
@@ -209,17 +304,19 @@ export default function AIDiplomacyEngine({ myNation }) {
   }
 
   async function maybeInitiateConversation() {
-    // Only post to global channel for spontaneous messages
     const allNations = await base44.entities.Nation.list("-gdp", 20);
+    const userEmails = userEmailsRef.current;
+
     const candidates = allNations.filter(n =>
       n.id !== myNation?.id &&
       n.owner_email !== myNation?.owner_email &&
-      isCooledDown(n.id)
+      isCooledDown(n.id) &&
+      (userEmails.size === 0 || !userEmails.has(n.owner_email))
     );
     if (!candidates.length) return;
 
-    // Pick randomly with some bias toward larger nations
-    const aiNation = candidates[Math.floor(Math.random() * Math.min(candidates.length, 6))];
+    // Only 1 spontaneous message per cycle
+    const aiNation = candidates[Math.floor(Math.random() * Math.min(candidates.length, 4))];
     if (!aiNation) return;
 
     const personality = getPersonality(aiNation);
@@ -238,7 +335,7 @@ export default function AIDiplomacyEngine({ myNation }) {
     ];
 
     const topic = INITIATOR_TOPICS[Math.floor(Math.random() * INITIATOR_TOPICS.length)];
-    const prompt = buildPrompt(aiNation, personality, {
+    const prompt = buildGlobalPrompt(aiNation, personality, {
       triggerText: `Initiate a brief diplomatic statement about: ${topic}`,
     }, "global");
 
@@ -259,11 +356,11 @@ export default function AIDiplomacyEngine({ myNation }) {
         sender_nation_name: aiNation.name,
         sender_flag: aiNation.flag_emoji || "🏴",
         sender_color: aiNation.flag_color || "#64748b",
-        sender_role: "ai", // ← AI nations are labelled "ai" — never impersonate a human player
+        sender_role: "ai",
         content,
       });
     } catch (_) {}
   }
 
-  return null; // Headless — no UI
+  return null;
 }
