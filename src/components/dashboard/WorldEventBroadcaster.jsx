@@ -175,7 +175,7 @@ export default function WorldEventBroadcaster({ myNation }) {
           sender_nation_name: agency.name,
           sender_flag: agency.flag,
           sender_color: agency.color,
-          sender_role: "player",
+          sender_role: "ai",
           content,
         });
       }
