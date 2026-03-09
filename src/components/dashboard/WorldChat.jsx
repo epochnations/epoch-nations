@@ -722,6 +722,14 @@ export default function WorldChat({ myNation, user }) {
         <PrivateChatPanel myNation={myNation} initialTarget={privateTarget}
           onClose={() => { setShowPrivate(false); setPrivateTarget(null); }} />
       )}
+
+      {/* Headless AI engine — handles all AI responses for this chat session */}
+      {myNation && (
+        <AIDiplomacyEngine
+          myNation={myNation}
+          onReady={(triggerFn) => { aiTriggerRef.current = triggerFn; }}
+        />
+      )}
     </>
   );
 }
