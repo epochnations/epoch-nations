@@ -4,7 +4,7 @@
  */
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
-import { Globe, Wifi } from "lucide-react";
+import { Globe, Wifi, Brain } from "lucide-react";
 
 import { useMapEngine } from "../map/MapEngine";
 import MapTerrain, { MAP_W, MAP_H, nationPos, CITIES } from "../map/MapTerrain";
