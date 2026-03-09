@@ -379,7 +379,7 @@ export default function WorldEventBroadcaster({ myNation }) {
         await base44.entities.ChatMessage.create({
           channel: "global",
           sender_nation_id: challenger.id,
-          sender_nation_name: challenger.name,
+          sender_nation_name: leaderDisplayName(challenger),
           sender_flag: challenger.flag_emoji || "🏴",
           sender_color: challenger.flag_color || "#64748b",
           sender_role: "ai",
