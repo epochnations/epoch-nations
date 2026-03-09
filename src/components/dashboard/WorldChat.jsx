@@ -45,13 +45,16 @@ function applyWordFilter(text, blockedList) {
 }
 
 const COMMANDS = [
+  { cmd: "/admin",            desc: "Show all admin commands",                      role: "admin" },
+  { cmd: "/mod",              desc: "Show all moderator commands",                  role: "moderator" },
   { cmd: "/announce",         desc: "Broadcast a system announcement",              role: "admin" },
   { cmd: "/promote",          desc: "/promote <nation> moderator|admin",            role: "admin" },
   { cmd: "/demote",           desc: "/demote <nation>",                             role: "admin" },
   { cmd: "/ban",              desc: "/ban <nation>",                                role: "admin" },
   { cmd: "/unban",            desc: "/unban <nation>",                              role: "admin" },
-  { cmd: "/addblockedword",   desc: "/addblockedword <word>",                       role: "admin" },
+  { cmd: "/addblockedword",   desc: "/addblockedword <word> — add word to filter",  role: "admin" },
   { cmd: "/removeblockedword",desc: "/removeblockedword <word>",                    role: "admin" },
+  { cmd: "/blockword",        desc: "/blockword <word> — quickly block a word",     role: "moderator" },
   { cmd: "/mute",             desc: "/mute <nation>",                               role: "moderator" },
   { cmd: "/unmute",           desc: "/unmute <nation>",                             role: "moderator" },
   { cmd: "/delete",           desc: "/delete <message-id>",                         role: "moderator" },
