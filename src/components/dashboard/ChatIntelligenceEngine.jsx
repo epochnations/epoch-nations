@@ -332,41 +332,86 @@ export function applyThreadBoost(score, nationId, topic) {
 
 /**
  * Select which AI nations should respond, in order.
+ * Uses a 4-tier priority system:
+ *   P1 — Reply target (player replied to this AI's message)
+ *   P2 — Addressed by name/leader name
+ *   P3 — Topic relevance
+ *   P4 — Casual / fallback
  *
- * @param {Array}  aiNations   — pre-filtered (not real players, not myNation)
- * @param {object} analysis    — from analyzeMessage()
- * @param {string} rawText     — original message
+ * @param {Array}  aiNations        — pre-filtered (not real players, not myNation)
+ * @param {object} analysis         — from analyzeMessage()
+ * @param {string} rawText          — original message
  * @param {Function} getPersonality — (nation) => { type, topics, ... }
- * @param {object} cooldownMap — { [nationId]: timestamp }
+ * @param {object} cooldownMap      — { [nationId]: timestamp }
+ * @param {string|null} replyTargetNationId  — nation ID the player is replying to (P1)
+ * @param {object|null} addressedNation      — full nation object detected by detectAddressedNation (P2)
  * @returns {Array} ordered array of { nation, personality, delay }
  */
-export function selectResponders(aiNations, analysis, rawText, getPersonality, cooldownMap) {
+export function selectResponders(
+  aiNations, analysis, rawText, getPersonality, cooldownMap,
+  replyTargetNationId = null, addressedNation = null
+) {
   if (!aiNations.length) return [];
 
-  const threshold = responseThreshold(analysis);
-  const max       = maxResponders(analysis);
+  const selected = [];
+  const usedIds  = new Set();
 
-  // Score all nations (regardless of cooldown first, so we have a fallback pool)
-  const allScored = aiNations.map(n => {
-    const personality = getPersonality(n);
-    let score = scoreNationRelevance(n, analysis, rawText, personality);
-    score = applyThreadBoost(score, n.id, analysis.topic);
-    if (analysis.targetNation &&
-        (n.name || "").toLowerCase().includes(analysis.targetNation.toLowerCase()))
-      score += 100;
-    return { nation: n, personality, score };
-  }).sort((a, b) => b.score - a.score);
-
-  // Prefer nations that are off cooldown AND above threshold
-  let selected = allScored
-    .filter(s => isOffCooldown(s.nation.id, cooldownMap) && s.score >= threshold)
-    .slice(0, max);
-
-  // GUARANTEE: if none qualify, force the highest-scored nation regardless of cooldown
-  if (selected.length === 0) {
-    selected = [allScored[0]];
+  // ── PRIORITY 1: Reply target ──────────────────────────────────────────────
+  if (replyTargetNationId) {
+    const p1 = aiNations.find(n => n.id === replyTargetNationId);
+    if (p1) {
+      selected.push({ nation: p1, personality: getPersonality(p1) });
+      usedIds.add(p1.id);
+    }
   }
 
-  // Attach staggered delays
+  // ── PRIORITY 2: Addressed by name or leader name ──────────────────────────
+  if (addressedNation && !usedIds.has(addressedNation.id)) {
+    const p2 = aiNations.find(n => n.id === addressedNation.id);
+    if (p2) {
+      selected.unshift({ nation: p2, personality: getPersonality(p2) }); // goes first
+      usedIds.add(p2.id);
+    }
+  }
+
+  // ── PRIORITY 3 & 4: Score remaining nations for relevance ─────────────────
+  const max = Math.max(1, 3 - selected.length); // fill up to 3 total
+  const threshold = responseThreshold(analysis);
+
+  const remaining = aiNations
+    .filter(n => !usedIds.has(n.id))
+    .map(n => {
+      const personality = getPersonality(n);
+      let score = scoreNationRelevance(n, analysis, rawText, personality);
+      score = applyThreadBoost(score, n.id, analysis.topic);
+      // Legacy targetNation string boost
+      if (analysis.targetNation &&
+          (n.name || "").toLowerCase().includes(analysis.targetNation.toLowerCase()))
+        score += 60;
+      return { nation: n, personality, score };
+    })
+    .sort((a, b) => b.score - a.score);
+
+  // If we already have a direct target (P1 or P2), only add secondary responders
+  // if the topic is important enough — avoid spam for casual/greeting if already targeted
+  const hasDirectTarget = selected.length > 0;
+  const secondaryThreshold = hasDirectTarget
+    ? Math.max(threshold, analysis.importance === "low" ? 999 : threshold + 10)
+    : threshold;
+
+  const offCooldown = remaining.filter(s =>
+    isOffCooldown(s.nation.id, cooldownMap) && s.score >= secondaryThreshold
+  );
+
+  const extras = offCooldown.slice(0, max);
+  for (const e of extras) selected.push(e);
+
+  // GUARANTEE: if still empty, force the highest-scored nation
+  if (selected.length === 0) {
+    const fallback = remaining[0] || aiNations.map(n => ({ nation: n, personality: getPersonality(n), score: 0 }))[0];
+    if (fallback) selected.push(fallback);
+  }
+
+  // Attach staggered delays — P1/P2 target responds first
   return selected.map((s, i) => ({ ...s, delay: responseDelay(i) }));
 }
