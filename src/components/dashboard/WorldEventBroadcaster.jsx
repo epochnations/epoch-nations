@@ -371,7 +371,7 @@ export default function WorldEventBroadcaster({ myNation }) {
           sender_nation_name: challenger.name,
           sender_flag: challenger.flag_emoji || "🏴",
           sender_color: challenger.flag_color || "#64748b",
-          sender_role: "player",
+          sender_role: "ai",
           content,
           reply_to_id: msg.id,
           reply_to_name: msg.sender_nation_name,
