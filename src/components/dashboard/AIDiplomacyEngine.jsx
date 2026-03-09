@@ -151,7 +151,7 @@ export default function AIDiplomacyEngine({ myNation }) {
 
   function isCooledDown(nationId) {
     const last = cooldownsRef.current[nationId] || 0;
-    const cooldown = BASE_COOLDOWN + Math.random() * 8000;
+    const cooldown = AI_CHAT_COOLDOWN_MIN + Math.random() * (AI_CHAT_COOLDOWN_MAX - AI_CHAT_COOLDOWN_MIN);
     return Date.now() - last > cooldown;
   }
 
