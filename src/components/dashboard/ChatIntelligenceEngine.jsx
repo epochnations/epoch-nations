@@ -13,8 +13,8 @@
 // CONSTANTS
 // ─────────────────────────────────────────────────────────────────────────────
 export const MAX_RESPONDERS_PER_MSG = 3;
-export const COOLDOWN_MIN_MS = 60000;   // 60s
-export const COOLDOWN_MAX_MS = 120000;  // 120s
+export const COOLDOWN_MIN_MS = 30000;   // 30s per nation
+export const COOLDOWN_MAX_MS = 30000;   // fixed 30s
 export const RESPONSE_DELAY_MIN = 2000;
 export const RESPONSE_DELAY_MAX = 6000;
 
