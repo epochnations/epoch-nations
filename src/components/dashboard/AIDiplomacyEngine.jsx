@@ -364,9 +364,22 @@ function isAINation(nation, userEmails) {
 // COMPONENT
 // ─────────────────────────────────────────────────────────────────────────────
 export default function AIDiplomacyEngine({ myNation, onReady }) {
-  const cooldownsRef   = useRef({});
-  const pmCooldownsRef = useRef({});
-  const userEmailsRef  = useRef(new Set());
+  const cooldownsRef      = useRef({});
+  const pmCooldownsRef    = useRef({});
+  const userEmailsRef     = useRef(new Set());
+  const handleMessageRef  = useRef(null);
+
+  // Keep handler ref always up-to-date so onReady closure always calls latest version
+  useEffect(() => {
+    handleMessageRef.current = (content, senderNation) => {
+      handlePlayerMessage({
+        content,
+        channel: "global",
+        sender_nation_id: senderNation?.id || myNation?.id,
+        sender_nation_name: senderNation?.name || myNation?.name,
+      });
+    };
+  });
 
   useEffect(() => {
     if (!myNation) return;
@@ -375,15 +388,10 @@ export default function AIDiplomacyEngine({ myNation, onReady }) {
       .then(users => { userEmailsRef.current = new Set(users.map(u => u.email)); })
       .catch(() => {});
 
-    // Expose handlePlayerMessage to parent via onReady callback
+    // Expose trigger to parent (WorldChat) via stable ref wrapper
     if (onReady) {
       onReady((content, senderNation) => {
-        handlePlayerMessage({
-          content,
-          channel: "global",
-          sender_nation_id: senderNation?.id || myNation?.id,
-          sender_nation_name: senderNation?.name || myNation?.name,
-        });
+        if (handleMessageRef.current) handleMessageRef.current(content, senderNation);
       });
     }
 
@@ -394,7 +402,7 @@ export default function AIDiplomacyEngine({ myNation, onReady }) {
       if (!msg || msg.is_deleted) return;
       if (msg.channel === "system") return;
       if (msg.sender_role === "ai" || msg.sender_role === "system") return;
-      if (msg.sender_nation_id === myNation?.id) return; // own messages handled via onReady
+      if (msg.sender_nation_id === myNation?.id) return; // own messages handled via onReady direct trigger
       handlePlayerMessage(msg);
     });
 
