@@ -280,29 +280,6 @@ export default function WorldChat({ myNation, user }) {
     inputRef.current?.focus();
   }
 
-  async function triggerAIResponse(playerMsg) {
-    const allNations = await base44.entities.Nation.list("-gdp", 20);
-    const others = allNations.filter(n => n.id !== myNation?.id && n.owner_email !== user?.email);
-    if (!others.length) return;
-    const aiNation = others[Math.floor(Math.random() * others.length)];
-
-    try {
-      const res = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are the leader of "${aiNation.name}", a nation in the ${aiNation.epoch} era of a geopolitical world simulation game. A nation just said: "${playerMsg}". Respond in character as a world leader — one concise sentence, no emojis, no quotation marks. Sound like a real statesperson.`,
-      });
-      const content = typeof res === "string" ? res : res?.response || res?.text || String(res);
-      await base44.entities.ChatMessage.create({
-        channel: "global",
-        sender_nation_id: aiNation.id,
-        sender_nation_name: aiNation.name,
-        sender_flag: aiNation.flag_emoji || "🏴",
-        sender_color: aiNation.flag_color || "#818cf8",
-        sender_role: "player",  // ← intentionally "player" so no AI badge is shown
-        content: content.trim().replace(/^["']|["']$/g, "").slice(0, 220),
-      });
-    } catch (_) {}
-  }
-
   async function deleteMessage(msg) {
     await base44.entities.ChatMessage.update(msg.id, { is_deleted: true });
   }
