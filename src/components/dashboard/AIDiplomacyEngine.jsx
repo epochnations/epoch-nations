@@ -287,9 +287,70 @@ function buildRelationshipContext(rel, playerName) {
 // ─────────────────────────────────────────────────────────────────────────────
 // PROMPT BUILDERS
 // ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// GAME STATE CONTEXT BUILDER
+// Formats real nation data into a concise fact block for LLM prompts
+// ─────────────────────────────────────────────────────────────────────────────
+function buildGameStateContext(nation) {
+  const lines = [];
+
+  // Resources
+  const resources = [
+    nation.res_oil   > 0 && `Oil: ${nation.res_oil}`,
+    nation.res_iron  > 0 && `Iron: ${nation.res_iron}`,
+    nation.res_food  > 0 && `Food: ${nation.res_food}`,
+    nation.res_gold  > 0 && `Gold: ${nation.res_gold}`,
+    nation.res_wood  > 0 && `Wood: ${nation.res_wood}`,
+    nation.res_stone > 0 && `Stone: ${nation.res_stone}`,
+  ].filter(Boolean);
+  if (resources.length) lines.push(`Resources: ${resources.join(", ")}`);
+  if (nation.res_oil === 0) lines.push("Oil: none");
+
+  // Economy
+  lines.push(`GDP: ${nation.gdp || 0} | Treasury: ${Math.round(nation.currency || 0)} ${nation.currency_name || "Credits"}`);
+  lines.push(`Stability: ${Math.round(nation.stability || 75)}% | Population: ${nation.population || 0}M`);
+
+  // Military
+  lines.push(`Military power: ${nation.unit_power || 0} | Defense: ${nation.defense_level || 0}`);
+
+  // War status
+  const wars = (nation.at_war_with || []);
+  if (wars.length) lines.push(`AT WAR WITH: ${wars.join(", ")}`);
+  else lines.push("War status: at peace");
+
+  // Allies
+  const allies = (nation.allies || []);
+  if (allies.length) lines.push(`Allies: ${allies.join(", ")}`);
+
+  // Epoch / tech
+  lines.push(`Era: ${nation.epoch || "Stone Age"} | Tech level: ${nation.tech_level || 1}`);
+
+  return lines.join("\n");
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RESOURCE TOPIC DETECTOR
+// Returns the specific resource being asked about, or null
+// ─────────────────────────────────────────────────────────────────────────────
+const RESOURCE_KEYWORDS = {
+  oil:    ["oil", "petroleum", "fuel", "barrel"],
+  iron:   ["iron", "steel", "metal", "ore"],
+  food:   ["food", "grain", "crop", "famine", "hunger", "agriculture", "farm"],
+  gold:   ["gold", "treasure"],
+  wood:   ["wood", "lumber", "timber", "forest"],
+  stone:  ["stone", "rock", "quarry"],
+  energy: ["energy", "power", "gas", "renewable", "solar"],
+};
+
+function detectResourceQuery(text) {
+  const t = text.toLowerCase();
+  for (const [resource, keywords] of Object.entries(RESOURCE_KEYWORDS)) {
+    if (keywords.some(k => t.includes(k))) return resource;
+  }
+  return null;
+}
+
 function buildReplyPrompt(aiNation, personality, leader, senderName, playerMsg, analysis, nationMem, relation, worldEvents, topicPat, senderRep, conversationHistory = "") {
-  const allies  = (aiNation.allies || []).join(", ") || "none";
-  const enemies = (aiNation.at_war_with || []).join(", ") || "none";
   const memCtx  = nationMem.length ? `\nYOUR DIPLOMATIC MEMORY:\n${nationMem.map(m => `- ${m}`).join("\n")}` : "";
   const wldCtx  = worldEvents.length ? `\nWORLD HISTORY:\n${worldEvents.map(e => `- ${e}`).join("\n")}` : "";
   const relCtx  = buildRelationshipContext(relation, senderName);
@@ -300,26 +361,47 @@ function buildReplyPrompt(aiNation, personality, leader, senderName, playerMsg, 
   const histCtx = conversationHistory
     ? `\nRECENT CONVERSATION:\n${conversationHistory}`
     : "";
+  const gameCtx = buildGameStateContext(aiNation);
+
+  // Detect if this is a resource/war/specific data question — add tailored instruction
+  const resourceQueried = detectResourceQuery(playerMsg);
+  const isWarQuery = /\b(war|conflict|battle|fighting|at war|peace)\b/i.test(playerMsg);
+
+  let dataInstruction = "";
+  if (resourceQueried && resourceQueried !== "energy") {
+    const resKey = `res_${resourceQueried}`;
+    const resVal = aiNation[resKey];
+    const hasResource = resVal !== undefined && resVal > 0;
+    const tradeHint = hasResource && Math.random() < 0.3
+      ? ` Consider offering to trade if it benefits ${aiNation.name}.`
+      : "";
+    dataInstruction = `\nDATA TASK: The player asked about ${resourceQueried}. Your ${resourceQueried} value is ${resVal ?? 0}. State this truthfully.${tradeHint}`;
+  } else if (isWarQuery) {
+    const wars = (aiNation.at_war_with || []);
+    dataInstruction = `\nDATA TASK: The player asked about war status. ${wars.length ? `You are at war with: ${wars.join(", ")}.` : "You are currently at peace."} State this truthfully.`;
+  }
 
   const modeHint =
     analysis.intent === "greeting"             ? "Reply briefly in your nation's style. Max 1 sentence."
-    : analysis.intent === "question"           ? "Give your genuine national position. 1–2 sentences."
+    : analysis.intent === "question"           ? "Give your genuine national position using your game data above. 1–2 sentences."
     : analysis.intent === "accusation"         ? "Defend or deflect firmly. Reference past from memory if relevant. 1–2 sentences."
-    : analysis.intent === "trade_offer"        ? "React based on your economic interests. 1–2 sentences."
-    : analysis.intent === "military_discussion"? "Respond as a statesperson on military matters. Reference world history if relevant. 1–2 sentences."
+    : analysis.intent === "trade_offer"        ? "React based on your actual economic resources above. 1–2 sentences."
+    : analysis.intent === "military_discussion"? "Respond as a statesperson on military matters using your real stats. 1–2 sentences."
     : analysis.intent === "diplomatic_statement"?"Respond diplomatically. Reference world history if truly relevant. 1–2 sentences."
-    : "Respond naturally and in character. 1–2 sentences.";
+    : "Respond naturally and in character using your game data. 1–2 sentences.";
 
   return `You are ${leader.display}, leader of "${aiNation.name}" in the ${aiNation.epoch} era, on a GLOBAL DIPLOMATIC CHANNEL.
 
 PERSONALITY: ${personality.type} — ${personality.traits}
 STYLE: ${personality.style}${driftNote}
-ALLIES: ${allies} | ENEMIES: ${enemies}
-NATION STATS: GDP ${aiNation.gdp || 0}, Stability ${Math.round(aiNation.stability || 75)}, Military ${aiNation.unit_power || 10}
+
+YOUR NATION'S REAL GAME DATA (use these exact numbers):
+${gameCtx}
 ${memCtx}${wldCtx}${histCtx}
 ${extras}
 
 RELATIONSHIP WITH ${senderName}: ${relCtx}
+${dataInstruction}
 
 ${senderName} just said: "${playerMsg}"
 INTENT: ${analysis.intent} | TOPIC: ${analysis.topic} | TONE: ${analysis.tone}
@@ -330,8 +412,8 @@ RULES:
 - Only the spoken words — no prefix, no quotation marks, no emojis, no meta-tags
 - Sound like a real head of state — concise, politically authentic
 - Max 2 sentences
-- If the conversation history shows you previously spoke with ${senderName}, acknowledge the continuity naturally
-- Reference memory or history only when genuinely relevant`;
+- NEVER invent resource numbers — use only the exact values from YOUR NATION'S REAL GAME DATA above
+- If the conversation history shows you previously spoke with ${senderName}, acknowledge the continuity naturally`;
 }
 
 function buildPrivateReplyPrompt(aiNation, personality, leader, senderNation, playerMsg, nationMem, relation, worldEvents) {
