@@ -1,21 +1,19 @@
 /**
  * HexEngine — Pure utility functions for axial hex coordinate system.
- * Uses "pointy-top" hex orientation.
+ * "Pointy-top" orientation.
  */
 
-export const HEX_SIZE = 32; // pixel radius
+export const HEX_SIZE = 36;
 
-// ─── Axial → Pixel ────────────────────────────────────────────────────────────
 export function hexToPixel(q, r, size = HEX_SIZE) {
-  const x = size * (Math.sqrt(3) * q + Math.sqrt(3) / 2 * r);
-  const y = size * (3 / 2 * r);
+  const x = size * (Math.sqrt(3) * q + (Math.sqrt(3) / 2) * r);
+  const y = size * (1.5 * r);
   return { x, y };
 }
 
-// ─── Pixel → Axial ───────────────────────────────────────────────────────────
 export function pixelToHex(px, py, size = HEX_SIZE) {
-  const q = (Math.sqrt(3) / 3 * px - 1 / 3 * py) / size;
-  const r = (2 / 3 * py) / size;
+  const q = ((Math.sqrt(3) / 3) * px - (1 / 3) * py) / size;
+  const r = ((2 / 3) * py) / size;
   return hexRound(q, r);
 }
 
@@ -28,7 +26,6 @@ export function hexRound(q, r) {
   return { q: rq, r: rr };
 }
 
-// ─── Hex corners for SVG polygon ─────────────────────────────────────────────
 export function hexCorners(cx, cy, size = HEX_SIZE) {
   const pts = [];
   for (let i = 0; i < 6; i++) {
@@ -39,11 +36,18 @@ export function hexCorners(cx, cy, size = HEX_SIZE) {
 }
 
 export function hexCornersStr(cx, cy, size = HEX_SIZE) {
-  return hexCorners(cx, cy, size).map(p => `${p.x},${p.y}`).join(" ");
+  return hexCorners(cx, cy, size)
+    .map(p => `${p.x.toFixed(2)},${p.y.toFixed(2)}`)
+    .join(" ");
 }
 
-// ─── Neighbors ───────────────────────────────────────────────────────────────
-const NEIGHBOR_DIRS = [[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
+export function hexCornersStrInner(cx, cy, size = HEX_SIZE, inset = 1.5) {
+  return hexCorners(cx, cy, size - inset)
+    .map(p => `${p.x.toFixed(2)},${p.y.toFixed(2)}`)
+    .join(" ");
+}
+
+const NEIGHBOR_DIRS = [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]];
 
 export function hexNeighbors(q, r) {
   return NEIGHBOR_DIRS.map(([dq, dr]) => ({ q: q + dq, r: r + dr }));
@@ -51,15 +55,32 @@ export function hexNeighbors(q, r) {
 
 export function hexId(q, r) { return `${q}_${r}`; }
 
-// ─── Distance ────────────────────────────────────────────────────────────────
 export function hexDistance(q1, r1, q2, r2) {
   return (Math.abs(q1 - q2) + Math.abs(q1 + r1 - q2 - r2) + Math.abs(r1 - r2)) / 2;
 }
 
-// ─── Procedural Terrain Generation ───────────────────────────────────────────
-// Simple noise function based on coords
+// Shared edge between two adjacent hexes (returns 2 corner points)
+export function sharedEdge(q1, r1, q2, r2, size = HEX_SIZE) {
+  const c1 = hexToPixel(q1, r1, size);
+  const c2 = hexToPixel(q2, r2, size);
+  const corners1 = hexCorners(c1.x, c1.y, size);
+  const corners2 = hexCorners(c2.x, c2.y, size);
+  const EPS = 0.5;
+  const shared = [];
+  for (const p of corners1) {
+    for (const q of corners2) {
+      if (Math.abs(p.x - q.x) < EPS && Math.abs(p.y - q.y) < EPS) {
+        shared.push(p);
+        break;
+      }
+    }
+  }
+  return shared.length === 2 ? shared : null;
+}
+
+// ─── Procedural terrain ───────────────────────────────────────────────────────
 function pseudoNoise(q, r, seed = 42) {
-  let n = Math.sin(q * 127.1 + r * 311.7 + seed) * 43758.5453;
+  const n = Math.sin(q * 127.1 + r * 311.7 + seed) * 43758.5453;
   return n - Math.floor(n);
 }
 
@@ -87,7 +108,6 @@ export function generateHexTile(q, r) {
   const noise = pseudoNoise(q, r);
   const terrain = TERRAIN_THRESHOLDS.find(t => noise < t.max)?.type || "plains";
 
-  // Resource generation
   const rng = pseudoNoise(q, r, 99);
   let resourceType = "none", resourceAmount = 0;
   const rChances = RESOURCE_CHANCES[terrain] || [["none", 1.0]];
@@ -130,51 +150,42 @@ export function generateHexTile(q, r) {
   };
 }
 
-// ─── Island cluster generation for new players ───────────────────────────────
-// Returns an array of {q,r} hexes forming a small island cluster
 export function generateStartingCluster(centerQ, centerR) {
-  // Central hex + ring of 6 neighbors, only 4 of which are land
   const neighbors = hexNeighbors(centerQ, centerR);
-  const landNeighbors = neighbors.slice(0, 4); // take first 4 directions
-  return [{ q: centerQ, r: centerR }, ...landNeighbors];
+  return [{ q: centerQ, r: centerR }, ...neighbors.slice(0, 4)];
 }
 
-// ─── Find a free cluster origin far from existing hexes ───────────────────────
 export function findFreeClusterOrigin(existingHexIds) {
-  // Spread new players far apart by random placement in a wide grid
   const SPREAD = 80;
   let attempts = 0;
   while (attempts < 100) {
     const q = Math.floor((Math.random() - 0.5) * SPREAD * 2);
     const r = Math.floor((Math.random() - 0.5) * SPREAD * 2);
-    // Check none of the cluster hexes exist
     const cluster = [{ q, r }, ...hexNeighbors(q, r)];
-    const allFree = cluster.every(h => !existingHexIds.has(hexId(h.q, h.r)));
-    if (allFree) return { q, r };
+    if (cluster.every(h => !existingHexIds.has(hexId(h.q, h.r)))) return { q, r };
     attempts++;
   }
-  // Fallback: place very far away
   const offset = 100 + Math.floor(Math.random() * 50);
   return { q: offset, r: offset };
 }
 
-// ─── Terrain visual config ────────────────────────────────────────────────────
+// ─── Terrain visual config (rich gradients) ───────────────────────────────────
 export const TERRAIN_CONFIG = {
-  ocean:     { fill: "#0d3b6e", stroke: "#0a2d52", label: "Ocean",     emoji: "🌊" },
-  coastal:   { fill: "#1a5276", stroke: "#154360", label: "Coastal",   emoji: "🏖" },
-  plains:    { fill: "#1a6b2f", stroke: "#145a27", label: "Plains",    emoji: "🌿" },
-  forest:    { fill: "#0d4f1c", stroke: "#0a3d16", label: "Forest",    emoji: "🌲" },
-  desert:    { fill: "#7d6608", stroke: "#6e5c07", label: "Desert",    emoji: "🏜" },
-  mountains: { fill: "#4a4a5a", stroke: "#3a3a48", label: "Mountains", emoji: "⛰" },
-  tundra:    { fill: "#5d6d7e", stroke: "#4d5d6e", label: "Tundra",    emoji: "❄" },
+  ocean:     { fill: "#0b2d52", fillB: "#0d3d6e", label: "Ocean",     icon: "ocean" },
+  coastal:   { fill: "#1a5276", fillB: "#2471a3", label: "Coastal",   icon: "coastal" },
+  plains:    { fill: "#1e6b35", fillB: "#27ae60", label: "Plains",    icon: "plains" },
+  forest:    { fill: "#0d4f1c", fillB: "#1a7a2e", label: "Forest",    icon: "forest" },
+  desert:    { fill: "#7d6608", fillB: "#c8a415", label: "Desert",    icon: "desert" },
+  mountains: { fill: "#404050", fillB: "#5d6d7e", label: "Mountains", icon: "mountains" },
+  tundra:    { fill: "#4a5e72", fillB: "#7f8c8d", label: "Tundra",    icon: "tundra" },
 };
 
 export const RESOURCE_CONFIG = {
-  none:    { emoji: "",   color: "transparent" },
-  oil:     { emoji: "🛢", color: "#f59e0b" },
-  iron:    { emoji: "⚙",  color: "#9ca3af" },
-  food:    { emoji: "🌾", color: "#84cc16" },
-  gold:    { emoji: "✨", color: "#fbbf24" },
-  stone:   { emoji: "🪨", color: "#6b7280" },
-  uranium: { emoji: "☢", color: "#a3e635" },
+  none:    { label: "",         color: "transparent", svgIcon: null },
+  oil:     { label: "Oil",      color: "#f59e0b",     svgIcon: "oil" },
+  iron:    { label: "Iron",     color: "#9ca3af",     svgIcon: "iron" },
+  food:    { label: "Food",     color: "#84cc16",     svgIcon: "food" },
+  gold:    { label: "Gold",     color: "#fbbf24",     svgIcon: "gold" },
+  stone:   { label: "Stone",    color: "#6b7280",     svgIcon: "stone" },
+  uranium: { label: "Uranium",  color: "#a3e635",     svgIcon: "uranium" },
 };
