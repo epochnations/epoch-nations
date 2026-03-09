@@ -84,6 +84,11 @@ export default function WorldEventBroadcaster({ myNation }) {
   useEffect(() => {
     if (!myNation) return;
 
+    // Load real user emails so we never post as their nations
+    base44.entities.User.list().then(users => {
+      userEmailsRef.current = new Set(users.map(u => u.email));
+    }).catch(() => {});
+
     // Subscribe to new NewsEvents → broadcast major ones
     const unsubNews = base44.entities.NewsEvent.subscribe((event) => {
       if (event.type !== "create") return;
