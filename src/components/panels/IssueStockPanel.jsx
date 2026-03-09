@@ -31,18 +31,24 @@ function getStockCap(epochIndex) {
   return 8;                               // Modern+
 }
 
+// Stock shares: 15 per epoch index (baseline 500 + 15 * epochIndex)
+function getBaseShares(epochIndex) {
+  return 500 + (15 * epochIndex);
+}
+
 export default function IssueStockPanel({ nation, onClose, onRefresh }) {
   const [companyName, setCompanyName] = useState("");
   const [ticker, setTicker] = useState("");
   const [sector, setSector] = useState("Agriculture");
-  const [shares, setShares] = useState(1000);
+  const [shares, setShares] = useState(() => getBaseShares(EPOCHS.indexOf(nation?.epoch) || 0));
   const [price, setPrice] = useState(10);
   const [loading, setLoading] = useState(false);
   const [existingCount, setExistingCount] = useState(0);
 
   const epochIndex = EPOCHS.indexOf(nation?.epoch) || 0;
   const stockCap = getStockCap(epochIndex);
-  const maxShares = Math.floor((nation?.gdp || 500) * (2 + epochIndex * 0.5));
+  const baseShares = getBaseShares(epochIndex);
+  const maxShares = Math.floor((nation?.gdp || 500) * (2 + epochIndex * 0.5) + baseShares);
   const atCap = existingCount >= stockCap;
 
   useEffect(() => {
@@ -58,8 +64,17 @@ export default function IssueStockPanel({ nation, onClose, onRefresh }) {
     setLoading(true);
 
     const cappedShares = Math.min(shares, maxShares);
+    // Resource modifier: add 2% of sector-relevant resources to base price
+    let resourceMod = 0;
+    if (sector === "Agriculture") resourceMod = (nation.res_food || 0) * 0.02;
+    else if (sector === "Energy") resourceMod = (nation.res_oil || 0) * 0.03;
+    else if (sector === "Defense") resourceMod = (nation.res_iron || 0) * 0.025;
+    else if (sector === "Technology") resourceMod = (nation.res_gold || 0) * 0.04;
+    else if (sector === "Finance") resourceMod = (nation.currency || 0) * 0.005;
+    else if (sector === "Nano") resourceMod = (nation.res_uranium || 0) * 0.05;
+
     const stockValue = (nation.gdp + nation.stability) * nation.public_trust;
-    const finalPrice = parseFloat(((price + stockValue * 0.01)).toFixed(2));
+    const finalPrice = parseFloat(((price + stockValue * 0.01 + resourceMod)).toFixed(2));
 
     // Treasury cost: 5% of total IPO value
     const issueCost = Math.round(finalPrice * cappedShares * 0.05);
@@ -166,7 +181,7 @@ export default function IssueStockPanel({ nation, onClose, onRefresh }) {
             <div>Final IPO price adjusted by Nation Stock Index: ({nation.gdp} + {nation.stability}) × {(nation.public_trust||1).toFixed(2)}</div>
             <div className="text-amber-400">📋 Stock cap for {nation.epoch}: <b>{existingCount}/{stockCap}</b> issued</div>
             <div>Max shares at current GDP: <b>{maxShares.toLocaleString()}</b></div>
-            <div className="text-cyan-400">💰 IPO listing cost (5%): ~<b>{Math.round((price + (nation.gdp + nation.stability) * (nation.public_trust||1) * 0.01) * Math.min(shares, maxShares) * 0.05)} cr</b></div>
+            <div className="text-cyan-400">💰 IPO listing cost (5%): ~<b>{Math.round((price + (nation.gdp + nation.stability) * (nation.public_trust||1) * 0.01) * Math.min(shares, baseShares) * 0.05)} cr</b></div>
           </div>
 
           {atCap && (

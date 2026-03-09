@@ -4,9 +4,22 @@ import WarModal from "./WarModal";
 import LendLeaseModal from "./LendLeaseModal";
 
 const EPOCH_COLORS = {
-  Industrial: "from-amber-500 to-orange-600",
-  Information: "from-cyan-500 to-blue-600",
-  Nano: "from-violet-500 to-purple-600"
+  "Stone Age": "from-amber-600 to-amber-700",
+  "Copper Age": "from-orange-500 to-orange-600",
+  "Bronze Age": "from-yellow-500 to-amber-500",
+  "Iron Age": "from-slate-500 to-slate-600",
+  "Dark Ages": "from-slate-600 to-gray-700",
+  "Middle Ages": "from-purple-600 to-indigo-600",
+  "Renaissance": "from-cyan-500 to-blue-600",
+  "Imperial Age": "from-blue-500 to-blue-600",
+  "Enlightenment Age": "from-blue-400 to-cyan-500",
+  "Industrial Age": "from-amber-500 to-orange-600",
+  "Modern Age": "from-cyan-400 to-blue-500",
+  "Atomic Age": "from-red-500 to-orange-600",
+  "Digital Age": "from-violet-500 to-purple-600",
+  "Genetic Age": "from-green-500 to-emerald-600",
+  "Synthetic Age": "from-pink-500 to-purple-600",
+  "Nano Age": "from-violet-600 to-purple-700"
 };
 
 export default function NationModal({ nation, myNation, onClose, onRefresh }) {
@@ -31,7 +44,7 @@ export default function NationModal({ nation, myNation, onClose, onRefresh }) {
           <div className="flex-1 space-y-1">
             <div className="font-black text-lg text-white leading-tight">{nation.name}</div>
             <div className="text-xs text-slate-400 leading-tight">Leader: {nation.leader}</div>
-            <span className={`inline-block px-2 py-1 rounded text-xs font-bold bg-gradient-to-r ${EPOCH_COLORS[nation.epoch]} text-white`}>
+            <span className={`inline-block px-2 py-1 rounded text-xs font-bold bg-gradient-to-r ${EPOCH_COLORS[nation.epoch] || "from-slate-500 to-slate-600"} text-white`}>
               {nation.epoch}
             </span>
           </div>
