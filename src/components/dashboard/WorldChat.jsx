@@ -274,11 +274,6 @@ export default function WorldChat({ myNation, user }) {
       reply_to_name: replyTo ? replyTo.sender_nation_name : "",
     });
 
-    // AI nation response — appears as a normal player nation, no AI badge
-    if (channel === "global" && Math.random() < 0.22) {
-      triggerAIResponse(trimmed);
-    }
-
     setInput("");
     setReplyTo(null);
     setSending(false);
