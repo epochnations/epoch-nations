@@ -611,58 +611,89 @@ export default function AIDiplomacyEngine({ myNation, onReady }) {
     if (!aiNations.length) return;
 
     // ── P1: Reply target detection ─────────────────────────────────────────
-    let replyTargetNationId = null;
+    let replyTargetNation = null;
     if (msg.reply_to_id) {
       try {
         const repliedMsg = await base44.entities.ChatMessage.get(msg.reply_to_id);
         if (repliedMsg?.sender_nation_id && repliedMsg.sender_role === "ai") {
-          replyTargetNationId = repliedMsg.sender_nation_id;
+          replyTargetNation = aiNations.find(n => n.id === repliedMsg.sender_nation_id) || null;
         }
       } catch { /* ignore */ }
     }
 
-    // ── P2: Leader/nation name detection ──────────────────────────────────
-    const addressedNation = detectAddressedNation(
+    // ── P2: Direct address detection (name or leader name) ────────────────
+    const addressedNation = detectDirectAddress(
       msg.content,
       aiNations,
       (nation) => leaderDisplayName(nation)
     );
 
-    // ── Conversation history for LLM context ──────────────────────────────
+    // ── Conversation history (last 6 messages) ────────────────────────────
     let recentMessages = [];
     try {
-      recentMessages = await base44.entities.ChatMessage.filter(
+      const fetched = await base44.entities.ChatMessage.filter(
         { channel: msg.channel || "global" },
         "-created_date",
         8
       );
-      recentMessages = recentMessages.filter(m => !m.is_deleted).reverse();
+      recentMessages = fetched.filter(m => !m.is_deleted).reverse();
     } catch { /* ignore */ }
-    const conversationHistory = buildConversationHistory(recentMessages);
+    const conversationHistory = buildHistory(recentMessages);
 
-    // Select responders using the 4-priority system
-    const responders = selectResponders(
-      aiNations, analysis, msg.content, getPersonality, cooldownsRef.current,
-      replyTargetNationId, addressedNation
-    );
+    // ── ConversationDirector: select responders ────────────────────────────
+    const responders = selectDirectedResponders({
+      aiNations,
+      analysis,
+      rawText:           msg.content,
+      cooldownMap:       cooldownsRef.current,
+      replyTargetNation,
+      addressedNation,
+      getScoreFn: (nation, anal, text) =>
+        scoreNationRelevance(nation, anal, text, getPersonality(nation)),
+    });
     if (!responders.length) return;
 
-    for (const { nation, personality, delay } of responders) {
+    for (const { nation, traitKey, delay, isPrimary, isSecondary } of responders) {
       setTimeout(async () => {
-        const leader      = getLeader(nation);
-        const nationMem   = getMemorySummaries(nation.id);
-        const relation    = getRelation(nation.id, msg.sender_nation_id || "");
-        const worldEvents = getRelevantWorldEvents(nation.name, analysis.topic);
-        const topicPat    = getTopicPattern(msg.sender_nation_name);
-        const senderRep   = getReputationSummary(msg.sender_nation_name);
+        const leader          = getLeader(nation);
+        const personality     = getPersonality(nation);
+        const diplomaticTrait = getDiplomaticPersonality(nation);
+        const nationMem       = getMemorySummaries(nation.id);
+        const relation        = getRelation(nation.id, msg.sender_nation_id || "");
+        const worldEvents     = getRelevantWorldEvents(nation.name, analysis.topic);
+        const gameCtx         = buildGameStateContext(nation);
+        const relCtx          = buildRelationshipContext(relation, msg.sender_nation_name);
 
-        const prompt  = buildReplyPrompt(
-          nation, personality, leader, msg.sender_nation_name, msg.content,
-          analysis, nationMem, relation, worldEvents, topicPat, senderRep,
-          conversationHistory
-        );
-        const content = await callLLM(prompt, 290);
-        if (!content) return;
+        // Build ConversationDirector-format prompt
+        const prompt = buildDirectorPrompt({
+          aiNation:            nation,
+          leaderDisplay:       leaderDisplayName(nation),
+          basePersonality:     personality,
+          diplomaticTrait,
+          senderName:          msg.sender_nation_name,
+          playerMessage:       msg.content,
+          conversationHistory,
+          gameStateContext:    gameCtx,
+          relationshipContext: relCtx,
+          worldEvents,
+          nationMemory:        nationMem,
+          analysis,
+          isSecondary,
+          isAddressed:         isPrimary && !!addressedNation && nation.id === addressedNation.id,
+        });
+
+        // Generate and validate response
+        let content = await callLLM(prompt, 300);
+        if (!content) {
+          content = FALLBACK_RESPONSE;
+        } else {
+          const { valid } = validateResponse(content);
+          if (!valid) {
+            // Attempt regeneration once
+            const retry = await callLLM(prompt, 300);
+            content = retry || repairResponse(content);
+          }
+        }
 
         await base44.entities.ChatMessage.create({
           channel:            msg.channel || "global",
@@ -676,10 +707,10 @@ export default function AIDiplomacyEngine({ myNation, onReady }) {
           reply_to_name: msg.sender_nation_name || "",
         });
 
-        // Update cooldown
+        // Update cooldown (45s)
         cooldownsRef.current[nation.id] = Date.now();
 
-        // Record thread participation for continuity
+        // Record thread participation
         recordThreadParticipation(analysis.topic, nation.id);
 
         // Update memory & relationships
@@ -690,7 +721,6 @@ export default function AIDiplomacyEngine({ myNation, onReady }) {
         );
         updateRelation(nation.id, msg.sender_nation_id || "", analysis);
 
-        // Drift personality based on what was said
         if (analysis.intent === "accusation") updatePersonaDrift(nation.id, getBasePersonalityKey(nation), "accusation");
         if (analysis.intent === "trade_offer") updatePersonaDrift(nation.id, getBasePersonalityKey(nation), "trade");
       }, delay);
