@@ -75,10 +75,15 @@ export default function CouncilDilemmaModal({ dilemma, nation, onClose, onRefres
       const trimmed = part.trim();
       const match = trimmed.match(/([a-z_]+)\s*([+-]\d+\.?\d*)/i);
       if (match) {
-        map[match[1]] = parseFloat(match[2]);
+        const key = match[1].replace(/_/g, "");
+        map[key] = parseFloat(match[2]);
       }
     }
     return map;
+  }
+
+  function formatLabel(text) {
+    return text ? text.replace(/_/g, " ") : "";
   }
 
   function buildReaction(source, option) {
@@ -137,7 +142,7 @@ export default function CouncilDilemmaModal({ dilemma, nation, onClose, onRefres
                 className={`text-left p-4 rounded-xl border transition-all min-h-[44px] ${cfg.border} ${cfg.bg} hover:brightness-125 disabled:opacity-50`}
               >
                 <div className={`text-xs font-bold mb-1 ${cfg.color}`}>OPTION A</div>
-                <div className="text-white font-bold text-sm">{dilemma.option_a_label}</div>
+                <div className="text-white font-bold text-sm">{formatLabel(dilemma.option_a_label)}</div>
                 <div className="text-slate-500 text-xs mt-1">{dilemma.option_a_effect}</div>
               </button>
               <button
@@ -146,7 +151,7 @@ export default function CouncilDilemmaModal({ dilemma, nation, onClose, onRefres
                 className="text-left p-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all min-h-[44px] disabled:opacity-50"
               >
                 <div className="text-xs font-bold text-slate-500 mb-1">OPTION B</div>
-                <div className="text-white font-bold text-sm">{dilemma.option_b_label}</div>
+                <div className="text-white font-bold text-sm">{formatLabel(dilemma.option_b_label)}</div>
                 <div className="text-slate-500 text-xs mt-1">{dilemma.option_b_effect}</div>
               </button>
             </div>

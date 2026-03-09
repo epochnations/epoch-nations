@@ -4,22 +4,22 @@ import { X, Plus } from "lucide-react";
 import { EPOCHS } from "../game/EpochConfig";
 
 const SECTORS_BY_EPOCH = {
-  "Stone Age": ["Agriculture"],
-  "Copper Age": ["Agriculture", "Energy"],
-  "Bronze Age": ["Agriculture", "Energy", "Defense"],
-  "Iron Age": ["Agriculture", "Energy", "Defense"],
-  "Dark Ages": ["Agriculture", "Energy", "Defense", "Finance"],
-  "Middle Ages": ["Agriculture", "Energy", "Defense", "Finance"],
-  "Renaissance": ["Agriculture", "Energy", "Defense", "Finance"],
-  "Imperial Age": ["Agriculture", "Energy", "Defense", "Finance", "Technology"],
-  "Enlightenment Age": ["Agriculture", "Energy", "Defense", "Finance", "Technology"],
-  "Industrial Age": ["Energy", "Defense", "Technology", "Finance", "Agriculture"],
-  "Modern Age": ["Energy", "Defense", "Technology", "Finance", "Agriculture"],
-  "Atomic Age": ["Energy", "Defense", "Technology", "Finance", "Agriculture"],
-  "Digital Age": ["Energy", "Defense", "Technology", "Finance", "Agriculture"],
-  "Genetic Age": ["Energy", "Defense", "Technology", "Finance", "Agriculture", "Nano"],
-  "Synthetic Age": ["Energy", "Defense", "Technology", "Finance", "Agriculture", "Nano"],
-  "Nano Age": ["Energy", "Defense", "Technology", "Finance", "Agriculture", "Nano"],
+  "Stone Age": ["Agriculture", "Timber", "Stone"],
+  "Copper Age": ["Agriculture", "Energy", "Timber", "Stone", "Iron"],
+  "Bronze Age": ["Agriculture", "Energy", "Defense", "Timber", "Stone", "Iron"],
+  "Iron Age": ["Agriculture", "Energy", "Defense", "Iron", "Gold"],
+  "Dark Ages": ["Agriculture", "Energy", "Defense", "Finance", "Iron", "Gold"],
+  "Middle Ages": ["Agriculture", "Energy", "Defense", "Finance", "Iron", "Gold"],
+  "Renaissance": ["Agriculture", "Energy", "Defense", "Finance", "Gold"],
+  "Imperial Age": ["Agriculture", "Energy", "Defense", "Finance", "Technology", "Gold"],
+  "Enlightenment Age": ["Agriculture", "Energy", "Defense", "Finance", "Technology", "Gold"],
+  "Industrial Age": ["Energy", "Defense", "Technology", "Finance", "Agriculture", "Oil"],
+  "Modern Age": ["Energy", "Defense", "Technology", "Finance", "Agriculture", "Oil"],
+  "Atomic Age": ["Energy", "Defense", "Technology", "Finance", "Agriculture", "Oil"],
+  "Digital Age": ["Energy", "Defense", "Technology", "Finance", "Agriculture", "Oil"],
+  "Genetic Age": ["Energy", "Defense", "Technology", "Finance", "Agriculture", "Nano", "Oil"],
+  "Synthetic Age": ["Energy", "Defense", "Technology", "Finance", "Agriculture", "Nano", "Oil"],
+  "Nano Age": ["Energy", "Defense", "Technology", "Finance", "Agriculture", "Nano", "Oil"],
 };
 
 // Stock cap by epoch index
@@ -73,6 +73,11 @@ export default function IssueStockPanel({ nation, onClose, onRefresh }) {
     else if (sector === "Technology") resourceMod = (nation.res_gold || 0) * 0.04;
     else if (sector === "Finance") resourceMod = (nation.currency || 0) * 0.005;
     else if (sector === "Nano") resourceMod = (nation.res_uranium || 0) * 0.05;
+    else if (sector === "Timber") resourceMod = (nation.res_wood || 0) * 0.035;
+    else if (sector === "Stone") resourceMod = (nation.res_stone || 0) * 0.03;
+    else if (sector === "Iron") resourceMod = (nation.res_iron || 0) * 0.04;
+    else if (sector === "Oil") resourceMod = (nation.res_oil || 0) * 0.05;
+    else if (sector === "Gold") resourceMod = (nation.res_gold || 0) * 0.06;
 
     const stockValue = (nation.gdp + nation.stability) * nation.public_trust;
     const finalPrice = parseFloat(((price + stockValue * 0.01 + resourceMod)).toFixed(2));
