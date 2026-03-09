@@ -150,6 +150,24 @@ export function analyzeMessage(text = "", allNationNames = []) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// CONVERSATION HISTORY BUILDER
+// Formats recent chat messages into a readable context string for LLM prompts
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Build a concise conversation history string from recent messages.
+ * @param {Array} recentMessages — array of ChatMessage objects, oldest first
+ * @returns {string}
+ */
+export function buildConversationHistory(recentMessages) {
+  if (!recentMessages || !recentMessages.length) return "";
+  return recentMessages
+    .slice(-6) // last 6 messages for context
+    .map(m => `${m.sender_nation_name}: ${m.content}`)
+    .join("\n");
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // NATION RELEVANCE ENGINE
 // Determines which AI nations should respond to a given analysis
 // ─────────────────────────────────────────────────────────────────────────────
