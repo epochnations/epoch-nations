@@ -28,11 +28,11 @@ export default function NationModal({ nation, myNation, onClose, onRefresh }) {
           <div className="w-14 h-14 rounded-xl flex items-center justify-center text-3xl shrink-0" style={{ backgroundColor: (nation.flag_color || "#3b82f6") + "33" }}>
             {nation.flag_emoji}
           </div>
-          <div className="flex-1">
-            <div className="font-black text-xl text-white">{nation.name}</div>
-            <div className="text-sm text-slate-400">{nation.leader}</div>
-            <span className={`inline-block mt-1 px-2 py-0.5 rounded text-xs font-bold bg-gradient-to-r ${EPOCH_COLORS[nation.epoch]} text-white`}>
-              {nation.epoch} Epoch
+          <div className="flex-1 space-y-1">
+            <div className="font-black text-lg text-white leading-tight">{nation.name}</div>
+            <div className="text-xs text-slate-400 leading-tight">Leader: {nation.leader}</div>
+            <span className={`inline-block px-2 py-1 rounded text-xs font-bold bg-gradient-to-r ${EPOCH_COLORS[nation.epoch]} text-white`}>
+              {nation.epoch}
             </span>
           </div>
           <button onClick={onClose}><X size={16} className="text-slate-400 hover:text-white" /></button>

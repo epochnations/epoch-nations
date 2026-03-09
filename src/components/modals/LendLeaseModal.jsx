@@ -3,14 +3,14 @@ import { base44 } from "@/api/base44Client";
 import { X, Package, Heart } from "lucide-react";
 
 const RESOURCES = [
-  { id: "currency", label: "Credits", icon: "💰", field: "currency" },
-  { id: "res_wood", label: "Wood", icon: "🪵", field: "res_wood" },
+  { id: "currency", label: "Credits", icon: "💎", field: "currency" },
+  { id: "res_wood", label: "Wood", icon: "🌳", field: "res_wood" },
   { id: "res_stone", label: "Stone", icon: "🪨", field: "res_stone" },
-  { id: "res_gold", label: "Gold", icon: "🥇", field: "res_gold" },
-  { id: "res_iron", label: "Iron", icon: "⚙️", field: "res_iron" },
-  { id: "res_oil", label: "Oil", icon: "🛢️", field: "res_oil" },
+  { id: "res_gold", label: "Gold", icon: "✨", field: "res_gold" },
+  { id: "res_iron", label: "Iron", icon: "⚙", field: "res_iron" },
+  { id: "res_oil", label: "Oil", icon: "🛢", field: "res_oil" },
   { id: "res_food", label: "Food", icon: "🌾", field: "res_food" },
-  { id: "tech_points", label: "Tech Points", icon: "🔬", field: "tech_points" },
+  { id: "tech_points", label: "Tech Points", icon: "⚡", field: "tech_points" },
 ];
 
 export default function LendLeaseModal({ targetNation, myNation, onClose, onRefresh }) {
@@ -80,8 +80,8 @@ export default function LendLeaseModal({ targetNation, myNation, onClose, onRefr
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
         <div className="w-full max-w-sm backdrop-blur-xl bg-[#0f172a]/95 border border-white/20 rounded-2xl p-8 text-center space-y-4">
-          <div className="text-5xl">📦</div>
-          <div className="text-2xl font-black text-white">Aid Delivered!</div>
+          <div className="text-5xl">✓</div>
+          <div className="text-2xl font-black text-white">Aid Sent!</div>
           <div className="text-slate-300 text-sm">Alliance formed with <strong>{targetNation.name}</strong></div>
           <button onClick={onClose} className="w-full py-3 rounded-xl font-bold bg-green-500/20 text-green-400 hover:bg-green-500/30 transition-all">
             Close
@@ -152,7 +152,7 @@ export default function LendLeaseModal({ targetNation, myNation, onClose, onRefr
               disabled={loading || amount > myBalance || amount <= 0}
               className="flex-1 py-3 rounded-xl font-bold text-sm bg-gradient-to-r from-blue-500 to-cyan-600 text-white hover:from-blue-400 hover:to-cyan-500 disabled:opacity-30 transition-all"
             >
-              {loading ? "Sending..." : "SEND AID 📦"}
+              {loading ? "Sending..." : "SEND AID"}
             </button>
           </div>
         </div>
