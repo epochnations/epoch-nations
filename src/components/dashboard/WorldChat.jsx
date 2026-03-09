@@ -547,6 +547,13 @@ export default function WorldChat({ myNation, user }) {
       sender_role: myRole, content: filtered,
       reply_to_id: replyTo?.id || "", reply_to_name: replyTo ? replyTo.sender_nation_name : "",
     });
+
+    // Trigger AI responses for global channel messages
+    if (channel === "global" && aiTriggerRef.current) {
+      console.log("[WorldChat] AI engine triggered for:", filtered);
+      aiTriggerRef.current(filtered, myNation);
+    }
+
     setInput(""); setReplyTo(null); setSending(false);
     inputRef.current?.focus();
   }
