@@ -7,7 +7,8 @@
 import { useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 
-const BASE_COOLDOWN = 25000; // 25 seconds
+const AI_CHAT_COOLDOWN_MIN = 60000;  // 60 seconds
+const AI_CHAT_COOLDOWN_MAX = 120000; // 120 seconds
 
 // Personality profiles: determines LLM prompt tone
 const PERSONALITY_TYPES = [
