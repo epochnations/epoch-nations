@@ -36,6 +36,7 @@ export default function Dashboard() {
   const [showIssueStock, setShowIssueStock] = useState(false);
   const [showWorkforce, setShowWorkforce] = useState(false);
   const [activeDilemma, setActiveDilemma] = useState(null);
+  const [showAdvisor, setShowAdvisor] = useState(false);
 
   const refreshDebounceRef = useRef(null);
   const userEmailRef = useRef(null);
