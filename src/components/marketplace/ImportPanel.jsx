@@ -15,8 +15,8 @@ const RESOURCE_META = {
 function importPrice(resourceKey, qty, nation) {
   const epochIndex = Math.max(0, EPOCHS.indexOf(nation.epoch));
   const epochMult = 1 + epochIndex * 0.03;
-  // Import has a 30% premium over base sell price
-  return Math.round(RESOURCE_META[resourceKey].base * (qty / 100) * epochMult * 1.30);
+  // Import has a 30% premium over base sell price × 3.75x multiplier
+  return Math.round(RESOURCE_META[resourceKey].base * (qty / 100) * epochMult * 1.30 * 3.75);
 }
 
 const SHORTAGE_THRESHOLD = 100;
