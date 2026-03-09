@@ -41,12 +41,12 @@ export default function NationModal({ nation, myNation, onClose, onRefresh }) {
         {/* Stats */}
         <div className="p-6 grid grid-cols-2 gap-3">
           {[
-            ["GDP", nation.gdp, "text-cyan-400"],
-            ["Treasury", nation.currency?.toFixed(0) + " cr", "text-green-400"],
-            ["Stability", nation.stability + "%", "text-blue-400"],
-            ["Tech Lvl", nation.tech_level, "text-yellow-400"],
-            ["Unit Power", nation.unit_power, "text-red-400"],
-            ["Defense", nation.defense_level, "text-violet-400"],
+            ["GDP", Math.round(nation.gdp || 0), "text-cyan-400"],
+            ["Treasury", Math.round(nation.currency || 0) + " cr", "text-green-400"],
+            ["Stability", Math.round(nation.stability || 0) + "%", "text-blue-400"],
+            ["Tech Lvl", nation.tech_level || 1, "text-yellow-400"],
+            ["Unit Power", Math.round(nation.unit_power || 0), "text-red-400"],
+            ["Defense", Math.round(nation.defense_level || 0), "text-violet-400"],
           ].map(([label, val, color]) => (
             <div key={label} className="bg-white/5 rounded-xl p-3">
               <div className="text-xs text-slate-500">{label}</div>
