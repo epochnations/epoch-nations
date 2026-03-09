@@ -111,8 +111,15 @@ export default function WorldMap({ myNation, onSelectNation, onOpenAdvisor }) {
     >
       {/* Top Bar */}
       <div className="absolute top-0 left-0 right-0 z-30 flex items-center gap-2 px-3 py-2 bg-black/60 backdrop-blur-sm border-b border-white/10">
+        {onOpenAdvisor && (
+          <button onClick={onOpenAdvisor}
+            className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold border transition-all hover:scale-105"
+            style={{ color: "#a78bfa", background: "rgba(139,92,246,0.1)", borderColor: "rgba(139,92,246,0.25)" }}>
+            <Brain size={11} /> National Advisor
+          </button>
+        )}
         <Globe size={13} className="text-cyan-400 shrink-0" />
-        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">
+        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap hidden xl:block">
           {mode === "global" ? `World · ${nations.length} Nations` : `National View · ${myNation?.name || ""}`}
         </span>
         <div className="flex-1" />
