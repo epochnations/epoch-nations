@@ -363,7 +363,7 @@ function isAINation(nation, userEmails) {
 // ─────────────────────────────────────────────────────────────────────────────
 // COMPONENT
 // ─────────────────────────────────────────────────────────────────────────────
-export default function AIDiplomacyEngine({ myNation }) {
+export default function AIDiplomacyEngine({ myNation, onReady }) {
   const cooldownsRef   = useRef({});
   const pmCooldownsRef = useRef({});
   const userEmailsRef  = useRef(new Set());
@@ -375,14 +375,26 @@ export default function AIDiplomacyEngine({ myNation }) {
       .then(users => { userEmailsRef.current = new Set(users.map(u => u.email)); })
       .catch(() => {});
 
-    // Only real player messages trigger AI responses
+    // Expose handlePlayerMessage to parent via onReady callback
+    if (onReady) {
+      onReady((content, senderNation) => {
+        handlePlayerMessage({
+          content,
+          channel: "global",
+          sender_nation_id: senderNation?.id || myNation?.id,
+          sender_nation_name: senderNation?.name || myNation?.name,
+        });
+      });
+    }
+
+    // Also listen for messages from OTHER players (multi-player scenarios)
     const unsubChat = base44.entities.ChatMessage.subscribe((event) => {
       if (event.type !== "create") return;
       const msg = event.data;
       if (!msg || msg.is_deleted) return;
       if (msg.channel === "system") return;
       if (msg.sender_role === "ai" || msg.sender_role === "system") return;
-      if (msg.sender_nation_id === myNation?.id) return;
+      if (msg.sender_nation_id === myNation?.id) return; // own messages handled via onReady
       handlePlayerMessage(msg);
     });
 
