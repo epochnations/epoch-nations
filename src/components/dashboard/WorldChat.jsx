@@ -26,14 +26,29 @@ const ROLE_BADGE = {
 
 // Slash commands
 const COMMANDS = [
-  { cmd: "/announce", desc: "Broadcast a system announcement", role: "admin" },
-  { cmd: "/mute",     desc: "/mute <nation>",                  role: "moderator" },
-  { cmd: "/unmute",   desc: "/unmute <nation>",                role: "moderator" },
-  { cmd: "/delete",   desc: "/delete <message-id>",            role: "moderator" },
-  { cmd: "/promote",  desc: "/promote <nation> moderator",     role: "admin" },
-  { cmd: "/demote",   desc: "/demote <nation>",                role: "admin" },
-  { cmd: "/ban",      desc: "/ban <nation>",                   role: "admin" },
+  { cmd: "/announce",  desc: "Broadcast a system announcement",        role: "admin" },
+  { cmd: "/mute",      desc: "/mute <nation>",                         role: "moderator" },
+  { cmd: "/unmute",    desc: "/unmute <nation>",                       role: "moderator" },
+  { cmd: "/delete",    desc: "/delete <message-id>",                   role: "moderator" },
+  { cmd: "/promote",   desc: "/promote <nation> moderator",            role: "admin" },
+  { cmd: "/demote",    desc: "/demote <nation>",                       role: "admin" },
+  { cmd: "/ban",       desc: "/ban <nation>",                          role: "admin" },
+  // Diplomatic commands — all players
+  { cmd: "/trade",     desc: "/trade <nation> <resource> <amount>",    role: "player" },
+  { cmd: "/diplomacy", desc: "/diplomacy propose alliance <nation>",   role: "player" },
+  { cmd: "/sanction",  desc: "/sanction <nation>",                     role: "player" },
+  { cmd: "/spy",       desc: "/spy <nation>",                          role: "player" },
+  { cmd: "/aid",       desc: "/aid <nation> <amount>",                 role: "player" },
 ];
+
+// Propaganda detection
+function detectPropaganda(content = "") {
+  const t = content.toLowerCase();
+  return (
+    (/collaps|bankrupt|defeated|humiliat|crush|destroy|annihilat/.test(t) && /economy|military|nation/.test(t)) ||
+    /fake news|propaganda|lies|false report/.test(t)
+  );
+}
 
 function timeStr(d) {
   const t = new Date(d);
