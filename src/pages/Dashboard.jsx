@@ -22,6 +22,7 @@ import ResourceEngine from "../components/dashboard/ResourceEngine";
 import WorkforcePanel from "../components/panels/WorkforcePanel";
 import WorldChat from "../components/dashboard/WorldChat";
 import NationalAdvisorModal from "../components/modals/NationalAdvisorModal";
+import AIDiplomacyEngine from "../components/dashboard/AIDiplomacyEngine";
 
 export default function Dashboard() {
   const [myNation, setMyNation] = useState(null);
