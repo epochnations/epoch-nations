@@ -291,6 +291,36 @@ export default function WorldChat({ myNation, user }) {
     const parts = raw.trim().split(/\s+/);
     const cmd = parts[0].toLowerCase();
 
+    if (cmd === "/admin" && isAdmin) {
+      const adminCmds = COMMANDS.filter(c => c.role === "admin");
+      const text = "🛡️ ADMIN COMMANDS:\n" + adminCmds.map(c => `${c.cmd} — ${c.desc}`).join("\n");
+      setInput("");
+      alert(text);
+      return true;
+    }
+
+    if (cmd === "/mod" && isMod) {
+      const modCmds = COMMANDS.filter(c => c.role === "moderator" || (isAdmin && c.role === "admin"));
+      const text = "⚖️ MOD COMMANDS:\n" + modCmds.map(c => `${c.cmd} — ${c.desc}`).join("\n");
+      setInput("");
+      alert(text);
+      return true;
+    }
+
+    if (cmd === "/blockword" && isMod) {
+      const word = parts[1]?.toLowerCase();
+      if (!word) return true;
+      await base44.entities.WordFilter.create({ word, added_by: user?.email || "" });
+      setBlockedWords(prev => [...prev, word]);
+      await logModAction("add_blocked_word", word, "", word);
+      await base44.entities.ChatMessage.create({
+        channel: "system", sender_nation_name: "WORLD SYSTEM",
+        sender_flag: "🌐", sender_color: "#a78bfa", sender_role: "system",
+        content: `🚫 Word "${word}" has been added to the filter by ${myNation?.name || "Moderator"}.`,
+      });
+      return true;
+    }
+
     if (cmd === "/announce" && isAdmin) {
       const text = parts.slice(1).join(" ");
       if (!text) return true;
