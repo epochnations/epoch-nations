@@ -215,12 +215,10 @@ export default function Dashboard() {
         <div className="mx-3 mb-3">
           <NationStatsPanel nation={myNation} />
         </div>
-        {/* National Advisor — mobile: appears before activities */}
-        {myNation && (
-          <div className="mx-3 mb-3">
-            <NationalAdvisorPanel nation={myNation} />
-          </div>
-        )}
+        {/* World Chat — mobile */}
+        <div className="mx-3 mb-3 h-72 shrink-0">
+          <WorldChat myNation={myNation} user={user} />
+        </div>
         {/* Global Ledger */}
         <div className="mx-3 mb-3">
           <GlobalLedger />
