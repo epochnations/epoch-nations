@@ -287,7 +287,7 @@ function buildRelationshipContext(rel, playerName) {
 // ─────────────────────────────────────────────────────────────────────────────
 // PROMPT BUILDERS
 // ─────────────────────────────────────────────────────────────────────────────
-function buildReplyPrompt(aiNation, personality, leader, senderName, playerMsg, analysis, nationMem, relation, worldEvents, topicPat, senderRep) {
+function buildReplyPrompt(aiNation, personality, leader, senderName, playerMsg, analysis, nationMem, relation, worldEvents, topicPat, senderRep, conversationHistory = "") {
   const allies  = (aiNation.allies || []).join(", ") || "none";
   const enemies = (aiNation.at_war_with || []).join(", ") || "none";
   const memCtx  = nationMem.length ? `\nYOUR DIPLOMATIC MEMORY:\n${nationMem.map(m => `- ${m}`).join("\n")}` : "";
@@ -296,6 +296,9 @@ function buildReplyPrompt(aiNation, personality, leader, senderName, playerMsg, 
   const extras  = [topicPat && `PATTERN: ${topicPat}`, senderRep && `REPUTATION: ${senderRep}`].filter(Boolean).join("\n");
   const driftNote = personality.type !== personality.baseType
     ? `\nPERSONALITY DRIFT: Originally ${personality.baseType}, now ${personality.type} due to past conflicts/interactions.`
+    : "";
+  const histCtx = conversationHistory
+    ? `\nRECENT CONVERSATION:\n${conversationHistory}`
     : "";
 
   const modeHint =
@@ -313,7 +316,7 @@ PERSONALITY: ${personality.type} — ${personality.traits}
 STYLE: ${personality.style}${driftNote}
 ALLIES: ${allies} | ENEMIES: ${enemies}
 NATION STATS: GDP ${aiNation.gdp || 0}, Stability ${Math.round(aiNation.stability || 75)}, Military ${aiNation.unit_power || 10}
-${memCtx}${wldCtx}
+${memCtx}${wldCtx}${histCtx}
 ${extras}
 
 RELATIONSHIP WITH ${senderName}: ${relCtx}
@@ -327,6 +330,7 @@ RULES:
 - Only the spoken words — no prefix, no quotation marks, no emojis, no meta-tags
 - Sound like a real head of state — concise, politically authentic
 - Max 2 sentences
+- If the conversation history shows you previously spoke with ${senderName}, acknowledge the continuity naturally
 - Reference memory or history only when genuinely relevant`;
 }
 
