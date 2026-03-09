@@ -452,9 +452,9 @@ export default function AIDiplomacyEngine({ myNation, onReady }) {
 
   // ── Main player message handler ────────────────────────────────────────────
   async function handlePlayerMessage(msg) {
-    const allNations = await base44.entities.Nation.list("-gdp", 30);
+    const allNations  = await base44.entities.Nation.list("-gdp", 30);
     const nationNames = allNations.map(n => n.name);
-    const analysis = analyzeMessage(msg.content || "", nationNames);
+    const analysis    = analyzeMessage(msg.content || "", nationNames);
 
     // Record topic and reputation for the player
     trackTopic(msg.sender_nation_name, analysis.topic);
@@ -483,9 +483,42 @@ export default function AIDiplomacyEngine({ myNation, onReady }) {
     );
     if (!aiNations.length) return;
 
-    // Use ChatIntelligenceEngine to select responders (always returns at least 1)
-    const responders = selectResponders(aiNations, analysis, msg.content, getPersonality, cooldownsRef.current);
-    if (!responders.length) return; // only skips if zero AI nations exist at all
+    // ── P1: Reply target detection ─────────────────────────────────────────
+    let replyTargetNationId = null;
+    if (msg.reply_to_id) {
+      try {
+        const repliedMsg = await base44.entities.ChatMessage.get(msg.reply_to_id);
+        if (repliedMsg?.sender_nation_id && repliedMsg.sender_role === "ai") {
+          replyTargetNationId = repliedMsg.sender_nation_id;
+        }
+      } catch { /* ignore */ }
+    }
+
+    // ── P2: Leader/nation name detection ──────────────────────────────────
+    const addressedNation = detectAddressedNation(
+      msg.content,
+      aiNations,
+      (nation) => leaderDisplayName(nation)
+    );
+
+    // ── Conversation history for LLM context ──────────────────────────────
+    let recentMessages = [];
+    try {
+      recentMessages = await base44.entities.ChatMessage.filter(
+        { channel: msg.channel || "global" },
+        "-created_date",
+        8
+      );
+      recentMessages = recentMessages.filter(m => !m.is_deleted).reverse();
+    } catch { /* ignore */ }
+    const conversationHistory = buildConversationHistory(recentMessages);
+
+    // Select responders using the 4-priority system
+    const responders = selectResponders(
+      aiNations, analysis, msg.content, getPersonality, cooldownsRef.current,
+      replyTargetNationId, addressedNation
+    );
+    if (!responders.length) return;
 
     for (const { nation, personality, delay } of responders) {
       setTimeout(async () => {
@@ -496,7 +529,11 @@ export default function AIDiplomacyEngine({ myNation, onReady }) {
         const topicPat    = getTopicPattern(msg.sender_nation_name);
         const senderRep   = getReputationSummary(msg.sender_nation_name);
 
-        const prompt  = buildReplyPrompt(nation, personality, leader, msg.sender_nation_name, msg.content, analysis, nationMem, relation, worldEvents, topicPat, senderRep);
+        const prompt  = buildReplyPrompt(
+          nation, personality, leader, msg.sender_nation_name, msg.content,
+          analysis, nationMem, relation, worldEvents, topicPat, senderRep,
+          conversationHistory
+        );
         const content = await callLLM(prompt, 290);
         if (!content) return;
 
@@ -508,6 +545,8 @@ export default function AIDiplomacyEngine({ myNation, onReady }) {
           sender_color:       nation.flag_color || "#64748b",
           sender_role:        "ai",
           content,
+          reply_to_id:   msg.id || "",
+          reply_to_name: msg.sender_nation_name || "",
         });
 
         // Update cooldown
