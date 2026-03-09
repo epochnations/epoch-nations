@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
-import { Cpu, Plus, Sliders, Users, Hammer } from "lucide-react";
+import { Cpu, Plus, Sliders, Users, Hammer, Building2 } from "lucide-react";
 
 
 import NationStatsPanel from "../components/dashboard/NationStatsPanel";
@@ -162,6 +162,12 @@ export default function Dashboard() {
           </a>
 
           <a
+            href={createPageUrl("CityManagement")}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold hover:bg-emerald-500/20 transition-all duration-150"
+          >
+            <Building2 size={12} /> Run a City
+          </a>
+          <a
             href={createPageUrl("ConstructionHub")}
             className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold hover:bg-amber-500/20 transition-all duration-150"
           >
@@ -263,6 +269,9 @@ export default function Dashboard() {
           </a>
           <a href={createPageUrl("GlobalChronicles")} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-white/5 border border-white/10 text-slate-400 min-h-[44px] flex items-center gap-1.5">
             🌐 World
+          </a>
+          <a href={createPageUrl("CityManagement")} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 min-h-[44px] flex items-center gap-1.5">
+            🏛️ City
           </a>
           <a href={createPageUrl("Marketplace")} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-green-500/10 border border-green-500/20 text-green-400 min-h-[44px] flex items-center gap-1.5">
             🏪 Market
