@@ -147,7 +147,19 @@ function ChatMessage({ msg, myNation, isMod, onReact, onReply, onDelete, onMute,
           {isMuted && !isMod ? (
             <div className="text-[11px] text-slate-700 italic">Message hidden (muted)</div>
           ) : (
-            <div className="text-[12px] text-slate-300 leading-relaxed break-words">{msg.content}</div>
+            <div className="text-[12px] text-slate-300 leading-relaxed break-words">
+              {msg.content}
+            </div>
+          )}
+          {/* Propaganda label */}
+          {!isMuted && detectPropaganda(msg.content) && (
+            <div className="mt-0.5 text-[9px] font-bold text-amber-500/60 ep-mono tracking-wider">
+              ⚠ POSSIBLE PROPAGANDA
+            </div>
+          )}
+          {/* Diplomatic command echo */}
+          {!isMuted && msg.content?.startsWith("[DIPLOMATIC ACTION]") && (
+            <div className="mt-1 text-[10px] text-cyan-400/60 ep-mono">🏛 Official diplomatic record</div>
           )}
 
           <ReactionBar msg={msg} onReact={onReact} />
