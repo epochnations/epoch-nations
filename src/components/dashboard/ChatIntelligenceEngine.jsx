@@ -378,6 +378,19 @@ export function selectResponders(
   const max = Math.max(1, 3 - selected.length); // fill up to 3 total
   const threshold = responseThreshold(analysis);
 
+  // Detect queried resource for relevance boosting
+  const RESOURCE_MAP = {
+    oil: "res_oil", iron: "res_iron", food: "res_food",
+    gold: "res_gold", wood: "res_wood", stone: "res_stone",
+  };
+  const resourceMatch = rawText ? (() => {
+    const t = rawText.toLowerCase();
+    for (const [key, field] of Object.entries(RESOURCE_MAP)) {
+      if (t.includes(key)) return field;
+    }
+    return null;
+  })() : null;
+
   const remaining = aiNations
     .filter(n => !usedIds.has(n.id))
     .map(n => {
@@ -388,6 +401,8 @@ export function selectResponders(
       if (analysis.targetNation &&
           (n.name || "").toLowerCase().includes(analysis.targetNation.toLowerCase()))
         score += 60;
+      // Resource availability boost — nations with the queried resource respond more
+      if (resourceMatch && n[resourceMatch] > 0) score += 35;
       return { nation: n, personality, score };
     })
     .sort((a, b) => b.score - a.score);
