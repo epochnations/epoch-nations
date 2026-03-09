@@ -1,108 +1,107 @@
 /**
- * HexMapOverlays — Animated overlays for the global diplomacy layer:
- * trade routes, alliance lines, war borders, protection shields.
+ * HexMapOverlays — animated diplomacy lines between nation capitals.
+ * Trade routes (amber dashes), alliance lines (green), war lines (red pulsing).
  */
 import { useMemo } from "react";
-import { hexToPixel } from "./HexEngine";
+import { hexToPixel, HEX_SIZE } from "./HexEngine";
 
-// Animated dashed trade route line between two points
-function TradeRouteLine({ x1, y1, x2, y2, color = "#fbbf24" }) {
-  const len = Math.hypot(x2 - x1, y2 - y1);
-  return (
-    <line x1={x1} y1={y1} x2={x2} y2={y2}
-      stroke={color} strokeWidth={1.5} opacity={0.6}
-      strokeDasharray="8,6"
-      style={{ animation: "tradeAnim 2s linear infinite" }}
-    />
-  );
-}
-
-function AllianceLine({ x1, y1, x2, y2 }) {
-  return (
-    <line x1={x1} y1={y1} x2={x2} y2={y2}
-      stroke="#4ade80" strokeWidth={1.2} opacity={0.4}
-      strokeDasharray="12,8"
-      style={{ animation: "allianceAnim 3s linear infinite" }}
-    />
-  );
-}
-
-function WarLine({ x1, y1, x2, y2 }) {
-  return (
-    <line x1={x1} y1={y1} x2={x2} y2={y2}
-      stroke="#f87171" strokeWidth={1.8} opacity={0.55}
-      strokeDasharray="5,4"
-      style={{ animation: "warAnim 1s linear infinite" }}
-    />
-  );
-}
-
-// Find capital tile for a nation
 function getCapitalPos(tiles, nationId) {
   const capital = tiles.find(t => t.owner_nation_id === nationId && t.is_capital);
-  if (!capital) {
-    // fallback to first owned hex
-    const any = tiles.find(t => t.owner_nation_id === nationId);
-    if (any) return hexToPixel(any.q, any.r);
-    return null;
-  }
-  return hexToPixel(capital.q, capital.r);
+  const any     = capital || tiles.find(t => t.owner_nation_id === nationId);
+  return any ? hexToPixel(any.q, any.r, HEX_SIZE) : null;
 }
 
-export default function HexMapOverlays({ tiles, nations, myNation, tradeRoutes, showAlliances, showTrade, showWars }) {
-  const lines = useMemo(() => {
-    const result = { alliances: [], wars: [], trade: [] };
-    if (!nations.length || !tiles.length) return result;
+function AnimatedLine({ x1, y1, x2, y2, color, width, dashArray, animName, opacity = 0.7 }) {
+  return (
+    <g>
+      {/* glow */}
+      <line x1={x1} y1={y1} x2={x2} y2={y2}
+        stroke={color} strokeWidth={width * 3} opacity={opacity * 0.2} strokeLinecap="round" />
+      {/* line */}
+      <line x1={x1} y1={y1} x2={x2} y2={y2}
+        stroke={color} strokeWidth={width} opacity={opacity}
+        strokeDasharray={dashArray}
+        strokeLinecap="round"
+        style={{ animation: `${animName} 1.8s linear infinite` }} />
+    </g>
+  );
+}
 
-    const posMap = {};
+export default function HexMapOverlays({ tiles, nations, tradeRoutes, showAlliances, showTrade, showWars }) {
+  const posMap = useMemo(() => {
+    const m = {};
     for (const n of nations) {
       const pos = getCapitalPos(tiles, n.id);
-      if (pos) posMap[n.id] = pos;
+      if (pos) m[n.id] = pos;
     }
+    return m;
+  }, [tiles, nations]);
 
-    // Alliance lines
-    if (showAlliances) {
-      for (const n of nations) {
-        for (const allyId of (n.allies || [])) {
-          if (allyId > n.id) continue; // avoid duplicates
-          const a = posMap[n.id], b = posMap[allyId];
-          if (a && b) result.alliances.push({ key: `al_${n.id}_${allyId}`, x1: a.x, y1: a.y, x2: b.x, y2: b.y });
-        }
+  const alliances = useMemo(() => {
+    if (!showAlliances) return [];
+    const seen = new Set();
+    const lines = [];
+    for (const n of nations) {
+      for (const allyId of (n.allies || [])) {
+        const key = [n.id, allyId].sort().join("|");
+        if (seen.has(key)) continue;
+        seen.add(key);
+        const a = posMap[n.id], b = posMap[allyId];
+        if (a && b) lines.push({ key, x1: a.x, y1: a.y, x2: b.x, y2: b.y });
       }
     }
+    return lines;
+  }, [nations, posMap, showAlliances]);
 
-    // War lines
-    if (showWars) {
-      for (const n of nations) {
-        for (const enemyId of (n.at_war_with || [])) {
-          if (enemyId > n.id) continue;
-          const a = posMap[n.id], b = posMap[enemyId];
-          if (a && b) result.wars.push({ key: `war_${n.id}_${enemyId}`, x1: a.x, y1: a.y, x2: b.x, y2: b.y });
-        }
+  const wars = useMemo(() => {
+    if (!showWars) return [];
+    const seen = new Set();
+    const lines = [];
+    for (const n of nations) {
+      for (const enemyId of (n.at_war_with || [])) {
+        const key = [n.id, enemyId].sort().join("|");
+        if (seen.has(key)) continue;
+        seen.add(key);
+        const a = posMap[n.id], b = posMap[enemyId];
+        if (a && b) lines.push({ key, x1: a.x, y1: a.y, x2: b.x, y2: b.y });
       }
     }
+    return lines;
+  }, [nations, posMap, showWars]);
 
-    // Trade routes
-    if (showTrade && tradeRoutes) {
-      for (const tr of tradeRoutes) {
+  const trade = useMemo(() => {
+    if (!showTrade || !tradeRoutes) return [];
+    return tradeRoutes
+      .map(tr => {
         const a = posMap[tr.from_nation_id], b = posMap[tr.to_nation_id];
-        if (a && b) result.trade.push({ key: tr.id, x1: a.x, y1: a.y, x2: b.x, y2: b.y });
-      }
-    }
-
-    return result;
-  }, [tiles, nations, tradeRoutes, showAlliances, showTrade, showWars]);
+        return a && b ? { key: tr.id, x1: a.x, y1: a.y, x2: b.x, y2: b.y } : null;
+      })
+      .filter(Boolean);
+  }, [tradeRoutes, posMap, showTrade]);
 
   return (
     <g>
       <style>{`
-        @keyframes tradeAnim   { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -28; } }
-        @keyframes allianceAnim{ from { stroke-dashoffset: 0; } to { stroke-dashoffset: -40; } }
-        @keyframes warAnim     { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -18; } }
+        @keyframes dashMoveAlliance { to { stroke-dashoffset: -40; } }
+        @keyframes dashMoveTrade    { to { stroke-dashoffset: -28; } }
+        @keyframes dashMoveWar      { to { stroke-dashoffset: -18; } }
       `}</style>
-      {lines.alliances.map(l => <AllianceLine key={l.key} {...l} />)}
-      {lines.wars.map(l => <WarLine key={l.key} {...l} />)}
-      {lines.trade.map(l => <TradeRouteLine key={l.key} {...l} />)}
+
+      {alliances.map(l => (
+        <AnimatedLine key={l.key} {...l}
+          color="#4ade80" width={1.5} dashArray="10,8"
+          animName="dashMoveAlliance" opacity={0.65} />
+      ))}
+      {wars.map(l => (
+        <AnimatedLine key={l.key} {...l}
+          color="#f87171" width={2} dashArray="5,4"
+          animName="dashMoveWar" opacity={0.8} />
+      ))}
+      {trade.map(l => (
+        <AnimatedLine key={l.key} {...l}
+          color="#fbbf24" width={1.2} dashArray="8,6"
+          animName="dashMoveTrade" opacity={0.55} />
+      ))}
     </g>
   );
 }
