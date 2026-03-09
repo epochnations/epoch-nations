@@ -426,27 +426,32 @@ RULES:
 }
 
 function buildPrivateReplyPrompt(aiNation, personality, leader, senderNation, playerMsg, nationMem, relation, worldEvents) {
-  const allies   = (aiNation.allies || []).join(", ") || "none";
-  const enemies  = (aiNation.at_war_with || []).join(", ") || "none";
   const isAlly   = (aiNation.allies || []).includes(senderNation?.id);
   const isEnemy  = (aiNation.at_war_with || []).includes(senderNation?.id);
   const relLabel = isAlly ? "allied nation" : isEnemy ? "enemy nation" : "neutral nation";
   const memCtx   = nationMem.length ? `\nPAST CONTEXT:\n${nationMem.map(m => `- ${m}`).join("\n")}` : "";
   const wldCtx   = worldEvents.length ? `\nWORLD HISTORY:\n${worldEvents.map(e => `- ${e}`).join("\n")}` : "";
   const relCtx   = buildRelationshipContext(relation, senderNation?.name || "them");
+  const culture  = getCulture(aiNation);
+  const goal     = getStrategicGoal(aiNation);
+  const gameCtx  = buildGameStateContext(aiNation);
 
   return `You are ${leader.display}, leader of "${aiNation.name}" in the ${aiNation.epoch} era.
-Private message from ${senderNation?.name || "another nation"} (${relLabel}).
+Private diplomatic message from ${senderNation?.name || "another nation"} (${relLabel}).
 
 PERSONALITY: ${personality.type} — ${personality.traits}
 STYLE: ${personality.style}
-ALLIES: ${allies} | ENEMIES: ${enemies}
+CULTURE: ${culture.label} — ${culture.traits}
+STRATEGIC GOAL: ${goal.label}
 RELATIONSHIP: ${relCtx}
+
+YOUR NATION'S GAME DATA:
+${gameCtx}
 ${memCtx}${wldCtx}
 
 THEIR MESSAGE: "${playerMsg}"
 
-Reply directly. 2–3 sentences max. No quotation marks. No emojis. Sound authentic. Reference history if relevant.`;
+Reply directly in character. Reference real game data if relevant (resources, war status). 2–3 sentences max. No quotation marks. No emojis. Sound like a real head of state.`;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
