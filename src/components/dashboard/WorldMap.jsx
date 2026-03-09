@@ -18,7 +18,7 @@ const DEFAULT_LAYERS = {
   wars: true, battles: true, tradeRoutes: true, danger: true, resources: false
 };
 
-export default function WorldMap({ myNation, onSelectNation }) {
+export default function WorldMap({ myNation, onSelectNation, onOpenAdvisor }) {
   const containerRef = useRef(null);
   const { zoom, pan, setZoom, setPan, smoothPanTo, handlers } = useMapEngine(containerRef);
 
