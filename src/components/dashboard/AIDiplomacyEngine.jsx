@@ -130,9 +130,10 @@ export default function AIDiplomacyEngine({ myNation }) {
     });
 
     // Periodic initiator — AI nations occasionally start conversations
+    // Interval kept at 90–150s so combined with per-nation cooldown it stays calm
     timerRef.current = setInterval(() => {
       maybeInitiateConversation();
-    }, 45000 + Math.random() * 30000); // every 45–75s
+    }, 90000 + Math.random() * 60000); // every 90–150s
 
     // Staggered first initiation
     const initDelay = 12000 + Math.random() * 8000;
