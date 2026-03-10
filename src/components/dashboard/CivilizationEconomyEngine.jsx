@@ -25,10 +25,11 @@ const EPOCHS = ["Stone Age","Copper Age","Bronze Age","Iron Age","Dark Ages",
 
 // Daily spending by social class (credits/day)
 const DAILY_SPEND = { low: 2.0, middle: 2.74, upper: 4.5 };
+// Per-tick share: 1 game day = TICKS_PER_DAY ticks (30 ticks = 30 real minutes)
 const TICK_SPEND  = {
-  low:    DAILY_SPEND.low    / 1440,
-  middle: DAILY_SPEND.middle / 1440,
-  upper:  DAILY_SPEND.upper  / 1440,
+  low:    DAILY_SPEND.low    / TICKS_PER_DAY,
+  middle: DAILY_SPEND.middle / TICKS_PER_DAY,
+  upper:  DAILY_SPEND.upper  / TICKS_PER_DAY,
 };
 
 // Wage multipliers × daily spending
