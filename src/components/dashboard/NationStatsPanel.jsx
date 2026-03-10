@@ -225,7 +225,11 @@ export default function NationStatsPanel({ nation }) {
           style={{ background: "rgba(167,139,250,0.07)", border: "1px solid rgba(167,139,250,0.15)" }}>
           <span className="text-[11px] text-slate-500 font-bold ep-mono uppercase">Pop</span>
           <FlashStat value={nation.population || 0} className="text-xl font-black ep-mono text-violet-400">
-            {nation.population || 0}
+            {pop >= 1_000_000
+              ? `${(pop / 1_000_000).toFixed(2)}M`
+              : pop >= 1_000
+              ? `${(pop / 1_000).toFixed(1)}K`
+              : pop}
           </FlashStat>
         </div>
       </div>
