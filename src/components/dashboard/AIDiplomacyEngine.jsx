@@ -372,6 +372,13 @@ function buildPrivateReplyPrompt(aiNation, personality, leader, senderNation, pl
   const goal     = getStrategicGoal(aiNation);
   const gameCtx  = buildGameStateContext(aiNation);
 
+  // Detect if player is requesting a trade / aid
+  const msgLower = playerMsg.toLowerCase();
+  const isTradeRequest = /\b(send|give|transfer|provide|trade|sell|buy|pay|owe|deal|agreement|oil|credit|gold|iron|food|wood)\b/.test(msgLower);
+  const tradeInstruction = isTradeRequest
+    ? `\nTRADE/AID RULE: If you agree to send credits or resources, state the EXACT amount using this format: "I will send you X credits" or "I will transfer X oil" — using a plain number (e.g. 500 credits, 200 oil). Only commit to amounts you actually have per YOUR NATION'S GAME DATA. If you cannot afford it, say so explicitly.`
+    : "";
+
   return `You are ${leader.display}, leader of "${aiNation.name}" in the ${aiNation.epoch} era.
 Private diplomatic message from ${senderNation?.name || "another nation"} (${relLabel}).
 
@@ -386,7 +393,7 @@ ${gameCtx}
 ${memCtx}${wldCtx}
 
 THEIR MESSAGE: "${playerMsg}"
-
+${tradeInstruction}
 Reply directly in character. Reference real game data if relevant (resources, war status). 2–3 sentences max. No quotation marks. No emojis. Sound like a real head of state.`;
 }
 
