@@ -21,12 +21,12 @@ function useFlash(value) {
 }
 
 const RESOURCE_DEFS = [
-  { key: "res_wood",  label: "Wood",  color: "#a78bfa", symbol: "🪵" },
-  { key: "res_stone", label: "Stone", color: "#94a3b8", symbol: "🪨" },
-  { key: "res_gold",  label: "Gold",  color: "#fbbf24", symbol: "💰" },
-  { key: "res_iron",  label: "Iron",  color: "#64748b", symbol: "⚙️" },
-  { key: "res_oil",   label: "Oil",   color: "#6ee7b7", symbol: "🛢️" },
-  { key: "res_food",  label: "Food",  color: "#4ade80", symbol: "🌾" },
+  { key: "res_wood",  label: "Wood",  color: "#a78bfa", symbol: "[W]" },
+  { key: "res_stone", label: "Stone", color: "#94a3b8", symbol: "[S]" },
+  { key: "res_gold",  label: "Gold",  color: "#fbbf24", symbol: "[G]" },
+  { key: "res_iron",  label: "Iron",  color: "#64748b", symbol: "[Fe]" },
+  { key: "res_oil",   label: "Oil",   color: "#6ee7b7", symbol: "[O]" },
+  { key: "res_food",  label: "Food",  color: "#4ade80", symbol: "[F]" },
 ];
 
 const CORE_METRICS = [
