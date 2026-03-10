@@ -268,7 +268,10 @@ export default function Dashboard() {
             + Stock
           </button>
           <button onClick={() => setShowTechTree(true)} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-violet-500/10 border border-violet-500/20 text-violet-400 min-h-[44px]">
-            🔬 Tech
+            🧬 Tech
+          </button>
+          <button onClick={() => setShowResearch(true)} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-fuchsia-500/10 border border-fuchsia-500/20 text-fuchsia-400 min-h-[44px]">
+            🔬 Research
           </button>
           <button onClick={() => setShowManagement(true)} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 min-h-[44px]">
             📊 Manage
