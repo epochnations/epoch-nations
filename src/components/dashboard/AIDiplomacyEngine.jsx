@@ -655,6 +655,101 @@ export default function AIDiplomacyEngine({ myNation, onReady }) {
     }
   }
 
+  // ── AI Aid Executor ───────────────────────────────────────────────────────
+  // Scans an AI's outgoing private message for transfer promises and executes them
+  async function executeAIAidIfPromised(aiNation, recipientNation, messageContent) {
+    if (!aiNation || !recipientNation) return;
+    const text = messageContent.toLowerCase();
+
+    // ── Credit/currency transfer detection ──────────────────────────────────
+    // Matches: "send you 6000 credits", "transfer 1,500 credits", "provide 2000 gold", etc.
+    const creditMatch = text.match(/(?:send|transfer|provide|give|wire|dispatch|offer)\D{0,15}([\d,]+)\s*(?:credits?|gold|currency|funds|payment)/);
+    if (creditMatch) {
+      const amount = parseInt(creditMatch[1].replace(/,/g, ""), 10);
+      if (amount >= 50 && amount <= 50000) {
+        // Transfer credits from AI to player
+        const aiCurrency   = aiNation.currency || 0;
+        const transferAmt  = Math.min(amount, aiCurrency * 0.8); // AI won't give more than 80% of what it has
+        if (transferAmt >= 50) {
+          await base44.entities.Nation.update(aiNation.id, {
+            currency: Math.max(0, aiCurrency - transferAmt),
+          });
+          await base44.entities.Nation.update(recipientNation.id, {
+            currency: (recipientNation.currency || 0) + transferAmt,
+          });
+          await base44.entities.Transaction.create({
+            type: "lend_lease",
+            from_nation_id:   aiNation.id,
+            from_nation_name: aiNation.name,
+            to_nation_id:     recipientNation.id,
+            to_nation_name:   recipientNation.name,
+            total_value:      transferAmt,
+            description:      `AI Aid: ${aiNation.name} transferred ${Math.round(transferAmt)} ${aiNation.currency_name || "credits"} to ${recipientNation.name}`,
+          });
+          await base44.entities.Notification.create({
+            target_nation_id:    recipientNation.id,
+            target_owner_email:  recipientNation.owner_email,
+            type: "lend_lease",
+            title: `Aid Received from ${aiNation.name}`,
+            message: `${aiNation.name} has transferred ${Math.round(transferAmt).toLocaleString()} ${aiNation.currency_name || "credits"} to your treasury as promised.`,
+            severity: "success",
+          });
+          return; // don't also process resources if credits matched
+        }
+      }
+    }
+
+    // ── Resource transfer detection ──────────────────────────────────────────
+    const RESOURCE_MAP = {
+      oil:   "res_oil",
+      iron:  "res_iron",
+      food:  "res_food",
+      grain: "res_food",
+      gold:  "res_gold",
+      wood:  "res_wood",
+      lumber:"res_wood",
+      stone: "res_stone",
+    };
+    for (const [keyword, resKey] of Object.entries(RESOURCE_MAP)) {
+      const resMatch = text.match(
+        new RegExp(`(?:send|transfer|provide|give|ship|export|dispatch)\\D{0,15}([\\d,]+)\\s*(?:units?\\s+of\\s+|tons?\\s+of\\s+)?${keyword}`)
+      );
+      if (resMatch) {
+        const amount = parseInt(resMatch[1].replace(/,/g, ""), 10);
+        if (amount >= 10 && amount <= 100000) {
+          const aiStock  = aiNation[resKey] || 0;
+          const transfer = Math.min(amount, Math.floor(aiStock * 0.6));
+          if (transfer >= 10) {
+            await base44.entities.Nation.update(aiNation.id, { [resKey]: Math.max(0, aiStock - transfer) });
+            await base44.entities.Nation.update(recipientNation.id, {
+              [resKey]: (recipientNation[resKey] || 0) + transfer,
+            });
+            await base44.entities.Transaction.create({
+              type: "lend_lease",
+              from_nation_id:   aiNation.id,
+              from_nation_name: aiNation.name,
+              to_nation_id:     recipientNation.id,
+              to_nation_name:   recipientNation.name,
+              resource_type:    resKey,
+              resource_amount:  transfer,
+              total_value:      transfer,
+              description:      `AI Aid: ${aiNation.name} shipped ${transfer} ${keyword} to ${recipientNation.name}`,
+            });
+            await base44.entities.Notification.create({
+              target_nation_id:    recipientNation.id,
+              target_owner_email:  recipientNation.owner_email,
+              type: "lend_lease",
+              title: `Resource Shipment from ${aiNation.name}`,
+              message: `${aiNation.name} has delivered ${transfer.toLocaleString()} ${keyword} to your nation as agreed.`,
+              severity: "success",
+            });
+          }
+        }
+        break;
+      }
+    }
+  }
+
   // ── Private messages ──────────────────────────────────────────────────────
   async function handlePrivateMessage(pm) {
     const recipientId = pm.recipient_nation_id;
