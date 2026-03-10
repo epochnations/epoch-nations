@@ -186,9 +186,9 @@ export default function CivilizationEconomyEngine({ nation, onRefresh }) {
     // ── GDP FORMULA ───────────────────────────────────────────────
     // GDP = (Pop×DailySpend) + IndustryOutput + GovSpend + TradeBalance
     const dailyPopSpend = (popLow * DAILY_SPEND.low + popMiddle * DAILY_SPEND.middle + popUpper * DAILY_SPEND.upper) * employmentFactor;
-    const dailyIndustry = productionTick * 1440;
-    const dailyGovSpend = govSpendTick   * 1440;
-    const dailyTrade    = tradeBalance   * 1440;
+    const dailyIndustry = productionTick * TICKS_PER_DAY;
+    const dailyGovSpend = govSpendTick   * TICKS_PER_DAY;
+    const dailyTrade    = tradeBalance   * TICKS_PER_DAY;
 
     const targetGDP = Math.max(100, dailyPopSpend + dailyIndustry + dailyGovSpend + dailyTrade);
     const currentGDP = fresh.gdp || 500;
