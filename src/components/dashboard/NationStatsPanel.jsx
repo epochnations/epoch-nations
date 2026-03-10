@@ -1,5 +1,23 @@
+import { useRef, useEffect, useState } from "react";
 import { EPOCHS } from "../game/EpochConfig";
 import { getCitiesForNation } from "../news/CityConfig";
+
+/** Flash a glow when a numeric value changes */
+function useFlash(value) {
+  const prev = useRef(value);
+  const [dir, setDir] = useState(null); // 'up' | 'down' | null
+
+  useEffect(() => {
+    if (prev.current === value) return;
+    const went = value > prev.current ? "up" : "down";
+    prev.current = value;
+    setDir(went);
+    const t = setTimeout(() => setDir(null), 1200);
+    return () => clearTimeout(t);
+  }, [value]);
+
+  return dir;
+}
 
 const RESOURCE_DEFS = [
   { key: "res_wood",  label: "Wood",  color: "#a78bfa", symbol: "🪵" },
