@@ -116,6 +116,7 @@ export default function Dashboard() {
             <span className="ep-live-dot" />
             <span className="text-green-400 font-bold ml-1">LIVE</span>
           </div>
+          <GameClockDisplay />
 
         </div>
 
