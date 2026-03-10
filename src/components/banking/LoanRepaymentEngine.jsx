@@ -1,10 +1,11 @@
 import { useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
+import { TICK_MS } from "../game/GameClock";
 
 /**
  * LoanRepaymentEngine — headless component
  *
- * Runs every 60s (1 tick). For each active loan owned by this nation:
+ * Runs every game tick (TICK_MS = 60s). For each active loan owned by this nation:
  * - Deducts repayment_per_tick from treasury
  * - Reduces balance_remaining
  * - If balance hits 0 → marks as "repaid"
