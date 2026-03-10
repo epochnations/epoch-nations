@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
-import { Hammer, AlertCircle, Users, Zap, ShieldCheck } from "lucide-react";
+import { Hammer, AlertCircle, Users, Zap, ShieldCheck, Landmark } from "lucide-react";
 import { BUILDINGS, BUILDING_MAP, EPOCH_REQUIREMENTS } from "../components/game/BuildingConfig";
 import { EPOCHS } from "../components/game/EpochConfig";
+import BankingPanel from "../components/banking/BankingPanel";
 
 
 const CATEGORY_LABELS = { civilian: "🏘️ Civilian", military: "⚔️ Military", recreational: "🎡 Recreational", government: "🏛️ Government" };
@@ -26,6 +27,7 @@ export default function ConstructionHub() {
   const [building, setBuilding] = useState(null); // currently constructing
   const [category, setCategory] = useState("civilian");
   const [addInsurance, setAddInsurance] = useState(false);
+  const [showBank, setShowBank] = useState(false);
 
   useEffect(() => { init(); }, []);
 
@@ -156,6 +158,12 @@ export default function ConstructionHub() {
           <span className="text-sm font-bold text-amber-400 hidden sm:inline">🏗️ Construction Hub</span>
         </div>
         <div className="flex gap-2">
+          {buildings.some(b => b.building_type === "bank" && !b.is_destroyed) && (
+            <button onClick={() => setShowBank(true)}
+              className="px-3 py-1.5 rounded-xl text-xs font-bold border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 transition-all flex items-center gap-1.5">
+              <Landmark size={11} /> 🏦 Bank
+            </button>
+          )}
           <a href={createPageUrl("Dashboard")} className="px-3 py-1.5 rounded-xl text-xs font-bold border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 transition-all">
             ← Dashboard
           </a>
@@ -331,6 +339,21 @@ export default function ConstructionHub() {
 
 
       </main>
+
+      {showBank && nation && (
+        <BankingPanel
+          nation={nation}
+          onClose={() => setShowBank(false)}
+          onRefresh={async () => {
+            const [fn, fb] = await Promise.all([
+              base44.entities.Nation.filter({ owner_email: user.email }),
+              base44.entities.Building.filter({ nation_id: nation.id }),
+            ]);
+            setNation(fn[0]);
+            setBuildings(fb);
+          }}
+        />
+      )}
     </div>
   );
 }
