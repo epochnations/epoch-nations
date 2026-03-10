@@ -6,8 +6,7 @@
 import { useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { RESEARCH_MAP, calcResearchSpeed } from "../game/ResearchConfig";
-
-const TICK_MS = 90_000;
+import { TICK_MS } from "../game/GameClock";
 
 export default function ResearchEngine({ nation, buildings, onRefresh }) {
   const timerRef = useRef(null);
