@@ -36,6 +36,22 @@ const CORE_METRICS = [
   { key: "unit_power",      label: "Unit Power",     max: 200, color: "#fb923c" },
 ];
 
+/** Wraps a value display with a glow flash when it changes */
+function FlashStat({ value, className = "", style = {}, children }) {
+  const dir = useFlash(value);
+  const glowStyle = dir === "up"
+    ? { boxShadow: "0 0 14px 3px rgba(74,222,128,0.55)", background: "rgba(74,222,128,0.08)", borderRadius: 8, transition: "box-shadow 0.3s, background 0.3s" }
+    : dir === "down"
+    ? { boxShadow: "0 0 14px 3px rgba(248,113,113,0.55)", background: "rgba(248,113,113,0.08)", borderRadius: 8, transition: "box-shadow 0.3s, background 0.3s" }
+    : { transition: "box-shadow 0.6s, background 0.6s" };
+
+  return (
+    <span className={className} style={{ ...style, ...glowStyle, padding: "0 4px" }}>
+      {children}
+    </span>
+  );
+}
+
 function Bar({ value, max, color }) {
   const pct = Math.min(100, Math.round((value / max) * 100));
   return (
