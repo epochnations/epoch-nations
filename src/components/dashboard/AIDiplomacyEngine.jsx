@@ -665,6 +665,59 @@ export default function AIDiplomacyEngine({ myNation, onReady }) {
     }
   }
 
+  // ── Outstanding Promise Fulfillment (on mount) ────────────────────────────
+  // Scan recent private messages from AI nations to myNation for unfulfilled transfer promises
+  async function fulfillOutstandingAIPromises() {
+    if (!myNation) return;
+    try {
+      const received = await base44.entities.PrivateMessage.filter(
+        { recipient_nation_id: myNation.id },
+        "-created_date",
+        30
+      );
+      if (!received.length) return;
+
+      const allNations = await base44.entities.Nation.list();
+      const userEmails = userEmailsRef.current;
+
+      // Only consider messages from AI nations
+      const aiMessages = received.filter(pm => {
+        const sender = allNations.find(n => n.id === pm.sender_nation_id);
+        return sender && isAINation(sender, userEmails);
+      });
+
+      // Check transactions to see which promises were already fulfilled
+      const recent = aiMessages.slice(0, 10);
+      for (const pm of recent) {
+        const content = (pm.content || "").toLowerCase();
+        // Quick check: does this message contain a transfer promise?
+        const hasPromise = /(?:send|transfer|provide|give|wire|dispatch|ship|export)\D{0,15}[\d,]+\s*(?:credits?|gold|currency|funds|oil|iron|food|wood|stone)/.test(content);
+        if (!hasPromise) continue;
+
+        // Check if there's already a transaction from this AI to myNation around the time of the message
+        const msgTime = new Date(pm.created_date).getTime();
+        const existingTx = await base44.entities.Transaction.filter({
+          from_nation_id: pm.sender_nation_id,
+          to_nation_id: myNation.id,
+          type: "lend_lease",
+        });
+        // If a transaction exists within 10 minutes of the message, skip
+        const alreadyFulfilled = existingTx.some(tx => {
+          const txTime = new Date(tx.created_date).getTime();
+          return Math.abs(txTime - msgTime) < 600000;
+        });
+        if (alreadyFulfilled) continue;
+
+        // Execute the promise now
+        const aiNation  = allNations.find(n => n.id === pm.sender_nation_id);
+        const playerNation = allNations.find(n => n.id === myNation.id);
+        if (aiNation && playerNation) {
+          await executeAIAidIfPromised(aiNation, playerNation, pm.content);
+        }
+      }
+    } catch { /* silent */ }
+  }
+
   // ── AI Aid Executor ───────────────────────────────────────────────────────
   // Scans an AI's outgoing private message for transfer promises and executes them
   async function executeAIAidIfPromised(aiNation, recipientNation, messageContent) {
