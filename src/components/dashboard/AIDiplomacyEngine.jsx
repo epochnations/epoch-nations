@@ -465,6 +465,9 @@ export default function AIDiplomacyEngine({ myNation, onReady }) {
       if (pm) handlePrivateMessage(pm);
     });
 
+    // On mount: scan recent AI private messages for unexecuted promises and fulfill them
+    fulfillOutstandingAIPromises();
+
     return () => { unsubChat(); unsubTx(); unsubPM(); };
   }, [myNation?.id]);
 
