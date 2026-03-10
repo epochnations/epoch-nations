@@ -261,7 +261,7 @@ export default function CivilizationEconomyEngine({ nation, onRefresh }) {
       inflation_rate:     clampedInflation,
       money_supply:       Math.round(moneySupply),
       currency_stability: newCurrencyStability,
-      trade_balance:      parseFloat((tradeBalance * 1440).toFixed(2)),
+      trade_balance:      parseFloat((tradeBalance * TICKS_PER_DAY).toFixed(2)),
       resource_price_mod: resourcePriceMod,
       construction_cost_mod: parseFloat(constructionCostMod.toFixed(4)),
     };
