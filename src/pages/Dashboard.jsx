@@ -27,6 +27,8 @@ import WorldSimulationEngine from "../components/dashboard/WorldSimulationEngine
 import CivilizationEconomyEngine from "../components/dashboard/CivilizationEconomyEngine";
 import LoanRepaymentEngine from "../components/banking/LoanRepaymentEngine";
 import GlobalCommodityEngine from "../components/dashboard/GlobalCommodityEngine";
+import ResearchEngine from "../components/research/ResearchEngine";
+import ResearchPanel from "../components/research/ResearchPanel";
 
 export default function Dashboard() {
   const [myNation, setMyNation] = useState(null);
@@ -42,6 +44,7 @@ export default function Dashboard() {
   const [showWorkforce, setShowWorkforce] = useState(false);
   const [activeDilemma, setActiveDilemma] = useState(null);
   const [showAdvisor, setShowAdvisor] = useState(false);
+  const [showResearch, setShowResearch] = useState(false);
   const [showTour, setShowTour] = useState(false);
   const [tourStep, setTourStep] = useState(0);
 
@@ -128,6 +131,12 @@ export default function Dashboard() {
             className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-400 text-xs font-bold hover:bg-violet-500/20 transition-all duration-150"
           >
             <Cpu size={12} /> Tech Tree
+          </button>
+          <button
+            onClick={() => setShowResearch(true)}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-fuchsia-500/10 border border-fuchsia-500/20 text-fuchsia-400 text-xs font-bold hover:bg-fuchsia-500/20 transition-all duration-150"
+          >
+            🔬 Research
           </button>
           <button
             onClick={() => setShowManagement(true)}
@@ -366,6 +375,14 @@ export default function Dashboard() {
 
       {/* Global Commodity Engine — admin-only price aggregation tick (runs every 90s) */}
       <GlobalCommodityEngine user={user} />
+
+      {/* Research Engine — advances in-progress research every 90s */}
+      {myNation && <ResearchEngine nation={myNation} onRefresh={refresh} />}
+
+      {/* Research Panel */}
+      {showResearch && myNation && (
+        <ResearchPanel nation={myNation} onClose={() => setShowResearch(false)} />
+      )}
 
       {/* National Advisor Modal */}
       {showAdvisor && myNation && (
