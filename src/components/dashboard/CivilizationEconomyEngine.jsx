@@ -124,7 +124,7 @@ export default function CivilizationEconomyEngine({ nation, onRefresh }) {
       const routes = await base44.entities.TradeRoute.filter({ owner_email: fresh.owner_email });
       for (const r of routes) {
         if (r.status !== "active") continue;
-        const tickVal = (r.price_per_100 / 100) * (r.quantity_per_cycle / 1440);
+        const tickVal = (r.price_per_100 / 100) * (r.quantity_per_cycle / TICKS_PER_DAY);
         if (r.direction === "export") exportValue += tickVal;
         else importValue += tickVal;
       }
