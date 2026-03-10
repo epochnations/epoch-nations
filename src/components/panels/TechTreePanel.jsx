@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Cpu, CheckCircle, ChevronRight, Zap, Hammer } from "lucide-react";
 import { EPOCHS, EPOCH_EMOJI, TECH_TREE, EPOCH_STABILITY_THRESHOLD, EPOCH_ADVANCE_COST } from "../game/EpochConfig";
 import { EPOCH_REQUIREMENTS, BUILDING_MAP } from "../game/BuildingConfig";
+import EpochCelebration from "../game/EpochCelebration";
 
 const RESOURCE_LABELS = {
   res_wood: "Wood", res_stone: "Stone", res_gold: "Gold",
@@ -24,6 +25,7 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
   const [loading, setLoading] = useState(null);
   const [nationBuildings, setNationBuildings] = useState([]);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [celebrationEpoch, setCelebrationEpoch] = useState(null);
 
   const lastResetKey = `epoch_reset_${nation?.id}`;
   const lastReset = parseInt(localStorage.getItem(lastResetKey) || "0");
@@ -144,7 +146,8 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
 
     setLoading(null);
     onRefresh?.();
-    onClose?.();
+    // Show celebration — close tech tree panel AFTER celebration
+    setCelebrationEpoch(nextEpoch);
   }
 
   const currentTechs = TECH_TREE[nation.epoch] || [];
@@ -289,6 +292,15 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
       </div>
 
       {/* Epoch Reset Confirmation Modal */}
+      {/* Epoch Celebration Overlay */}
+      {celebrationEpoch && (
+        <EpochCelebration
+          newEpoch={celebrationEpoch}
+          nation={nation}
+          onClose={() => { setCelebrationEpoch(null); onClose?.(); }}
+        />
+      )}
+
       {showResetConfirm && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
           <div className="w-full max-w-sm bg-[#0f172a] border border-red-500/40 rounded-2xl p-6 shadow-2xl">
