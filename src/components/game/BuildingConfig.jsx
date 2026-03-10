@@ -408,7 +408,7 @@ export const BUILDINGS = [
   {
     id: "military_foundry",
     name: "Military Foundry",
-    emoji: "⚙️",
+    emoji: "🏭",
     category: "government",
     epoch_required: "Iron Age",
     description: "Produces military equipment, requires Iron.",
@@ -610,7 +610,7 @@ export const BUILDINGS = [
   {
     id: "gun_factory",
     name: "Gun Factory",
-    emoji: "🔫",
+    emoji: "🏹",
     category: "military",
     epoch_required: "Industrial Age",
     description: "Produces firearms and munitions for troops.",
