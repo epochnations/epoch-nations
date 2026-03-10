@@ -40,7 +40,7 @@ export const BUILDINGS = [
     cost: { res_wood: 80, res_stone: 60, currency: 150 },
     workforce: 1,
     benefits: { tpBonus: 10, stability: 2 },
-    populationCap: 100,
+    populationCap: 50,
   },
   {
     id: "well",
@@ -789,7 +789,7 @@ export const BUILDING_MAP = Object.fromEntries(BUILDINGS.map(b => [b.id, b]));
 export const EPOCH_REQUIREMENTS = {
   "Stone Age": {
     tp: 50,
-    population: 30,
+    population: 100,
     stability_min: 70,
     buildings: { school: 1 },
     resources: { res_wood: 100, res_stone: 80 },
