@@ -52,6 +52,32 @@ function FlashStat({ value, className = "", style = {}, children }) {
   );
 }
 
+function ResourceCell({ label, color, symbol, value }) {
+  const dir = useFlash(value);
+  const ring = dir === "up"
+    ? `0 0 12px 3px rgba(74,222,128,0.5)`
+    : dir === "down"
+    ? `0 0 12px 3px rgba(248,113,113,0.5)`
+    : "none";
+  return (
+    <div
+      className="rounded-xl p-2 flex flex-col items-center gap-0.5"
+      style={{
+        background: `${color}0d`,
+        border: `1px solid ${color}22`,
+        boxShadow: ring,
+        transition: "box-shadow 0.6s"
+      }}
+    >
+      <span className="text-base leading-none">{symbol}</span>
+      <span className="text-[10px] text-slate-500 ep-mono">{label}</span>
+      <span className="text-[13px] font-black ep-mono" style={{ color }}>
+        {value.toLocaleString()}
+      </span>
+    </div>
+  );
+}
+
 function Bar({ value, max, color }) {
   const pct = Math.min(100, Math.round((value / max) * 100));
   return (
