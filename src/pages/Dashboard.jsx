@@ -347,6 +347,9 @@ export default function Dashboard() {
       {/* World Simulation Engine — AI strategic ticks, global events, faction pressure, chronicle */}
       {myNation && <WorldSimulationEngine myNation={myNation} />}
 
+      {/* Civilization Economy Engine — citizen spending, GDP formula, unemployment, national wealth */}
+      {myNation && <CivilizationEconomyEngine nation={myNation} onRefresh={refresh} />}
+
       {/* National Advisor Modal */}
       {showAdvisor && myNation && (
         <NationalAdvisorModal nation={myNation} onClose={() => setShowAdvisor(false)} />
