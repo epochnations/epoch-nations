@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
+import { TICK_MS } from "../game/GameClock";
 
 /**
  * GlobalCommodityEngine — headless admin-only price simulation
