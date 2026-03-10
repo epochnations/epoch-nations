@@ -29,6 +29,7 @@ import LoanRepaymentEngine from "../components/banking/LoanRepaymentEngine";
 import GlobalCommodityEngine from "../components/dashboard/GlobalCommodityEngine";
 import ResearchEngine from "../components/research/ResearchEngine";
 import ResearchPanel from "../components/research/ResearchPanel";
+import GameClockDisplay from "../components/dashboard/GameClockDisplay";
 
 export default function Dashboard() {
   const [myNation, setMyNation] = useState(null);
