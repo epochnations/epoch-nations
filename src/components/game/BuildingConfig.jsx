@@ -738,6 +738,46 @@ export const BUILDINGS = [
     populationCap: null,
     uniqueMax: 1,
   },
+
+  // ── WAREHOUSES ─────────────────────────────────────────────────────────────
+  {
+    id: "warehouse_small",
+    name: "Small Warehouse",
+    emoji: "🏚️",
+    category: "civilian",
+    epoch_required: "Stone Age",
+    description: "Adds 5,000 storage capacity per resource. Protects reserves from war and price volatility.",
+    cost: { res_wood: 80, res_stone: 60, currency: 150 },
+    workforce: 1,
+    benefits: { stability: 1 },
+    populationCap: null,
+  },
+  {
+    id: "warehouse_industrial",
+    name: "Industrial Warehouse",
+    emoji: "🏭",
+    category: "civilian",
+    epoch_required: "Industrial Age",
+    description: "Adds 25,000 storage capacity per resource. Immune to global price changes inside.",
+    cost: { res_iron: 150, res_stone: 200, currency: 800 },
+    workforce: 2,
+    benefits: { stability: 2 },
+    populationCap: null,
+    uniqueMax: 3,
+  },
+  {
+    id: "warehouse_strategic",
+    name: "Strategic Reserve Complex",
+    emoji: "🏗️",
+    category: "government",
+    epoch_required: "Modern Age",
+    description: "Adds 100,000 storage capacity. Full immunity to war capture and price shocks.",
+    cost: { res_iron: 400, res_gold: 300, currency: 3000 },
+    workforce: 3,
+    benefits: { stability: 4, public_trust: 0.05 },
+    populationCap: null,
+    uniqueMax: 2,
+  },
   ];
 
 export const BUILDING_MAP = Object.fromEntries(BUILDINGS.map(b => [b.id, b]));
