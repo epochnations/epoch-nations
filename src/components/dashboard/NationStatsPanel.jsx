@@ -256,23 +256,29 @@ export default function NationStatsPanel({ nation }) {
         </div>
       </div>
 
-      {/* ── Income / Expense per min ── */}
+      {/* ── Income / Expense per tick (1 tick = 1 real min) ── */}
       <div className="rounded-xl px-3 py-2.5 shrink-0" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
-        <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase mb-2">ECONOMY / MIN</div>
+        <div className="flex items-center justify-between mb-2">
+          <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase">ECONOMY / MIN</div>
+          <div className="text-[9px] text-slate-600 ep-mono">1 tick = 1 min</div>
+        </div>
         <div className="grid grid-cols-3 gap-2 text-center">
           <div>
             <div className="text-[11px] text-slate-500">Income</div>
             <div className="text-[14px] font-black ep-mono text-green-400">+{incomePerMin}</div>
+            <div className="text-[9px] text-slate-600 ep-mono">cr/min</div>
           </div>
           <div>
             <div className="text-[11px] text-slate-500">Expense</div>
             <div className="text-[14px] font-black ep-mono text-red-400">-{spendingPerMin}</div>
+            <div className="text-[9px] text-slate-600 ep-mono">cr/min</div>
           </div>
           <div>
             <div className="text-[11px] text-slate-500">Net</div>
             <div className={`text-[14px] font-black ep-mono ${netPerMin >= 0 ? "text-cyan-400" : "text-red-400"}`}>
               {netPerMin >= 0 ? "+" : ""}{netPerMin}
             </div>
+            <div className="text-[9px] text-slate-600 ep-mono">cr/min</div>
           </div>
         </div>
       </div>
