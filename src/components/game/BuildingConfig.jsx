@@ -217,7 +217,7 @@ export const BUILDINGS = [
   {
     id: "naval_yard",
     name: "Naval Yard",
-    emoji: "⚓",
+    emoji: "⚓️",
     category: "military",
     epoch_required: "Medieval Age",
     description: "Naval warfare and trade capabilities.",
@@ -498,7 +498,7 @@ export const BUILDINGS = [
   {
     id: "stone_quarry",
     name: "Stone Quarry",
-    emoji: "⛏",
+    emoji: "⛏️",
     category: "civilian",
     epoch_required: "Stone Age",
     description: "Produces stone passively (+20 stone/tick). Requires 1 quarry worker.",
@@ -582,7 +582,7 @@ export const BUILDINGS = [
   {
     id: "uranium_enrichment",
     name: "Uranium Enrichment Plant",
-    emoji: "☢",
+    emoji: "☢️",
     category: "civilian",
     epoch_required: "Information Age",
     description: "Processes uranium for fuel and weapons. Massive power output.",
@@ -728,7 +728,7 @@ export const BUILDINGS = [
   {
     id: "waste_management",
     name: "Waste Management Facility",
-    emoji: "♻",
+    emoji: "♻️",
     category: "civilian",
     epoch_required: "Modern Age",
     description: "Manages pollution and waste. Improves stability.",
