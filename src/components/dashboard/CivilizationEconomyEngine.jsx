@@ -146,7 +146,7 @@ export default function CivilizationEconomyEngine({ nation, onRefresh }) {
     // ── MONEY SUPPLY ─────────────────────────────────────────────
     // M = CitizenCurrency + BusinessCapital + GovTreasury + BankLending
     const citizenCurrency  = pop * wagePerTick * 10;           // proxy: pop × avg wage pool
-    const businessCapital  = productionTick * 1440 * 0.4;      // business retains 40% of daily output
+    const businessCapital  = productionTick * TICKS_PER_DAY * 0.4; // business retains 40% of daily output
     const govTreasury      = fresh.currency || 500;
     const bankLending      = govTreasury * 0.3 * (fresh.stability / 100 || 0.75); // fractional reserve proxy
     const moneySupply      = citizenCurrency + businessCapital + govTreasury + bankLending;
