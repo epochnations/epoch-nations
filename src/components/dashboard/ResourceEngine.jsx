@@ -179,10 +179,10 @@ export default function ResourceEngine({ nation, onRefresh }) {
       updates.population = Math.max(1, warPop - 1);
     }
 
-    // --- WAR AUTO-RESET after 30 minutes of inactivity ---
+    // --- WAR AUTO-RESET after 1 game week (WAR_DURATION_MS = 3.5 real hours) ---
     if ((fresh.at_war_with || []).length > 0 && fresh.war_started_at) {
       const warAge = Date.now() - new Date(fresh.war_started_at).getTime();
-      if (warAge > 30 * 60 * 1000) {
+      if (warAge > WAR_DURATION_MS) {
         updates.at_war_with = [];
         updates.war_started_at = "";
         notifications.push({
