@@ -97,12 +97,12 @@ export default function DilemmaEngine({ nation, onDilemmaReady }) {
     // Check for pending dilemma
     checkPendingDilemma();
 
-    // Schedule next dilemma between 15–30 minutes
-    const delay = (15 + Math.random() * 15) * 60 * 1000;
+    // Schedule next dilemma between 0.5–1 game day (15–30 real minutes)
+    const delay = (0.5 + Math.random() * 0.5) * TICKS_PER_DAY * TICK_MS;
     timerRef.current = setTimeout(() => generateDilemma(), delay);
 
-    // NPC global event every ~20 minutes if no recent news
-    npcTimerRef.current = setTimeout(() => generateNpcEvent(), 20 * 60 * 1000);
+    // NPC global event every ~0.67 game day (~20 real minutes) if no recent news
+    npcTimerRef.current = setTimeout(() => generateNpcEvent(), 0.67 * TICKS_PER_DAY * TICK_MS);
 
     return () => {
       clearTimeout(timerRef.current);
