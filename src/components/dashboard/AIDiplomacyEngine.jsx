@@ -793,6 +793,15 @@ export default function AIDiplomacyEngine({ myNation, onReady }) {
         content,
       });
 
+      // Execute any aid/resource transfer the AI promised in its reply
+      // Re-fetch both nations to get latest data before transferring
+      const freshNations = await base44.entities.Nation.list();
+      const freshAI      = freshNations.find(n => n.id === recipientNation.id);
+      const freshSender  = freshNations.find(n => n.id === pm.sender_nation_id);
+      if (freshAI && freshSender) {
+        await executeAIAidIfPromised(freshAI, freshSender, content);
+      }
+
       addMemoryEntry(recipientNation.id, `Private from ${senderNation?.name || "unknown"}: "${pm.content.slice(0, 80)}"`, analysis.importance === "high" ? "high" : "medium");
       updateRelation(recipientNation.id, pm.sender_nation_id || "", analysis);
       if (analysis.intent === "accusation") updatePersonaDrift(recipientNation.id, getBasePersonalityKey(recipientNation), "accusation");
