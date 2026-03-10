@@ -2,14 +2,15 @@ import { useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { EPOCHS } from "../game/EpochConfig";
 import { BUILDING_MAP } from "../game/BuildingConfig";
+import { TICK_MS, TICKS_PER_DAY, WAR_DURATION_MS } from "../game/GameClock";
 
 /**
  * ResourceEngine — headless component
- * Runs every 60s to simulate:
- * 1. Worker-based resource production (wood, stone, gold, oil, food)
- * 2. Food consumption by population
- * 3. Population growth / decline based on food surplus & housing
- * 4. Notifications for famine, shortages
+ * Runs every game tick (60s real-time = 1 game tick).
+ * 1. Worker-based resource production
+ * 2. Food consumption (daily rate spread over ticks)
+ * 3. Population growth / decline
+ * 4. War expiry based on GameClock.WAR_DURATION_MS
  */
 export default function ResourceEngine({ nation, onRefresh }) {
   const intervalRef = useRef(null);
@@ -17,7 +18,7 @@ export default function ResourceEngine({ nation, onRefresh }) {
   useEffect(() => {
     if (!nation?.id) return;
     const firstTick = setTimeout(() => runTick(), 20_000);
-    intervalRef.current = setInterval(() => runTick(), 90_000);
+    intervalRef.current = setInterval(() => runTick(), TICK_MS);
     return () => {
       clearTimeout(firstTick);
       clearInterval(intervalRef.current);
