@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
-import { Cpu, Plus, Sliders, Users, Hammer } from "lucide-react";
+import { Cpu, Plus, Sliders, Users, Hammer, BookOpen } from "lucide-react";
+import TourTooltip from "../components/onboarding/TourTooltip";
 
 
 import NationStatsPanel from "../components/dashboard/NationStatsPanel";
@@ -41,6 +42,8 @@ export default function Dashboard() {
   const [showWorkforce, setShowWorkforce] = useState(false);
   const [activeDilemma, setActiveDilemma] = useState(null);
   const [showAdvisor, setShowAdvisor] = useState(false);
+  const [showTour, setShowTour] = useState(false);
+  const [tourStep, setTourStep] = useState(0);
 
   const refreshDebounceRef = useRef(null);
   const userEmailRef = useRef(null);
@@ -137,6 +140,12 @@ export default function Dashboard() {
             className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold hover:bg-amber-500/20 transition-all duration-150"
           >
             <Users size={12} /> Workers
+          </button>
+          <button
+            onClick={() => { setTourStep(0); setShowTour(true); }}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-500/10 border border-slate-500/20 text-slate-400 text-xs font-bold hover:bg-slate-500/20 transition-all duration-150"
+          >
+            <BookOpen size={12} /> Tutorial
           </button>
 
           <a
