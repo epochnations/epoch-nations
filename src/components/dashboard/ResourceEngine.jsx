@@ -143,19 +143,8 @@ export default function ResourceEngine({ nation, onRefresh }) {
       }
     }
 
-    // --- GDP from workers ---
-    const industrialBoost = Math.floor((fresh.workers_industrial || 0) * 10 * techMult);
-    updates.gdp = Math.min(100000, (fresh.gdp || 500) + industrialBoost + Math.floor((fresh.manufacturing || 50) * 0.005));
-
-    // --- TREASURY INCOME ACCUMULATION (fix: actually add income each tick) ---
-    const incomePerMin = Math.floor((updates.gdp || fresh.gdp || 500) * 0.05);
-    // Tick runs every 90s ≈ 1.5 min, so multiply income accordingly
-    const tickIncome = Math.round(incomePerMin * 1.5);
-    // Spending deduction: education + military spending drains treasury
-    const spendingDrain = Math.round(
-      ((fresh.education_spending || 20) + (fresh.military_spending || 20)) * 0.5
-    );
-    updates.currency = Math.max(0, (fresh.currency || 500) + tickIncome - spendingDrain);
+    // GDP and treasury are now fully managed by CivilizationEconomyEngine.
+    // ResourceEngine only handles physical production & population.
 
     // --- WAR STABILITY DRAIN (gradual: −1% per tick while at war) ---
     if ((fresh.at_war_with || []).length > 0) {
