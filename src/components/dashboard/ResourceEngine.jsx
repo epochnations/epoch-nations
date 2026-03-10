@@ -73,8 +73,11 @@ export default function ResourceEngine({ nation, onRefresh }) {
     );
 
     // --- CONSUMPTION ---
+    // Daily food consumption spread evenly across ticks per game day
+    // 1 game day = TICKS_PER_DAY ticks; citizens consume daily_need / TICKS_PER_DAY per tick
     const pop = fresh.population || 1;
-    const foodConsumption = Math.ceil(pop * 1.2); // each person eats 1.2 food/min
+    const dailyFoodNeed  = pop * 1.2 * TICKS_PER_DAY; // total daily need
+    const foodConsumption = Math.ceil(dailyFoodNeed / TICKS_PER_DAY); // per-tick portion (= pop * 1.2)
 
     // --- NET FOOD ---
     const netFood = totalFoodProd - foodConsumption;
