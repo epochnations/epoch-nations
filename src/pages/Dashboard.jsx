@@ -24,6 +24,7 @@ import NationalAdvisorModal from "../components/modals/NationalAdvisorModal";
 import WorldEventBroadcaster from "../components/dashboard/WorldEventBroadcaster";
 import WorldSimulationEngine from "../components/dashboard/WorldSimulationEngine";
 import CivilizationEconomyEngine from "../components/dashboard/CivilizationEconomyEngine";
+import LoanRepaymentEngine from "../components/banking/LoanRepaymentEngine";
 
 export default function Dashboard() {
   const [myNation, setMyNation] = useState(null);
@@ -349,6 +350,9 @@ export default function Dashboard() {
 
       {/* Civilization Economy Engine — citizen spending, GDP formula, unemployment, national wealth */}
       {myNation && <CivilizationEconomyEngine nation={myNation} onRefresh={refresh} />}
+
+      {/* Loan Repayment Engine — auto-deducts loan payments, handles defaults, pays creditors */}
+      {myNation && <LoanRepaymentEngine nation={myNation} onRefresh={refresh} />}
 
       {/* National Advisor Modal */}
       {showAdvisor && myNation && (
