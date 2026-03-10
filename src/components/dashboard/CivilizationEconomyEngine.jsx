@@ -1,13 +1,14 @@
 import { useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
+import { TICK_MS, TICKS_PER_DAY } from "../game/GameClock";
 
 /**
  * CivilizationEconomyEngine — headless simulation component
  *
- * TIME: 1 tick = 60 seconds real-time | 1 game-day = 1440 ticks
+ * TIME: 1 tick = 60s real | 1 game-day = 30 ticks (30 real minutes)
  *
  * Simulates per tick:
- * - Social class distribution & citizen spending
+ * - Social class distribution & citizen spending (daily amounts / TICKS_PER_DAY)
  * - Unemployment effects
  * - GDP formula: (Pop×DailySpend) + IndustryOutput + GovSpend + TradeBalance
  * - Money Supply = CitizenCurrency + BusinessCapital + GovTreasury + BankLending
