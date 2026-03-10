@@ -395,19 +395,6 @@ export default function NationStatsPanel({ nation }) {
         </div>
       </div>
 
-      {/* ── Natural Resources ── */}
-      <div className="shrink-0">
-        <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase mb-2">NATURAL RESOURCES</div>
-        <div className="grid grid-cols-3 gap-1.5">
-          {RESOURCE_DEFS.map(({ key, label, color, symbol }) => {
-            const val = nation[key] || 0;
-            return (
-              <ResourceCell key={key} label={label} color={color} symbol={symbol} value={val} />
-            );
-          })}
-        </div>
-      </div>
-
 
     </div>
   );
