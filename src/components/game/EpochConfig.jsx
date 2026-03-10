@@ -51,7 +51,7 @@ export const EPOCH_STABILITY_THRESHOLD = {
 export const EPOCH_EMOJI = {
   "Stone Age":       "🪨",
   "Bronze Age":      "⚔️",
-  "Iron Age":        "🛡️",
+  "Iron Age":        "🛡",
   "Classical Age":   "🏛️",
   "Medieval Age":    "🏰",
   "Renaissance Age": "🎨",

@@ -6,8 +6,8 @@
 
 export const RESEARCH_BRANCHES = {
   agriculture: { name: "Agriculture", emoji: "🌾", color: "#22c55e" },
-  industry:    { name: "Industry",    emoji: "⚙️",  color: "#f59e0b" },
-  military:    { name: "Military",    emoji: "⚔️",  color: "#ef4444" },
+  industry:    { name: "Industry",    emoji: "⚙️", color: "#f59e0b" },
+  military:    { name: "Military",    emoji: "⚔️", color: "#ef4444" },
   governance:  { name: "Governance",  emoji: "🏛️",  color: "#8b5cf6" },
   frontier:    { name: "Frontier",    emoji: "🚀",  color: "#06b6d4" },
 };
