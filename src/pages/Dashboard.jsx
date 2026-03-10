@@ -25,6 +25,7 @@ import WorldEventBroadcaster from "../components/dashboard/WorldEventBroadcaster
 import WorldSimulationEngine from "../components/dashboard/WorldSimulationEngine";
 import CivilizationEconomyEngine from "../components/dashboard/CivilizationEconomyEngine";
 import LoanRepaymentEngine from "../components/banking/LoanRepaymentEngine";
+import GlobalCommodityEngine from "../components/dashboard/GlobalCommodityEngine";
 
 export default function Dashboard() {
   const [myNation, setMyNation] = useState(null);
@@ -353,6 +354,9 @@ export default function Dashboard() {
 
       {/* Loan Repayment Engine — auto-deducts loan payments, handles defaults, pays creditors */}
       {myNation && <LoanRepaymentEngine nation={myNation} onRefresh={refresh} />}
+
+      {/* Global Commodity Engine — admin-only price aggregation tick (runs every 90s) */}
+      <GlobalCommodityEngine user={user} />
 
       {/* National Advisor Modal */}
       {showAdvisor && myNation && (
