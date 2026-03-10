@@ -1,9 +1,11 @@
 import { useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
+import { TICK_MS } from "../game/GameClock";
 
 /**
  * EconomyEngine — headless component
- * Runs every 60s to simulate stock market price updates based on nation stats.
+ * Runs every game tick (TICK_MS = 60s). Stock prices update once per tick;
+ * they settle on game-day boundaries (every 30 ticks).
  */
 export default function EconomyEngine({ nation, onRefresh }) {
   const intervalRef = useRef(null);
@@ -11,7 +13,7 @@ export default function EconomyEngine({ nation, onRefresh }) {
   useEffect(() => {
     if (!nation?.id) return;
     const firstTick = setTimeout(() => runTick(), 40_000);
-    intervalRef.current = setInterval(() => runTick(), 120_000);
+    intervalRef.current = setInterval(() => runTick(), TICK_MS);
     return () => {
       clearTimeout(firstTick);
       clearInterval(intervalRef.current);
