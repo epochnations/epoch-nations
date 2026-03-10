@@ -23,6 +23,7 @@ import WorldChat from "../components/dashboard/WorldChat.jsx";
 import NationalAdvisorModal from "../components/modals/NationalAdvisorModal";
 import WorldEventBroadcaster from "../components/dashboard/WorldEventBroadcaster";
 import WorldSimulationEngine from "../components/dashboard/WorldSimulationEngine";
+import CivilizationEconomyEngine from "../components/dashboard/CivilizationEconomyEngine";
 
 export default function Dashboard() {
   const [myNation, setMyNation] = useState(null);
