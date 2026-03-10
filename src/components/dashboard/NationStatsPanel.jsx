@@ -299,7 +299,9 @@ export default function NationStatsPanel({ nation }) {
         <div className="grid grid-cols-2 gap-2">
           <div className="rounded-xl px-2.5 py-2 text-center" style={{ background: "rgba(139,92,246,0.07)", border: "1px solid rgba(139,92,246,0.15)" }}>
             <div className="text-[11px] text-slate-500 ep-mono">Tech Points</div>
-            <div className="text-[15px] font-black ep-mono text-violet-400">{(nation.tech_points || 0).toLocaleString()}</div>
+            <FlashStat value={Math.round(nation.tech_points || 0)} className="text-[15px] font-black ep-mono text-violet-400">
+              {(nation.tech_points || 0).toLocaleString()}
+            </FlashStat>
           </div>
           <div className="rounded-xl px-2.5 py-2 text-center" style={{ background: "rgba(139,92,246,0.07)", border: "1px solid rgba(139,92,246,0.15)" }}>
             <div className="text-[11px] text-slate-500 ep-mono">Techs</div>
