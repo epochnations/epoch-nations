@@ -215,7 +215,7 @@ export default function Dashboard() {
       </header>
 
       {/* DESKTOP BENTO GRID — 3 cols: [Nation Stats] [World Map + Chat] [Stock Ticker + Global Activity] */}
-      <main className="relative z-10 p-4 hidden lg:grid gap-4" style={{ height: "calc(100vh - 57px)", gridTemplateColumns: "340px 1fr 360px", gridTemplateRows: "1fr 50%", overflow: "hidden" }}>
+      <main className="relative z-10 p-4 hidden lg:grid gap-4" style={{ height: "calc(100vh - 57px)", gridTemplateColumns: "320px 1fr 480px", gridTemplateRows: "1fr 50%", overflow: "hidden" }}>
         {/* Col 1: Nation Stats — full height */}
         <div style={{ gridRow: "1 / 3", overflowY: "auto" }}><NationStatsPanel nation={myNation} /></div>
         {/* Col 2 row 1: World Map */}
