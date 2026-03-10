@@ -138,7 +138,8 @@ export default function DilemmaEngine({ nation, onDilemmaReady }) {
     const recentNews = await base44.entities.NewsArticle.list("-created_date", 5);
     // Only post NPC event if last article was over 10 minutes ago
     const lastArticle = recentNews[0];
-    const tenMinsAgo = Date.now() - 10 * 60 * 1000;
+    // 10 real minutes ≈ 1/3 of a game day
+    const tenMinsAgo = Date.now() - 10 * TICK_MS;
     if (!lastArticle || new Date(lastArticle.created_date).getTime() < tenMinsAgo) {
       const event = NPC_EVENTS[Math.floor(Math.random() * NPC_EVENTS.length)];
       // Generate an image for the article
