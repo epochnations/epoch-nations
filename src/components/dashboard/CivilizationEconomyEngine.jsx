@@ -197,7 +197,9 @@ export default function CivilizationEconomyEngine({ nation, onRefresh }) {
 
     // ── TREASURY UPDATE ───────────────────────────────────────────
     // Taxes add money, government spending & war remove it
-    const netTreasury     = totalTaxTick - govSpendTick;
+    // Baseline GDP dividend: 0.1% of GDP per tick ensures visible credit flow
+    const gdpDividendTick = (fresh.gdp || 500) * 0.001;
+    const netTreasury     = totalTaxTick - govSpendTick + gdpDividendTick;
     let   newCurrency     = Math.max(0, (fresh.currency || 500) + netTreasury);
 
     // Exports bring currency in, imports take it out
