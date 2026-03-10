@@ -51,7 +51,7 @@ export default function CivilizationEconomyEngine({ nation, onRefresh }) {
   useEffect(() => {
     if (!nation?.id) return;
     const first = setTimeout(() => runTick(), 30_000);
-    intervalRef.current = setInterval(() => runTick(), 60_000);
+    intervalRef.current = setInterval(() => runTick(), TICK_MS);
     return () => {
       clearTimeout(first);
       clearInterval(intervalRef.current);
