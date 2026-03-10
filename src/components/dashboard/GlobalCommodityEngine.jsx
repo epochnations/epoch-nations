@@ -39,7 +39,7 @@ export default function GlobalCommodityEngine({ user }) {
   useEffect(() => {
     if (user?.role !== "admin") return;
     const first = setTimeout(() => runTick(), 15_000);
-    intervalRef.current = setInterval(() => runTick(), 90_000);
+    intervalRef.current = setInterval(() => runTick(), TICK_MS);
     return () => { clearTimeout(first); clearInterval(intervalRef.current); };
   }, [user?.role]);
 
