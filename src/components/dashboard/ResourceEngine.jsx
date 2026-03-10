@@ -188,7 +188,7 @@ export default function ResourceEngine({ nation, onRefresh }) {
         notifications.push({
           type: "war_declared",
           title: "☮️ WAR EXPIRED",
-          message: "Your conflict has expired after 30 minutes of inactivity. Peace has been restored.",
+          message: "Your conflict has expired after 1 game week. Peace has been restored.",
           severity: "info",
           is_read: false
         });
