@@ -294,20 +294,20 @@ export default function WorldSimulationEngine({ myNation }) {
     if (!myNation?.id || initializedRef.current) return;
     initializedRef.current = true;
 
-    // Strategic AI tick: every 4–6 minutes
-    const stratInterval = 4 * 60 * 1000 + Math.random() * 2 * 60 * 1000;
+    // Strategic AI tick: every 5 game ticks (5 real minutes)
+    const stratInterval = 5 * TICK_MS + Math.random() * 2 * TICK_MS;
     tickRef.current = setInterval(() => {
       runStrategicTick(myNation.id);
     }, stratInterval);
 
-    // Global events: every 8–12 minutes
-    const eventInterval = 8 * 60 * 1000 + Math.random() * 4 * 60 * 1000;
+    // Global events: every 1 game day (30 real minutes) ±10%
+    const eventInterval = TICKS_PER_DAY * TICK_MS * (0.9 + Math.random() * 0.2);
     eventRef.current = setInterval(() => {
       generateGlobalEvent();
     }, eventInterval);
 
-    // Faction pressure: every 12–18 minutes
-    const factionInterval = 12 * 60 * 1000 + Math.random() * 6 * 60 * 1000;
+    // Faction pressure: every 1.5 game days (45 real minutes) ±10%
+    const factionInterval = TICKS_PER_DAY * 1.5 * TICK_MS * (0.9 + Math.random() * 0.2);
     factionRef.current = setInterval(() => {
       generateFactionPressure(myNation.id);
     }, factionInterval);
