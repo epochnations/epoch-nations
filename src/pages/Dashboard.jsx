@@ -142,7 +142,7 @@ export default function Dashboard() {
             onClick={() => setShowManagement(true)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-bold hover:bg-cyan-500/20 transition-all duration-150"
           >
-            <Sliders size={12} /> <span className="hidden sm:inline">Manage</span>
+            <SlidersHorizontal size={12} /> <span className="hidden sm:inline">Manage</span>
           </button>
           <button
             onClick={() => setShowWorkforce(true)}
