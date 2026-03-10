@@ -186,7 +186,9 @@ export default function NationStatsPanel({ nation }) {
         <div className="rounded-xl p-2.5 flex flex-col items-center gap-0.5"
           style={{ background: "rgba(167,139,250,0.07)", border: "1px solid rgba(167,139,250,0.15)" }}>
           <span className="text-[11px] text-slate-500 font-bold ep-mono uppercase">Pop</span>
-          <span className="text-xl font-black ep-mono text-violet-400">{nation.population || 0}</span>
+          <FlashStat value={nation.population || 0} className="text-xl font-black ep-mono text-violet-400">
+            {nation.population || 0}
+          </FlashStat>
         </div>
       </div>
 
