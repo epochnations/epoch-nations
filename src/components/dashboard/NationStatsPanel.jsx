@@ -104,18 +104,55 @@ export default function NationStatsPanel({ nation }) {
   const allyCount    = allies.length;
   const cityCount    = getCitiesForNation(nation).length;
 
-  // Income / expense calculations (matching ResourceEngine logic)
-  const incomePerMin   = Math.floor((nation.gdp || 0) * 0.05);
-  const spendingPerMin = Math.round(((nation.education_spending || 20) + (nation.military_spending || 20)) * 0.5);
-  const netPerMin      = incomePerMin - spendingPerMin;
+  // ── Per-tick economy (mirrors CivilizationEconomyEngine tick math) ──
+  // 1 tick = 1 real minute = 1 display "per min"
+  const pop        = Math.max(1, nation.population || 1);
+  const epochMult  = 1 + Math.max(0, epochIndex) * 0.08;
+  const totalWorkers =
+    (nation.workers_farmers     || 0) + (nation.workers_hunters      || 0) +
+    (nation.workers_fishermen   || 0) + (nation.workers_builders     || 0) +
+    (nation.workers_lumberjacks || 0) + (nation.workers_quarry       || 0) +
+    (nation.workers_miners      || 0) + (nation.workers_oil_engineers|| 0) +
+    (nation.workers_soldiers    || 0) + (nation.workers_researchers  || 0) +
+    (nation.workers_industrial  || 0);
+  const efficiency     = Math.min(1.5, (nation.manufacturing || 50) / 100 + 0.5);
+  const productionTick = totalWorkers * efficiency * epochMult * 0.1;
 
-  // Food calculations (matching ResourceEngine)
-  const epochMult = 1 + Math.max(0, epochIndex) * 0.08;
+  // Tax rates
+  const taxRates     = nation.tax_rates || {};
+  const incomeTaxR   = Math.min(0.50, (taxRates.income    ?? 15) / 100);
+  const salesTaxR    = Math.min(0.30, (taxRates.sales     ??  8) / 100);
+  const corpTaxR     = Math.min(0.40, (taxRates.corporate ?? 12) / 100);
+
+  // Social class distribution (simplified — mirrors engine)
+  const eduLevel  = Math.min(100, nation.education_spending || 20);
+  const upper     = Math.min(0.25, eduLevel / 400);
+  const middle    = Math.min(0.55, eduLevel / 182);
+  const low       = Math.max(0.20, 1 - upper - middle);
+  const DAILY_SPEND  = { low: 2.0, middle: 2.74, upper: 4.5 };
+  const WAGE_MULT    = { low: 2.5, middle: 3.88, upper: 5.66 };
+  const TICK_SPEND   = { low: DAILY_SPEND.low / TICKS_PER_DAY, middle: DAILY_SPEND.middle / TICKS_PER_DAY, upper: DAILY_SPEND.upper / TICKS_PER_DAY };
+  const workforce    = Math.floor(pop * 0.60);
+  const unemployed   = Math.max(0, workforce - totalWorkers);
+  const unempRate    = workforce > 0 ? unemployed / workforce : 0;
+  const empFactor    = Math.max(0.5, 1 - unempRate / 2);
+
+  const wagePerTick    = (pop * low) * WAGE_MULT.low * TICK_SPEND.low + (pop * middle) * WAGE_MULT.middle * TICK_SPEND.middle + (pop * upper) * WAGE_MULT.upper * TICK_SPEND.upper;
+  const spendPerTick   = ((pop * low) * TICK_SPEND.low + (pop * middle) * TICK_SPEND.middle + (pop * upper) * TICK_SPEND.upper) * empFactor;
+  const incomeTaxTick  = wagePerTick * incomeTaxR;
+  const salesTaxTick   = spendPerTick * salesTaxR;
+  const corpTaxTick    = productionTick * corpTaxR;
+  const gdpDividend    = (nation.gdp || 500) * 0.001;
+  const incomePerMin   = parseFloat((incomeTaxTick + salesTaxTick + corpTaxTick + gdpDividend).toFixed(2));
+  const spendingPerMin = parseFloat(((( (nation.education_spending || 20) + (nation.military_spending || 20)) * 0.002)).toFixed(2));
+  const netPerMin      = parseFloat((incomePerMin - spendingPerMin).toFixed(2));
+
+  // Food calculations (matching ResourceEngine — per tick)
   const farmFood  = Math.floor((nation.workers_farmers    || 0) * 8 * epochMult);
   const huntFood  = Math.floor((nation.workers_hunters    || 0) * 3 * epochMult);  // avg
   const fishFood  = Math.floor((nation.workers_fishermen  || 0) * 6 * epochMult);
   const foodProd  = farmFood + huntFood + fishFood;
-  const foodCons  = Math.ceil((nation.population || 1) * 1.2);
+  const foodCons  = Math.ceil(pop * 1.2);   // per-tick consumption (pop × 1.2 / TICKS_PER_DAY × TICKS_PER_DAY)
   const foodNet   = foodProd - foodCons;
 
   return (
