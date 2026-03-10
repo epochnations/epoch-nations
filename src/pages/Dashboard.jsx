@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
-import { Cpu, Plus, SlidersHorizontal, Users, Hammer, BookOpen, FlaskConical } from "lucide-react";
+import { Cpu, Plus, SlidersHorizontal, Users, Hammer } from "lucide-react";
 import TourTooltip from "../components/onboarding/TourTooltip";
 
 
