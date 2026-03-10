@@ -321,6 +321,30 @@ export default function NationStatsPanel({ nation }) {
         </div>
       </div>
 
+      {/* ── Housing Cap ── */}
+      <div className="rounded-xl px-3 py-2.5 shrink-0" style={{ background: "rgba(251,146,60,0.05)", border: "1px solid rgba(251,146,60,0.12)" }}>
+        <div className="flex items-center justify-between mb-1.5">
+          <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase">HOUSING CAPACITY</div>
+          <div className="text-[11px] ep-mono font-black text-orange-400">{pop.toLocaleString()} / {(nation.housing_capacity || 20).toLocaleString()}</div>
+        </div>
+        <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
+          <div
+            className="h-full rounded-full transition-all duration-700"
+            style={{
+              width: `${Math.min(100, Math.round((pop / Math.max(1, nation.housing_capacity || 20)) * 100))}%`,
+              background: pop >= (nation.housing_capacity || 20) * 0.9
+                ? "linear-gradient(90deg, #f87171aa, #f87171)"
+                : "linear-gradient(90deg, #fb923caa, #fb923c)",
+              boxShadow: pop >= (nation.housing_capacity || 20) * 0.9 ? "0 0 6px #f8717155" : "0 0 6px #fb923c55"
+            }}
+          />
+        </div>
+        <div className="flex justify-between text-[9px] ep-mono text-slate-600 mt-1">
+          <span>Population</span>
+          <span>{Math.min(100, Math.round((pop / Math.max(1, nation.housing_capacity || 20)) * 100))}% full</span>
+        </div>
+      </div>
+
       {/* ── Core Metrics ── */}
       <div className="shrink-0">
         <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase mb-2">CORE METRICS</div>
