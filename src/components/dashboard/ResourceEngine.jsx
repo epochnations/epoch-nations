@@ -13,15 +13,38 @@ import { TICK_MS, TICKS_PER_DAY, WAR_DURATION_MS } from "../game/GameClock";
  * 4. War expiry based on GameClock.WAR_DURATION_MS
  */
 export default function ResourceEngine({ nation, onRefresh }) {
-  const intervalRef = useRef(null);
+  // Use a ref to guard against React Strict Mode double-invocation
+  const activeRef = useRef(false);
 
   useEffect(() => {
     if (!nation?.id) return;
-    const firstTick = setTimeout(() => runTick(), 20_000);
-    intervalRef.current = setInterval(() => runTick(), TICK_MS);
+    // Prevent duplicate loops — only one tick chain allowed per nation
+    if (activeRef.current) return;
+    activeRef.current = true;
+
+    let timer;
+    let alive = true;
+
+    const schedule = () => {
+      if (!alive) return;
+      timer = setTimeout(async () => {
+        if (!alive) return;
+        await runTick();
+        schedule(); // chain next tick only after current completes
+      }, TICK_MS);
+    };
+
+    // First tick fires after 20s to allow data to load
+    timer = setTimeout(async () => {
+      if (!alive) return;
+      await runTick();
+      schedule();
+    }, 20_000);
+
     return () => {
-      clearTimeout(firstTick);
-      clearInterval(intervalRef.current);
+      alive = false;
+      activeRef.current = false;
+      clearTimeout(timer);
     };
   }, [nation?.id]);
 
