@@ -26,7 +26,7 @@ export default function ConstructionHub() {
   const [loading, setLoading] = useState(true);
   const [building, setBuilding] = useState(null); // currently constructing
   const [category, setCategory] = useState("civilian");
-  const [addInsurance, setAddInsurance] = useState(false);
+  const [insuranceMap, setInsuranceMap] = useState({});
   const [showBank, setShowBank] = useState(false);
 
   useEffect(() => { init(); }, []);

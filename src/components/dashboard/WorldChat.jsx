@@ -540,21 +540,41 @@ export default function WorldChat({ myNation, user }) {
     }
 
     const filtered = applyWordFilter(trimmed, blockedWords);
+
+    // Optimistic update — show message instantly before server confirms
+    const optimisticId = `optimistic-${Date.now()}`;
+    const optimisticMsg = {
+      id: optimisticId,
+      channel,
+      sender_nation_id: myNation.id,
+      sender_nation_name: myNation.name,
+      sender_flag: myNation.flag_emoji || "🏴",
+      sender_color: myNation.flag_color || "#3b82f6",
+      sender_role: myRole,
+      content: filtered,
+      reply_to_id: replyTo?.id || "",
+      reply_to_name: replyTo ? replyTo.sender_nation_name : "",
+      created_date: new Date().toISOString(),
+      reactions: {},
+    };
+    setMessages(prev => [...prev, optimisticMsg]);
+    setInput(""); setReplyTo(null);
+    setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: "smooth" }), 30);
+
     setSending(true);
     await base44.entities.ChatMessage.create({
       channel, sender_nation_id: myNation.id, sender_nation_name: myNation.name,
       sender_flag: myNation.flag_emoji || "🏴", sender_color: myNation.flag_color || "#3b82f6",
       sender_role: myRole, content: filtered,
-      reply_to_id: replyTo?.id || "", reply_to_name: replyTo ? replyTo.sender_nation_name : "",
+      reply_to_id: optimisticMsg.reply_to_id, reply_to_name: optimisticMsg.reply_to_name,
     });
 
     // Trigger AI responses for global channel messages
     if (channel === "global" && aiTriggerRef.current) {
-      console.log("[WorldChat] AI engine triggered for:", filtered);
       aiTriggerRef.current(filtered, myNation);
     }
 
-    setInput(""); setReplyTo(null); setSending(false);
+    setSending(false);
     inputRef.current?.focus();
   }
 

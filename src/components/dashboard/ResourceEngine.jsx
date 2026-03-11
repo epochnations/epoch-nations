@@ -66,10 +66,20 @@ export default function ResourceEngine({ nation, onRefresh }) {
       }
     } catch (_) {}
 
+    // ── TECH POINTS — school/university count model ───────────────────────────
+    const schoolCount = nationBuildings_.filter(b => !b.is_destroyed && b.building_type === "school").length;
+    const uniCount    = nationBuildings_.filter(b => !b.is_destroyed && b.building_type === "university").length;
+    // Other buildings (science_academy, cyber_command, etc.) still contribute via tpBonus
+    const otherBuildingTP = nationBuildings_
+      .filter(b => !b.is_destroyed && b.building_type !== "school" && b.building_type !== "university")
+      .reduce((sum, b) => sum + (BUILDING_MAP[b.building_type]?.benefits?.tpBonus || 0), 0);
+    const researchFundingBonus = (fresh.education_spending || 20) * 0.1;
     const techGain = Math.floor(
-      (fresh.workers_researchers || 0) * 2 * techMult +
-      (fresh.education_spending || 0) * 0.3 +
-      buildingTpBonus
+      schoolCount * 1 +
+      uniCount    * 4 +
+      (fresh.population || 1) * 0.001 +
+      researchFundingBonus +
+      otherBuildingTP
     );
 
     // --- CONSUMPTION ---
