@@ -139,6 +139,9 @@ function pickStrategicAction(nation, goal, culture, allNations) {
   if (goal.id === "expand_military" && roll < 0.25) return "military_posture";
   if (goal.id === "secure_food" && (nation.res_food || 0) < 80 && roll < 0.4) return "request_food_aid";
 
+  // Aid — resource/credit-wealthy AI nations can send aid to player nations
+  if ((nation.currency || 0) > 500 && roll < 0.12) return "send_aid";
+
   // General diplomacy
   if (roll < 0.2) return "diplomatic_statement";
   return null;
@@ -177,6 +180,11 @@ async function executeStrategicAction(nation, action, goal, allNations) {
     reply_to_name: "",
   });
 
+  // Execute real transfer for trade/aid actions targeting player nations
+  if (["oil_trade_offer", "trade_proposal", "send_aid"].includes(action) && target) {
+    executeGlobalChatAid(nation, target, action).catch(() => {});
+  }
+
   // Record in chronicle for high-importance actions
   if (["propose_alliance", "oil_trade_offer", "war_statement"].includes(action)) {
     await recordChronicle({
@@ -209,9 +217,152 @@ Target nation for message: ${target?.name || "the global community"}`.trim();
     request_food_aid: `You are the leader of ${nation.name}. Your food reserves are critically low (${nation.res_food}). Formally request humanitarian food assistance from the international community. Be dignified but urgent. 1–2 sentences, no prefix.`,
     war_statement:    `You are the leader of ${nation.name}, currently at war with ${(nation.at_war_with || []).join(", ")}. Make a brief wartime public statement on the global channel. Assertive, determined. 1 sentence, no prefix.`,
     diplomatic_statement: `You are the leader of ${nation.name}. Make a brief, authentic diplomatic statement on the world stage that reflects your culture (${culture.label}) and current strategic goal. 1–2 sentences, no prefix.`,
+    send_aid: `You are the leader of ${nation.name}. You are sending financial aid or resources to ${target?.name || "a nation in need"}. Announce this generosity on the world stage. Mention the act of aid. 1–2 sentences, no prefix.`,
   };
 
   return `${gameCtx}\n\n${actionPrompts[action] || actionPrompts.diplomatic_statement}`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AI GLOBAL CHAT AID EXECUTOR
+// When AI posts trade/aid in global chat, execute the real transfer to players
+// ─────────────────────────────────────────────────────────────────────────────
+async function executeGlobalChatAid(aiNation, targetNation, action) {
+  try {
+    const users = await base44.entities.User.list();
+    const userEmails = new Set(users.map(u => u.email));
+    // Only transfer to real player nations
+    if (!targetNation.owner_email || !userEmails.has(targetNation.owner_email)) return;
+
+    const freshNations = await base44.entities.Nation.list();
+    const freshAI     = freshNations.find(n => n.id === aiNation.id);
+    const freshTarget = freshNations.find(n => n.id === targetNation.id);
+    if (!freshAI || !freshTarget) return;
+
+    let transferAmt = 0;
+    let resKey = null;
+    let resLabel = null;
+
+    if (action === "oil_trade_offer" && (freshAI.res_oil || 0) > 40) {
+      resKey = "res_oil"; resLabel = "oil";
+      transferAmt = Math.min(150, Math.floor((freshAI.res_oil || 0) * 0.25));
+    } else if (action === "send_aid" && (freshAI.currency || 0) > 200) {
+      transferAmt = Math.min(500, Math.floor((freshAI.currency || 0) * 0.15));
+    } else if (action === "trade_proposal" && (freshAI.currency || 0) > 100) {
+      transferAmt = Math.min(300, Math.floor((freshAI.currency || 0) * 0.10));
+    }
+
+    if (transferAmt < 10) return;
+
+    if (resKey) {
+      await base44.entities.Nation.update(freshAI.id, { [resKey]: Math.max(0, (freshAI[resKey] || 0) - transferAmt) });
+      await base44.entities.Nation.update(freshTarget.id, { [resKey]: (freshTarget[resKey] || 0) + transferAmt });
+      await base44.entities.Transaction.create({
+        type: "lend_lease",
+        from_nation_id: freshAI.id, from_nation_name: freshAI.name,
+        to_nation_id: freshTarget.id, to_nation_name: freshTarget.name,
+        resource_type: resKey, resource_amount: transferAmt, total_value: transferAmt,
+        description: `${freshAI.name} sent ${transferAmt} ${resLabel} to ${freshTarget.name} via global trade offer`,
+      });
+    } else {
+      await base44.entities.Nation.update(freshAI.id, { currency: Math.max(0, (freshAI.currency || 0) - transferAmt) });
+      await base44.entities.Nation.update(freshTarget.id, { currency: (freshTarget.currency || 0) + transferAmt });
+      await base44.entities.Transaction.create({
+        type: "lend_lease",
+        from_nation_id: freshAI.id, from_nation_name: freshAI.name,
+        to_nation_id: freshTarget.id, to_nation_name: freshTarget.name,
+        total_value: transferAmt,
+        description: `${freshAI.name} sent ${transferAmt} credits to ${freshTarget.name} via global aid`,
+      });
+    }
+
+    await base44.entities.Notification.create({
+      target_nation_id: freshTarget.id,
+      target_owner_email: freshTarget.owner_email,
+      type: "lend_lease",
+      title: `Aid Received from ${freshAI.name}`,
+      message: resKey
+        ? `${freshAI.name} has shipped ${transferAmt} ${resLabel} to your nation following their public trade announcement.`
+        : `${freshAI.name} has wired ${transferAmt} credits to your treasury as announced in global chat.`,
+      severity: "success",
+      is_read: false,
+    });
+
+    await base44.entities.ChatMessage.create({
+      channel: "global",
+      sender_nation_name: "TRADE BUREAU",
+      sender_flag: "🤝",
+      sender_color: "#10b981",
+      sender_role: "system",
+      content: resKey
+        ? `✅ TRANSFER CONFIRMED — ${freshAI.name} shipped ${transferAmt} ${resLabel} → ${freshTarget.name}.`
+        : `✅ TRANSFER CONFIRMED — ${freshAI.name} wired ${transferAmt} credits → ${freshTarget.name}'s treasury.`,
+    });
+  } catch { /* non-blocking */ }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AI STOCK ISSUANCE
+// Periodically lists stocks for qualifying AI nations that haven't listed yet
+// ─────────────────────────────────────────────────────────────────────────────
+async function runAIStockIssuance(myNationId) {
+  try {
+    const allNations = await base44.entities.Nation.list("-gdp", 30);
+    const users      = await base44.entities.User.list();
+    const userEmails = new Set(users.map(u => u.email));
+
+    const aiNations = allNations.filter(n =>
+      n.id !== myNationId &&
+      n.owner_email &&
+      !userEmails.has(n.owner_email) &&
+      (n.gdp || 0) >= 200 &&
+      (n.stability || 0) >= 35
+    );
+    if (!aiNations.length) return;
+
+    const allStocks = await base44.entities.Stock.list();
+    const listedIds = new Set(allStocks.map(s => s.nation_id));
+
+    for (const nation of aiNations) {
+      if (listedIds.has(nation.id)) continue;
+
+      const ticker     = nation.name.replace(/[^A-Za-z]/g, "").substring(0, 4).toUpperCase() || "NATL";
+      const basePrice  = Math.max(5, Math.round((nation.gdp || 200) / 80));
+      const totalShares = 500;
+      const sector = (nation.res_oil || 0) > 30 ? "Energy"
+        : (nation.unit_power || 0) > 25 ? "Defense"
+        : (nation.tech_level || 1) > 3 ? "Technology"
+        : "Agriculture";
+
+      await base44.entities.Stock.create({
+        company_name:     `${nation.name} National Corp`,
+        ticker,
+        nation_id:        nation.id,
+        nation_name:      nation.name,
+        sector,
+        total_shares:     totalShares,
+        available_shares: totalShares,
+        base_price:       basePrice,
+        current_price:    basePrice,
+        price_history:    [],
+        market_cap:       basePrice * totalShares,
+        epoch_required:   nation.epoch || "Stone Age",
+        is_crashed:       false,
+      });
+
+      await base44.entities.ChatMessage.create({
+        channel:            "global",
+        sender_nation_name: "GLOBAL EXCHANGE",
+        sender_flag:        "📈",
+        sender_color:       "#10b981",
+        sender_role:        "system",
+        content:            `📊 IPO ALERT — ${nation.name} has listed "${nation.name} National Corp" [${ticker}] on the Global Exchange. ${totalShares} shares at ${basePrice} credits each. Sector: ${sector}.`,
+      });
+
+      listedIds.add(nation.id); // prevent duplicate in same run
+      await new Promise(r => setTimeout(r, 2000));
+    }
+  } catch { /* non-blocking */ }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -288,6 +439,7 @@ export default function WorldSimulationEngine({ myNation }) {
   const tickRef       = useRef(null);
   const eventRef      = useRef(null);
   const factionRef    = useRef(null);
+  const stockRef      = useRef(null);
   const initializedRef = useRef(false);
 
   useEffect(() => {
@@ -312,10 +464,17 @@ export default function WorldSimulationEngine({ myNation }) {
       generateFactionPressure(myNation.id);
     }, factionInterval);
 
+    // AI Stock issuance: run on mount + every 10 ticks (10 real minutes)
+    runAIStockIssuance(myNation.id);
+    stockRef.current = setInterval(() => {
+      runAIStockIssuance(myNation.id);
+    }, 10 * TICK_MS);
+
     return () => {
       clearInterval(tickRef.current);
       clearInterval(eventRef.current);
       clearInterval(factionRef.current);
+      clearInterval(stockRef.current);
       initializedRef.current = false;
     };
   }, [myNation?.id]);
