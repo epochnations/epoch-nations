@@ -324,7 +324,7 @@ export default function ConstructionHub() {
 
                 <button
                   onClick={() => construct(bdef)}
-                  disabled={!unlocked || !affordable || !buildable || !!building || (addInsurance && (nation.currency || 0) < ((bdef.cost.currency || 0) + 200))}
+                  disabled={!unlocked || !affordable || !buildable || !!building || (insuranceMap[bdef.id] && (nation.currency || 0) < ((bdef.cost.currency || 0) + 200))}
                   className="w-full py-2.5 rounded-xl text-xs font-bold min-h-[40px] transition-all bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:from-amber-400 hover:to-orange-500 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isBuilding ? (
