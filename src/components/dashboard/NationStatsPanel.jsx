@@ -60,9 +60,13 @@ function fmtRes(n) {
   return n.toLocaleString();
 }
 
+const BASE_CAP = 6000;
+
 function ResourceCell({ label, resKey, value }) {
   const color = getResourceColor(resKey);
   const emoji = getResourceEmoji(resKey);
+  const displayVal = Math.min(value, BASE_CAP);
+  const warehouseOverflow = Math.max(0, value - BASE_CAP);
   const dir = useFlash(value);
   const ring = dir === "up"
     ? `0 0 12px 3px rgba(74,222,128,0.5)`
@@ -82,8 +86,13 @@ function ResourceCell({ label, resKey, value }) {
       <span style={{ fontSize: 20, lineHeight: 1, userSelect: "none" }}>{emoji}</span>
       <span className="text-[10px] text-slate-500 ep-mono">{label}</span>
       <span className="text-[13px] font-black ep-mono" style={{ color }}>
-        {fmtRes(value)}
+        {fmtRes(displayVal)}
       </span>
+      {warehouseOverflow > 0 && (
+        <span className="text-[9px] ep-mono text-amber-400 font-bold" title="Stored in warehouse">
+          🏚️ +{fmtRes(warehouseOverflow)}
+        </span>
+      )}
     </div>
   );
 }
