@@ -137,15 +137,15 @@ export default function ResourceEngine({ nation, onRefresh }) {
     let warnedThisTick = false;
     for (const key of resKeys) {
       const val = updates[key] ?? (fresh[key] || 0);
-      if (!warnedThisTick && val >= storageCap && storageCap > 0) {
+      if (!warnedThisTick && val >= totalStorageCap) {
         notifications.push({
           type: "market_crash", is_read: false,
           title: "⚠️ Storage Full — Production Lost",
-          message: `${key.replace("res_","").toUpperCase()} storage is at max (${storageCap.toLocaleString()} units). Excess production is being discarded. Build warehouses or sell surplus!`,
+          message: `${key.replace("res_","").toUpperCase()} storage is at max (${totalStorageCap.toLocaleString()} units). Excess production is being discarded. Build warehouses or sell surplus!`,
           severity: "warning",
         });
         warnedThisTick = true;
-      } else if (!warnedThisTick && val >= NATURAL_CAP) {
+      } else if (!warnedThisTick && val >= 5000) {
         notifications.push({
           type: "market_crash", is_read: false,
           title: "📦 Warning: Resource Storage Nearing Capacity",
