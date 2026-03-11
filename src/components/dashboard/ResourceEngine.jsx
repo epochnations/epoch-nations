@@ -123,7 +123,17 @@ export default function ResourceEngine({ nation, onRefresh }) {
     updates.res_iron  = Math.max(0, capResource(fresh.res_iron  || 0, ironProd));
     updates.res_oil   = Math.max(0, capResource(fresh.res_oil   || 0, oilProd));
     updates.res_food  = Math.max(0, capResource((fresh.res_food || 0) + netFood, buildingFoodBonus));
-    updates.tech_points = Math.min(99999, (fresh.tech_points || 0) + techGain);
+    // ── TECH POINT STORAGE CAP ──────────────────────────────────────────────
+    // Each education building has a TP storage capacity:
+    // School: 1,000 | College: 3,000 | University: 6,000
+    const schoolCount_ = nationBuildings_.filter(b => !b.is_destroyed && b.building_type === "school").length;
+    const collegeCount = nationBuildings_.filter(b => !b.is_destroyed && b.building_type === "college").length;
+    const uniCount_    = nationBuildings_.filter(b => !b.is_destroyed && b.building_type === "university").length;
+    const tpStorageCap = 500  // base capacity (no buildings)
+      + schoolCount_ * 1000
+      + collegeCount * 3000
+      + uniCount_    * 6000;
+    updates.tech_points = Math.min(tpStorageCap, (fresh.tech_points || 0) + techGain);
 
     // ── STORAGE WARNINGS ─────────────────────────────────────────────────────
     // Warn at 5,000 (natural cap); hard cap at 6,000 + warehouse
