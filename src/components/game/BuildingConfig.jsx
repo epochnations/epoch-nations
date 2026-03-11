@@ -45,7 +45,7 @@ export const BUILDINGS = [
   {
     id: "well",
     name: "Water Well",
-    emoji: "🪣",
+    emoji: "⛲",
     category: "civilian",
     epoch_required: "Stone Age",
     description: "Improves public health and stability.",
