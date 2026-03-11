@@ -302,14 +302,14 @@ export default function ConstructionHub() {
                   </div>
                 )}
 
-                {/* Insurance option */}
+                {/* Per-building insurance toggle */}
                 {unlocked && buildable && (
                   <div
-                    className={`mb-3 rounded-xl border px-3 py-2 flex items-center gap-3 cursor-pointer transition-all ${addInsurance ? "border-blue-400/40 bg-blue-500/10" : "border-white/10 bg-white/5"}`}
-                    onClick={() => setAddInsurance(v => !v)}
+                    className={`mb-3 rounded-xl border px-3 py-2 flex items-center gap-3 cursor-pointer transition-all ${insuranceMap[bdef.id] ? "border-blue-400/40 bg-blue-500/10" : "border-white/10 bg-white/5"}`}
+                    onClick={() => setInsuranceMap(m => ({ ...m, [bdef.id]: !m[bdef.id] }))}
                   >
-                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${addInsurance ? "border-blue-400 bg-blue-400" : "border-slate-600"}`}>
-                      {addInsurance && <div className="w-2 h-2 rounded-full bg-white" />}
+                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${insuranceMap[bdef.id] ? "border-blue-400 bg-blue-400" : "border-slate-600"}`}>
+                      {insuranceMap[bdef.id] && <div className="w-2 h-2 rounded-full bg-white" />}
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-1.5">
