@@ -261,33 +261,31 @@ export default function NationStatsPanel({ nation }) {
       </div>
 
       {/* ── Fuel Prices ── */}
-      <div className="rounded-xl px-3 py-2.5 shrink-0" style={{ background: "rgba(251,146,60,0.04)", border: "1px solid rgba(251,146,60,0.12)" }}>
-        <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase mb-2">FUEL PRICES</div>
-        <div className="grid grid-cols-2 gap-2">
-          {(() => {
-            const oilSupply = Math.max(1, nation.res_oil || 0);
-            const warMod = (nation.at_war_with || []).length > 0 ? 1.25 : 1.0;
-            const stability = (nation.stability || 75) / 100;
-            const baseGas    = 2.50;
-            const baseDiesel = 2.10;
-            const demandMod  = Math.max(0.8, 1 + (Math.max(1, nation.population || 1) * 0.02 / 1000) - oilSupply * 0.0001);
-            const gasPrice    = parseFloat((baseGas    * demandMod * warMod * (2 - stability)).toFixed(2));
-            const dieselPrice = parseFloat((baseDiesel * demandMod * warMod * (2 - stability)).toFixed(2));
-            return (
-              <>
-                <div>
-                  <div className="text-[10px] text-slate-500 ep-mono">⛽ Gas</div>
-                  <div className="text-[14px] font-black ep-mono text-orange-400">{gasPrice} cr</div>
-                </div>
-                <div>
-                  <div className="text-[10px] text-slate-500 ep-mono">🚛 Diesel</div>
-                  <div className="text-[14px] font-black ep-mono text-amber-400">{dieselPrice} cr</div>
-                </div>
-              </>
-            );
-          })()}
-        </div>
-      </div>
+      {(() => {
+        const oilSupply  = Math.max(1, nation.res_oil || 0);
+        const warMod     = (nation.at_war_with || []).length > 0 ? 1.25 : 1.0;
+        const stability  = Math.max(0.1, (nation.stability || 75) / 100);
+        const baseGas    = 2.80;
+        // demand scales up with population, down with oil reserves
+        const demandMod  = Math.max(0.75, 1 + (pop * 0.02 / 1000) - oilSupply * 0.0001);
+        const gasPrice   = parseFloat((baseGas * demandMod * warMod * (1.5 - stability * 0.5)).toFixed(2));
+        const dieselPrice = parseFloat((gasPrice * 1.15).toFixed(2)); // diesel always ~15% more
+        return (
+          <div className="rounded-xl px-3 py-2.5 shrink-0" style={{ background: "rgba(251,146,60,0.04)", border: "1px solid rgba(251,146,60,0.12)" }}>
+            <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase mb-2">FUEL PRICES</div>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <div className="text-[10px] text-slate-500 ep-mono">⛽ Gasoline</div>
+                <div className="text-[14px] font-black ep-mono text-orange-400">${gasPrice}/gal</div>
+              </div>
+              <div>
+                <div className="text-[10px] text-slate-500 ep-mono">🚛 Diesel</div>
+                <div className="text-[14px] font-black ep-mono text-amber-400">${dieselPrice}/gal</div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* ── Natural Resources (moved above economy) ── */}
       <div className="shrink-0">
