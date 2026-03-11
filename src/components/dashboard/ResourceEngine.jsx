@@ -122,7 +122,7 @@ export default function ResourceEngine({ nation, onRefresh }) {
     updates.res_gold  = Math.max(0, capResource(fresh.res_gold  || 0, goldProd));
     updates.res_iron  = Math.max(0, capResource(fresh.res_iron  || 0, ironProd));
     updates.res_oil   = Math.max(0, capResource(fresh.res_oil   || 0, oilProd));
-    updates.res_food  = Math.max(0, capResource((fresh.res_food || 0) + netFood, buildingFoodBonus));
+    updates.res_food  = Math.max(0, capResource(Math.max(0, (fresh.res_food || 0) + netFood + buildingFoodBonus), 0));
     // ── TECH POINT STORAGE CAP ──────────────────────────────────────────────
     // Each education building has a TP storage capacity:
     // School: 1,000 | College: 3,000 | University: 6,000
