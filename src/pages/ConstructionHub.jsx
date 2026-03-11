@@ -330,7 +330,7 @@ export default function ConstructionHub() {
                   {isBuilding ? (
                     <><div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin" /> Building...</>
                   ) : (
-                    <><Hammer size={12} /> {!unlocked ? "Locked" : !buildable ? "At Capacity" : !affordable ? "Insufficient Resources" : `Construct${addInsurance ? " + Insure" : ""}`}</>
+                    <><Hammer size={12} /> {!unlocked ? "Locked" : !buildable ? "At Capacity" : !affordable ? "Insufficient Resources" : `Construct${insuranceMap[bdef.id] ? " + Insure" : ""}`}</>
                   )}
                 </button>
               </div>
