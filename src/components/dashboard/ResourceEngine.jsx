@@ -59,15 +59,19 @@ export default function ResourceEngine({ nation, onRefresh }) {
     const notifications = [];
 
     // --- PRODUCTION ---
-    // Worker-based production
-    const woodProd = Math.floor((fresh.workers_lumberjacks || 0) * 5 * techMult);
-    const stoneProd = Math.floor((fresh.workers_quarry || 0) * 4 * techMult);
-    const goldProd = Math.floor((fresh.workers_miners || 0) * 2 * techMult);
-    // Iron: available from Iron Age+
-    const ironProd = epochIndex >= 3
-      ? Math.floor((fresh.workers_miners || 0) * 3 * techMult)
+    // Specialized worker-based production — each role produces ONE resource only
+    // Lumberjack → Wood only
+    const woodProd  = Math.floor((fresh.workers_lumberjacks  || 0) * 5 * techMult);
+    // Stone Miner → Stone only
+    const stoneProd = Math.floor((fresh.workers_quarry       || 0) * 4 * techMult);
+    // Gold Miner → Gold only
+    const goldProd  = Math.floor((fresh.workers_miners       || 0) * 2 * techMult);
+    // Iron Miner → Iron only (Iron Age = index 2+)
+    const ironProd  = epochIndex >= 2
+      ? Math.floor((fresh.workers_iron_miners || 0) * 3 * techMult)
       : 0;
-    const oilProd = epochIndex >= 9 // Industrial Age+
+    // Oil Worker → Oil only (Industrial Age = index 6+)
+    const oilProd   = epochIndex >= 6
       ? Math.floor((fresh.workers_oil_engineers || 0) * 6 * techMult)
       : 0;
     const farmFood = Math.floor((fresh.workers_farmers || 0) * 8 * techMult);
