@@ -140,6 +140,29 @@ const ICON_DATA = {
       </svg>
     )
   },
+  well: {
+    emoji: "⛲",
+    color: "#38bdf8",
+    svg: (
+      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        {/* Base/rim */}
+        <ellipse cx="32" cy="44" rx="18" ry="6" fill="#64748b"/>
+        <rect x="14" y="38" width="36" height="8" rx="4" fill="#475569"/>
+        {/* Well shaft */}
+        <rect x="20" y="28" width="24" height="14" rx="2" fill="#334155"/>
+        <ellipse cx="32" cy="28" rx="12" ry="3" fill="#1e293b"/>
+        {/* Roof */}
+        <polygon points="10,28 32,14 54,28" fill="#92400e"/>
+        <polygon points="12,28 32,16 52,28" fill="#b45309"/>
+        {/* Crossbar */}
+        <rect x="26" y="18" width="12" height="3" rx="1.5" fill="#78350f"/>
+        {/* Water */}
+        <ellipse cx="32" cy="40" rx="10" ry="3" fill="#38bdf8" opacity="0.7"/>
+        {/* Bucket rope hint */}
+        <line x1="32" y1="21" x2="32" y2="36" stroke="#d97706" strokeWidth="1.5" strokeDasharray="2,2"/>
+      </svg>
+    )
+  },
   gasoline: {
     emoji: "⛽",
     color: "#fb923c",
