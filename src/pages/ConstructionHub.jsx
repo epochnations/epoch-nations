@@ -284,7 +284,11 @@ export default function ConstructionHub() {
                   <div className="flex flex-wrap gap-2">
                     {Object.entries(bdef.benefits).map(([k, v]) => (
                       <span key={k} className="text-xs px-2 py-0.5 rounded-lg bg-green-500/10 text-green-400 font-mono">
-                        {k === "tpBonus" ? `+${v} TP/tick` : k === "farmBonus" ? `+${v} Food/tick` : k === "migrationBonus" ? `+${v} Migration` : `+${v} ${k.replace(/_/g, " ")}`}
+                        {k === "tpBonus" ? `+${v} TP/tick`
+                          : k === "farmBonus" ? `+${v} Food/tick`
+                          : k === "migrationBonus" ? `+${v} Migration`
+                          : k === "housing_capacity" ? `+${v} Housing (total: ${(nation?.housing_capacity || 0) + v * (count + 1)} after build)`
+                          : `+${v} ${k.replace(/_/g, " ")}`}
                       </span>
                     ))}
                     {bdef.workforce > 0 && (
