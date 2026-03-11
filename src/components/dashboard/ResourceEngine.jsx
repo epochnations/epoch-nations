@@ -161,18 +161,22 @@ export default function ResourceEngine({ nation, onRefresh }) {
     for (const key of resKeys) {
       const val = updates[key] ?? (fresh[key] || 0);
       if (!warnedThisTick && val >= totalStorageCap) {
+        const resourceName = key.replace("res_", "").toUpperCase();
+        const isNaturalCap = warehouseCap === 0;
         notifications.push({
           type: "market_crash", is_read: false,
-          title: "⚠️ Storage Full — Production Lost",
-          message: `${key.replace("res_","").toUpperCase()} storage is at max (${totalStorageCap.toLocaleString()} units). Excess production is being discarded. Build warehouses or sell surplus!`,
+          title: `🏗️ ${resourceName} Storage Full — Excess Removed`,
+          message: isNaturalCap
+            ? `${resourceName} hit the natural cap of 6,000 units. Excess has been discarded. Build a Warehouse (Small, Industrial, or Strategic) to expand your storage capacity!`
+            : `${resourceName} hit your storage cap of ${totalStorageCap.toLocaleString()} units. Excess has been discarded. Build more Warehouses to expand further!`,
           severity: "warning",
         });
         warnedThisTick = true;
       } else if (!warnedThisTick && val >= 5000) {
         notifications.push({
           type: "market_crash", is_read: false,
-          title: "📦 Warning: Resource Storage Nearing Capacity",
-          message: `${key.replace("res_","").toUpperCase()} has reached ${val.toLocaleString()} units (natural cap: 5,000). Build a Warehouse to expand storage or sell surplus.`,
+          title: `📦 ${key.replace("res_","").toUpperCase()} Nearing Natural Cap (5,000)`,
+          message: `You are approaching the 6,000 unit natural storage limit. Build a Warehouse to expand capacity or sell your surplus on the market.`,
           severity: "info",
         });
         warnedThisTick = true;

@@ -278,7 +278,7 @@ export default function NationStatsPanel({ nation }) {
         // demand scales up with population, down with oil reserves
         const demandMod  = Math.max(0.75, 1 + (pop * 0.02 / 1000) - oilSupply * 0.0001);
         const gasPrice   = parseFloat((baseGas * demandMod * warMod * (1.5 - stability * 0.5)).toFixed(2));
-        const dieselPrice = parseFloat((gasPrice * 1.15).toFixed(2)); // diesel always ~15% more
+        const dieselPrice = parseFloat((gasPrice * 1.20).toFixed(2)); // diesel always 20% more
         return (
           <div className="rounded-xl px-3 py-2.5 shrink-0" style={{ background: "rgba(251,146,60,0.04)", border: "1px solid rgba(251,146,60,0.12)" }}>
             <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase mb-2">FUEL PRICES</div>
