@@ -126,25 +126,27 @@ export default function ResourceEngine({ nation, onRefresh }) {
     updates.tech_points = Math.min(99999, (fresh.tech_points || 0) + techGain);
 
     // ── STORAGE WARNINGS ─────────────────────────────────────────────────────
+    // Warn at 5,000 (natural cap); hard cap at 6,000 + warehouse
     const resKeys = ["res_wood","res_stone","res_gold","res_iron","res_oil","res_food"];
+    let warnedThisTick = false;
     for (const key of resKeys) {
       const val = updates[key] ?? (fresh[key] || 0);
-      if (val >= storageCap && storageCap > 0) {
+      if (!warnedThisTick && val >= storageCap && storageCap > 0) {
         notifications.push({
           type: "market_crash", is_read: false,
-          title: "⚠️ Storage Exceeded",
-          message: `${key.replace("res_","").toUpperCase()} storage is full (${storageCap.toLocaleString()} cap). Build warehouses or sell surplus — production is being lost!`,
+          title: "⚠️ Storage Full — Production Lost",
+          message: `${key.replace("res_","").toUpperCase()} storage is at max (${storageCap.toLocaleString()} units). Excess production is being discarded. Build warehouses or sell surplus!`,
           severity: "warning",
         });
-        break; // one warning per tick is enough
-      } else if (val >= NATURAL_CAP && val < storageCap && warehouseCap === 0) {
+        warnedThisTick = true;
+      } else if (!warnedThisTick && val >= NATURAL_CAP) {
         notifications.push({
           type: "market_crash", is_read: false,
-          title: "📦 Storage Nearing Capacity",
-          message: `${key.replace("res_","").toUpperCase()} is at ${val.toLocaleString()} units. Natural cap is 5,000. Build a Warehouse or sell surplus soon.`,
+          title: "📦 Warning: Resource Storage Nearing Capacity",
+          message: `${key.replace("res_","").toUpperCase()} has reached ${val.toLocaleString()} units (natural cap: 5,000). Build a Warehouse to expand storage or sell surplus.`,
           severity: "info",
         });
-        break;
+        warnedThisTick = true;
       }
     }
 
