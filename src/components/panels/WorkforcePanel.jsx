@@ -4,17 +4,18 @@ import { X, Users, Save } from "lucide-react";
 import { EPOCHS } from "../game/EpochConfig";
 
 const ROLES = [
-  { key: "workers_farmers", label: "Farmers", emoji: "🌾", desc: "Produce Food" },
-  { key: "workers_hunters", label: "Hunters", emoji: "🏹", desc: "Produce Food (random)" },
-  { key: "workers_fishermen", label: "Fishermen", emoji: "🎣", desc: "Produce Food (coastal)" },
-  { key: "workers_lumberjacks", label: "Lumberjacks", emoji: "🪵", desc: "Produce Wood" },
-  { key: "workers_quarry", label: "Quarry Workers", emoji: "⛏️", desc: "Produce Stone" },
-  { key: "workers_miners", label: "Miners", emoji: "⚒️", desc: "Produce Gold + Iron (Iron Age+)" },
-  { key: "workers_oil_engineers", label: "Oil Engineers", emoji: "🛢️", desc: "Produce Oil (Industrial+)" },
-  { key: "workers_builders", label: "Builders", emoji: "🔨", desc: "Speed up construction" },
-  { key: "workers_soldiers", label: "Soldiers", emoji: "⚔️", desc: "Military power" },
-  { key: "workers_researchers", label: "Researchers", emoji: "🔬", desc: "Generate Tech Points" },
-  { key: "workers_industrial", label: "Industrial Workers", emoji: "🏭", desc: "Boost GDP (Industrial+)" },
+  { key: "workers_farmers",      label: "Farmers",           emoji: "🌾", desc: "Works on Farm — produces Food" },
+  { key: "workers_hunters",      label: "Hunters",           emoji: "🏹", desc: "Works in Forest — produces Food (variable)" },
+  { key: "workers_fishermen",    label: "Fishermen",         emoji: "🎣", desc: "Works at Coast — produces Food" },
+  { key: "workers_lumberjacks",  label: "Lumberjacks",       emoji: "🌲", desc: "Works in Lumber Camp — produces Wood only" },
+  { key: "workers_quarry",       label: "Stone Miners",      emoji: "🪨", desc: "Works in Stone Quarry — produces Stone only" },
+  { key: "workers_miners",       label: "Gold Miners",       emoji: "💰", desc: "Works in Gold Mine — produces Gold only" },
+  { key: "workers_iron_miners",  label: "Iron Miners",       emoji: "⚙️", desc: "Works in Iron Mine — produces Iron only (Iron Age+)", epochMin: 2 },
+  { key: "workers_oil_engineers",label: "Oil Workers",       emoji: "🛢️", desc: "Works at Oil Derrick — produces Oil only (Industrial+)", epochMin: 6 },
+  { key: "workers_builders",     label: "Builders",          emoji: "🔨", desc: "Speeds up construction" },
+  { key: "workers_soldiers",     label: "Soldiers",          emoji: "⚔️", desc: "Military power" },
+  { key: "workers_researchers",  label: "Researchers",       emoji: "🔬", desc: "Generate Tech Points" },
+  { key: "workers_industrial",   label: "Industrial Workers",emoji: "🏭", desc: "Boost GDP (Industrial+)", epochMin: 6 },
 ];
 
 export default function WorkforcePanel({ nation, onClose, onRefresh }) {
@@ -23,6 +24,7 @@ export default function WorkforcePanel({ nation, onClose, onRefresh }) {
 
   const initial = {};
   ROLES.forEach(r => { initial[r.key] = nation?.[r.key] ?? 0; });
+  // Migrate legacy workers_miners → gold miners (already mapped, iron defaults to 0 for new field)
   const [assignments, setAssignments] = useState(initial);
   const [saving, setSaving] = useState(false);
 
@@ -53,14 +55,13 @@ export default function WorkforcePanel({ nation, onClose, onRefresh }) {
     if (role.key === "workers_farmers") return `+${Math.floor(count * 8 * techMult)} Food/min`;
     if (role.key === "workers_hunters") return `+${Math.floor(count * 5 * techMult)}~${Math.floor(count * 7 * techMult)} Food/min`;
     if (role.key === "workers_fishermen") return `+${Math.floor(count * 6 * techMult)} Food/min`;
-    if (role.key === "workers_lumberjacks") return `+${Math.floor(count * 5 * techMult)} Wood/min`;
-    if (role.key === "workers_quarry") return `+${Math.floor(count * 4 * techMult)} Stone/min`;
-    if (role.key === "workers_miners") return epochIndex >= 3
-      ? `+${Math.floor(count * 2 * techMult)} Gold +${Math.floor(count * 3 * techMult)} Iron/min`
-      : `+${Math.floor(count * 2 * techMult)} Gold/min`;
-    if (role.key === "workers_oil_engineers") return epochIndex >= 9 ? `+${Math.floor(count * 6 * techMult)} Oil/min` : "Requires Industrial Age";
-    if (role.key === "workers_researchers") return `+${Math.floor(count * 2 * techMult)} TP/min`;
-    if (role.key === "workers_industrial") return epochIndex >= 9 ? `+${Math.floor(count * 10 * techMult)} GDP/min` : "Requires Industrial Age";
+    if (role.key === "workers_lumberjacks")   return `+${Math.floor(count * 5 * techMult)} Wood/min`;
+    if (role.key === "workers_quarry")        return `+${Math.floor(count * 4 * techMult)} Stone/min`;
+    if (role.key === "workers_miners")        return `+${Math.floor(count * 2 * techMult)} Gold/min`;
+    if (role.key === "workers_iron_miners")   return epochIndex >= 2 ? `+${Math.floor(count * 3 * techMult)} Iron/min` : "Requires Iron Age";
+    if (role.key === "workers_oil_engineers") return epochIndex >= 6 ? `+${Math.floor(count * 6 * techMult)} Oil/min` : "Requires Industrial Age";
+    if (role.key === "workers_researchers")   return `+${Math.floor(count * 2 * techMult)} TP/min`;
+    if (role.key === "workers_industrial")    return epochIndex >= 6 ? `+${Math.floor(count * 10 * techMult)} GDP/min` : "Requires Industrial Age";
     return null;
   }
 
@@ -94,7 +95,7 @@ export default function WorkforcePanel({ nation, onClose, onRefresh }) {
         <div className="overflow-y-auto p-6 space-y-3">
           {ROLES.map(role => {
             const prod = productionFor(role);
-            const isLocked = (role.key === "workers_oil_engineers" || role.key === "workers_industrial") && epochIndex < 9;
+            const isLocked = (role.epochMin !== undefined) && epochIndex < role.epochMin;
             return (
               <div key={role.key} className={`rounded-xl p-3 border ${isLocked ? "border-white/5 bg-white/3 opacity-40" : "border-white/10 bg-white/5"}`}>
                 <div className="flex items-center gap-3">
