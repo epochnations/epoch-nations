@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from "react";
 import { EPOCHS } from "../game/EpochConfig";
 import { getCitiesForNation } from "../news/CityConfig";
 import { TICKS_PER_DAY } from "../game/GameClock";
+import { getResourceEmoji, getResourceColor } from "../game/ResourceIcons";
 
 /** Flash a glow when a numeric value changes */
 function useFlash(value) {
