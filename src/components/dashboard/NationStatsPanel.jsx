@@ -82,7 +82,7 @@ function ResourceCell({ label, resKey, value }) {
       <span style={{ fontSize: 20, lineHeight: 1, userSelect: "none" }}>{emoji}</span>
       <span className="text-[10px] text-slate-500 ep-mono">{label}</span>
       <span className="text-[13px] font-black ep-mono" style={{ color }}>
-        {value.toLocaleString()}
+        {fmtRes(value)}
       </span>
     </div>
   );
