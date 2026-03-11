@@ -94,35 +94,31 @@ export default function ResourceEngine({ nation, onRefresh }) {
     const newFood = Math.max(0, (fresh.res_food || 0) + netFood);
 
     // ── WAREHOUSE STORAGE CAPS ────────────────────────────────────────────────
-    // Natural cap: 5000  | Soft buffer: 6000 | Warehouse expands cap
-    const NATURAL_CAP  = 5000;
-    const OVERFLOW_CAP = 6000;
+    // Natural storage: 5,000 | Grace overflow: 6,000 | Warehouse expands beyond 6,000
+    const OVERFLOW_CAP = 6000; // max without any warehouse
 
     let warehouseCap = 0;
-    try {
-      const nationBuildings = nationBuildings_ || await base44.entities.Building.filter({ nation_id: fresh.id });
-      for (const b of nationBuildings) {
-        if (b.is_destroyed) continue;
-        if (b.building_type === "warehouse_small")    warehouseCap += 5000;
-        if (b.building_type === "warehouse_industrial") warehouseCap += 25000;
-        if (b.building_type === "warehouse_strategic")  warehouseCap += 100000;
-      }
-    } catch (_) {}
-
-    const storageCap = OVERFLOW_CAP + warehouseCap;
-
-    function capResource(current, added) {
-      const newVal = current + added;
-      if (newVal > storageCap) return storageCap; // hard cap — excess lost
-      return newVal;
+    for (const b of nationBuildings_) {
+      if (b.is_destroyed) continue;
+      if (b.building_type === "warehouse_small")       warehouseCap += 5000;
+      if (b.building_type === "warehouse_industrial")  warehouseCap += 25000;
+      if (b.building_type === "warehouse_strategic")   warehouseCap += 100000;
     }
 
-    updates.res_wood  = Math.max(0, capResource(fresh.res_wood  || 0, woodProd));
-    updates.res_stone = Math.max(0, capResource(fresh.res_stone || 0, stoneProd));
-    updates.res_gold  = Math.max(0, capResource(fresh.res_gold  || 0, goldProd));
-    updates.res_iron  = Math.max(0, capResource(fresh.res_iron  || 0, ironProd));
-    updates.res_oil   = Math.max(0, capResource(fresh.res_oil   || 0, oilProd));
-    updates.res_food  = Math.max(0, capResource(Math.max(0, (fresh.res_food || 0) + netFood + buildingFoodBonus), 0));
+    const totalStorageCap = OVERFLOW_CAP + warehouseCap;
+
+    // Apply cap: excess above OVERFLOW_CAP moves to warehouse if space exists,
+    // otherwise is discarded. Result is clamped to totalStorageCap.
+    function capResource(rawNewVal) {
+      return Math.min(totalStorageCap, Math.max(0, rawNewVal));
+    }
+
+    updates.res_wood  = capResource((fresh.res_wood  || 0) + woodProd);
+    updates.res_stone = capResource((fresh.res_stone || 0) + stoneProd);
+    updates.res_gold  = capResource((fresh.res_gold  || 0) + goldProd);
+    updates.res_iron  = capResource((fresh.res_iron  || 0) + ironProd);
+    updates.res_oil   = capResource((fresh.res_oil   || 0) + oilProd);
+    updates.res_food  = capResource(Math.max(0, (fresh.res_food || 0) + netFood + buildingFoodBonus));
     // ── TECH POINT STORAGE CAP ──────────────────────────────────────────────
     // Each education building has a TP storage capacity:
     // School: 1,000 | College: 3,000 | University: 6,000
