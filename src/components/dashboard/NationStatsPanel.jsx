@@ -54,7 +54,9 @@ function FlashStat({ value, className = "", style = {}, children }) {
   );
 }
 
-function ResourceCell({ label, color, symbol, value }) {
+function ResourceCell({ label, resKey, value }) {
+  const color = getResourceColor(resKey);
+  const emoji = getResourceEmoji(resKey);
   const dir = useFlash(value);
   const ring = dir === "up"
     ? `0 0 12px 3px rgba(74,222,128,0.5)`
@@ -71,7 +73,7 @@ function ResourceCell({ label, color, symbol, value }) {
         transition: "box-shadow 0.6s"
       }}
     >
-      <span className="text-base leading-none">{symbol}</span>
+      <span style={{ fontSize: 20, lineHeight: 1, userSelect: "none" }}>{emoji}</span>
       <span className="text-[10px] text-slate-500 ep-mono">{label}</span>
       <span className="text-[13px] font-black ep-mono" style={{ color }}>
         {value.toLocaleString()}
