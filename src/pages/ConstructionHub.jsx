@@ -45,6 +45,7 @@ export default function ConstructionHub() {
   async function construct(bdef) {
     if (!nation || building) return;
     setBuilding(bdef.id);
+    const addInsurance = !!insuranceMap[bdef.id];
 
     // Deduct resources (+ insurance cost if selected)
     const insuranceCost = addInsurance ? 200 : 0;
