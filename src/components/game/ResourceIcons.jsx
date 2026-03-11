@@ -6,7 +6,7 @@
 
 const ICON_DATA = {
   wood: {
-    emoji: "🪵",
+    emoji: "🌲",
     color: "#a78bfa",
     svg: (
       <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -19,7 +19,7 @@ const ICON_DATA = {
     )
   },
   stone: {
-    emoji: "🪨",
+    emoji: "🗿",
     color: "#94a3b8",
     svg: (
       <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -31,7 +31,7 @@ const ICON_DATA = {
     )
   },
   gold: {
-    emoji: "🪙",
+    emoji: "💰",
     color: "#fbbf24",
     svg: (
       <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -44,7 +44,7 @@ const ICON_DATA = {
     )
   },
   iron: {
-    emoji: "⛓️",
+    emoji: "⚙️",
     color: "#64748b",
     svg: (
       <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
