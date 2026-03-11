@@ -54,6 +54,12 @@ function FlashStat({ value, className = "", style = {}, children }) {
   );
 }
 
+function fmtRes(n) {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000)     return `${(n / 1_000).toFixed(1)}K`;
+  return n.toLocaleString();
+}
+
 function ResourceCell({ label, resKey, value }) {
   const color = getResourceColor(resKey);
   const emoji = getResourceEmoji(resKey);
