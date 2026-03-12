@@ -417,6 +417,73 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── FORGE SDK ── */}
+      <section id="forge" className="py-20 px-6 relative overflow-hidden" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+        <div className="absolute inset-0 pointer-events-none">
+          <div style={{ position: "absolute", bottom: "10%", left: "10%", width: 400, height: 400, borderRadius: "50%", background: "radial-gradient(circle, rgba(139,92,246,0.07) 0%, transparent 70%)" }} />
+        </div>
+        <div className="max-w-4xl mx-auto relative">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-3"
+              style={{ background: "rgba(139,92,246,0.1)", border: "1px solid rgba(139,92,246,0.25)" }}>
+              <Puzzle size={12} className="text-violet-400" />
+              <span className="text-[11px] font-bold text-violet-400 ep-mono uppercase tracking-widest">COMMUNITY MODDING</span>
+            </div>
+            <h2 className="text-3xl font-black text-white mb-3">
+              Build on Epoch Nations with{" "}
+              <span style={{ background: "linear-gradient(135deg, #a78bfa, #06b6d4)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+                Forge SDK
+              </span>
+            </h2>
+            <p className="text-slate-400 text-sm max-w-xl mx-auto leading-relaxed">
+              Forge is our official plugin SDK for community developers. Add new buildings, resources, research trees, game events, economy rules, UI panels, and language packs — all sandboxed, version-controlled, and shareable.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+            {[
+              { icon: "🏗️", color: "#fbbf24", label: "Buildings",      desc: "New structures with custom costs & production" },
+              { icon: "💎", color: "#22d3ee", label: "Resources",       desc: "New commodities & tradeable goods" },
+              { icon: "⚡", color: "#f87171", label: "Game Events",     desc: "Probabilistic world events with real effects" },
+              { icon: "🔬", color: "#a78bfa", label: "Research Trees",  desc: "Custom tech branches & unlock chains" },
+              { icon: "📊", color: "#f97316", label: "Economy Rules",   desc: "Per-tick financial hooks on nation data" },
+              { icon: "🎨", color: "#818cf8", label: "UI Components",   desc: "Inject React panels into dashboard slots" },
+              { icon: "🌐", color: "#4ade80", label: "Language Packs",  desc: "Translate the entire UI to any language" },
+              { icon: "🔒", color: "#64748b", label: "Sandboxed",       desc: "Secure isolation — no direct game access" },
+            ].map(({ icon, color, label, desc }) => (
+              <div key={label} className="rounded-2xl p-4 text-center"
+                style={{ background: `${color}07`, border: `1px solid ${color}18` }}>
+                <span className="text-2xl mb-2 block">{icon}</span>
+                <div className="font-bold text-white text-xs mb-1">{label}</div>
+                <div className="text-[11px] text-slate-500 leading-snug">{desc}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="rounded-2xl p-5 mb-8" style={{ background: "rgba(0,0,0,0.4)", border: "1px solid rgba(255,255,255,0.07)" }}>
+            <div className="text-xs font-black text-slate-400 ep-mono mb-2 uppercase">QUICK LOOK — index.js</div>
+            <pre className="ep-mono text-[11px] text-slate-300 leading-relaxed overflow-x-auto whitespace-pre">{`export function initMyPlugin(api) {
+  api.registerBuilding({
+    id: "crystal_mine",  name: "Crystal Mine",  emoji: "⛏️",
+    category: "civilian",  epoch_required: "Medieval Age",
+    cost: { stone: 300, gold: 100 },  workers: 4,
+    benefit: "Produces 5 Rare Crystals per tick.",
+    productionPerTick: { rare_crystal: 5 },
+  });
+}`}</pre>
+          </div>
+
+          <div className="text-center">
+            <button onClick={() => setForgeOpen(true)}
+              className="px-8 py-4 rounded-2xl font-black text-base transition-all ep-btn-lift inline-flex items-center gap-2"
+              style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)", color: "white" }}>
+              <Puzzle size={18} /> Open Forge SDK Docs
+            </button>
+            <div className="text-xs text-slate-600 mt-3 ep-mono">Full API reference · Examples · Sandbox rules · Submission guide</div>
+          </div>
+        </div>
+      </section>
+
       {/* ── ABOUT ── */}
       <section id="about" className="py-20 px-6">
         <div className="max-w-4xl mx-auto">
