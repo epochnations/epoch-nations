@@ -6,8 +6,9 @@ import {
   Globe, Sword, FlaskConical, Landmark, TrendingUp, Users, Map,
   ChevronRight, Star, Shield, Zap, BookOpen, MessageSquare,
   Mail, Clock, Calendar, Layers, GitBranch, Bug, Lock, Eye, EyeOff,
-  ArrowRight, CheckCircle, Rocket, Heart, Cpu, Scroll, Award
+  ArrowRight, CheckCircle, Rocket, Heart, Cpu, Scroll, Award, Puzzle
 } from "lucide-react";
+import DevPortal from "@/components/home/DevPortal";
 
 // ── Live Game Clock ──────────────────────────────────────────────────────────
 function LiveClock() {
