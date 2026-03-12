@@ -198,14 +198,26 @@ export default function IssueStockPanel({ nation, onClose, onRefresh }) {
             const previewCost = Math.round(previewFinalPrice * cappedShares * 0.05);
             const canAfford = (nation.currency || 0) >= previewCost;
             return (
-              <div className="rounded-xl bg-white/5 p-3 text-xs text-slate-400 space-y-1">
+              <div className="rounded-xl bg-white/5 p-3 text-xs text-slate-400 space-y-1.5">
                 <div>Final IPO price: <b className="text-white">{previewFinalPrice} cr/share</b> (base {price} + index + resource bonus)</div>
                 <div className="text-amber-400">📋 Stock cap for {nation.epoch}: <b>{existingCount}/{stockCap}</b> issued</div>
                 <div>Shares to issue: <b>{cappedShares.toLocaleString()}</b> (max {maxShares.toLocaleString()})</div>
-                <div className={canAfford ? "text-cyan-400" : "text-red-400"}>
-                  💰 IPO listing cost (5%): <b>{previewCost.toLocaleString()} cr</b>
-                  {!canAfford && <span className="ml-1 text-red-400">⚠️ Insufficient funds ({(nation.currency||0).toLocaleString()} cr)</span>}
+                <div className="border-t border-white/10 pt-1.5 mt-1 grid grid-cols-2 gap-x-3">
+                  <div>
+                    <div className="text-slate-500 uppercase tracking-wider" style={{fontSize:10}}>Current Treasury</div>
+                    <div className="text-amber-400 font-bold text-sm">{(nation.currency||0).toLocaleString()} cr</div>
+                  </div>
+                  <div>
+                    <div className="text-slate-500 uppercase tracking-wider" style={{fontSize:10}}>IPO Listing Cost (5%)</div>
+                    <div className={`font-bold text-sm ${canAfford ? "text-cyan-400" : "text-red-400"}`}>{previewCost.toLocaleString()} cr</div>
+                  </div>
                 </div>
+                {!canAfford && (
+                  <div className="text-red-400 font-bold">⚠️ Insufficient funds — need {(previewCost - (nation.currency||0)).toLocaleString()} more cr</div>
+                )}
+                {canAfford && (
+                  <div className="text-green-400">✓ After IPO: <b>{((nation.currency||0) - previewCost).toLocaleString()} cr</b> remaining</div>
+                )}
               </div>
             );
           })()}
