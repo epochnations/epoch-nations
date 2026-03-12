@@ -114,13 +114,13 @@ const FEATURES = [
   { icon: FlaskConical, color: "#a78bfa", title: "Research Tree",   desc: "Advance through 12 historical epochs from Stone Age to Galactic Age." },
   { icon: TrendingUp, color: "#4ade80", title: "Stock Market",       desc: "IPO your corporations, trade shares, trigger market crashes, and dominate finance." },
   { icon: Landmark,   color: "#fbbf24", title: "Economy Engine",     desc: "Manage inflation, GDP, tax policy, loans, and a dynamic global commodity market." },
-  { icon: Map,        color: "#06b6d4", title: "Hex World Map",      desc: "Claim territory on a procedural hex grid, build cities, and expand your borders." },
+  { icon: Map,        color: "#06b6d4", title: "Interactive World Map", desc: "Claim territory, expand your borders, build cities, and project military power across a living world map." },
   { icon: Users,      color: "#f97316", title: "City Management",    desc: "Zone districts, manage happiness, fight crime, and grow population in your cities." },
   { icon: Cpu,        color: "#818cf8", title: "AI Nations",         desc: "Compete against living AI civilizations with unique cultures and strategies." },
 ];
 
 const ROADMAP = [
-  { phase: "v0.1", label: "Foundation", status: "done", items: ["Nation creation", "Resource engine", "Research tree", "Stock market", "Hex world map", "AI nations"] },
+  { phase: "v0.1", label: "Foundation", status: "done", items: ["Nation creation", "Resource engine", "Research tree", "Stock market", "Interactive world map", "AI nations"] },
   { phase: "v0.2", label: "Expansion", status: "done", items: ["City management", "Banking & loans", "Global commodity market", "Diplomacy system", "News engine"] },
   { phase: "v0.3", label: "Community", status: "active", items: ["Plugin architecture", "Council dilemmas", "Private messaging", "World Chronicle", "Moderation tools"] },
   { phase: "v0.4", label: "Warfare+", status: "upcoming", items: ["Tactical combat", "Naval units", "Siege mechanics", "War crimes tribunal", "Peace treaties"] },
