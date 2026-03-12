@@ -501,7 +501,6 @@ export default function Home() {
       </footer>
 
       {/* ── Modals ── */}
-      {authModal && <AuthModal mode={authModal} onClose={() => setAuthModal(null)} onSuccess={handleAuthSuccess} />}
       {supportOpen && <SupportModal onClose={() => setSupportOpen(false)} />}
       {forgeOpen && <DevPortal onClose={() => setForgeOpen(false)} />}
     </div>
