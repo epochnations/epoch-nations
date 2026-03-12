@@ -179,12 +179,36 @@ export default function IssueStockPanel({ nation, onClose, onRefresh }) {
             </div>
           </div>
 
-          <div className="rounded-xl bg-white/5 p-3 text-xs text-slate-400 space-y-1">
-            <div>Final IPO price adjusted by Nation Stock Index: ({nation.gdp} + {nation.stability}) × {(nation.public_trust||1).toFixed(2)}</div>
-            <div className="text-amber-400">📋 Stock cap for {nation.epoch}: <b>{existingCount}/{stockCap}</b> issued</div>
-            <div>Max shares at current GDP: <b>{maxShares.toLocaleString()}</b></div>
-            <div className="text-cyan-400">💰 IPO listing cost (5%): ~<b>{Math.round((price + (nation.gdp + nation.stability) * (nation.public_trust||1) * 0.01) * Math.min(shares, baseShares) * 0.05)} cr</b></div>
-          </div>
+          {(() => {
+            const cappedShares = Math.min(shares, maxShares);
+            let resourceMod = 0;
+            if (sector === "Agriculture") resourceMod = (nation.res_food || 0) * 0.02;
+            else if (sector === "Energy") resourceMod = (nation.res_oil || 0) * 0.03;
+            else if (sector === "Defense") resourceMod = (nation.res_iron || 0) * 0.025;
+            else if (sector === "Technology") resourceMod = (nation.res_gold || 0) * 0.04;
+            else if (sector === "Finance") resourceMod = (nation.currency || 0) * 0.005;
+            else if (sector === "Nano") resourceMod = 0;
+            else if (sector === "Timber") resourceMod = (nation.res_wood || 0) * 0.035;
+            else if (sector === "Stone") resourceMod = (nation.res_stone || 0) * 0.03;
+            else if (sector === "Iron") resourceMod = (nation.res_iron || 0) * 0.04;
+            else if (sector === "Oil") resourceMod = (nation.res_oil || 0) * 0.05;
+            else if (sector === "Gold") resourceMod = (nation.res_gold || 0) * 0.06;
+            const stockValue = (nation.gdp + nation.stability) * (nation.public_trust || 1);
+            const previewFinalPrice = parseFloat((price + stockValue * 0.01 + resourceMod).toFixed(2));
+            const previewCost = Math.round(previewFinalPrice * cappedShares * 0.05);
+            const canAfford = (nation.currency || 0) >= previewCost;
+            return (
+              <div className="rounded-xl bg-white/5 p-3 text-xs text-slate-400 space-y-1">
+                <div>Final IPO price: <b className="text-white">{previewFinalPrice} cr/share</b> (base {price} + index + resource bonus)</div>
+                <div className="text-amber-400">📋 Stock cap for {nation.epoch}: <b>{existingCount}/{stockCap}</b> issued</div>
+                <div>Shares to issue: <b>{cappedShares.toLocaleString()}</b> (max {maxShares.toLocaleString()})</div>
+                <div className={canAfford ? "text-cyan-400" : "text-red-400"}>
+                  💰 IPO listing cost (5%): <b>{previewCost.toLocaleString()} cr</b>
+                  {!canAfford && <span className="ml-1 text-red-400">⚠️ Insufficient funds ({(nation.currency||0).toLocaleString()} cr)</span>}
+                </div>
+              </div>
+            );
+          })()}
 
           {atCap && (
             <div className="rounded-xl bg-red-500/10 border border-red-500/30 p-3 text-xs text-red-400 font-bold">
