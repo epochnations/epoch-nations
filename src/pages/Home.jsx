@@ -473,7 +473,7 @@ export default function Home() {
           <div className="text-4xl mb-4">🌍</div>
           <h2 className="text-3xl font-black text-white mb-3">Your Nation Awaits</h2>
           <p className="text-slate-500 text-sm mb-8">The world is already in motion. Found your civilization today.</p>
-          <button onClick={() => setAuthModal("signup")}
+          <button onClick={goToLogin}
             className="px-10 py-4 rounded-2xl font-black text-base transition-all ep-btn-lift inline-flex items-center gap-2"
             style={{ background: "linear-gradient(135deg, #06b6d4, #8b5cf6)", color: "white" }}>
             <Rocket size={18} /> Play for Free
