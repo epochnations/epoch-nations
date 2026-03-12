@@ -4,8 +4,8 @@ import { base44 } from "@/api/base44Client";
 import { getGameTime, formatGameTime } from "@/components/game/GameClock";
 import {
   Globe, Sword, FlaskConical, Landmark, TrendingUp, Users, Map,
-  ChevronRight, Star, Shield, Zap, BookOpen, MessageSquare,
-  Mail, Clock, Calendar, Layers, GitBranch, Bug, Lock, Eye, EyeOff,
+  Shield, Zap, BookOpen, MessageSquare,
+  Mail, Clock, Layers, GitBranch, Bug,
   ArrowRight, CheckCircle, Rocket, Heart, Cpu, Scroll, Award, Puzzle
 } from "lucide-react";
 import DevPortal from "@/components/home/DevPortal";
