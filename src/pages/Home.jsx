@@ -180,12 +180,12 @@ export default function Home() {
           ))}
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={() => setAuthModal("login")}
+          <button onClick={goToLogin}
             className="px-4 py-2 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition-colors"
             style={{ border: "1px solid rgba(255,255,255,0.1)" }}>
             Log In
           </button>
-          <button onClick={() => setAuthModal("signup")}
+          <button onClick={goToLogin}
             className="px-4 py-2 rounded-xl text-xs font-black text-black transition-all ep-btn-lift"
             style={{ background: "linear-gradient(135deg, #22d3ee, #8b5cf6)" }}>
             Play Free
