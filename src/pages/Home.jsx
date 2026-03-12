@@ -601,6 +601,7 @@ export default function Home() {
           <div className="flex items-center gap-6 text-xs text-slate-600">
             <a href="#features" className="hover:text-slate-400 transition-colors">Features</a>
             <a href="#roadmap" className="hover:text-slate-400 transition-colors">Roadmap</a>
+            <button onClick={() => setForgeOpen(true)} className="hover:text-slate-400 transition-colors">Forge SDK</button>
             <a href="#about" className="hover:text-slate-400 transition-colors">About</a>
             <button onClick={() => setSupportOpen(true)} className="hover:text-slate-400 transition-colors">Support</button>
           </div>
