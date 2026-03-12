@@ -156,10 +156,7 @@ export default function Home() {
     });
   }, []);
 
-  const handleAuthSuccess = () => {
-    setAuthModal(null);
-    navigate("/Dashboard");
-  };
+  const goToLogin = () => base44.auth.redirectToLogin("/Dashboard");
 
   if (checkingAuth) return (
     <div className="fixed inset-0 flex items-center justify-center" style={{ background: "#040810" }}>
