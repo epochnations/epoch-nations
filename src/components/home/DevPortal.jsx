@@ -455,8 +455,22 @@ export default function DevPortal({ onClose }) {
               <div className="text-xs font-black text-white mb-3">📡 Engine Events (api.on)</div>
               <div className="grid sm:grid-cols-2 gap-2">
                 {[
-                  "building:registered", "resource:registered", "language:registered",
-                  "economy:registered", "research:registered", "event:registered", "ui:registered"
+                  "tick:before",          "tick:after",
+                  "epoch:advance",        "war:declared",
+                  "war:ended",            "alliance:formed",
+                  "alliance:broken",      "trade:route_created",
+                  "trade:route_broken",   "market:crash",
+                  "market:recovery",      "research:completed",
+                  "building:constructed", "building:destroyed",
+                  "city:founded",         "city:event",
+                  "nation:created",       "nation:deleted",
+                  "stock:ipo",            "stock:crashed",
+                  "loan:issued",          "loan:defaulted",
+                  "policy:toggled",       "dilemma:resolved",
+                  "building:registered",  "resource:registered",
+                  "language:registered",  "economy:registered",
+                  "research:registered",  "event:registered",
+                  "ui:registered",        "plugin:loaded",
                 ].map(ev => (
                   <div key={ev} className="rounded-xl px-3 py-2 text-xs ep-mono text-cyan-400"
                     style={{ background: "rgba(6,182,212,0.05)", border: "1px solid rgba(6,182,212,0.12)" }}>
