@@ -4,22 +4,22 @@ import { X, Plus } from "lucide-react";
 import { EPOCHS } from "../game/EpochConfig";
 
 const SECTORS_BY_EPOCH = {
-  "Stone Age": ["Agriculture", "Timber", "Stone"],
-  "Copper Age": ["Agriculture", "Energy", "Timber", "Stone", "Iron"],
-  "Bronze Age": ["Agriculture", "Energy", "Defense", "Timber", "Stone", "Iron"],
-  "Iron Age": ["Agriculture", "Energy", "Defense", "Iron", "Gold"],
-  "Dark Ages": ["Agriculture", "Energy", "Defense", "Finance", "Iron", "Gold"],
-  "Middle Ages": ["Agriculture", "Energy", "Defense", "Finance", "Iron", "Gold"],
-  "Renaissance": ["Agriculture", "Energy", "Defense", "Finance", "Gold"],
-  "Imperial Age": ["Agriculture", "Energy", "Defense", "Finance", "Technology", "Gold"],
-  "Enlightenment Age": ["Agriculture", "Energy", "Defense", "Finance", "Technology", "Gold"],
-  "Industrial Age": ["Energy", "Defense", "Technology", "Finance", "Agriculture", "Oil"],
-  "Modern Age": ["Energy", "Defense", "Technology", "Finance", "Agriculture", "Oil"],
-  "Atomic Age": ["Energy", "Defense", "Technology", "Finance", "Agriculture", "Oil"],
-  "Digital Age": ["Energy", "Defense", "Technology", "Finance", "Agriculture", "Oil"],
-  "Genetic Age": ["Energy", "Defense", "Technology", "Finance", "Agriculture", "Nano", "Oil"],
-  "Synthetic Age": ["Energy", "Defense", "Technology", "Finance", "Agriculture", "Nano", "Oil"],
-  "Nano Age": ["Energy", "Defense", "Technology", "Finance", "Agriculture", "Nano", "Oil"],
+  "Stone Age":        ["Agriculture", "Timber", "Stone"],
+  "Copper Age":       ["Agriculture", "Energy", "Timber", "Stone", "Iron", "Gold"],
+  "Bronze Age":       ["Agriculture", "Energy", "Defense", "Timber", "Stone", "Iron", "Gold"],
+  "Iron Age":         ["Agriculture", "Energy", "Defense", "Finance", "Iron", "Gold", "Stone"],
+  "Dark Ages":        ["Agriculture", "Energy", "Defense", "Finance", "Iron", "Gold", "Stone"],
+  "Middle Ages":      ["Agriculture", "Energy", "Defense", "Finance", "Iron", "Gold", "Stone"],
+  "Renaissance":      ["Agriculture", "Energy", "Defense", "Finance", "Technology", "Gold", "Iron"],
+  "Imperial Age":     ["Agriculture", "Energy", "Defense", "Finance", "Technology", "Gold", "Iron", "Oil"],
+  "Enlightenment Age":["Agriculture", "Energy", "Defense", "Finance", "Technology", "Gold", "Iron", "Oil"],
+  "Industrial Age":   ["Energy", "Defense", "Technology", "Finance", "Agriculture", "Oil", "Iron", "Gold", "Stone"],
+  "Modern Age":       ["Energy", "Defense", "Technology", "Finance", "Agriculture", "Oil", "Iron", "Gold", "Stone"],
+  "Atomic Age":       ["Energy", "Defense", "Technology", "Finance", "Agriculture", "Oil", "Iron", "Gold"],
+  "Digital Age":      ["Energy", "Defense", "Technology", "Finance", "Agriculture", "Oil", "Iron", "Gold"],
+  "Genetic Age":      ["Energy", "Defense", "Technology", "Finance", "Agriculture", "Nano", "Oil", "Iron", "Gold"],
+  "Synthetic Age":    ["Energy", "Defense", "Technology", "Finance", "Agriculture", "Nano", "Oil", "Iron", "Gold"],
+  "Nano Age":         ["Energy", "Defense", "Technology", "Finance", "Agriculture", "Nano", "Oil", "Iron", "Gold"],
 };
 
 // Stock cap by epoch index
