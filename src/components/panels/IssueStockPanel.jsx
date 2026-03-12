@@ -54,7 +54,7 @@ export default function IssueStockPanel({ nation, onClose, onRefresh }) {
   }, [nation?.id]);
 
   if (!nation) return null;
-  const sectors = SECTORS_BY_EPOCH[nation.epoch] || ["Agriculture", "Energy"];
+  const sectors = SECTORS_BY_EPOCH[nation.epoch] || ["Agriculture", "Energy", "Stone", "Iron", "Gold", "Finance", "Technology", "Oil"];
 
   async function issue() {
     if (!companyName || !ticker || atCap) return;
