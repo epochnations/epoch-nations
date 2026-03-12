@@ -144,7 +144,6 @@ const STATUS_STYLE = {
 // ── Main Page ────────────────────────────────────────────────────────────────
 export default function Home() {
   const navigate = useNavigate();
-  const [authModal, setAuthModal] = useState(null); // null | 'login' | 'signup' | 'forgot'
   const [supportOpen, setSupportOpen] = useState(false);
   const [forgeOpen, setForgeOpen] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
