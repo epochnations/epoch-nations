@@ -134,7 +134,13 @@ export default function NationSharePanel({ nation, allNations }) {
         {/* Share buttons */}
         <div className="flex flex-wrap gap-2 pt-1">
           <SocialButton icon={Twitter} label="Share on X" color="#1d9bf0" href={twitterShare} />
-          <SocialButton icon={Facebook} label="Facebook" color="#1877f2" href={facebookShare} />
+          <button
+            onClick={openFacebook}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all"
+            style={{ background: "#1877f218", border: "1px solid #1877f235", color: "#1877f2" }}
+          >
+            <Facebook size={15} /> Facebook
+          </button>
           <SocialButton icon={Link} label="Copy Profile Link" color="#a78bfa" href="#"
             onClick={(e) => { e.preventDefault(); navigator.clipboard.writeText(profileUrl); }} />
           <button
