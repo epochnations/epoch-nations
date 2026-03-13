@@ -199,6 +199,12 @@ export default function NationalProfile() {
             onRefresh={() => loadAll(user?.email)}
           />
         )}
+        {activeTab === "share" && (
+          <NationSharePanel
+            nation={myNation}
+            allNations={allNations}
+          />
+        )}
       </main>
     </div>
   );
