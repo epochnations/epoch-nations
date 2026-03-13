@@ -100,6 +100,7 @@ const SECTIONS = [
     { title: "Fuel Prices", body: "The Fuel Prices section shows current energy costs based on your Oil reserves, population demand, and global market price. High fuel prices increase construction costs and reduce manufacturing efficiency.", tip: "Fuel prices spike during wars (increased military energy demand). Build strategic oil reserves before any conflict.", deepDive: "#fuel" },
     { title: "Spending & Education", body: "This section shows your Military Spending % and Education Spending % as visual gauges. Higher education spending accelerates tech point generation. Higher military spending boosts defense and unit power.", tip: "The sweet spot for education is 25–35%. Military spending above 40% causes economic drag.", deepDive: "#spending" },
     { title: "Technology Achievements", body: "The bottom of the Metrics Panel lists your Unlocked Technologies with icons. Technologies persist permanently — you never lose them, even if your economy struggles.", tip: "Technologies compound over time. The earlier you unlock a production bonus, the more value it generates over your nation's lifetime.", deepDive: "#tech-list" },
+    { title: "National Advisor", body: "The 🎓 National Advisor button opens an AI assistant that knows your nation's current stats. Ask it anything: 'Why is my GDP dropping?', 'Should I build a University?', 'What's my biggest risk right now?'", tip: "Ask your advisor at the start of every session for a quick situational briefing before making any major decisions.", deepDive: "#national-advisor" },
   ]},
 ];
 
