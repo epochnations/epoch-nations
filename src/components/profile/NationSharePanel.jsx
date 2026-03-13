@@ -44,16 +44,17 @@ function CopyField({ label, value }) {
   );
 }
 
-function SocialButton({ icon: Icon, label, color, href }) {
+function SocialButton({ icon: SocialIcon, label, color, href, onClick }) {
   return (
     <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={onClick}
       className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all"
       style={{ background: `${color}18`, border: `1px solid ${color}35`, color }}
     >
-      <Icon size={15} />
+      <SocialIcon size={15} />
       {label}
     </a>
   );
