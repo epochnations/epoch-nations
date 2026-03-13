@@ -485,7 +485,11 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
     }).catch(() => {});
 
     const isAILoser = !targetNation.owner_email || !(await isHumanPlayer(targetNation.owner_email));
-    if (isAILoser) await spawnReplacementAINation(targetNation);
+    if (isAILoser) {
+      await spawnReplacementAINation(targetNation);
+      // Delete the defeated AI nation so it no longer appears on the map
+      await base44.entities.Nation.delete(targetNation.id);
+    }
   }
 
   async function isHumanPlayer(email) {
