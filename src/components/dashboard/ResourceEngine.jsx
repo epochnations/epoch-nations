@@ -162,31 +162,42 @@ export default function ResourceEngine({ nation, onRefresh }) {
     updates.tech_points = Math.min(tpStorageCap, (fresh.tech_points || 0) + techGain);
 
     // ── STORAGE WARNINGS ─────────────────────────────────────────────────────
-    // Warn at 5,000 (natural cap); hard cap at 6,000 + warehouse
+    // Warn once per resource when hitting cap / near-cap; reset warning when it drops below threshold
     const resKeys = ["res_wood","res_stone","res_gold","res_iron","res_oil","res_food"];
-    let warnedThisTick = false;
     for (const key of resKeys) {
       const val = updates[key] ?? (fresh[key] || 0);
-      if (!warnedThisTick && val >= totalStorageCap) {
-        const resourceName = key.replace("res_", "").toUpperCase();
-        const isNaturalCap = warehouseCap === 0;
-        notifications.push({
-          type: "market_crash", is_read: false,
-          title: `🏗️ ${resourceName} Storage Full — Excess Removed`,
-          message: isNaturalCap
-            ? `${resourceName} hit the natural cap of 6,000 units. Excess has been discarded. Build a Warehouse (Small, Industrial, or Strategic) to expand your storage capacity!`
-            : `${resourceName} hit your storage cap of ${totalStorageCap.toLocaleString()} units. Excess has been discarded. Build more Warehouses to expand further!`,
-          severity: "warning",
-        });
-        warnedThisTick = true;
-      } else if (!warnedThisTick && val >= 5000) {
-        notifications.push({
-          type: "market_crash", is_read: false,
-          title: `📦 ${key.replace("res_","").toUpperCase()} Nearing Natural Cap (5,000)`,
-          message: `You are approaching the 6,000 unit natural storage limit. Build a Warehouse to expand capacity or sell your surplus on the market.`,
-          severity: "info",
-        });
-        warnedThisTick = true;
+      if (val >= totalStorageCap) {
+        // Reset near-cap warning so it can re-fire if resource later drops and rises again
+        warnedNear.current.delete(key);
+        if (!warnedCap.current.has(key)) {
+          warnedCap.current.add(key);
+          const resourceName = key.replace("res_", "").toUpperCase();
+          const isNaturalCap = warehouseCap === 0;
+          notifications.push({
+            type: "market_crash", is_read: false,
+            title: `🏗️ ${resourceName} Storage Full — Excess Removed`,
+            message: isNaturalCap
+              ? `${resourceName} hit the natural cap of 6,000 units. Excess has been discarded. Build a Warehouse (Small, Industrial, or Strategic) to expand your storage capacity!`
+              : `${resourceName} hit your storage cap of ${totalStorageCap.toLocaleString()} units. Excess has been discarded. Build more Warehouses to expand further!`,
+            severity: "warning",
+          });
+        }
+      } else if (val >= 5000) {
+        // Reset hard-cap warning in case it fluctuates
+        warnedCap.current.delete(key);
+        if (!warnedNear.current.has(key)) {
+          warnedNear.current.add(key);
+          notifications.push({
+            type: "market_crash", is_read: false,
+            title: `📦 ${key.replace("res_","").toUpperCase()} Nearing Natural Cap (5,000)`,
+            message: `You are approaching the 6,000 unit natural storage limit. Build a Warehouse to expand capacity or sell your surplus on the market.`,
+            severity: "info",
+          });
+        }
+      } else {
+        // Resource dropped below warning threshold — allow future warnings
+        warnedCap.current.delete(key);
+        warnedNear.current.delete(key);
       }
     }
 
