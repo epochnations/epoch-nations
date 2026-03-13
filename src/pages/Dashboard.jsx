@@ -284,7 +284,9 @@ export default function Dashboard() {
           <a href={createPageUrl("Marketplace")} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-green-500/10 border border-green-500/20 text-green-400 min-h-[44px] flex items-center gap-1.5">
             🏪 Market
           </a>
-
+          <button onClick={() => setShowTour(true)} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 min-h-[44px] flex items-center gap-1.5">
+            📖 Tutorial
+          </button>
         </div>
       </div>
 
