@@ -8,7 +8,7 @@ import TourTooltip from "../components/onboarding/TourTooltip";
 import NationStatsPanel from "../components/dashboard/NationStatsPanel";
 import StockTicker from "../components/dashboard/StockTicker";
 import WorldMap from "../components/dashboard/WorldMap";
-import GlobalLedger from "../components/dashboard/GlobalLedger";
+
 import NotificationsPanel from "../components/dashboard/NotificationsPanel";
 import StockModal from "../components/modals/StockModal";
 import NationModal from "../components/modals/NationModal";
@@ -29,6 +29,7 @@ import LoanRepaymentEngine from "../components/banking/LoanRepaymentEngine";
 import GlobalCommodityEngine from "../components/dashboard/GlobalCommodityEngine";
 import ResearchEngine from "../components/research/ResearchEngine";
 import ResearchPanel from "../components/research/ResearchPanel";
+import NationMetricsPanel from "../components/dashboard/NationMetricsPanel";
 
 export default function Dashboard() {
   const [myNation, setMyNation] = useState(null);
@@ -199,23 +200,25 @@ export default function Dashboard() {
         </div>
       </header>
 
-      {/* DESKTOP BENTO GRID — 3 cols: [Nation Stats] [World Map + Chat] [Stock Ticker + Global Activity] */}
-      <main className="relative z-10 p-4 hidden lg:grid gap-4" style={{ height: "calc(100vh - 57px)", gridTemplateColumns: "320px 1fr 480px", gridTemplateRows: "1fr 50%", overflow: "hidden" }}>
+      {/* DESKTOP BENTO GRID — 3 cols: [Nation Stats] [World Map + Chat] [Metrics top / Market Feed bottom] */}
+      <main className="relative z-10 p-4 hidden lg:grid gap-4" style={{ height: "calc(100vh - 57px)", gridTemplateColumns: "320px 1fr 380px", gridTemplateRows: "1fr 50%", overflow: "hidden" }}>
         {/* Col 1: Nation Stats — full height */}
         <div style={{ gridRow: "1 / 3", overflowY: "auto" }}><NationStatsPanel nation={myNation} /></div>
         {/* Col 2 row 1: World Map */}
         <div style={{ gridRow: "1 / 2", overflow: "hidden" }}>
           <WorldMap myNation={myNation} onSelectNation={n => setSelectedNation(n)} onOpenAdvisor={() => setShowAdvisor(true)} />
         </div>
-        {/* Col 2 row 2: World Chat */}
+        {/* Col 2 row 2: World Chat (includes Global Activity tab) */}
         <div style={{ gridColumn: "2 / 3", gridRow: "2 / 3", minWidth: 0, overflow: "hidden" }}>
           <WorldChat myNation={myNation} user={user} />
         </div>
-        {/* Col 3 row 1: Stock Ticker (Market Feed) */}
-        <div style={{ gridRow: "1 / 2", overflowY: "auto" }}><StockTicker onSelectStock={s => setSelectedStock(s)} /></div>
-        {/* Col 3 row 2: Global Activity */}
+        {/* Col 3 row 1: Nation Metrics (Core Metrics, Fuel, Spending, Technology) */}
+        <div style={{ gridRow: "1 / 2", overflowY: "auto" }}>
+          <NationMetricsPanel nation={myNation} />
+        </div>
+        {/* Col 3 row 2: Market Feed (Stock Ticker) */}
         <div style={{ gridRow: "2 / 3", minHeight: 0, overflow: "hidden" }}>
-          <GlobalLedger />
+          <StockTicker onSelectStock={s => setSelectedStock(s)} />
         </div>
       </main>
 
