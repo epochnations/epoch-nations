@@ -30,13 +30,7 @@ const RESOURCE_DEFS = [
   { key: "res_food",  label: "Food",  resKey: "food"  },
 ];
 
-const CORE_METRICS = [
-  { key: "stability",       label: "Stability",      max: 100, color: "#22d3ee" },
-  { key: "public_trust",    label: "Public Trust",   max: 1,   color: "#a78bfa", format: v => `${Math.round(v * 100)}%` },
-  { key: "manufacturing",   label: "Manufacturing",  max: 200, color: "#34d399" },
-  { key: "defense_level",   label: "Defense",        max: 200, color: "#f87171" },
-  { key: "unit_power",      label: "Unit Power",     max: 200, color: "#fb923c" },
-];
+
 
 /** Wraps a value display with a glow flash when it changes */
 function FlashStat({ value, className = "", style = {}, children }) {
