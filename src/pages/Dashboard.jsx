@@ -47,7 +47,6 @@ export default function Dashboard() {
   const [showAdvisor, setShowAdvisor] = useState(false);
   const [showResearch, setShowResearch] = useState(false);
   const [showTour, setShowTour] = useState(false);
-  const [tourStep, setTourStep] = useState(0);
 
   const refreshDebounceRef = useRef(null);
   const userEmailRef = useRef(null);
