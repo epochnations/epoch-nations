@@ -686,65 +686,67 @@ export default function WorldChat({ myNation, user }) {
         )}
 
         {/* Input area */}
-        {channel !== "activity" && <div className="px-2 pb-2 pt-1 border-t shrink-0 relative" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
-          {showEmoji && (
-            <div className="absolute bottom-full left-2 mb-1 bg-[#0c1220] border border-white/10 rounded-xl p-2 flex flex-wrap gap-1 w-52 shadow-2xl z-20">
-              {EMOJIS.map(e => (
-                <button key={e} title={EMOJI_LABELS[e]}
-                  onClick={() => { setInput(i => i + e); setShowEmoji(false); inputRef.current?.focus(); }}
-                  className="text-lg hover:scale-125 transition-transform">{e}</button>
-              ))}
+        {channel !== "activity" && (
+          <div className="px-2 pb-2 pt-1 border-t shrink-0 relative" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+            {showEmoji && (
+              <div className="absolute bottom-full left-2 mb-1 bg-[#0c1220] border border-white/10 rounded-xl p-2 flex flex-wrap gap-1 w-52 shadow-2xl z-20">
+                {EMOJIS.map(e => (
+                  <button key={e} title={EMOJI_LABELS[e]}
+                    onClick={() => { setInput(i => i + e); setShowEmoji(false); inputRef.current?.focus(); }}
+                    className="text-lg hover:scale-125 transition-transform">{e}</button>
+                ))}
+              </div>
+            )}
+            <div className="flex gap-1.5 items-center">
+              <button onClick={() => setShowEmoji(s => !s)}
+                className="shrink-0 text-base px-1.5 py-1 rounded-lg hover:bg-white/5 transition-colors" title="Emoji">😊</button>
+              {isAdmin && channel !== "system" && (
+                <button onClick={() => { setInput("/announce "); setChannel("system"); inputRef.current?.focus(); }}
+                  title="Create announcement"
+                  className="shrink-0 p-1.5 rounded-lg hover:bg-violet-500/10 text-violet-500/50 hover:text-violet-400 transition-colors">
+                  <Megaphone size={12} />
+                </button>
+              )}
+              <input
+                ref={inputRef}
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+                  if (e.key === "Escape") { setReplyTo(null); setShowEmoji(false); }
+                }}
+                placeholder={myNation ? `Message #${channel} or @NationName for DM${isMod ? " or /command" : ""}…` : "Create a nation to chat"}
+                disabled={!myNation}
+                maxLength={400}
+                className="flex-1 border rounded-xl px-3 py-1.5 text-xs focus:outline-none transition-all"
+                style={{ color: "#1e293b", background: "#f1f5f9", borderColor: "rgba(100,116,139,0.3)" }}
+              />
+              <button onClick={sendMessage} disabled={!input.trim() || !myNation || sending}
+                className="shrink-0 p-1.5 rounded-xl border transition-all disabled:opacity-25"
+                style={{ background: "rgba(34,211,238,0.12)", borderColor: "rgba(34,211,238,0.2)", color: "#22d3ee" }}>
+                <Send size={13} />
+              </button>
             </div>
-          )}
-          <div className="flex gap-1.5 items-center">
-            <button onClick={() => setShowEmoji(s => !s)}
-              className="shrink-0 text-base px-1.5 py-1 rounded-lg hover:bg-white/5 transition-colors" title="Emoji">😊</button>
-            {isAdmin && channel !== "system" && (
-              <button onClick={() => { setInput("/announce "); setChannel("system"); inputRef.current?.focus(); }}
-                title="Create announcement"
-                className="shrink-0 p-1.5 rounded-lg hover:bg-violet-500/10 text-violet-500/50 hover:text-violet-400 transition-colors">
-                <Megaphone size={12} />
-              </button>
-            )}
-            <input
-              ref={inputRef}
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={e => {
-                if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-                if (e.key === "Escape") { setReplyTo(null); setShowEmoji(false); }
-              }}
-              placeholder={myNation ? `Message #${channel} or @NationName for DM${isMod ? " or /command" : ""}…` : "Create a nation to chat"}
-              disabled={!myNation}
-              maxLength={400}
-              className="flex-1 border rounded-xl px-3 py-1.5 text-xs focus:outline-none transition-all"
-              style={{ color: "#1e293b", background: "#f1f5f9", borderColor: "rgba(100,116,139,0.3)" }}
-            />
-            <button onClick={sendMessage} disabled={!input.trim() || !myNation || sending}
-              className="shrink-0 p-1.5 rounded-xl border transition-all disabled:opacity-25"
-              style={{ background: "rgba(34,211,238,0.12)", borderColor: "rgba(34,211,238,0.2)", color: "#22d3ee" }}>
-              <Send size={13} />
-            </button>
+            <div className="mt-1.5 flex items-center gap-2 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+              {(isMod
+                ? ["/trade", "/diplomacy", "/blockword", "/mute", "/warn"]
+                : ["/trade", "/diplomacy", "/sanction", "/spy", "/aid"]
+              ).map(cmd => (
+                <button key={cmd} onClick={() => { setInput(cmd + " "); inputRef.current?.focus(); }}
+                  className="shrink-0 text-[9px] font-bold ep-mono px-1.5 py-0.5 rounded-md border border-white/10 text-slate-600 hover:text-cyan-400 hover:border-cyan-500/30 transition-colors">
+                  {cmd}
+                </button>
+              ))}
+              {isMod && (
+                <>
+                  <div className="w-px h-3 bg-white/10 shrink-0" />
+                  <Shield size={8} className="text-orange-400/50 shrink-0" />
+                  <span className="text-[9px] text-orange-400/40 ep-mono shrink-0">Mod active</span>
+                </>
+              )}
+            </div>
           </div>
-          <div className="mt-1.5 flex items-center gap-2 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
-            {(isMod
-              ? ["/trade", "/diplomacy", "/blockword", "/mute", "/warn"]
-              : ["/trade", "/diplomacy", "/sanction", "/spy", "/aid"]
-            ).map(cmd => (
-              <button key={cmd} onClick={() => { setInput(cmd + " "); inputRef.current?.focus(); }}
-                className="shrink-0 text-[9px] font-bold ep-mono px-1.5 py-0.5 rounded-md border border-white/10 text-slate-600 hover:text-cyan-400 hover:border-cyan-500/30 transition-colors">
-                {cmd}
-              </button>
-            ))}
-            {isMod && (
-              <>
-                <div className="w-px h-3 bg-white/10 shrink-0" />
-                <Shield size={8} className="text-orange-400/50 shrink-0" />
-                <span className="text-[9px] text-orange-400/40 ep-mono shrink-0">Mod active</span>
-              </>
-            )}
-          </div>
-        </div>}
+        )}
       </div>
 
       {showPrivate && myNation && (
