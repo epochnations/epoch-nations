@@ -278,32 +278,7 @@ export default function NationStatsPanel({ nation }) {
         </div>
       </div>
 
-      {/* ── Fuel Prices ── */}
-      {(() => {
-        const oilSupply  = Math.max(1, nation.res_oil || 0);
-        const warMod     = (nation.at_war_with || []).length > 0 ? 1.25 : 1.0;
-        const stability  = Math.max(0.1, (nation.stability || 75) / 100);
-        const baseGas    = 2.80;
-        // demand scales up with population, down with oil reserves
-        const demandMod  = Math.max(0.75, 1 + (pop * 0.02 / 1000) - oilSupply * 0.0001);
-        const gasPrice   = parseFloat((baseGas * demandMod * warMod * (1.5 - stability * 0.5)).toFixed(2));
-        const dieselPrice = parseFloat((gasPrice * 1.20).toFixed(2)); // diesel always 20% more
-        return (
-          <div className="rounded-xl px-3 py-2.5 shrink-0" style={{ background: "rgba(251,146,60,0.04)", border: "1px solid rgba(251,146,60,0.12)" }}>
-            <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase mb-2">FUEL PRICES</div>
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <div className="text-[10px] text-slate-500 ep-mono">⛽ Gasoline</div>
-                <div className="text-[14px] font-black ep-mono text-orange-400">${gasPrice}/gal</div>
-              </div>
-              <div>
-                <div className="text-[10px] text-slate-500 ep-mono">🚛 Diesel</div>
-                <div className="text-[14px] font-black ep-mono text-amber-400">${dieselPrice}/gal</div>
-              </div>
-            </div>
-          </div>
-        );
-      })()}
+
 
       {/* ── Natural Resources (moved above economy) ── */}
       <div className="shrink-0">
@@ -387,56 +362,6 @@ export default function NationStatsPanel({ nation }) {
         <div className="flex justify-between text-[9px] ep-mono text-slate-600 mt-1">
           <span>Population</span>
           <span>{Math.min(100, Math.round((pop / Math.max(1, nation.housing_capacity || 20)) * 100))}% full</span>
-        </div>
-      </div>
-
-      {/* ── Core Metrics ── */}
-      <div className="shrink-0">
-        <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase mb-2">CORE METRICS</div>
-        <div className="space-y-2.5">
-          {CORE_METRICS.map(({ key, label, max, color, format }) => {
-            const val = nation[key] ?? 0;
-            const display = format ? format(val) : Math.round(val);
-            return (
-              <div key={key}>
-                <div className="flex justify-between text-[12px] mb-1">
-                  <span className="text-slate-400 font-medium">{label}</span>
-                  <span className="ep-mono font-bold" style={{ color }}>{display}</span>
-                </div>
-                <Bar value={key === "public_trust" ? val * 100 : val} max={key === "public_trust" ? 100 : max} color={color} />
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* ── Military ── */}
-      <div className="rounded-xl px-3 py-2.5 shrink-0 grid grid-cols-2 gap-3"
-        style={{ background: "rgba(248,113,113,0.05)", border: "1px solid rgba(248,113,113,0.12)" }}>
-        <div>
-          <div className="text-[11px] text-slate-500 ep-mono uppercase">Spending</div>
-          <div className="text-[14px] font-black ep-mono text-red-400">{nation.military_spending || 20}%</div>
-        </div>
-        <div>
-          <div className="text-[11px] text-slate-500 ep-mono uppercase">Education</div>
-          <div className="text-[14px] font-black ep-mono text-blue-400">{nation.education_spending || 20}%</div>
-        </div>
-      </div>
-
-      {/* ── Technology ── */}
-      <div className="shrink-0">
-        <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase mb-2">TECHNOLOGY</div>
-        <div className="grid grid-cols-2 gap-2">
-          <div className="rounded-xl px-2.5 py-2 text-center" style={{ background: "rgba(139,92,246,0.07)", border: "1px solid rgba(139,92,246,0.15)" }}>
-            <div className="text-[11px] text-slate-500 ep-mono">Tech Points</div>
-            <FlashStat value={Math.round(nation.tech_points || 0)} className="text-[15px] font-black ep-mono text-violet-400">
-              {(nation.tech_points || 0).toLocaleString()}
-            </FlashStat>
-          </div>
-          <div className="rounded-xl px-2.5 py-2 text-center" style={{ background: "rgba(139,92,246,0.07)", border: "1px solid rgba(139,92,246,0.15)" }}>
-            <div className="text-[11px] text-slate-500 ep-mono">Techs</div>
-            <div className="text-[15px] font-black ep-mono text-violet-400">{(nation.unlocked_techs || []).length}</div>
-          </div>
         </div>
       </div>
 
