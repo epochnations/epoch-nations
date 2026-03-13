@@ -268,6 +268,121 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
       nation_color: myNation.flag_color,
       image_url: annexImageUrl
     });
+
+    // ── If the defeated nation is an AI (no matching user), spawn a new AI nation ──
+    const isAILoser = !targetNation.owner_email || !(await isHumanPlayer(targetNation.owner_email));
+    if (isAILoser) {
+      await spawnReplacementAINation(targetNation);
+    }
+  }
+
+  async function isHumanPlayer(email) {
+    if (!email) return false;
+    try {
+      const users = await base44.entities.User.list();
+      return users.some(u => u.email === email);
+    } catch { return false; }
+  }
+
+  async function spawnReplacementAINation(defeatedNation) {
+    const AI_NAMES = [
+      "New Veldoria","Rising Caldeth","Restored Aethon","Reborn Morkai","Resurgent Draxis",
+      "Nova Herath","Phoenix Solund","Renewed Kalvos","Ascendant Thyra","Reforged Ozmund",
+      "Revived Brexar","Second Valon","Rekindled Morthis","Awakened Styrax","Resurgent Queldar"
+    ];
+    const FLAG_EMOJIS = ["🏴","⚔️","🦅","🐉","🌟","🔱","🛡️","🌙","☀️","🦁","🐯","🌊"];
+    const FLAG_COLORS = ["#3b82f6","#ef4444","#10b981","#f59e0b","#8b5cf6","#06b6d4","#f97316","#ec4899","#64748b","#84cc16"];
+    const GOV_TYPES = ["Democracy","Federal Republic","Constitutional Monarchy","Technocracy","Military Junta","Oligarchy","Socialist Republic"];
+    const LEADER_FIRSTS = ["Arman","Erika","Viktor","Soren","Yuna","Marcus","Dayo","Leila","Otto","Zara","Kai","Raj","Felix","Hana","Dmitri"];
+    const LEADER_LASTS  = ["Petrov","Vogel","Laurent","Stahl","Osei","Tanaka","Reyes","Novak","Kimura","Torres","Mendez","Fischer","Singh","Yamamoto","Ivanova"];
+
+    // Pick a unique name (avoid collisions)
+    const existingNations = await base44.entities.Nation.list();
+    const existingNames = new Set(existingNations.map(n => n.name));
+    const seed = Date.now();
+    const pick = arr => arr[seed % arr.length];
+
+    let newName = pick(AI_NAMES);
+    if (existingNames.has(newName)) newName = `${pick(AI_NAMES)} ${Math.floor(Math.random() * 900) + 100}`;
+
+    const govType = pick(GOV_TYPES);
+    const flagEmoji = FLAG_EMOJIS[seed % FLAG_EMOJIS.length];
+    const flagColor = FLAG_COLORS[(seed >> 2) % FLAG_COLORS.length];
+    const leaderName = `${LEADER_FIRSTS[(seed >> 3) % LEADER_FIRSTS.length]} ${LEADER_LASTS[(seed >> 5) % LEADER_LASTS.length]}`;
+
+    // Spawn with Stone Age starter stats — fresh learner, no memory of the past
+    const newNation = await base44.entities.Nation.create({
+      name: newName,
+      leader: leaderName,
+      owner_email: defeatedNation.owner_email || "", // keep same owner_email (still AI — no real user)
+      government_type: govType,
+      epoch: "Stone Age",
+      tech_points: 0,
+      tech_level: 1,
+      gdp: 200,
+      stability: 65,
+      public_trust: 0.9,
+      currency: 500,
+      manufacturing: 20,
+      education_spending: 20,
+      military_spending: 20,
+      unit_power: 10,
+      defense_level: 10,
+      population: 10,
+      housing_capacity: 20,
+      tax_rates: { income: 15, sales: 8, corporate: 12, tariff: 5 },
+      flag_color: flagColor,
+      flag_emoji: flagEmoji,
+      allies: [],
+      at_war_with: [],
+      is_in_market_crash: false,
+      crash_turns_remaining: 0,
+      unlocked_techs: [],
+      res_wood: 100,
+      res_stone: 100,
+      res_gold: 50,
+      res_oil: 0,
+      res_food: 200,
+      res_iron: 0,
+      workers_farmers: 3,
+      workers_hunters: 2,
+      workers_fishermen: 0,
+      workers_lumberjacks: 2,
+      workers_quarry: 1,
+      workers_miners: 1,
+      workers_oil_engineers: 0,
+      workers_builders: 1,
+      workers_soldiers: 0,
+      workers_researchers: 0,
+      workers_industrial: 0,
+    });
+
+    // Give the new AI nation a starter stock
+    await base44.entities.Stock.create({
+      company_name: `${newName} Trading Co.`,
+      ticker: newName.replace(/\s+/g, "").substring(0, 3).toUpperCase() + "T",
+      nation_id: newNation.id,
+      nation_name: newName,
+      sector: "Agriculture",
+      total_shares: 500,
+      available_shares: 500,
+      base_price: 5,
+      current_price: 5,
+      price_history: [5],
+      market_cap: 2500,
+      is_crashed: false,
+      epoch_required: "Stone Age"
+    });
+
+    await base44.entities.NewsArticle.create({
+      headline: `🌱 NEW NATION RISES: ${newName} Emerges from the Ashes of ${defeatedNation.name}`,
+      body: `As the dust settles on the ruins of ${defeatedNation.name}, a new civilization has emerged — ${newName}, led by ${leaderName}. This fledgling nation enters the world stage at the Stone Age, ready to learn from history and forge a new path.`,
+      category: "milestone",
+      tier: "standard",
+      nation_name: newName,
+      nation_flag: flagEmoji,
+      nation_color: flagColor,
+    });
   }
 
   if (result) {
