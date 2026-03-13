@@ -4,8 +4,8 @@ import { TrendingUp, TrendingDown, Minus, AlertTriangle, ShoppingCart, DollarSig
 
 const COMMODITY_META = {
   food:          { emoji: "🌾", label: "Food",          res: "res_food"  },
-  wood:          { emoji: "🪵", label: "Wood",          res: "res_wood"  },
-  stone:         { emoji: "🪨", label: "Stone",         res: "res_stone" },
+  wood:          { emoji: "🌲", label: "Wood",          res: "res_wood"  },
+  stone:         { emoji: "🗿", label: "Stone",         res: "res_stone" },
   iron:          { emoji: "⚙️", label: "Iron",          res: "res_iron"  },
   steel:         { emoji: "🔩", label: "Steel",         res: null        },
   oil:           { emoji: "🛢️", label: "Oil",           res: "res_oil"   },
