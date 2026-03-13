@@ -106,6 +106,69 @@ async function tickNation(base44, nation) {
   await base44.asServiceRole.entities.Nation.update(nation.id, updates);
 }
 
+const LEADER_FIRSTS = ["Arman","Erika","Viktor","Soren","Yuna","Marcus","Dayo","Leila","Otto","Zara","Cyrus","Petra","Rael","Nora","Idris"];
+const LEADER_LASTS  = ["Petrov","Vogel","Laurent","Stahl","Osei","Tanaka","Reyes","Novak","Kimura","Torres","Ashford","Miran","Voss","Khalid","Stern"];
+const AI_SECTORS    = ["Agriculture","Defense","Technology","Finance","Energy","Stone","Iron","Timber"];
+
+function randomLeader(seed) {
+  const s = seed || Date.now();
+  return `${LEADER_FIRSTS[s % LEADER_FIRSTS.length]} ${LEADER_LASTS[(s >> 3) % LEADER_LASTS.length]}`;
+}
+
+async function ensureLeaderName(base44, nation) {
+  if (!nation.leader || nation.leader.trim() === "") {
+    const seed = nation.id.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
+    await base44.asServiceRole.entities.Nation.update(nation.id, {
+      leader: randomLeader(seed)
+    });
+  }
+}
+
+async function ensureAIStock(base44, nation) {
+  // Only for AI nations (no real owner_email or empty)
+  if (nation.owner_email && nation.owner_email.trim() !== "") return;
+  const existing = await base44.asServiceRole.entities.Stock.filter({ nation_id: nation.id });
+  if (existing.length > 0) return;
+  const seed = nation.id.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  const sector = AI_SECTORS[seed % AI_SECTORS.length];
+  const ticker = (nation.name || "AI").replace(/\s+/g,"").substring(0,3).toUpperCase() + "T";
+  const basePrice = 3 + (seed % 12);
+  await base44.asServiceRole.entities.Stock.create({
+    company_name: `${nation.name} Trading Co.`,
+    ticker,
+    nation_id: nation.id,
+    nation_name: nation.name,
+    sector,
+    total_shares: 500,
+    available_shares: 500,
+    base_price: basePrice,
+    current_price: basePrice,
+    price_history: [basePrice],
+    market_cap: basePrice * 500,
+    is_crashed: false,
+    epoch_required: "Stone Age",
+  });
+}
+
+async function tickAIStockPrice(base44, nation) {
+  if (nation.owner_email && nation.owner_email.trim() !== "") return;
+  const stocks = await base44.asServiceRole.entities.Stock.filter({ nation_id: nation.id });
+  for (const s of stocks) {
+    if (s.is_crashed) continue;
+    // Small random walk based on nation GDP/stability
+    const gdpFactor = ((nation.gdp || 200) / 500);
+    const stabFactor = ((nation.stability || 65) / 100);
+    const drift = (gdpFactor + stabFactor - 1) * 0.02; // -2% to +2%
+    const noise = (Math.random() - 0.5) * 0.06;
+    const newPrice = Math.max(0.5, parseFloat((s.current_price * (1 + drift + noise)).toFixed(2)));
+    await base44.asServiceRole.entities.Stock.update(s.id, {
+      current_price: newPrice,
+      price_history: [...(s.price_history || []), newPrice].slice(-20),
+      market_cap: parseFloat((newPrice * s.total_shares).toFixed(2)),
+    });
+  }
+}
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -131,6 +194,9 @@ Deno.serve(async (req) => {
     for (const nation of nations) {
       try {
         await tickNation(base44, nation);
+        await ensureLeaderName(base44, nation);
+        await ensureAIStock(base44, nation);
+        await tickAIStockPrice(base44, nation);
         processed++;
       } catch { /* skip broken nation */ }
       // Stagger writes to avoid rate limiting
