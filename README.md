@@ -1,92 +1,122 @@
-Running Epoch Nations with Base44
+# 🌍 Epoch Nations
 
-Epoch Nations is deployed using Base44, which automatically builds and publishes the application when changes are pushed to the repository.
+![Version](https://img.shields.io/badge/version-alpha-blue)
+![Node](https://img.shields.io/badge/node-%3E%3D18-green)
+![License](https://img.shields.io/badge/license-open--source-brightgreen)
+![Contributions](https://img.shields.io/badge/contributions-welcome-orange)
 
-Base44 provides the hosted environment used for the official game instance, but developers can still run the project locally or host their own servers independently.
+Epoch Nations is a **persistent civilization simulation game** where players build nations from the earliest stages of human development to advanced global civilizations.
 
-Base44 Development Setup
+Players manage:
 
-If you want to connect your local development environment to the Base44 deployment environment, follow these steps.
+- Resources  
+- Population  
+- Cities  
+- Global Trade  
+- Diplomacy  
+- Research  
+- Economic Systems  
+- Military Strategy  
 
-1 Clone the Repository
-git clone https://github.com/YOUR_REPO/epoch-nations.git
-cd epoch-nations
-2 Install Dependencies
+Unlike traditional strategy games, **Epoch Nations runs as a living world simulation** where nations evolve continuously and the global economy changes over time.
 
-Install required Node.js packages:
+---
 
-npm install
-3 Configure Environment Variables
+# 📖 Table of Contents
 
-Create a file called:
+- About Epoch Nations
+- Why Play Epoch Nations
+- Features
+- System Requirements
+- Running the Game Locally
+- Hosting a Server
+- Forge SDK (Plugin System)
+- Plugin Development
+- Architecture Overview
+- Economic Simulation Engine
+- Plugin Marketplace Roadmap
+- Contributing
+- License
 
-.env.local
+---
 
-Add the required Base44 configuration variables:
+# 🧭 About Epoch Nations
 
-VITE_BASE44_APP_ID=your_app_id
-VITE_BASE44_APP_BASE_URL=your_backend_url
+Epoch Nations simulates the **rise and evolution of civilizations** inside a persistent world.
 
-Example:
+Players start with:
 
-VITE_BASE44_APP_ID=cbef744a8545c389ef439ea6
-VITE_BASE44_APP_BASE_URL=https://my-to-do-list-81bfaad7.base44.app
+- small populations  
+- limited infrastructure  
+- basic resources  
 
-These values allow your local development server to connect to the Base44 backend services.
+Over time they develop:
 
-4 Run the Development Server
+- cities  
+- industrial economies  
+- global trade networks  
+- research institutions  
+- military forces  
+- diplomatic alliances  
 
-Start the local development environment:
+The game world evolves through **multiple historical epochs**, from primitive settlements to advanced technological societies.
 
-npm run dev
+Unlike traditional strategy games that reset after each match, Epoch Nations runs as a **continuous evolving simulation**.
 
-The game will be available at:
+---
 
-http://localhost:5173
-Publishing Updates to Base44
+# 🎮 Why Play Epoch Nations
 
-When development changes are ready to be deployed:
+## Persistent World
 
-Commit your changes to GitHub
+The world continues evolving even when players are offline.
 
-Open the Base44 dashboard
+Markets fluctuate, nations grow, and diplomacy shifts.
 
-Click Publish
+---
 
-Base44 will automatically rebuild and deploy the updated game.
+## Deep Economic Simulation
 
-Base44 Documentation
+The game models real macroeconomic systems:
 
-Official documentation:
+- GDP
+- Inflation
+- Unemployment
+- Global commodity markets
+- Banking systems
+- Stock markets
 
-https://docs.base44.com/Integrations/Using-GitHub
+---
 
-Base44 Support
+## Global Diplomacy
 
-Support portal:
+Players can:
 
-https://app.base44.com/support
+- negotiate alliances
+- form trade agreements
+- compete for global influence
+- engage in strategic conflict
 
-Important Note for Contributors
+---
 
-Base44 is used for deployment only.
+## Technological Progression
 
-The game itself is designed to run:
+Civilizations progress through multiple **epochs of development** through research.
 
-locally
+---
 
-on custom servers
+## Extensible Modding System
 
-on VPS hosting environments
+Epoch Nations includes a **Forge SDK plugin system** allowing developers to add new game features.
 
-Developers working on gameplay features or Forge plugins do not need to use Base44 directly unless they want to test deployment behavior.
+---
 
-Plugin Development with Base44 (Optional)
+# ⚙️ System Requirements
 
-Developers may optionally use Base44 AI tools to generate plugins for the Forge SDK.
+## Minimum
 
-Example prompt:
-
-Create an Epoch Nations plugin that adds a Solar Power Plant building producing 50 energy per tick.
-
-The generated plugin should follow the standard Forge plugin structure and be submitted as a pull request.
+```text
+CPU: 2 cores
+RAM: 4 GB
+Storage: 5 GB
+Node.js: v18+
