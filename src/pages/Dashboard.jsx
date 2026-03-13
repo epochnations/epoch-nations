@@ -293,6 +293,9 @@ export default function Dashboard() {
           <button onClick={() => setShowTour(true)} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 min-h-[44px] flex items-center gap-1.5">
             📖 Tutorial
           </button>
+          <a href={createPageUrl("HallOfNations")} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-amber-500/10 border border-amber-500/20 text-amber-400 min-h-[44px] flex items-center gap-1.5">
+            🏆 Hall
+          </a>
         </div>
       </div>
 
