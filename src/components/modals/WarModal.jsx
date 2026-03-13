@@ -62,8 +62,8 @@ function BattleLoadingScreen({ myNation, targetNation, phase }) {
     "Mobilizing forces...",
     "Launching assault...",
     "Calculating casualties...",
-    "Reporting to command...",
-    "Finalizing operations...",
+    "Transferring territory & assets...",
+    "Updating world records...",
   ];
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
