@@ -751,6 +751,47 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
             ))}
           </div>
 
+          {/* Conquest progress — remaining to defeat */}
+          <div className="rounded-xl p-4 space-y-3"
+            style={{ background: "rgba(255,165,0,0.04)", border: "1px solid rgba(255,165,0,0.15)" }}>
+            <div className="flex items-center justify-between">
+              <div className="text-xs font-bold text-orange-300 uppercase tracking-wider">Conquest Progress</div>
+              <div className="text-xs ep-mono px-2 py-0.5 rounded-full font-bold"
+                style={{
+                  background: conquestHits <= 1 ? "rgba(239,68,68,0.2)" : conquestHits <= 3 ? "rgba(251,146,60,0.2)" : "rgba(255,255,255,0.06)",
+                  color: conquestHits <= 1 ? "#f87171" : conquestHits <= 3 ? "#fb923c" : "#94a3b8",
+                  border: `1px solid ${conquestHits <= 1 ? "rgba(239,68,68,0.3)" : conquestHits <= 3 ? "rgba(251,146,60,0.3)" : "rgba(255,255,255,0.1)"}`
+                }}
+              >
+                {conquestHits === Infinity ? "∞ strikes" : conquestHits <= 1 ? "⚠ 1 strike left!" : `~${conquestHits} strikes to conquer`}
+              </div>
+            </div>
+            {[
+              { label: "Stability", cur: defStab, floor: 0, max: 100, pct: stabPct, hits: hitsNeeded, color: "#60a5fa" },
+              { label: "GDP",       cur: defGdp,  floor: 100, max: Math.max(defGdp, 500), pct: gdpPct, hits: hitsGdp, color: "#34d399" },
+              { label: "Mfg",      cur: defMfg,  floor: 10,  max: 100, pct: mfgPct, hits: hitsMfg, color: "#a78bfa" },
+              { label: "Treasury", cur: defTreasury, floor: 0, max: Math.max(defTreasury, 1000), pct: trsPct, hits: hitsTrs, color: "#fbbf24" },
+            ].map(({ label, cur, floor, pct, hits, color }) => (
+              <div key={label} className="space-y-1">
+                <div className="flex justify-between items-center text-[10px]">
+                  <span className="text-slate-500">{label}</span>
+                  <span className="font-mono" style={{ color }}>
+                    {cur.toLocaleString()} → {floor} 
+                    <span className="text-slate-600 ml-1">({hits === Infinity ? "∞" : hits <= 1 ? "💀 1" : hits} hits)</span>
+                  </span>
+                </div>
+                <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
+                  <motion.div
+                    className="h-full rounded-full"
+                    style={{ background: color, width: `${pct}%` }}
+                    animate={{ width: [`${pct}%`, `${Math.max(0, pct - (100 / Math.max(conquestHits, 1)))}%`, `${pct}%`] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+
           {isCritical && (
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
