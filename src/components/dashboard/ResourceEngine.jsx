@@ -15,6 +15,9 @@ import { TICK_MS, TICKS_PER_DAY, WAR_DURATION_MS } from "../game/GameClock";
 export default function ResourceEngine({ nation, onRefresh }) {
   // Use a ref to guard against React Strict Mode double-invocation
   const activeRef = useRef(false);
+  // Track which resources have already triggered a cap warning (reset when resource drops below threshold)
+  const warnedCap  = useRef(new Set()); // resources at hard cap
+  const warnedNear = useRef(new Set()); // resources at 5000 near-cap
 
   useEffect(() => {
     if (!nation?.id) return;
