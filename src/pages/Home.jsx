@@ -6,7 +6,7 @@ import {
   Globe, Sword, FlaskConical, Landmark, TrendingUp, Users, Map,
   Shield, Zap, BookOpen, MessageSquare,
   Mail, Clock, Layers, GitBranch, Bug,
-  ArrowRight, CheckCircle, Rocket, Heart, Cpu, Scroll, Award, Puzzle
+  ArrowRight, CheckCircle, Rocket, Heart, Cpu, Scroll, Award, Puzzle, Github
 } from "lucide-react";
 import DevPortal from "@/components/home/DevPortal";
 
@@ -495,6 +495,10 @@ export default function Home() {
             <button onClick={() => setForgeOpen(true)} className="hover:text-slate-400 transition-colors">Forge SDK</button>
             <a href="#about" className="hover:text-slate-400 transition-colors">About</a>
             <button onClick={() => setSupportOpen(true)} className="hover:text-slate-400 transition-colors">Support</button>
+            <a href="https://github.com/epochnations" target="_blank" rel="noopener noreferrer"
+              className="hover:text-slate-400 transition-colors flex items-center gap-1">
+              <Github size={11} /> GitHub
+            </a>
           </div>
           <div className="text-xs text-slate-700 ep-mono">© 2025–2026 Epoch Nations</div>
         </div>
