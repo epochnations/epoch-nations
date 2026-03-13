@@ -116,7 +116,8 @@ function randomLeader(seed) {
 }
 
 async function ensureLeaderName(base44, nation) {
-  if (!nation.leader || nation.leader.trim() === "") {
+  const l = (nation.leader || "").trim();
+  if (!l || l === "undefined undefined" || l === "undefined" || l.length < 3) {
     const seed = nation.id.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
     await base44.asServiceRole.entities.Nation.update(nation.id, {
       leader: randomLeader(seed)
