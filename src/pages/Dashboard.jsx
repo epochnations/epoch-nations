@@ -236,9 +236,9 @@ export default function Dashboard() {
         <div className="mx-3 mb-3 h-72 shrink-0">
           <WorldChat myNation={myNation} user={user} />
         </div>
-        {/* Global Ledger */}
+        {/* Nation Metrics */}
         <div className="mx-3 mb-3">
-          <GlobalLedger />
+          <NationMetricsPanel nation={myNation} />
         </div>
         {/* Stock Ticker */}
         <div className="mx-3 mb-3 h-64 shrink-0">
