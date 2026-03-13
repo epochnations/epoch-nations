@@ -678,21 +678,43 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
             </div>
           </div>
 
-          {/* War cost */}
-          <div className={`rounded-xl p-4 border ${canAffordWar ? "bg-red-500/8 border-red-500/25" : "bg-white/3 border-white/8 opacity-60"}`}
-            style={{ background: canAffordWar ? "rgba(239,68,68,0.06)" : undefined }}>
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-300 mb-2">
-              <DollarSign size={12} className="text-red-400" /> War Declaration Cost
+          {/* War fund slider */}
+          <div className="rounded-xl p-4 space-y-3"
+            style={{ background: canAffordWar ? "rgba(239,68,68,0.06)" : "rgba(255,255,255,0.03)", border: `1px solid ${canAffordWar ? "rgba(239,68,68,0.25)" : "rgba(255,255,255,0.08)"}` }}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
+                <DollarSign size={12} className="text-red-400" /> War Fund Allocation
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-slate-500">Your treasury:</span>
+                <span className="font-mono text-xs text-slate-300">{Math.floor(treasury).toLocaleString()} cr</span>
+              </div>
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-slate-400">Treasury Fee (8%)</span>
-              <span className={`font-mono font-bold ${canAffordWar ? "text-red-400" : "text-slate-600"}`}>{warCost} cr</span>
+            {/* Slider */}
+            <div className="space-y-1">
+              <input
+                type="range" min={5} max={30} step={1}
+                value={warFundPct}
+                onChange={e => setWarFundPct(Number(e.target.value))}
+                className="w-full"
+                style={{ accentColor: "#ef4444" }}
+              />
+              <div className="flex justify-between text-[10px] text-slate-600">
+                <span>5% (min)</span><span>15%</span><span>30% (max)</span>
+              </div>
             </div>
-            <div className="flex justify-between text-xs mt-1">
-              <span className="text-slate-500">Your Treasury</span>
-              <span className="text-slate-400 font-mono">{Math.floor(myNation.currency)} cr</span>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-slate-400">Committing <span className="font-bold text-white">{warFundPct}%</span> of treasury</span>
+              <motion.span
+                key={warCost}
+                initial={{ scale: 1.3, color: "#ff4444" }}
+                animate={{ scale: 1, color: canAffordWar ? "#f87171" : "#6b7280" }}
+                className="font-mono font-black text-lg"
+              >
+                {warCost.toLocaleString()} cr
+              </motion.span>
             </div>
-            {!canAffordWar && <div className="mt-2 text-xs text-red-400 font-bold">⚠ Insufficient funds to declare war</div>}
+            {!canAffordWar && <div className="text-xs text-red-400 font-bold">⚠ Insufficient funds to declare war</div>}
           </div>
 
           {/* Combat sim */}
