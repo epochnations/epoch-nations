@@ -197,7 +197,7 @@ export default function Dashboard() {
             <BookOpen size={12} /> Tutorial
           </button>
           <button
-            onClick={() => base44.auth.logout(createPageUrl("Onboarding"))}
+            onClick={() => base44.auth.logout("/")}
             className="p-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors text-slate-400 text-xs"
           >
             Exit
