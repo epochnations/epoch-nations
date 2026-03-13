@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-route
 import PageNotFound from './lib/PageNotFound';
 import PluginManager from './pages/PluginManager';
 import Home from './pages/Home';
+import HallOfNations from './pages/HallOfNations';
 // HexWorldMap removed
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
@@ -67,6 +68,7 @@ const AuthenticatedApp = () => {
         />
       ))}
       <Route path="/PluginManager" element={<LayoutWrapper currentPageName="PluginManager"><PluginManager /></LayoutWrapper>} />
+      <Route path="/HallOfNations" element={<LayoutWrapper currentPageName="HallOfNations"><HallOfNations /></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
