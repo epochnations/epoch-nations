@@ -479,7 +479,7 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
           initial={{ opacity: 0, scale: 0.85, y: 30 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ type: "spring", stiffness: 260, damping: 20 }}
-          className="relative w-full max-w-md rounded-2xl overflow-hidden"
+          className="relative w-full max-w-xl rounded-2xl overflow-hidden"
           style={{
             background: result.annexed
               ? "linear-gradient(135deg, #1a0a00 0%, #0f0800 100%)"
