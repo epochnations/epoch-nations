@@ -1,35 +1,196 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
-import { X, Swords, AlertTriangle, Clock, DollarSign } from "lucide-react";
+import { X, Swords, AlertTriangle, DollarSign, Zap, Shield, TrendingDown, Users } from "lucide-react";
+
+// ── Animated particles for battle scene ──────────────────────────────────────
+function Particle({ x, y, color, size, delay }) {
+  return (
+    <motion.div
+      className="absolute rounded-full pointer-events-none"
+      style={{ left: x, top: y, width: size, height: size, background: color }}
+      initial={{ opacity: 1, scale: 1, x: 0, y: 0 }}
+      animate={{ opacity: 0, scale: 0, x: (Math.random() - 0.5) * 120, y: (Math.random() - 0.5) * 120 }}
+      transition={{ duration: 0.8 + Math.random() * 0.6, delay, ease: "easeOut" }}
+    />
+  );
+}
+
+function ExplosionBurst({ active, isCritical }) {
+  const particles = Array.from({ length: isCritical ? 24 : 14 }, (_, i) => ({
+    id: i,
+    x: `${40 + Math.random() * 20}%`,
+    y: `${30 + Math.random() * 40}%`,
+    color: isCritical
+      ? ["#ff4444","#ff8800","#ffdd00","#ff2200","#ffffff"][i % 5]
+      : ["#ff4444","#ff8800","#ffdd00","#ff6600"][i % 4],
+    size: 4 + Math.random() * 8,
+    delay: i * 0.04,
+  }));
+  if (!active) return null;
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {particles.map(p => <Particle key={p.id} {...p} />)}
+    </div>
+  );
+}
+
+// ── Animated stat bar ──────────────────────────────────────────────────────────
+function DamageBar({ label, value, icon }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      className="flex items-center justify-between"
+    >
+      <span className="text-slate-500 text-xs flex items-center gap-1">{icon}{label}</span>
+      <motion.span
+        className="text-red-400 font-mono text-xs font-bold"
+        initial={{ scale: 1.4, color: "#ff0000" }}
+        animate={{ scale: 1, color: "#f87171" }}
+        transition={{ duration: 0.4, delay: 0.2 }}
+      >
+        {value}
+      </motion.span>
+    </motion.div>
+  );
+}
+
+// ── Loading battle screen ──────────────────────────────────────────────────────
+function BattleLoadingScreen({ myNation, targetNation, phase }) {
+  const phases = [
+    "Mobilizing forces...",
+    "Launching assault...",
+    "Calculating casualties...",
+    "Reporting to command...",
+    "Finalizing operations...",
+  ];
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ background: "rgba(0,0,0,0.92)", backdropFilter: "blur(20px)" }}>
+
+      {/* Animated war background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {Array.from({ length: 20 }, (_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-px"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: "-10%",
+              height: `${30 + Math.random() * 40}%`,
+              background: `linear-gradient(180deg, transparent, ${i % 3 === 0 ? "#ff4400" : i % 3 === 1 ? "#ff8800" : "#ffdd00"}88, transparent)`,
+            }}
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: [0, 0.8, 0], y: ["0%", "120%"] }}
+            transition={{ duration: 1 + Math.random(), delay: Math.random() * 1.5, repeat: Infinity, repeatDelay: Math.random() * 2 }}
+          />
+        ))}
+      </div>
+
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="relative text-center space-y-8 z-10 max-w-sm w-full"
+      >
+        {/* Battle scene */}
+        <div className="flex items-center justify-center gap-6">
+          <motion.div
+            animate={{ x: [0, 8, 0], rotate: [0, -5, 0] }}
+            transition={{ repeat: Infinity, duration: 0.4 }}
+            className="text-center"
+          >
+            <div className="text-5xl filter drop-shadow-lg">{myNation.flag_emoji}</div>
+            <div className="text-[10px] text-green-400 font-bold ep-mono mt-1">ATTACKING</div>
+          </motion.div>
+
+          <div className="relative">
+            <motion.div
+              animate={{ scale: [1, 1.3, 1], rotate: [0, 15, -15, 0] }}
+              transition={{ repeat: Infinity, duration: 0.3 }}
+              className="text-4xl"
+            >
+              ⚔️
+            </motion.div>
+            {/* Shockwave rings */}
+            {[0, 1, 2].map(i => (
+              <motion.div
+                key={i}
+                className="absolute inset-0 rounded-full border border-red-500"
+                initial={{ scale: 0.5, opacity: 0.8 }}
+                animate={{ scale: 3 + i, opacity: 0 }}
+                transition={{ duration: 1, delay: i * 0.3, repeat: Infinity, repeatDelay: 0.5 }}
+              />
+            ))}
+          </div>
+
+          <motion.div
+            animate={{ x: [0, -5, 0], rotate: [0, 8, 0] }}
+            transition={{ repeat: Infinity, duration: 0.35 }}
+            className="text-center"
+          >
+            <div className="text-5xl filter drop-shadow-lg">{targetNation.flag_emoji}</div>
+            <div className="text-[10px] text-red-400 font-bold ep-mono mt-1">DEFENDING</div>
+          </motion.div>
+        </div>
+
+        {/* Phase text */}
+        <div className="space-y-3">
+          <motion.div
+            key={phase}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-white font-bold text-lg"
+          >
+            {phases[Math.min(phase, phases.length - 1)]}
+          </motion.div>
+
+          {/* Progress bar */}
+          <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.08)" }}>
+            <motion.div
+              className="h-full rounded-full"
+              style={{ background: "linear-gradient(90deg, #ef4444, #f97316, #fbbf24)" }}
+              initial={{ width: "5%" }}
+              animate={{ width: `${Math.min(95, (phase + 1) * 20)}%` }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+            />
+          </div>
+
+          <div className="text-xs text-slate-500 ep-mono">
+            {myNation.name} vs {targetNation.name}
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
 
 export default function WarModal({ targetNation, myNation, onClose, onRefresh }) {
   const [loading, setLoading] = useState(false);
+  const [loadPhase, setLoadPhase] = useState(0);
   const [result, setResult] = useState(null);
+  const [showExplosion, setShowExplosion] = useState(false);
 
   if (!targetNation || !myNation) return null;
 
-  // War declaration cost: 8% of treasury
   const warCost = Math.floor((myNation.currency || 0) * 0.08);
   const canAffordWar = myNation.currency >= warCost && warCost > 0;
-
-  // Combat formula
   const damage = (myNation.tech_level / Math.max(targetNation.defense_level, 1)) * myNation.unit_power;
   const isCritical = damage > 40;
 
   async function launchAttack() {
     if (!canAffordWar) return;
     setLoading(true);
+    setLoadPhase(0);
 
     const damageDealt = parseFloat(damage.toFixed(1));
+    const phaseTimer = setInterval(() => setLoadPhase(p => Math.min(p + 1, 4)), 600);
 
-    // Deduct war cost from attacker
     const attackerWarList = [...(myNation.at_war_with || [])];
     if (!attackerWarList.includes(targetNation.id)) attackerWarList.push(targetNation.id);
-
     const defenderWarList = [...(targetNation.at_war_with || [])];
     if (!defenderWarList.includes(myNation.id)) defenderWarList.push(myNation.id);
 
-    // Real damage to defender stats
     let defenderUpdates = {
       at_war_with: defenderWarList,
       stability: Math.max(0, targetNation.stability - Math.floor(damageDealt * 0.4)),
@@ -48,7 +209,6 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
       defenderUpdates.crash_turns_remaining = 3;
       crashTriggered = true;
 
-      // Devalue top 3 stocks by 20% and lose holdings value
       const defenderStocks = await base44.entities.Stock.filter({ nation_id: targetNation.id });
       const sorted = defenderStocks.sort((a, b) => b.market_cap - a.market_cap).slice(0, 3);
       for (const s of sorted) {
@@ -59,17 +219,13 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
           market_cap: parseFloat((newPrice * s.total_shares).toFixed(2)),
           is_crashed: true
         });
-
-        // Investors holding these stocks lose money proportionally
         const holdings = await base44.entities.StockHolding.filter({ stock_id: s.id });
         for (const h of holdings) {
-          if (h.nation_id === myNation.id) continue; // attacker benefits
+          if (h.nation_id === myNation.id) continue;
           const loss = Math.floor(h.shares_owned * s.current_price * 0.2);
           const holderNations = await base44.entities.Nation.filter({ id: h.nation_id });
           if (holderNations[0]) {
-            await base44.entities.Nation.update(h.nation_id, {
-              currency: Math.max(0, holderNations[0].currency - loss)
-            });
+            await base44.entities.Nation.update(h.nation_id, { currency: Math.max(0, holderNations[0].currency - loss) });
           }
         }
       }
@@ -79,9 +235,8 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
         target_nation_id: targetNation.id,
         type: "market_crash",
         title: "⚠ Market Crash Triggered!",
-        message: `${myNation.name}'s critical strike triggered a market crash! Manufacturing -15%, top stocks -20%. GDP, Stability, and Treasury all damaged.`,
-        severity: "danger",
-        is_read: false
+        message: `${myNation.name}'s critical strike triggered a market crash! Manufacturing -15%, top stocks -20%.`,
+        severity: "danger", is_read: false
       });
     } else {
       await base44.entities.Notification.create({
@@ -89,25 +244,20 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
         target_nation_id: targetNation.id,
         type: "attack_received",
         title: `⚔ War Declared!`,
-        message: `${myNation.name} declared war, dealing ${damageDealt} damage. GDP, Stability, Manufacturing, and Treasury all took hits.`,
-        severity: "danger",
-        is_read: false
+        message: `${myNation.name} declared war, dealing ${damageDealt} damage.`,
+        severity: "danger", is_read: false
       });
     }
 
-    // Apply defender damage
     await base44.entities.Nation.update(targetNation.id, defenderUpdates);
 
-    // Attacker pays war cost + joins war; stamp war start time
     const now = new Date().toISOString();
     await base44.entities.Nation.update(myNation.id, {
       at_war_with: attackerWarList,
       war_started_at: now,
       currency: Math.max(0, myNation.currency - warCost)
     });
-    await base44.entities.Nation.update(targetNation.id, {
-      war_started_at: now
-    });
+    await base44.entities.Nation.update(targetNation.id, { war_started_at: now });
 
     await base44.entities.Transaction.create({
       type: "war_attack",
@@ -119,108 +269,76 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
       total_value: damageDealt
     });
 
-    // Global news alert — generate image
-    let warImageUrl = "";
-    try {
-      const imgRes = await base44.integrations.Core.GenerateImage({
-        prompt: `Epic war scene between two nations, ${crashTriggered ? "massive destruction, market collapse, explosions" : "armies clashing, flags waving"}. Cinematic, dramatic, no text.`
-      });
-      warImageUrl = imgRes.url || "";
-    } catch (_) {}
-    await base44.entities.NewsArticle.create({
+    // Fire image generation WITHOUT awaiting — non-blocking
+    base44.entities.NewsArticle.create({
       headline: crashTriggered
         ? `⚔ INVASION: ${myNation.name} Launches Critical Strike on ${targetNation.name}! Markets Crash!`
         : `⚔ WAR DECLARED: ${myNation.name} Attacks ${targetNation.name}`,
-      body: `${myNation.name} has officially declared war on ${targetNation.name}, paying ${warCost} credits for the war declaration. Damage dealt: ${damageDealt}. ${targetNation.name}'s stability, GDP, manufacturing, and treasury have all been impacted.${crashTriggered ? " A critical strike triggered a market crash!" : ""}`,
+      body: `${myNation.name} declared war on ${targetNation.name}, paying ${warCost} credits. Damage dealt: ${damageDealt}.${crashTriggered ? " A critical strike triggered a market crash!" : ""}`,
       category: "war",
       tier: crashTriggered ? "gold" : "breaking",
       nation_name: myNation.name,
       nation_flag: myNation.flag_emoji,
       nation_color: myNation.flag_color,
-      image_url: warImageUrl
-    });
+    }).catch(() => {});
 
-    // Check defeat conditions: all four pillars collapsed
     const newStability = defenderUpdates.stability;
     const newGdp = defenderUpdates.gdp;
     const newManufacturing = defenderUpdates.manufacturing;
     const newTreasury = defenderUpdates.currency;
+    let annexed = false;
     if (newStability <= 0 && newGdp <= 100 && newManufacturing <= 10 && newTreasury <= 0) {
       await handleAnnexation(damageDealt);
-      setResult({ damage: damageDealt, critical: crashTriggered, annexed: true });
-    } else {
-      setResult({ damage: damageDealt, critical: crashTriggered, annexed: false });
+      annexed = true;
     }
 
+    clearInterval(phaseTimer);
     setLoading(false);
+    setShowExplosion(true);
+    setTimeout(() => setShowExplosion(false), 1200);
+    setResult({ damage: damageDealt, critical: crashTriggered, annexed });
     onRefresh?.();
   }
 
   async function handleAnnexation(damageDealt) {
-    // ── Tally all spoils from the defeated nation ──────────────────────────────
     const allResources = {
-      res_wood:  targetNation.res_wood  || 0,
-      res_stone: targetNation.res_stone || 0,
-      res_gold:  targetNation.res_gold  || 0,
-      res_iron:  targetNation.res_iron  || 0,
-      res_oil:   targetNation.res_oil   || 0,
-      res_food:  targetNation.res_food  || 0,
+      res_wood: targetNation.res_wood || 0, res_stone: targetNation.res_stone || 0,
+      res_gold: targetNation.res_gold || 0, res_iron: targetNation.res_iron || 0,
+      res_oil: targetNation.res_oil || 0, res_food: targetNation.res_food || 0,
     };
-
     const totalResources = Object.values(allResources).reduce((a, b) => a + b, 0);
-    const seizedTreasury  = targetNation.currency  || 0;
-    const seizedPop       = targetNation.population || 0;
-    const seizedHousing   = targetNation.housing_capacity || 0;
+    const seizedTreasury = targetNation.currency || 0;
+    const seizedPop = targetNation.population || 0;
+    const seizedHousing = targetNation.housing_capacity || 0;
 
-    // ── Winner absorbs EVERYTHING from the defeated nation ───────────────────
     await base44.entities.Nation.update(myNation.id, {
-      // Treasury — full seizure
       currency: (myNation.currency || 0) + seizedTreasury,
-      // Economy
       gdp: (myNation.gdp || 0) + Math.floor((targetNation.gdp || 0) * 0.6),
       manufacturing: (myNation.manufacturing || 0) + Math.floor((targetNation.manufacturing || 0) * 0.5),
       national_wealth: (myNation.national_wealth || 0) + Math.floor((targetNation.national_wealth || 0) * 0.4),
-      // Population & housing
       population: (myNation.population || 0) + Math.floor(seizedPop * 0.7),
       housing_capacity: (myNation.housing_capacity || 0) + Math.floor(seizedHousing * 0.5),
-      // All physical resources
-      res_wood:  (myNation.res_wood  || 0) + allResources.res_wood,
-      res_stone: (myNation.res_stone || 0) + allResources.res_stone,
-      res_gold:  (myNation.res_gold  || 0) + allResources.res_gold,
-      res_iron:  (myNation.res_iron  || 0) + allResources.res_iron,
-      res_oil:   (myNation.res_oil   || 0) + allResources.res_oil,
-      res_food:  (myNation.res_food  || 0) + allResources.res_food,
-      // Workers absorbed (partial)
-      workers_farmers:    (myNation.workers_farmers    || 0) + Math.floor((targetNation.workers_farmers    || 0) * 0.5),
-      workers_lumberjacks:(myNation.workers_lumberjacks|| 0) + Math.floor((targetNation.workers_lumberjacks|| 0) * 0.5),
-      workers_quarry:     (myNation.workers_quarry     || 0) + Math.floor((targetNation.workers_quarry     || 0) * 0.5),
-      workers_miners:     (myNation.workers_miners     || 0) + Math.floor((targetNation.workers_miners     || 0) * 0.5),
+      ...Object.fromEntries(Object.entries(allResources).map(([k, v]) => [k, (myNation[k] || 0) + v])),
+      workers_farmers: (myNation.workers_farmers || 0) + Math.floor((targetNation.workers_farmers || 0) * 0.5),
+      workers_lumberjacks: (myNation.workers_lumberjacks || 0) + Math.floor((targetNation.workers_lumberjacks || 0) * 0.5),
+      workers_quarry: (myNation.workers_quarry || 0) + Math.floor((targetNation.workers_quarry || 0) * 0.5),
+      workers_miners: (myNation.workers_miners || 0) + Math.floor((targetNation.workers_miners || 0) * 0.5),
     });
 
-    // ── Defeated nation is fully collapsed — left as a ruin ───────────────────
     await base44.entities.Nation.update(targetNation.id, {
-      stability: 0,
-      gdp: 0,
-      currency: 0,
-      manufacturing: 0,
-      national_wealth: 0,
-      population: 1,
+      stability: 0, gdp: 0, currency: 0, manufacturing: 0, national_wealth: 0, population: 1,
       res_wood: 0, res_stone: 0, res_gold: 0, res_iron: 0, res_oil: 0, res_food: 0,
       workers_farmers: 0, workers_lumberjacks: 0, workers_quarry: 0, workers_miners: 0,
       workers_hunters: 0, workers_fishermen: 0, workers_builders: 0,
       workers_iron_miners: 0, workers_oil_engineers: 0, workers_researchers: 0,
       workers_soldiers: 0, workers_industrial: 0,
-      at_war_with: [],
-      war_started_at: "",
-      allies: [],
-      is_in_market_crash: true,
-      crash_turns_remaining: 10
+      at_war_with: [], war_started_at: "", allies: [],
+      is_in_market_crash: true, crash_turns_remaining: 10
     });
 
-    // ── All defender stocks crash to near-zero ─────────────────────────────────
     const defStocks = await base44.entities.Stock.filter({ nation_id: targetNation.id });
     for (const s of defStocks) {
-      const newPrice = parseFloat((s.current_price * 0.05).toFixed(2)); // near-total collapse
+      const newPrice = parseFloat((s.current_price * 0.05).toFixed(2));
       await base44.entities.Stock.update(s.id, {
         current_price: newPrice,
         price_history: [...(s.price_history || []), newPrice].slice(-20),
@@ -229,51 +347,29 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
       });
     }
 
-    await base44.entities.Notification.create({
-      target_owner_email: targetNation.owner_email,
-      target_nation_id: targetNation.id,
-      type: "attack_received",
-      title: "💀 YOUR NATION HAS BEEN CONQUERED!",
-      message: `${myNation.name} has completely conquered your nation. All your treasury (${seizedTreasury} cr), resources (${totalResources} total), population, and workers have been seized. Your stocks collapsed to near-zero. You must rebuild from nothing.`,
-      severity: "danger",
-      is_read: false
-    });
+    await Promise.all([
+      base44.entities.Notification.create({
+        target_owner_email: targetNation.owner_email, target_nation_id: targetNation.id,
+        type: "attack_received", title: "💀 YOUR NATION HAS BEEN CONQUERED!",
+        message: `${myNation.name} seized all your treasury, resources, population, and workers. You must rebuild from nothing.`,
+        severity: "danger", is_read: false
+      }),
+      base44.entities.Notification.create({
+        target_owner_email: myNation.owner_email, target_nation_id: myNation.id,
+        type: "tech_unlocked", title: `⚔️ CONQUEST COMPLETE: ${targetNation.name} Defeated!`,
+        message: `You seized ${seizedTreasury} cr, ${totalResources} resources, ${Math.floor(seizedPop * 0.7)} population from ${targetNation.name}.`,
+        severity: "success", is_read: false
+      }),
+      base44.entities.NewsArticle.create({
+        headline: `💀 CONQUERED: ${targetNation.name} Falls to ${myNation.name}!`,
+        body: `${myNation.name} conquered ${targetNation.name}, seizing all assets. "${targetNation.name}" is left in ruins.`,
+        category: "war", tier: "gold",
+        nation_name: myNation.name, nation_flag: myNation.flag_emoji, nation_color: myNation.flag_color,
+      })
+    ]);
 
-    // Notify the winner
-    await base44.entities.Notification.create({
-      target_owner_email: myNation.owner_email,
-      target_nation_id: myNation.id,
-      type: "tech_unlocked",
-      title: `⚔️ CONQUEST COMPLETE: ${targetNation.name} Defeated!`,
-      message: `You seized ${seizedTreasury} cr treasury, ${totalResources} total resources, ${Math.floor(seizedPop * 0.7)} population, and workers from ${targetNation.name}. Their nation is in ruins.`,
-      severity: "success",
-      is_read: false
-    });
-
-    let annexImageUrl = "";
-    try {
-      const imgRes = await base44.integrations.Core.GenerateImage({
-        prompt: `Epic military conquest, victorious army planting flag over defeated capital city, spoils of war, cinematic illustration. No text.`
-      });
-      annexImageUrl = imgRes.url || "";
-    } catch (_) {}
-
-    await base44.entities.NewsArticle.create({
-      headline: `💀 CONQUERED: ${targetNation.name} Falls to ${myNation.name}!`,
-      body: `In a total military victory, ${myNation.name} has conquered and stripped ${targetNation.name} of all remaining assets. The victorious nation seized the entire treasury (${seizedTreasury} cr), all physical resources (${totalResources} units), ${Math.floor(seizedPop * 0.7)} citizens, and a portion of the workforce. All stocks of the fallen nation collapsed to near-zero. "${targetNation.name}" is left as a ruin — its leader must rebuild from scratch.`,
-      category: "war",
-      tier: "gold",
-      nation_name: myNation.name,
-      nation_flag: myNation.flag_emoji,
-      nation_color: myNation.flag_color,
-      image_url: annexImageUrl
-    });
-
-    // ── If the defeated nation is an AI (no matching user), spawn a new AI nation ──
     const isAILoser = !targetNation.owner_email || !(await isHumanPlayer(targetNation.owner_email));
-    if (isAILoser) {
-      await spawnReplacementAINation(targetNation);
-    }
+    if (isAILoser) await spawnReplacementAINation(targetNation);
   }
 
   async function isHumanPlayer(email) {
@@ -285,174 +381,275 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
   }
 
   async function spawnReplacementAINation(defeatedNation) {
-    const AI_NAMES = [
-      "New Veldoria","Rising Caldeth","Restored Aethon","Reborn Morkai","Resurgent Draxis",
-      "Nova Herath","Phoenix Solund","Renewed Kalvos","Ascendant Thyra","Reforged Ozmund",
-      "Revived Brexar","Second Valon","Rekindled Morthis","Awakened Styrax","Resurgent Queldar"
-    ];
-    const FLAG_EMOJIS = ["🏴","⚔️","🦅","🐉","🌟","🔱","🛡️","🌙","☀️","🦁","🐯","🌊"];
-    const FLAG_COLORS = ["#3b82f6","#ef4444","#10b981","#f59e0b","#8b5cf6","#06b6d4","#f97316","#ec4899","#64748b","#84cc16"];
-    const GOV_TYPES = ["Democracy","Federal Republic","Constitutional Monarchy","Technocracy","Military Junta","Oligarchy","Socialist Republic"];
-    const LEADER_FIRSTS = ["Arman","Erika","Viktor","Soren","Yuna","Marcus","Dayo","Leila","Otto","Zara","Kai","Raj","Felix","Hana","Dmitri"];
-    const LEADER_LASTS  = ["Petrov","Vogel","Laurent","Stahl","Osei","Tanaka","Reyes","Novak","Kimura","Torres","Mendez","Fischer","Singh","Yamamoto","Ivanova"];
-
-    // Pick a unique name (avoid collisions)
-    const existingNations = await base44.entities.Nation.list();
-    const existingNames = new Set(existingNations.map(n => n.name));
+    const AI_NAMES = ["New Veldoria","Rising Caldeth","Restored Aethon","Reborn Morkai","Nova Herath","Phoenix Solund","Renewed Kalvos","Ascendant Thyra"];
+    const FLAG_EMOJIS = ["🏴","⚔️","🦅","🐉","🌟","🔱","🛡️","🌙","☀️","🦁"];
+    const FLAG_COLORS = ["#3b82f6","#ef4444","#10b981","#f59e0b","#8b5cf6","#06b6d4","#f97316","#ec4899"];
+    const GOV_TYPES = ["Democracy","Federal Republic","Technocracy","Military Junta","Oligarchy"];
+    const LEADER_FIRSTS = ["Arman","Erika","Viktor","Soren","Yuna","Marcus","Dayo","Leila","Otto","Zara"];
+    const LEADER_LASTS = ["Petrov","Vogel","Laurent","Stahl","Osei","Tanaka","Reyes","Novak","Kimura","Torres"];
     const seed = Date.now();
     const pick = arr => arr[seed % arr.length];
-
+    const existingNations = await base44.entities.Nation.list();
+    const existingNames = new Set(existingNations.map(n => n.name));
     let newName = pick(AI_NAMES);
     if (existingNames.has(newName)) newName = `${pick(AI_NAMES)} ${Math.floor(Math.random() * 900) + 100}`;
-
-    const govType = pick(GOV_TYPES);
     const flagEmoji = FLAG_EMOJIS[seed % FLAG_EMOJIS.length];
     const flagColor = FLAG_COLORS[(seed >> 2) % FLAG_COLORS.length];
     const leaderName = `${LEADER_FIRSTS[(seed >> 3) % LEADER_FIRSTS.length]} ${LEADER_LASTS[(seed >> 5) % LEADER_LASTS.length]}`;
-
-    // Spawn with Stone Age starter stats — fresh learner, no memory of the past
     const newNation = await base44.entities.Nation.create({
-      name: newName,
-      leader: leaderName,
-      owner_email: defeatedNation.owner_email || "", // keep same owner_email (still AI — no real user)
-      government_type: govType,
-      epoch: "Stone Age",
-      tech_points: 0,
-      tech_level: 1,
-      gdp: 200,
-      stability: 65,
-      public_trust: 0.9,
-      currency: 500,
-      manufacturing: 20,
-      education_spending: 20,
-      military_spending: 20,
-      unit_power: 10,
-      defense_level: 10,
-      population: 10,
-      housing_capacity: 20,
-      tax_rates: { income: 15, sales: 8, corporate: 12, tariff: 5 },
-      flag_color: flagColor,
-      flag_emoji: flagEmoji,
-      allies: [],
-      at_war_with: [],
-      is_in_market_crash: false,
-      crash_turns_remaining: 0,
-      unlocked_techs: [],
-      res_wood: 100,
-      res_stone: 100,
-      res_gold: 50,
-      res_oil: 0,
-      res_food: 200,
-      res_iron: 0,
-      workers_farmers: 3,
-      workers_hunters: 2,
-      workers_fishermen: 0,
-      workers_lumberjacks: 2,
-      workers_quarry: 1,
-      workers_miners: 1,
-      workers_oil_engineers: 0,
-      workers_builders: 1,
-      workers_soldiers: 0,
-      workers_researchers: 0,
-      workers_industrial: 0,
+      name: newName, leader: leaderName, owner_email: defeatedNation.owner_email || "",
+      government_type: pick(GOV_TYPES), epoch: "Stone Age", tech_points: 0, tech_level: 1,
+      gdp: 200, stability: 65, public_trust: 0.9, currency: 500, manufacturing: 20,
+      education_spending: 20, military_spending: 20, unit_power: 10, defense_level: 10,
+      population: 10, housing_capacity: 20, tax_rates: { income: 15, sales: 8, corporate: 12, tariff: 5 },
+      flag_color: flagColor, flag_emoji: flagEmoji, allies: [], at_war_with: [],
+      is_in_market_crash: false, crash_turns_remaining: 0, unlocked_techs: [],
+      res_wood: 100, res_stone: 100, res_gold: 50, res_oil: 0, res_food: 200, res_iron: 0,
+      workers_farmers: 3, workers_hunters: 2, workers_fishermen: 0, workers_lumberjacks: 2,
+      workers_quarry: 1, workers_miners: 1, workers_oil_engineers: 0, workers_builders: 1,
+      workers_soldiers: 0, workers_researchers: 0, workers_industrial: 0,
     });
-
-    // Give the new AI nation a starter stock
     await base44.entities.Stock.create({
-      company_name: `${newName} Trading Co.`,
-      ticker: newName.replace(/\s+/g, "").substring(0, 3).toUpperCase() + "T",
-      nation_id: newNation.id,
-      nation_name: newName,
-      sector: "Agriculture",
-      total_shares: 500,
-      available_shares: 500,
-      base_price: 5,
-      current_price: 5,
-      price_history: [5],
-      market_cap: 2500,
-      is_crashed: false,
-      epoch_required: "Stone Age"
+      company_name: `${newName} Trading Co.`, ticker: newName.replace(/\s+/g,"").substring(0,3).toUpperCase()+"T",
+      nation_id: newNation.id, nation_name: newName, sector: "Agriculture",
+      total_shares: 500, available_shares: 500, base_price: 5, current_price: 5,
+      price_history: [5], market_cap: 2500, is_crashed: false, epoch_required: "Stone Age"
     });
-
-    await base44.entities.NewsArticle.create({
+    base44.entities.NewsArticle.create({
       headline: `🌱 NEW NATION RISES: ${newName} Emerges from the Ashes of ${defeatedNation.name}`,
-      body: `As the dust settles on the ruins of ${defeatedNation.name}, a new civilization has emerged — ${newName}, led by ${leaderName}. This fledgling nation enters the world stage at the Stone Age, ready to learn from history and forge a new path.`,
-      category: "milestone",
-      tier: "standard",
-      nation_name: newName,
-      nation_flag: flagEmoji,
-      nation_color: flagColor,
-    });
+      body: `A new civilization emerges — ${newName}, led by ${leaderName}. This fledgling nation enters at Stone Age, ready to forge a new path.`,
+      category: "milestone", tier: "standard", nation_name: newName, nation_flag: flagEmoji, nation_color: flagColor,
+    }).catch(() => {});
   }
 
+  // ── LOADING STATE ─────────────────────────────────────────────────────────
+  if (loading) {
+    return <BattleLoadingScreen myNation={myNation} targetNation={targetNation} phase={loadPhase} />;
+  }
+
+  // ── RESULT STATE ──────────────────────────────────────────────────────────
   if (result) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-        <div className="w-full max-w-md backdrop-blur-xl bg-[#0f172a]/95 border border-white/20 rounded-2xl p-8 text-center space-y-4">
-          <div className="text-5xl">{result.annexed ? "💀" : result.critical ? "💥" : "⚔️"}</div>
-          <div className="text-2xl font-black text-white">
-            {result.annexed ? "Nation Annexed!" : "Attack Launched!"}
-          </div>
-          <div className="text-slate-300">Damage dealt: <span className="font-mono font-bold text-red-400">{result.damage}</span></div>
-          {result.annexed && (
-            <div className="rounded-xl bg-yellow-500/10 border border-yellow-500/30 p-4 space-y-2">
-              <div className="font-bold text-yellow-400 text-base">⚔️ CONQUEST COMPLETE!</div>
-              <div className="text-xs text-yellow-300/70 leading-relaxed space-y-1">
-                <div>✅ Full treasury seized</div>
-                <div>✅ All resources transferred to you</div>
-                <div>✅ 70% of their population absorbed</div>
-                <div>✅ 50% of workers absorbed into your workforce</div>
-                <div>✅ GDP, manufacturing & national wealth boosted</div>
-                <div>🔴 Their stocks collapsed to near-zero</div>
-                <div>🔴 Their nation is in total ruin — allies disbanded</div>
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        style={{ background: "rgba(0,0,0,0.88)", backdropFilter: "blur(20px)" }}>
+
+        {/* Ambient red glow for critical/annex */}
+        {(result.critical || result.annexed) && (
+          <motion.div
+            className="absolute inset-0 pointer-events-none"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 0.3, 0.1] }}
+            transition={{ duration: 1.5 }}
+            style={{ background: "radial-gradient(ellipse at center, rgba(239,68,68,0.25) 0%, transparent 70%)" }}
+          />
+        )}
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.85, y: 30 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ type: "spring", stiffness: 260, damping: 20 }}
+          className="relative w-full max-w-md rounded-2xl overflow-hidden"
+          style={{
+            background: result.annexed
+              ? "linear-gradient(135deg, #1a0a00 0%, #0f0800 100%)"
+              : result.critical
+              ? "linear-gradient(135deg, #1a0000 0%, #0f0a0a 100%)"
+              : "linear-gradient(135deg, #0f172a 0%, #040810 100%)",
+            border: `1px solid ${result.annexed ? "rgba(251,191,36,0.3)" : result.critical ? "rgba(239,68,68,0.3)" : "rgba(255,255,255,0.15)"}`,
+            boxShadow: result.annexed
+              ? "0 0 60px rgba(251,191,36,0.15)"
+              : result.critical
+              ? "0 0 60px rgba(239,68,68,0.15)"
+              : "none"
+          }}
+        >
+          <ExplosionBurst active={showExplosion} isCritical={result.critical || result.annexed} />
+
+          <div className="p-8 text-center space-y-5">
+            {/* Main icon with bounce */}
+            <motion.div
+              initial={{ scale: 0, rotate: -30 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 15, delay: 0.1 }}
+              className="text-6xl"
+            >
+              {result.annexed ? "💀" : result.critical ? "💥" : "⚔️"}
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <div className="text-2xl font-black text-white">
+                {result.annexed ? "CONQUEST COMPLETE!" : result.critical ? "CRITICAL STRIKE!" : "ATTACK LAUNCHED!"}
               </div>
-            </div>
-          )}
-          {result.critical && !result.annexed && (
-            <div className="rounded-xl bg-red-500/10 border border-red-500/30 p-4">
-              <div className="font-bold text-red-400">CRITICAL HIT!</div>
-              <div className="text-sm text-red-300/70 mt-1">Manufacturing -15% · Market Crash triggered · Top 3 stocks -20% · Investor losses applied</div>
-            </div>
-          )}
-          <div className="rounded-xl bg-white/5 p-3 text-xs text-slate-400">
-            War cost deducted: <span className="text-red-400 font-mono">{warCost} cr</span>
+              <div className="text-sm text-slate-400 mt-1">
+                {myNation.name} → {targetNation.name}
+              </div>
+            </motion.div>
+
+            {/* Damage dealt */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3 }}
+              className="rounded-xl p-3 inline-block"
+              style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)" }}
+            >
+              <div className="text-xs text-slate-500 mb-0.5">DAMAGE DEALT</div>
+              <div className="text-3xl font-black font-mono text-red-400">{result.damage}</div>
+            </motion.div>
+
+            {/* Damage breakdown */}
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="rounded-xl p-3 space-y-1.5 text-left"
+              style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}
+            >
+              {[
+                { label: "Stability", value: `-${Math.floor(result.damage * 0.4)}`, icon: "⚖️" },
+                { label: "GDP", value: `-${Math.floor(result.damage * 3)} cr`, icon: "💹" },
+                { label: "Manufacturing", value: `-${Math.floor(result.damage * 0.2)}%`, icon: "🏭" },
+                { label: "Treasury", value: `-${Math.floor(result.damage * 5)} cr`, icon: "💰" },
+              ].map((d, i) => (
+                <motion.div key={d.label}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.45 + i * 0.07 }}
+                  className="flex justify-between items-center text-xs"
+                >
+                  <span className="text-slate-500">{d.icon} {d.label}</span>
+                  <span className="text-red-400 font-mono font-bold">{d.value}</span>
+                </motion.div>
+              ))}
+            </motion.div>
+
+            {/* Conquest spoils */}
+            {result.annexed && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.5, type: "spring" }}
+                className="rounded-xl p-4 space-y-2 text-left"
+                style={{ background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.25)" }}
+              >
+                <div className="font-bold text-yellow-400 text-sm text-center mb-2">⚔️ SPOILS OF WAR</div>
+                {[
+                  "✅ Full treasury seized",
+                  "✅ All resources transferred",
+                  "✅ 70% of population absorbed",
+                  "✅ 50% of workforce absorbed",
+                  "✅ GDP & manufacturing boosted",
+                  "🔴 Enemy stocks collapsed to near-zero",
+                  "🔴 Enemy nation left in total ruin",
+                ].map((line, i) => (
+                  <motion.div key={i} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.55 + i * 0.06 }}
+                    className="text-xs text-yellow-200/70">{line}</motion.div>
+                ))}
+              </motion.div>
+            )}
+
+            {result.critical && !result.annexed && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.5 }}
+                className="rounded-xl p-3"
+                style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)" }}
+              >
+                <div className="font-bold text-red-400 text-sm">💥 CRITICAL HIT EFFECTS</div>
+                <div className="text-xs text-red-300/70 mt-1">Manufacturing −15% · Market Crash triggered · Top 3 stocks −20% · Investor losses applied</div>
+              </motion.div>
+            )}
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              className="rounded-lg p-2 text-xs text-slate-500"
+              style={{ background: "rgba(255,255,255,0.03)" }}
+            >
+              War cost deducted: <span className="text-red-400 font-mono font-bold">{warCost} cr</span>
+            </motion.div>
+
+            <motion.button
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 }}
+              onClick={onClose}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full py-3 rounded-xl font-bold text-white transition-all min-h-[44px]"
+              style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)" }}
+            >
+              Close
+            </motion.button>
           </div>
-          <button onClick={onClose} className="w-full py-3 rounded-xl font-bold bg-white/10 text-white hover:bg-white/20 transition-all">
-            Close
-          </button>
-        </div>
+        </motion.div>
       </div>
     );
   }
 
+  // ── DECLARATION FORM ──────────────────────────────────────────────────────
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="w-full max-w-md backdrop-blur-xl bg-[#0f172a]/95 border border-white/20 rounded-2xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ background: "rgba(0,0,0,0.82)", backdropFilter: "blur(16px)" }}>
+
+      <motion.div
+        initial={{ opacity: 0, scale: 0.93, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ type: "spring", stiffness: 280, damping: 22 }}
+        className="w-full max-w-md rounded-2xl overflow-hidden"
+        style={{ background: "linear-gradient(135deg, #0f172a 0%, #040810 100%)", border: "1px solid rgba(239,68,68,0.2)", boxShadow: "0 0 60px rgba(239,68,68,0.08)" }}
+      >
+        {/* Header */}
+        <div className="px-6 py-4 border-b flex items-center justify-between"
+          style={{ borderColor: "rgba(239,68,68,0.15)", background: "linear-gradient(90deg, rgba(239,68,68,0.07) 0%, transparent 100%)" }}>
           <div className="flex items-center gap-2">
-            <Swords size={18} className="text-red-400" />
+            <motion.div animate={{ rotate: [0, -10, 10, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>
+              <Swords size={18} className="text-red-400" />
+            </motion.div>
             <span className="font-bold text-white">War Declaration</span>
           </div>
-          <button onClick={onClose}><X size={16} className="text-slate-400" /></button>
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-white/10 transition-colors">
+            <X size={16} className="text-slate-400" />
+          </button>
         </div>
 
         <div className="p-6 space-y-4">
-          <div className="flex items-center justify-between">
+          {/* Nations vs banner */}
+          <div className="relative flex items-center justify-between px-4 py-3 rounded-2xl"
+            style={{ background: "rgba(239,68,68,0.05)", border: "1px solid rgba(239,68,68,0.12)" }}>
             <div className="text-center">
-              <div className="text-3xl">{myNation.flag_emoji}</div>
+              <motion.div animate={{ scale: [1, 1.05, 1] }} transition={{ repeat: Infinity, duration: 2 }}
+                className="text-4xl">{myNation.flag_emoji}</motion.div>
               <div className="text-xs text-white font-bold mt-1">{myNation.name}</div>
-              <div className="text-xs text-slate-500">T{myNation.tech_level} · {myNation.unit_power} PWR</div>
+              <div className="text-[10px] text-green-400 ep-mono">T{myNation.tech_level} · {myNation.unit_power} PWR</div>
             </div>
-            <div className="text-2xl text-red-400">⚔️</div>
+
+            <div className="flex flex-col items-center gap-1">
+              <motion.div
+                animate={{ scale: [1, 1.2, 1], rotate: [0, 5, -5, 0] }}
+                transition={{ repeat: Infinity, duration: 0.8 }}
+                className="text-2xl"
+              >⚔️</motion.div>
+              <div className="text-[9px] text-red-400 font-bold ep-mono tracking-widest">VS</div>
+            </div>
+
             <div className="text-center">
-              <div className="text-3xl">{targetNation.flag_emoji}</div>
+              <motion.div animate={{ scale: [1, 1.05, 1] }} transition={{ repeat: Infinity, duration: 2, delay: 0.5 }}
+                className="text-4xl">{targetNation.flag_emoji}</motion.div>
               <div className="text-xs text-white font-bold mt-1">{targetNation.name}</div>
-              <div className="text-xs text-slate-500">DEF {targetNation.defense_level}</div>
+              <div className="text-[10px] text-red-400 ep-mono">DEF {targetNation.defense_level}</div>
             </div>
           </div>
 
           {/* War cost */}
-          <div className={`rounded-xl p-4 border ${canAffordWar ? "bg-red-500/10 border-red-500/30" : "bg-white/5 border-white/10 opacity-60"}`}>
+          <div className={`rounded-xl p-4 border ${canAffordWar ? "bg-red-500/8 border-red-500/25" : "bg-white/3 border-white/8 opacity-60"}`}
+            style={{ background: canAffordWar ? "rgba(239,68,68,0.06)" : undefined }}>
             <div className="flex items-center gap-2 text-xs font-bold text-slate-300 mb-2">
               <DollarSign size={12} className="text-red-400" /> War Declaration Cost
             </div>
@@ -464,62 +661,79 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
               <span className="text-slate-500">Your Treasury</span>
               <span className="text-slate-400 font-mono">{Math.floor(myNation.currency)} cr</span>
             </div>
-            {!canAffordWar && (
-              <div className="mt-2 text-xs text-red-400 font-bold">⚠ Insufficient funds to declare war</div>
-            )}
+            {!canAffordWar && <div className="mt-2 text-xs text-red-400 font-bold">⚠ Insufficient funds to declare war</div>}
           </div>
 
-          <div className="rounded-xl bg-white/5 p-4 space-y-2">
+          {/* Combat sim */}
+          <div className="rounded-xl p-4 space-y-2" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
             <div className="text-xs text-slate-400 uppercase tracking-wider font-bold">Combat Simulation</div>
-            <div className="font-mono text-sm text-slate-300">
-              ({myNation.tech_level} Tech / {targetNation.defense_level} Defense) × {myNation.unit_power} Power
+            <div className="font-mono text-xs text-slate-400">
+              ({myNation.tech_level} Tech ÷ {targetNation.defense_level} Defense) × {myNation.unit_power} Power
             </div>
-            <div className="text-2xl font-black font-mono text-white">
-              = {damage.toFixed(1)} <span className="text-sm font-normal text-slate-400">damage</span>
-            </div>
+            <motion.div
+              initial={{ scale: 1 }}
+              animate={{ scale: [1, 1.03, 1] }}
+              transition={{ repeat: Infinity, duration: 2 }}
+              className="text-3xl font-black font-mono"
+              style={{ color: isCritical ? "#ff4444" : "#f97316" }}
+            >
+              {damage.toFixed(1)} <span className="text-sm font-normal text-slate-400">damage</span>
+              {isCritical && <span className="ml-2 text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full border border-red-500/30">CRITICAL</span>}
+            </motion.div>
           </div>
 
           {/* Damage preview */}
-          <div className="rounded-xl bg-white/5 p-3 space-y-1">
-            <div className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-2">Expected Damage to {targetNation.name}</div>
+          <div className="rounded-xl p-3 space-y-2" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+            <div className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Expected Impact on {targetNation.name}</div>
             {[
-              ["Stability", `-${Math.floor(damage * 0.4)}`],
-              ["GDP", `-${Math.floor(damage * 3)}`],
-              ["Manufacturing", `-${Math.floor(damage * 0.2)}`],
-              ["Treasury", `-${Math.floor(damage * 5)} cr`],
-            ].map(([k, v]) => (
-              <div key={k} className="flex justify-between text-xs">
-                <span className="text-slate-500">{k}</span>
-                <span className="text-red-400 font-mono">{v}</span>
+              { label: "Stability", val: `-${Math.floor(damage * 0.4)}`, icon: <Shield size={10} /> },
+              { label: "GDP", val: `-${Math.floor(damage * 3)} cr`, icon: <TrendingDown size={10} /> },
+              { label: "Manufacturing", val: `-${Math.floor(damage * 0.2)}%`, icon: <Zap size={10} /> },
+              { label: "Treasury", val: `-${Math.floor(damage * 5)} cr`, icon: <DollarSign size={10} /> },
+            ].map(({ label, val, icon }) => (
+              <div key={label} className="flex justify-between items-center text-xs">
+                <span className="text-slate-500 flex items-center gap-1">{icon}{label}</span>
+                <span className="text-red-400 font-mono font-bold">{val}</span>
               </div>
             ))}
           </div>
 
           {isCritical && (
-            <div className="rounded-xl bg-red-500/10 border border-red-500/30 p-3">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="rounded-xl p-3"
+              style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)" }}
+            >
               <div className="flex items-center gap-2 font-bold text-red-400 text-sm">
-                <AlertTriangle size={14} /> Critical Strike — Market Crash Triggered
+                <AlertTriangle size={14} />
+                <motion.span animate={{ opacity: [1, 0.6, 1] }} transition={{ repeat: Infinity, duration: 1 }}>
+                  CRITICAL STRIKE — Market Crash Triggered
+                </motion.span>
               </div>
-              <div className="text-xs text-red-300/70 mt-1">
-                Investors holding {targetNation.name}'s stocks will lose real currency.
-              </div>
-            </div>
+              <div className="text-xs text-red-300/60 mt-1">Investors holding {targetNation.name}'s stocks will lose real currency.</div>
+            </motion.div>
           )}
 
-          <div className="flex gap-3">
-            <button onClick={onClose} className="flex-1 py-3 min-h-[44px] rounded-xl font-bold text-sm border border-white/10 text-slate-400 hover:bg-white/5 transition-all">
+          <div className="flex gap-3 pt-1">
+            <button onClick={onClose}
+              className="flex-1 py-3 min-h-[44px] rounded-xl font-bold text-sm border text-slate-400 hover:bg-white/5 transition-all"
+              style={{ borderColor: "rgba(255,255,255,0.1)" }}>
               Stand Down
             </button>
-            <button
+            <motion.button
               onClick={launchAttack}
-              disabled={loading || !canAffordWar}
-              className="flex-1 py-3 min-h-[44px] rounded-xl font-bold text-sm bg-gradient-to-r from-red-600 to-rose-700 text-white hover:from-red-500 hover:to-rose-600 transition-all disabled:opacity-40"
+              disabled={!canAffordWar}
+              whileHover={canAffordWar ? { scale: 1.02, filter: "brightness(1.15)" } : {}}
+              whileTap={canAffordWar ? { scale: 0.97 } : {}}
+              className="flex-1 py-3 min-h-[44px] rounded-xl font-bold text-sm text-white transition-all disabled:opacity-40"
+              style={{ background: isCritical ? "linear-gradient(135deg, #dc2626, #991b1b)" : "linear-gradient(135deg, #dc2626, #b91c1c)" }}
             >
-              {loading ? "Launching..." : `DECLARE WAR (-${warCost} cr)`}
-            </button>
+              {isCritical ? `⚡ CRITICAL STRIKE (-${warCost} cr)` : `⚔️ DECLARE WAR (-${warCost} cr)`}
+            </motion.button>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
