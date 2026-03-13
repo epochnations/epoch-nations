@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronRight, ChevronLeft, BookOpen, Search, ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
 import DeepDivePanel from "./DeepDivePanel.jsx";
-import { DEEP_DIVES } from "./deepDiveData.js";
+import { DEEP_DIVES } from "./deepDiveData";
 
 const SECTIONS = [
   { id: "dashboard", icon: "🏛️", color: "#22d3ee", title: "Dashboard Overview", summary: "Your command center — everything starts here.", steps: [
