@@ -385,18 +385,7 @@ export default function Dashboard() {
         <NationalAdvisorModal nation={myNation} onClose={() => setShowAdvisor(false)} />
       )}
 
-      {/* Tutorial overlay */}
-      {showTour && (
-        <div className="fixed inset-0 z-[199] bg-black/40 backdrop-blur-sm pointer-events-none" />
-      )}
-      {showTour && (
-        <TourTooltip
-          step={tourStep}
-          onNext={() => { if (tourStep < 7) setTourStep(t => t + 1); else setShowTour(false); }}
-          onPrev={() => setTourStep(t => Math.max(0, t - 1))}
-          onSkip={() => setShowTour(false)}
-        />
-      )}
+      {showTour && <AdvancedTutorial onClose={() => setShowTour(false)} />}
     </div>
   );
 }
