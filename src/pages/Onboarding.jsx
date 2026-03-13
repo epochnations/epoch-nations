@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
-import { Zap } from "lucide-react";
-import TourTooltip from "../components/onboarding/TourTooltip";
 
 const FLAG_EMOJIS = ["🏴", "⚔️", "🦅", "🐉", "🌟", "🔱", "🛡️", "🌙", "☀️", "🦁", "🐯", "🌊"];
 const FLAG_COLORS = [
@@ -11,16 +9,36 @@ const FLAG_COLORS = [
   "#64748b", "#84cc16", "#e11d48", "#0ea5e9"
 ];
 
+// Government types with their economic starting profiles
+const GOVERNMENT_TYPES = [
+  { value: "Democracy",             label: "Democracy",              desc: "Elected leadership, balanced rights & economy.", tax: { income: 18, sales: 8, corporate: 14, tariff: 5 }, stability: 75, trust: 1.0, military: 15, education: 25 },
+  { value: "Constitutional Monarchy", label: "Constitutional Monarchy", desc: "Monarch with parliamentary constraints.",         tax: { income: 16, sales: 9, corporate: 12, tariff: 6 }, stability: 78, trust: 1.0, military: 18, education: 22 },
+  { value: "Absolute Monarchy",     label: "Absolute Monarchy",      desc: "Total ruler control. High stability, low trust.",   tax: { income: 20, sales: 10, corporate: 8, tariff: 10 },  stability: 80, trust: 0.7, military: 25, education: 15 },
+  { value: "Federal Republic",      label: "Federal Republic",       desc: "Decentralized governance with strong trade.",       tax: { income: 15, sales: 7, corporate: 15, tariff: 4 },   stability: 72, trust: 1.1, military: 12, education: 28 },
+  { value: "Socialist Republic",    label: "Socialist Republic",     desc: "State ownership. Low inequality, high welfare.",    tax: { income: 28, sales: 5, corporate: 20, tariff: 8 },   stability: 70, trust: 0.9, military: 20, education: 30 },
+  { value: "Communist State",       label: "Communist State",        desc: "Centrally planned economy. Zero private sector.",   tax: { income: 35, sales: 3, corporate: 40, tariff: 15 },  stability: 65, trust: 0.8, military: 30, education: 25 },
+  { value: "Oligarchy",             label: "Oligarchy",              desc: "Elite families control wealth and policy.",         tax: { income: 10, sales: 12, corporate: 5, tariff: 8 },   stability: 68, trust: 0.7, military: 20, education: 15 },
+  { value: "Theocracy",             label: "Theocracy",              desc: "Religious law governs society.",                    tax: { income: 12, sales: 6, corporate: 8, tariff: 12 },   stability: 82, trust: 1.2, military: 22, education: 18 },
+  { value: "Military Junta",        label: "Military Junta",         desc: "Armed forces control the state.",                  tax: { income: 14, sales: 8, corporate: 10, tariff: 10 },  stability: 70, trust: 0.6, military: 40, education: 10 },
+  { value: "Technocracy",           label: "Technocracy",            desc: "Experts and scientists run the government.",       tax: { income: 20, sales: 7, corporate: 18, tariff: 3 },   stability: 74, trust: 1.0, military: 10, education: 35 },
+  { value: "Anarcho-Capitalism",    label: "Anarcho-Capitalism",     desc: "No government, free market controls everything.",  tax: { income: 0, sales: 0, corporate: 0, tariff: 0 },     stability: 50, trust: 1.3, military: 5,  education: 10 },
+  { value: "Direct Democracy",      label: "Direct Democracy",       desc: "Citizens vote on every policy directly.",          tax: { income: 20, sales: 9, corporate: 16, tariff: 4 },   stability: 68, trust: 1.3, military: 12, education: 30 },
+  { value: "Feudal Kingdom",        label: "Feudal Kingdom",         desc: "Lords control land, peasants provide labor.",      tax: { income: 25, sales: 4, corporate: 5, tariff: 15 },   stability: 76, trust: 0.65, military: 28, education: 8 },
+  { value: "Corporate State",       label: "Corporate State",        desc: "Corporations and state are merged into one.",      tax: { income: 8, sales: 15, corporate: 3, tariff: 6 },    stability: 65, trust: 0.7, military: 15, education: 20 },
+  { value: "Confederation",         label: "Confederation",          desc: "Loose alliance of self-governing territories.",    tax: { income: 12, sales: 6, corporate: 10, tariff: 3 },   stability: 62, trust: 1.1, military: 10, education: 22 },
+];
+
 export default function Onboarding() {
   const [step, setStep] = useState(1);
   const [nationName, setNationName] = useState("");
   const [leaderName, setLeaderName] = useState("");
+  const [govType, setGovType] = useState("Democracy");
   const [selectedEmoji, setSelectedEmoji] = useState("🏴");
   const [selectedColor, setSelectedColor] = useState("#3b82f6");
   const [loading, setLoading] = useState(false);
   const [checkingExisting, setCheckingExisting] = useState(true);
-  const [showTour, setShowTour] = useState(false);
-  const [tourStep, setTourStep] = useState(0);
+
+  const selectedGov = GOVERNMENT_TYPES.find(g => g.value === govType) || GOVERNMENT_TYPES[0];
 
   useEffect(() => {
     checkExistingNation();
@@ -37,7 +55,6 @@ export default function Onboarding() {
       }
     } catch (e) {
       if (e?.message?.includes("Rate limit")) {
-        // Retry after 2 seconds
         setTimeout(checkExistingNation, 2000);
       } else {
         setCheckingExisting(false);
@@ -48,24 +65,28 @@ export default function Onboarding() {
   async function createNation() {
     setLoading(true);
     const user = await base44.auth.me();
+    const gov = selectedGov;
+
     const nation = await base44.entities.Nation.create({
       name: nationName,
       leader: leaderName || user.full_name,
       owner_email: user.email,
+      government_type: govType,
       epoch: "Stone Age",
       tech_points: 0,
       tech_level: 1,
       gdp: 200,
-      stability: 75,
-      public_trust: 1.0,
+      stability: gov.stability,
+      public_trust: gov.trust,
       currency: 500,
       manufacturing: 20,
-      education_spending: 20,
-      military_spending: 20,
+      education_spending: gov.education,
+      military_spending: gov.military,
       unit_power: 10,
       defense_level: 10,
       population: 10,
       housing_capacity: 20,
+      tax_rates: gov.tax,
       flag_color: selectedColor,
       flag_emoji: selectedEmoji,
       allies: [],
@@ -107,24 +128,6 @@ export default function Onboarding() {
       epoch_required: "Stone Age"
     });
 
-    // Show tour before redirect
-    setLoading(false);
-    setShowTour(true);
-  }
-
-  function handleTourNext() {
-    if (tourStep < 4) {
-      setTourStep(t => t + 1);
-    } else {
-      window.location.href = createPageUrl("Dashboard");
-    }
-  }
-
-  function handleTourPrev() {
-    setTourStep(t => Math.max(0, t - 1));
-  }
-
-  function skipTour() {
     window.location.href = createPageUrl("Dashboard");
   }
 
@@ -148,34 +151,25 @@ export default function Onboarding() {
         {/* Header */}
         <div className="text-center mb-10">
           <div className="text-5xl font-black tracking-tighter mb-2"
-            style={{ background: "linear-gradient(90deg, #22d3ee 0%, #818cf8 50%, #a78bfa 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", textShadow: "none", filter: "drop-shadow(0 0 30px rgba(34,211,238,0.3))" }}>
+            style={{ background: "linear-gradient(90deg, #22d3ee 0%, #818cf8 50%, #a78bfa 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", filter: "drop-shadow(0 0 30px rgba(34,211,238,0.3))" }}>
             EPOCH NATIONS
           </div>
           <p className="text-slate-500 text-xs tracking-[0.35em] uppercase ep-mono">Grand Strategy Simulator</p>
         </div>
 
-        {/* Skip tutorial button */}
-        {step === 1 && (
-          <div className="flex justify-end mb-3">
-            <a
-              href={createPageUrl("Dashboard")}
-              className="flex items-center gap-1.5 px-4 py-2.5 min-h-[44px] rounded-xl text-xs font-bold bg-white/5 border border-white/10 text-slate-400 hover:bg-white/10 transition-all"
-            >
-              <Zap size={12} /> Skip Tutorial & Command Now
-            </a>
-          </div>
-        )}
-
         {/* Card */}
         <div className="rounded-2xl p-8 shadow-2xl ep-glow-anim"
           style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(4,8,16,0.95) 100%)", border: "1px solid rgba(6,182,212,0.2)", backdropFilter: "blur(24px)" }}>
+
+          {/* Step 1 — Identity */}
           {step === 1 && (
-            <div className="space-y-6">
+            <div className="space-y-5">
               <div>
-                <div className="text-xs text-cyan-400 uppercase tracking-widest mb-1">Step 1 of 2</div>
-                <h2 className="text-2xl font-bold text-white">Found Your Nation</h2>
+                <div className="text-xs text-cyan-400 uppercase tracking-widest mb-1">Step 1 of 3</div>
+                <h2 className="text-2xl font-bold text-white">Create Your Nation</h2>
                 <p className="text-slate-400 text-sm mt-1">Choose a name that will echo through history.</p>
               </div>
+
               <div>
                 <label className="text-xs text-slate-400 uppercase tracking-wider block mb-2">Nation Name</label>
                 <input
@@ -186,6 +180,7 @@ export default function Onboarding() {
                   onKeyDown={e => e.key === "Enter" && nationName.trim() && setStep(2)}
                 />
               </div>
+
               <div>
                 <label className="text-xs text-slate-400 uppercase tracking-wider block mb-2">Your Leader Name</label>
                 <input
@@ -195,6 +190,7 @@ export default function Onboarding() {
                   onChange={e => setLeaderName(e.target.value)}
                 />
               </div>
+
               <button
                 onClick={() => nationName.trim() && setStep(2)}
                 disabled={!nationName.trim()}
@@ -205,10 +201,70 @@ export default function Onboarding() {
             </div>
           )}
 
+          {/* Step 2 — Government */}
           {step === 2 && (
-            <div className="space-y-6">
+            <div className="space-y-5">
               <div>
-                <div className="text-xs text-cyan-400 uppercase tracking-widest mb-1">Step 2 of 2</div>
+                <div className="text-xs text-cyan-400 uppercase tracking-widest mb-1">Step 2 of 3</div>
+                <h2 className="text-2xl font-bold text-white">Choose Your Government</h2>
+                <p className="text-slate-400 text-sm mt-1">Your government type shapes your economy, tax rates, and starting stability.</p>
+              </div>
+
+              <div>
+                <label className="text-xs text-slate-400 uppercase tracking-wider block mb-2">Government Type</label>
+                <select
+                  value={govType}
+                  onChange={e => setGovType(e.target.value)}
+                  className="w-full bg-[#0a0f1e] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-400/50 transition-all text-sm"
+                >
+                  {GOVERNMENT_TYPES.map(g => (
+                    <option key={g.value} value={g.value}>{g.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Gov type description & stats */}
+              <div className="rounded-xl p-4 space-y-3"
+                style={{ background: "rgba(34,211,238,0.04)", border: "1px solid rgba(34,211,238,0.12)" }}>
+                <div className="text-xs text-slate-300 leading-relaxed">{selectedGov.desc}</div>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { label: "Income Tax", value: `${selectedGov.tax.income}%` },
+                    { label: "Corporate Tax", value: `${selectedGov.tax.corporate}%` },
+                    { label: "Sales Tax", value: `${selectedGov.tax.sales}%` },
+                    { label: "Tariff", value: `${selectedGov.tax.tariff}%` },
+                    { label: "Starting Stability", value: `${selectedGov.stability}` },
+                    { label: "Public Trust", value: `${selectedGov.trust.toFixed(1)}x` },
+                    { label: "Military Spend", value: `${selectedGov.military}%` },
+                    { label: "Education Spend", value: `${selectedGov.education}%` },
+                  ].map(({ label, value }) => (
+                    <div key={label} className="flex justify-between items-center">
+                      <span className="text-[11px] text-slate-500">{label}</span>
+                      <span className="text-[11px] font-bold text-cyan-300 ep-mono">{value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <button onClick={() => setStep(1)} className="flex-1 min-h-[44px] py-3 rounded-xl font-bold text-sm border border-white/10 text-slate-400 hover:bg-white/5 transition-all">
+                  ← BACK
+                </button>
+                <button
+                  onClick={() => setStep(3)}
+                  className="flex-grow min-h-[44px] py-3 rounded-xl font-bold tracking-wider text-sm bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-400 hover:to-blue-500 transition-all"
+                >
+                  CONTINUE →
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Step 3 — Flag */}
+          {step === 3 && (
+            <div className="space-y-5">
+              <div>
+                <div className="text-xs text-cyan-400 uppercase tracking-widest mb-1">Step 3 of 3</div>
                 <h2 className="text-2xl font-bold text-white">Design Your Flag</h2>
                 <p className="text-slate-400 text-sm mt-1">Choose your nation's symbol and color.</p>
               </div>
@@ -243,24 +299,27 @@ export default function Onboarding() {
               </div>
 
               {/* Preview */}
-              <div className="rounded-xl p-4 flex items-center gap-4" style={{ backgroundColor: selectedColor + "22", borderColor: selectedColor + "44", border: "1px solid" }}>
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center text-3xl" style={{ backgroundColor: selectedColor + "33" }}>
+              <div className="rounded-xl p-4 flex items-center gap-4"
+                style={{ backgroundColor: selectedColor + "22", borderColor: selectedColor + "44", border: "1px solid" }}>
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center text-3xl shrink-0"
+                  style={{ backgroundColor: selectedColor + "33" }}>
                   {selectedEmoji}
                 </div>
                 <div>
-                  <div className="font-bold text-white">{nationName || "Your Nation"}</div>
-                  <div className="text-xs text-slate-400">Stone Age · Leader: {leaderName || "TBD"}</div>
+                  <div className="font-bold text-white">{nationName}</div>
+                  <div className="text-xs text-slate-400">{selectedGov.label} · Leader: {leaderName || "TBD"}</div>
+                  <div className="text-xs text-cyan-400 mt-0.5">Stone Age · Starting Nation</div>
                 </div>
               </div>
 
               <div className="flex gap-3">
-                <button onClick={() => setStep(1)} className="flex-1 min-h-[44px] py-3 rounded-xl font-bold text-sm border border-white/10 text-slate-400 hover:bg-white/5 transition-all">
+                <button onClick={() => setStep(2)} className="flex-1 min-h-[44px] py-3 rounded-xl font-bold text-sm border border-white/10 text-slate-400 hover:bg-white/5 transition-all">
                   ← BACK
                 </button>
                 <button
                   onClick={createNation}
                   disabled={loading}
-                  className="flex-2 flex-grow min-h-[44px] py-3 rounded-xl font-bold tracking-wider text-sm transition-all bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-400 hover:to-blue-500 disabled:opacity-50"
+                  className="flex-grow min-h-[44px] py-3 rounded-xl font-bold tracking-wider text-sm bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-400 hover:to-blue-500 disabled:opacity-50 transition-all"
                 >
                   {loading ? "FOUNDING..." : "FOUND NATION 🚀"}
                 </button>
@@ -273,19 +332,6 @@ export default function Onboarding() {
           Starting era: Stone Age · Build your civilization from the ground up
         </p>
       </div>
-
-      {/* Tour tooltip overlay */}
-      {showTour && (
-        <div className="fixed inset-0 z-[199] bg-black/40 backdrop-blur-sm pointer-events-none" />
-      )}
-      {showTour && (
-        <TourTooltip
-          step={tourStep}
-          onNext={handleTourNext}
-          onPrev={handleTourPrev}
-          onSkip={skipTour}
-        />
-      )}
     </div>
   );
 }
