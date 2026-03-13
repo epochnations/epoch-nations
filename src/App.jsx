@@ -7,7 +7,6 @@ import PageNotFound from './lib/PageNotFound';
 import PluginManager from './pages/PluginManager';
 import Home from './pages/Home';
 import HallOfNations from './pages/HallOfNations';
-// HexWorldMap removed
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 
