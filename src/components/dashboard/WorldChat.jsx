@@ -3,11 +3,13 @@ import { base44 } from "@/api/base44Client";
 import { Send, Shield, Trash2, VolumeX, Reply, X, MessageSquare, Volume2, Megaphone, Lock } from "lucide-react";
 import PrivateChatPanel from "./PrivateChatPanel";
 import AIDiplomacyEngine from "./AIDiplomacyEngine";
+import GlobalLedger from "./GlobalLedger";
 
 const CHANNELS = [
-  { id: "global", label: "🌐 Global", color: "#22d3ee" },
-  { id: "allies", label: "🤝 Allies",  color: "#4ade80" },
-  { id: "system", label: "⚙️ System",  color: "#a78bfa" },
+  { id: "global",   label: "🌐 Global",   color: "#22d3ee" },
+  { id: "allies",   label: "🤝 Allies",   color: "#4ade80" },
+  { id: "system",   label: "⚙️ System",   color: "#a78bfa" },
+  { id: "activity", label: "📊 Activity", color: "#60a5fa" },
 ];
 
 const EMOJIS = ["👍","👎","❤️","😂","😱","⚔️","🤝","💰","🔥","💥","🏆","👑"];
