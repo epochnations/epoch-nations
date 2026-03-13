@@ -170,13 +170,44 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
   const [loadPhase, setLoadPhase] = useState(0);
   const [result, setResult] = useState(null);
   const [showExplosion, setShowExplosion] = useState(false);
+  const [warFundPct, setWarFundPct] = useState(8); // slider: 5–30%
 
   if (!targetNation || !myNation) return null;
 
-  const warCost = Math.floor((myNation.currency || 0) * 0.08);
-  const canAffordWar = myNation.currency >= warCost && warCost > 0;
-  const damage = (myNation.tech_level / Math.max(targetNation.defense_level, 1)) * myNation.unit_power;
+  const treasury = myNation.currency || 0;
+  const warCost = Math.floor(treasury * (warFundPct / 100));
+  const canAffordWar = treasury >= warCost && warCost > 0;
+
+  // Damage scales with how much you're willing to spend (more investment = more firepower)
+  const fundMultiplier = warFundPct / 8; // baseline at 8%
+  const baseDamage = (myNation.tech_level / Math.max(targetNation.defense_level, 1)) * myNation.unit_power;
+  const damage = baseDamage * fundMultiplier;
   const isCritical = damage > 40;
+
+  // ── "Remaining to conquer" — how many more hits needed ──────────────────
+  const defStab    = targetNation.stability     || 0;
+  const defGdp     = targetNation.gdp           || 0;
+  const defMfg     = targetNation.manufacturing || 0;
+  const defTreasury= targetNation.currency      || 0;
+
+  // Damage per attack to each stat
+  const dmgStab = Math.floor(damage * 0.4);
+  const dmgGdp  = Math.floor(damage * 3);
+  const dmgMfg  = Math.floor(damage * 0.2);
+  const dmgTrs  = Math.floor(damage * 5);
+
+  // How many strikes to zero each pillar (capped so it doesn't divide by 0)
+  const hitsNeeded = dmgStab > 0 ? Math.ceil(defStab / dmgStab)       : Infinity;
+  const hitsGdp    = dmgGdp  > 0 ? Math.ceil((defGdp - 100) / dmgGdp) : Infinity;
+  const hitsMfg    = dmgMfg  > 0 ? Math.ceil((defMfg - 10)  / dmgMfg) : Infinity;
+  const hitsTrs    = dmgTrs  > 0 ? Math.ceil(defTreasury / dmgTrs)     : Infinity;
+  const conquestHits = Math.max(hitsNeeded, Math.max(hitsGdp, Math.max(hitsMfg, hitsTrs)));
+
+  // Progress bars for each pillar (0% = already at floor, 100% = full health)
+  const stabPct = Math.min(100, (defStab / 100) * 100);
+  const gdpPct  = Math.min(100, Math.max(0, (defGdp - 100) / (defGdp || 1) * 100));
+  const mfgPct  = Math.min(100, Math.max(0, (defMfg - 10)  / (defMfg || 1) * 100));
+  const trsPct  = Math.min(100, (defTreasury / Math.max(defTreasury, 1)) * 100);
 
   async function launchAttack() {
     if (!canAffordWar) return;
