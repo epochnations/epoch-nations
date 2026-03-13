@@ -487,6 +487,13 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
     const isAILoser = !targetNation.owner_email || !(await isHumanPlayer(targetNation.owner_email));
     if (isAILoser) {
       await spawnReplacementAINation(targetNation);
+      // Delete all stocks belonging to the defeated AI nation
+      try {
+        const defeatedStocks = await base44.entities.Stock.filter({ nation_id: targetNation.id });
+        for (const s of defeatedStocks) {
+          await base44.entities.Stock.delete(s.id);
+        }
+      } catch (_) {}
       // Delete the defeated AI nation so it no longer appears on the map
       await base44.entities.Nation.delete(targetNation.id);
     }
