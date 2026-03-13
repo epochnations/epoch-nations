@@ -157,29 +157,70 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
   }
 
   async function handleAnnexation(damageDealt) {
-    // Winner gets 30% of defender's remaining treasury
-    const treasuryCut = Math.floor(targetNation.currency * 0.3);
+    // ── Tally all spoils from the defeated nation ──────────────────────────────
+    const allResources = {
+      res_wood:  targetNation.res_wood  || 0,
+      res_stone: targetNation.res_stone || 0,
+      res_gold:  targetNation.res_gold  || 0,
+      res_iron:  targetNation.res_iron  || 0,
+      res_oil:   targetNation.res_oil   || 0,
+      res_food:  targetNation.res_food  || 0,
+    };
+
+    const totalResources = Object.values(allResources).reduce((a, b) => a + b, 0);
+    const seizedTreasury  = targetNation.currency  || 0;
+    const seizedPop       = targetNation.population || 0;
+    const seizedHousing   = targetNation.housing_capacity || 0;
+
+    // ── Winner absorbs EVERYTHING from the defeated nation ───────────────────
     await base44.entities.Nation.update(myNation.id, {
-      currency: myNation.currency + treasuryCut,
-      manufacturing: myNation.manufacturing + Math.floor(targetNation.manufacturing * 0.5),
-      gdp: myNation.gdp + Math.floor(targetNation.gdp * 0.4),
+      // Treasury — full seizure
+      currency: (myNation.currency || 0) + seizedTreasury,
+      // Economy
+      gdp: (myNation.gdp || 0) + Math.floor((targetNation.gdp || 0) * 0.6),
+      manufacturing: (myNation.manufacturing || 0) + Math.floor((targetNation.manufacturing || 0) * 0.5),
+      national_wealth: (myNation.national_wealth || 0) + Math.floor((targetNation.national_wealth || 0) * 0.4),
+      // Population & housing
+      population: (myNation.population || 0) + Math.floor(seizedPop * 0.7),
+      housing_capacity: (myNation.housing_capacity || 0) + Math.floor(seizedHousing * 0.5),
+      // All physical resources
+      res_wood:  (myNation.res_wood  || 0) + allResources.res_wood,
+      res_stone: (myNation.res_stone || 0) + allResources.res_stone,
+      res_gold:  (myNation.res_gold  || 0) + allResources.res_gold,
+      res_iron:  (myNation.res_iron  || 0) + allResources.res_iron,
+      res_oil:   (myNation.res_oil   || 0) + allResources.res_oil,
+      res_food:  (myNation.res_food  || 0) + allResources.res_food,
+      // Workers absorbed (partial)
+      workers_farmers:    (myNation.workers_farmers    || 0) + Math.floor((targetNation.workers_farmers    || 0) * 0.5),
+      workers_lumberjacks:(myNation.workers_lumberjacks|| 0) + Math.floor((targetNation.workers_lumberjacks|| 0) * 0.5),
+      workers_quarry:     (myNation.workers_quarry     || 0) + Math.floor((targetNation.workers_quarry     || 0) * 0.5),
+      workers_miners:     (myNation.workers_miners     || 0) + Math.floor((targetNation.workers_miners     || 0) * 0.5),
     });
 
-    // Collapse defender to near-zero
+    // ── Defeated nation is fully collapsed — left as a ruin ───────────────────
     await base44.entities.Nation.update(targetNation.id, {
       stability: 0,
-      gdp: 100,
-      currency: Math.floor(targetNation.currency * 0.7),
-      manufacturing: 10,
+      gdp: 0,
+      currency: 0,
+      manufacturing: 0,
+      national_wealth: 0,
+      population: 1,
+      res_wood: 0, res_stone: 0, res_gold: 0, res_iron: 0, res_oil: 0, res_food: 0,
+      workers_farmers: 0, workers_lumberjacks: 0, workers_quarry: 0, workers_miners: 0,
+      workers_hunters: 0, workers_fishermen: 0, workers_builders: 0,
+      workers_iron_miners: 0, workers_oil_engineers: 0, workers_researchers: 0,
+      workers_soldiers: 0, workers_industrial: 0,
       at_war_with: [],
+      war_started_at: "",
+      allies: [],
       is_in_market_crash: true,
-      crash_turns_remaining: 5
+      crash_turns_remaining: 10
     });
 
-    // All defender stocks crash 50%
+    // ── All defender stocks crash to near-zero ─────────────────────────────────
     const defStocks = await base44.entities.Stock.filter({ nation_id: targetNation.id });
     for (const s of defStocks) {
-      const newPrice = parseFloat((s.current_price * 0.5).toFixed(2));
+      const newPrice = parseFloat((s.current_price * 0.05).toFixed(2)); // near-total collapse
       await base44.entities.Stock.update(s.id, {
         current_price: newPrice,
         price_history: [...(s.price_history || []), newPrice].slice(-20),
@@ -192,22 +233,34 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
       target_owner_email: targetNation.owner_email,
       target_nation_id: targetNation.id,
       type: "attack_received",
-      title: "💀 NATION COLLAPSED!",
-      message: `Your nation has been annexed by ${myNation.name}. They seized ${treasuryCut} credits of your treasury and absorbed your economy. All your stocks have crashed 50%.`,
+      title: "💀 YOUR NATION HAS BEEN CONQUERED!",
+      message: `${myNation.name} has completely conquered your nation. All your treasury (${seizedTreasury} cr), resources (${totalResources} total), population, and workers have been seized. Your stocks collapsed to near-zero. You must rebuild from nothing.`,
       severity: "danger",
+      is_read: false
+    });
+
+    // Notify the winner
+    await base44.entities.Notification.create({
+      target_owner_email: myNation.owner_email,
+      target_nation_id: myNation.id,
+      type: "tech_unlocked",
+      title: `⚔️ CONQUEST COMPLETE: ${targetNation.name} Defeated!`,
+      message: `You seized ${seizedTreasury} cr treasury, ${totalResources} total resources, ${Math.floor(seizedPop * 0.7)} population, and workers from ${targetNation.name}. Their nation is in ruins.`,
+      severity: "success",
       is_read: false
     });
 
     let annexImageUrl = "";
     try {
       const imgRes = await base44.integrations.Core.GenerateImage({
-        prompt: `Historic military conquest and annexation, victorious army, fallen empire, dramatic cinematic illustration. No text.`
+        prompt: `Epic military conquest, victorious army planting flag over defeated capital city, spoils of war, cinematic illustration. No text.`
       });
       annexImageUrl = imgRes.url || "";
     } catch (_) {}
+
     await base44.entities.NewsArticle.create({
-      headline: `💀 NATION HAS FALLEN: ${targetNation.name} Annexed by ${myNation.name}!`,
-      body: `In a historic military victory, ${myNation.name} has completely defeated and annexed ${targetNation.name}. The winning nation absorbed ${treasuryCut} credits and a significant portion of the defeated nation's economy. All stocks of the fallen nation collapsed 50%. The name "${targetNation.name}" is permanently reserved for its original leader.`,
+      headline: `💀 CONQUERED: ${targetNation.name} Falls to ${myNation.name}!`,
+      body: `In a total military victory, ${myNation.name} has conquered and stripped ${targetNation.name} of all remaining assets. The victorious nation seized the entire treasury (${seizedTreasury} cr), all physical resources (${totalResources} units), ${Math.floor(seizedPop * 0.7)} citizens, and a portion of the workforce. All stocks of the fallen nation collapsed to near-zero. "${targetNation.name}" is left as a ruin — its leader must rebuild from scratch.`,
       category: "war",
       tier: "gold",
       nation_name: myNation.name,
