@@ -64,7 +64,7 @@ function SocialButton({ icon: SocialIcon, label, color, href, onClick }) {
 export default function NationSharePanel({ nation, allNations }) {
   const nationId   = nation?.id;
   const bannerUrl  = getBannerUrl(nationId);
-  const profileUrl = getProfileUrl(nationId);
+  const profileUrl = getProfileUrl(nation);
 
   // Compute rank
   const sorted = [...(allNations || [])].sort((a, b) => (b.gdp || 0) - (a.gdp || 0));
