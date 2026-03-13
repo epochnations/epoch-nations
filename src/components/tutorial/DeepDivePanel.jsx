@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { X, ExternalLink } from "lucide-react";
-import { DEEP_DIVES } from "./deepDiveData.js";
+import { DEEP_DIVES } from "./deepDiveData";
 
 export default function DeepDivePanel({ deepDiveKey, sectionColor, onClose }) {
   const dd = DEEP_DIVES[deepDiveKey];
