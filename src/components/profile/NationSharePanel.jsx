@@ -9,8 +9,9 @@ function getBannerUrl(nationId) {
   return `${BASE_URL}/banner/nation/${nationId}.png`;
 }
 
-function getProfileUrl(nationId) {
-  return `${BASE_URL}/nation/${nationId}`;
+function getProfileUrl(nation) {
+  const slug = (nation?.name || "nation").toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+  return `${BASE_URL}/nation/${slug}`;
 }
 
 function CopyField({ label, value }) {
