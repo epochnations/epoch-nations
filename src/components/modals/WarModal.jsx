@@ -280,9 +280,17 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
           </div>
           <div className="text-slate-300">Damage dealt: <span className="font-mono font-bold text-red-400">{result.damage}</span></div>
           {result.annexed && (
-            <div className="rounded-xl bg-yellow-500/10 border border-yellow-500/30 p-4">
-              <div className="font-bold text-yellow-400">ANNEXATION COMPLETE!</div>
-              <div className="text-sm text-yellow-300/70 mt-1">You seized their treasury, manufacturing, and GDP. Their stocks collapsed 50%.</div>
+            <div className="rounded-xl bg-yellow-500/10 border border-yellow-500/30 p-4 space-y-2">
+              <div className="font-bold text-yellow-400 text-base">⚔️ CONQUEST COMPLETE!</div>
+              <div className="text-xs text-yellow-300/70 leading-relaxed space-y-1">
+                <div>✅ Full treasury seized</div>
+                <div>✅ All resources transferred to you</div>
+                <div>✅ 70% of their population absorbed</div>
+                <div>✅ 50% of workers absorbed into your workforce</div>
+                <div>✅ GDP, manufacturing & national wealth boosted</div>
+                <div>🔴 Their stocks collapsed to near-zero</div>
+                <div>🔴 Their nation is in total ruin — allies disbanded</div>
+              </div>
             </div>
           )}
           {result.critical && !result.annexed && (
