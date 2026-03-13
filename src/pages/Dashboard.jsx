@@ -191,6 +191,12 @@ export default function Dashboard() {
           )}
 
           <button
+            onClick={() => setShowTour(true)}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-bold hover:bg-indigo-500/20 transition-all duration-150"
+          >
+            <BookOpen size={12} /> Tutorial
+          </button>
+          <button
             onClick={() => base44.auth.logout(createPageUrl("Onboarding"))}
             className="p-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors text-slate-400 text-xs"
           >
