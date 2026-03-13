@@ -77,8 +77,12 @@ export default function NationSharePanel({ nation, allNations }) {
   const bbcodeEmbed = `[img]${bannerUrl}[/img]`;
 
   const twitterShare  = `https://twitter.com/intent/tweet?text=${encodeURIComponent(`${ogTitle}\n${ogDesc}\n`)}&url=${encodeURIComponent(profileUrl)}`;
-  const facebookShare = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(profileUrl)}&quote=${encodeURIComponent(ogDesc)}`;
   const discordNote   = `${ogTitle}\n${ogDesc}\n${profileUrl}`;
+
+  const openFacebook = () => {
+    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(profileUrl)}`;
+    window.open(url, "fb-share", "width=600,height=450,resizable=yes");
+  };
 
   const [discordCopied, setDiscordCopied] = useState(false);
   const copyDiscord = () => {
