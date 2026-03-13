@@ -399,6 +399,91 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
       })
     ]);
 
+    // ── Map: transfer all hex tiles from defeated to victor ─────────────────
+    try {
+      const defeatedHexes = await base44.entities.HexTile.filter({ owner_nation_id: targetNation.id });
+      for (const hex of defeatedHexes) {
+        await base44.entities.HexTile.update(hex.id, {
+          owner_nation_id: myNation.id,
+          owner_nation_name: myNation.name,
+          owner_color: myNation.flag_color,
+          owner_flag: myNation.flag_emoji,
+        });
+      }
+    } catch (_) {}
+
+    // ── Buildings: transfer ownership to victor ──────────────────────────────
+    try {
+      const defeatedBuildings = await base44.entities.Building.filter({ nation_id: targetNation.id });
+      for (const b of defeatedBuildings) {
+        await base44.entities.Building.update(b.id, {
+          nation_id: myNation.id,
+          nation_name: myNation.name,
+          owner_email: myNation.owner_email,
+        });
+      }
+    } catch (_) {}
+
+    // ── Cities: transfer ownership to victor ─────────────────────────────────
+    try {
+      const defeatedCities = await base44.entities.City.filter({ nation_id: targetNation.id });
+      for (const c of defeatedCities) {
+        await base44.entities.City.update(c.id, {
+          nation_id: myNation.id,
+          owner_email: myNation.owner_email,
+          happiness: Math.max(10, (c.happiness || 50) - 30), // occupied cities are unhappy
+        });
+      }
+    } catch (_) {}
+
+    // ── Trade routes: break all routes involving the defeated nation ─────────
+    try {
+      const routesFrom = await base44.entities.TradeRoute.filter({ from_nation_id: targetNation.id });
+      const routesTo   = await base44.entities.TradeRoute.filter({ to_nation_id: targetNation.id });
+      for (const r of [...routesFrom, ...routesTo]) {
+        await base44.entities.TradeRoute.update(r.id, { status: "broken" });
+      }
+    } catch (_) {}
+
+    // ── Diplomacy: break/expire all agreements involving the defeated nation ─
+    try {
+      const diploA = await base44.entities.DiplomacyAgreement.filter({ nation_a_id: targetNation.id });
+      const diploB = await base44.entities.DiplomacyAgreement.filter({ nation_b_id: targetNation.id });
+      for (const d of [...diploA, ...diploB]) {
+        await base44.entities.DiplomacyAgreement.update(d.id, { status: "broken" });
+      }
+    } catch (_) {}
+
+    // ── TradeAgreements: cancel all ──────────────────────────────────────────
+    try {
+      const taA = await base44.entities.TradeAgreement.filter({ nation_a_id: targetNation.id });
+      const taB = await base44.entities.TradeAgreement.filter({ nation_b_id: targetNation.id });
+      for (const t of [...taA, ...taB]) {
+        await base44.entities.TradeAgreement.update(t.id, { status: "cancelled" });
+      }
+    } catch (_) {}
+
+    // ── Policy: zero out the defeated nation's policy ────────────────────────
+    try {
+      const policies = await base44.entities.Policy.filter({ nation_id: targetNation.id });
+      for (const p of policies) {
+        await base44.entities.Policy.update(p.id, {
+          healthcare: false, martial_law: false, tech_subsidies: false,
+          tax_cuts: false, conscription: false, influence_points: 0,
+        });
+      }
+    } catch (_) {}
+
+    // ── WorldChronicle: record the conquest ─────────────────────────────────
+    base44.entities.WorldChronicle.create({
+      event_type: "war",
+      title: `${myNation.name} Conquers ${targetNation.name}`,
+      summary: `After a decisive military campaign, ${myNation.name} (led by ${myNation.leader || "unknown"}) has completely conquered ${targetNation.name}. All territory, resources, population and infrastructure have been absorbed. ${targetNation.name} ceases to exist as a sovereign nation.`,
+      actors: [myNation.name, targetNation.name],
+      importance: "critical",
+      era_tag: myNation.epoch || "Unknown Age",
+    }).catch(() => {});
+
     const isAILoser = !targetNation.owner_email || !(await isHumanPlayer(targetNation.owner_email));
     if (isAILoser) await spawnReplacementAINation(targetNation);
   }
