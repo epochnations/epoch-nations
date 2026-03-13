@@ -635,26 +635,33 @@ export default function WorldChat({ myNation, user }) {
           </div>
         </div>
 
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto py-1" style={{ minHeight: 0 }}>
-          {filtered.length === 0 && (
-            <div className="text-center text-slate-700 text-xs ep-mono mt-10 px-4">
-              {channel === "allies" ? "No allied messages yet." : "No messages yet — be the first!"}
-            </div>
-          )}
-          {filtered.map(msg => (
-            <ChatMessageRow key={msg.id} msg={msg} myNation={myNation} isMod={isMod}
-              onReact={handleReact}
-              onReply={(m) => { setReplyTo(m); inputRef.current?.focus(); }}
-              onDelete={deleteMessage} onMute={mutePlayer} onUnmute={unmutePlayer}
-              onPrivate={openPrivateFromMsg}
-            />
-          ))}
-          <div ref={bottomRef} />
-        </div>
+        {/* Messages / Activity */}
+        {channel === "activity" ? (
+          <div className="flex-1 overflow-y-auto" style={{ minHeight: 0 }}>
+            <GlobalLedger />
+          </div>
+        ) : (
+          <div className="flex-1 overflow-y-auto py-1" style={{ minHeight: 0 }}>
+            {filtered.length === 0 && (
+              <div className="text-center text-slate-700 text-xs ep-mono mt-10 px-4">
+                {channel === "allies" ? "No allied messages yet." : "No messages yet — be the first!"}
+              </div>
+            )}
+            {filtered.map(msg => (
+              <ChatMessageRow key={msg.id} msg={msg} myNation={myNation} isMod={isMod}
+                onReact={handleReact}
+                onReply={(m) => { setReplyTo(m); inputRef.current?.focus(); }}
+                onDelete={deleteMessage} onMute={mutePlayer} onUnmute={unmutePlayer}
+                onPrivate={openPrivateFromMsg}
+              />
+            ))}
+            <div ref={bottomRef} />
+          </div>
+        )}
 
+        {/* Input area — hidden for activity tab */}
         {/* Reply bar */}
-        {replyTo && (
+        {replyTo && channel !== "activity" && (
           <div className="px-3 py-1.5 flex items-center gap-2 border-t text-[11px] shrink-0"
             style={{ borderColor: "rgba(255,255,255,0.06)", background: "rgba(34,211,238,0.04)" }}>
             <Reply size={10} className="text-cyan-400 shrink-0" />
