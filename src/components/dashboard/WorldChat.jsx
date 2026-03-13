@@ -744,7 +744,7 @@ export default function WorldChat({ myNation, user }) {
               </>
             )}
           </div>
-        </div>
+        </div>}
       </div>
 
       {showPrivate && myNation && (
