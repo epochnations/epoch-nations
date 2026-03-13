@@ -673,7 +673,7 @@ export default function WorldChat({ myNation, user }) {
         )}
 
         {/* Command suggestions */}
-        {cmdSuggestions.length > 0 && (
+        {cmdSuggestions.length > 0 && channel !== "activity" && (
           <div className="mx-2 mb-1 bg-[#0c1220] border border-white/10 rounded-xl overflow-hidden shrink-0">
             {cmdSuggestions.map(c => (
               <button key={c.cmd} onClick={() => { setInput(c.cmd + " "); inputRef.current?.focus(); }}
@@ -686,7 +686,7 @@ export default function WorldChat({ myNation, user }) {
         )}
 
         {/* Input area */}
-        <div className="px-2 pb-2 pt-1 border-t shrink-0 relative" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+        {channel !== "activity" && <div className="px-2 pb-2 pt-1 border-t shrink-0 relative" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
           {showEmoji && (
             <div className="absolute bottom-full left-2 mb-1 bg-[#0c1220] border border-white/10 rounded-xl p-2 flex flex-wrap gap-1 w-52 shadow-2xl z-20">
               {EMOJIS.map(e => (
