@@ -602,7 +602,7 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
         initial={{ opacity: 0, scale: 0.93, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ type: "spring", stiffness: 280, damping: 22 }}
-        className="w-full max-w-md rounded-2xl overflow-hidden"
+        className="w-full max-w-xl rounded-2xl overflow-hidden"
         style={{ background: "linear-gradient(135deg, #0f172a 0%, #040810 100%)", border: "1px solid rgba(239,68,68,0.2)", boxShadow: "0 0 60px rgba(239,68,68,0.08)" }}
       >
         {/* Header */}
