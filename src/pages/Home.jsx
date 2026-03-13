@@ -178,6 +178,10 @@ export default function Home() {
           {[["Features", "#features"], ["Roadmap", "#roadmap"], ["Forge SDK", "#forge"], ["About", "#about"], ["Support", "#support"]].map(([label, href]) => (
             <a key={label} href={href} className="hover:text-white transition-colors">{label}</a>
           ))}
+          <a href="https://github.com/epochnations" target="_blank" rel="noopener noreferrer"
+            className="hover:text-white transition-colors flex items-center gap-1">
+            <Github size={13} /> GitHub
+          </a>
         </div>
         <div className="flex items-center gap-2">
           <button onClick={goToLogin}
