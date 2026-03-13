@@ -140,10 +140,12 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
       image_url: warImageUrl
     });
 
-    // Check defeat conditions: stability < 10 AND gdp < 200
+    // Check defeat conditions: all four pillars collapsed
     const newStability = defenderUpdates.stability;
     const newGdp = defenderUpdates.gdp;
-    if (newStability < 10 && newGdp < 200) {
+    const newManufacturing = defenderUpdates.manufacturing;
+    const newTreasury = defenderUpdates.currency;
+    if (newStability <= 0 && newGdp <= 100 && newManufacturing <= 10 && newTreasury <= 0) {
       await handleAnnexation(damageDealt);
       setResult({ damage: damageDealt, critical: crashTriggered, annexed: true });
     } else {
