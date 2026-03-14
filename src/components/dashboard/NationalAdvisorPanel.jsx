@@ -137,8 +137,7 @@ export default function NationalAdvisorPanel({ nation, onClose }) {
         <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
           {/* Advisory Feed */}
           <div className="px-3 py-2 space-y-1.5 border-b border-white/5 shrink-0">
-            {advisories.length === 0 ? null : (
-              advisories.map((a, i) => {
+            {advisories.length > 0 && advisories.map((a, i) => {
                 const s = SEV[a.severity];
                 return (
                   <div key={i} className="flex items-start gap-2 rounded-xl px-3 py-2"
