@@ -126,8 +126,9 @@ export default function WorldMap({ myNation, onSelectNation, onOpenAdvisor }) {
     <div
       ref={containerRef}
       className="relative w-full h-full rounded-2xl overflow-hidden select-none"
-      style={{ background: "#0f1e33", cursor: "grab" }}
-      {...handlers}
+      style={{ background: "#060d12", cursor: mapUnlocked ? "grab" : "default" }}
+      {...(mapUnlocked ? handlers : {})}
+      onClick={!mapUnlocked ? () => setMapUnlocked(true) : undefined}
     >
       {/* Top Bar */}
       <div className="absolute top-0 left-0 right-0 z-30 flex items-center gap-2 px-3 py-2 bg-black/60 backdrop-blur-sm border-b border-white/10">
