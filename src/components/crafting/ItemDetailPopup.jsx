@@ -166,7 +166,7 @@ export default function ItemDetailPopup({ item, onClose, onViewRecipe }) {
           )}
 
           {/* Action buttons */}
-          <div className="flex gap-2 pt-1">
+          <div className="flex gap-2 pt-1 flex-wrap">
             <button onClick={onClose}
               className="flex-1 py-2.5 rounded-xl text-xs font-bold border text-slate-400 hover:bg-white/5 transition-all"
               style={{ borderColor: "rgba(255,255,255,0.1)" }}>
@@ -177,7 +177,15 @@ export default function ItemDetailPopup({ item, onClose, onViewRecipe }) {
                 onClick={() => onViewRecipe(item)}
                 className="flex-1 py-2.5 rounded-xl text-xs font-bold text-white transition-all"
                 style={{ background: `linear-gradient(135deg, ${rarity.color}80, ${rarity.color}40)`, border: `1px solid ${rarity.color}40` }}>
-                🔨 View Craft Chain
+                🔨 Craft Chain
+              </button>
+            )}
+            {onViewTree && hasRecipe && (
+              <button
+                onClick={() => onViewTree(item)}
+                className="flex-1 py-2.5 rounded-xl text-xs font-bold transition-all"
+                style={{ background: "rgba(34,211,238,0.1)", border: "1px solid rgba(34,211,238,0.3)", color: "#22d3ee" }}>
+                🌳 Tree View
               </button>
             )}
           </div>

@@ -159,6 +159,9 @@ export default function Marketplace() {
           {tab === "commodities" && (
             <GlobalCommodityPanel nation={nation} onRefresh={refresh} />
           )}
+          {tab === "crafting" && (
+            <CraftingMarketplacePanel nation={nation} onRefresh={refresh} />
+          )}
           {tab === "import" && (
             <ImportPanel nation={nation} agreements={agreements} onRefresh={refresh} />
           )}
