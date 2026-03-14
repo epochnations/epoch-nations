@@ -130,8 +130,27 @@ export default function WorldMap({ myNation, onSelectNation, onOpenAdvisor }) {
       {...(mapUnlocked ? handlers : {})}
       onClick={!mapUnlocked ? () => setMapUnlocked(true) : undefined}
     >
+      {/* Status Bars (war / protection) */}
+      <div className="absolute top-0 left-0 right-0 z-30 flex flex-col">
+        {myNation && <WarCountdownBar nation={myNation} />}
+        {myNation && <ProtectionBar nation={myNation} />}
+      </div>
+
+      {/* Map lock overlay — click to unlock */}
+      {!mapUnlocked && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none"
+          style={{ background: "rgba(0,0,0,0.15)" }}>
+          <div className="flex flex-col items-center gap-2 px-4 py-3 rounded-2xl"
+            style={{ background: "rgba(0,0,0,0.6)", border: "1px solid rgba(74,122,64,0.4)", backdropFilter: "blur(4px)" }}>
+            <span className="text-2xl">🗺️</span>
+            <span className="text-xs font-bold text-green-300 tracking-widest uppercase">Click to interact</span>
+          </div>
+        </div>
+      )}
+
       {/* Top Bar */}
-      <div className="absolute top-0 left-0 right-0 z-30 flex items-center gap-2 px-3 py-2 bg-black/60 backdrop-blur-sm border-b border-white/10">
+      <div className="absolute z-30 left-0 right-0 flex items-center gap-2 px-3 py-2 bg-black/60 backdrop-blur-sm border-b border-white/10"
+        style={{ top: myNation && ((myNation.at_war_with||[]).length > 0 || (() => { const c = myNation.created_date; if(!c) return false; return (Date.now() - new Date(c).getTime()) < 48*60*60*1000; })()) ? "28px" : "0px" }}>
         {onOpenAdvisor && (
           <button onClick={onOpenAdvisor}
             className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold border transition-all hover:scale-105"
