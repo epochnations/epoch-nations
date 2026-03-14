@@ -199,8 +199,13 @@ export default function IssueStockPanel({ nation, onClose, onRefresh }) {
             else if (sector === "Iron") resourceMod = (nation.res_iron || 0) * 0.04;
             else if (sector === "Oil") resourceMod = (nation.res_oil || 0) * 0.05;
             else if (sector === "Gold") resourceMod = (nation.res_gold || 0) * 0.06;
-            const stockValue = (nation.gdp + nation.stability) * (nation.public_trust || 1);
-            const previewFinalPrice = parseFloat((price + stockValue * 0.01 + resourceMod).toFixed(2));
+            const gdpF = Math.min(2.0, Math.max(0.5, (nation.gdp || 500) / 500));
+            const stabF = Math.min(1.5, Math.max(0.5, (nation.stability || 75) / 75));
+            const trustF = Math.min(1.5, Math.max(0.5, nation.public_trust || 1.0));
+            const clampedRes = Math.min(3, resourceMod * 0.001);
+            const previewFinalPrice = parseFloat(Math.min(80, Math.max(1,
+              price * gdpF * stabF * trustF + clampedRes
+            )).toFixed(2));
             const previewCost = Math.round(previewFinalPrice * cappedShares * 0.05);
             const canAfford = (nation.currency || 0) >= previewCost;
             return (
