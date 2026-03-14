@@ -413,11 +413,18 @@ async function runAIStockIssuance(myNationId) {
       if (listedIds.has(nation.id)) continue;
 
       const ticker     = nation.name.replace(/[^A-Za-z]/g, "").substring(0, 4).toUpperCase() || "NATL";
-      const basePrice  = Math.max(5, Math.round((nation.gdp || 200) / 80));
-      const totalShares = 500;
+      // Realistic IPO price: capped at $80, based on GDP/stability/epoch
+      const gdpFactor = Math.min(2.0, (nation.gdp || 200) / 500);
+      const stabFactor = Math.min(1.2, (nation.stability || 65) / 100 + 0.3);
+      const trustFactor = Math.min(1.5, nation.public_trust || 1.0);
+      const epochIdx = ["Stone Age","Bronze Age","Iron Age","Classical Age","Medieval Age","Renaissance Age","Industrial Age","Modern Age","Digital Age","Information Age","Space Age","Galactic Age"].indexOf(nation.epoch || "Stone Age");
+      const epochFactor = 1 + Math.max(0, epochIdx) * 0.15;
+      const basePrice = Math.max(3, Math.min(80, parseFloat((5 * gdpFactor * stabFactor * trustFactor * epochFactor).toFixed(2))));
+      const totalShares = 500 + Math.floor((epochIdx || 0) * 100);
       const sector = (nation.res_oil || 0) > 30 ? "Energy"
         : (nation.unit_power || 0) > 25 ? "Defense"
-        : (nation.tech_level || 1) > 3 ? "Technology"
+        : (nation.tech_level || 1) > 5 ? "Technology"
+        : (nation.tech_level || 1) > 3 ? "Finance"
         : "Agriculture";
 
       await base44.entities.Stock.create({
