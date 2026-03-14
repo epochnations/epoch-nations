@@ -9,6 +9,10 @@ const LAYERS = [
   { key: "tradeRoutes", label: "Trade Routes",  emoji: "📦" },
   { key: "danger",      label: "Danger Zones",  emoji: "⚠️" },
   { key: "resources",   label: "Resources",     emoji: "⛏️" },
+  { key: "territories", label: "Territories",   emoji: "🗺️" },
+  { key: "cities",      label: "Cities",        emoji: "🏛️" },
+  { key: "armies",      label: "Armies",        emoji: "⚔️" },
+  { key: "infra",       label: "Infrastructure",emoji: "🏗️" },
 ];
 
 export default function MapControls({

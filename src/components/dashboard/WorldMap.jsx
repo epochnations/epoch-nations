@@ -13,9 +13,15 @@ import MapNationIcon from "../map/MapNationIcon";
 import MapSearchBar from "../map/MapSearchBar";
 import MapControls from "../map/MapControls";
 import MapCityPanel from "../map/MapCityPanel";
+import TerritoryLayer from "../map/strategy/TerritoryLayer";
+import CityMarkerLayer from "../map/strategy/CityMarkerLayer";
+import ResourceLayer from "../map/strategy/ResourceLayer";
+import ArmyLayer from "../map/strategy/ArmyLayer";
+import InfrastructureLayer from "../map/strategy/InfrastructureLayer";
 
 const DEFAULT_LAYERS = {
-  wars: true, battles: true, tradeRoutes: true, danger: true, resources: false
+  wars: true, battles: true, tradeRoutes: true, danger: true, resources: false,
+  territories: true, cities: true, armies: true, infra: false,
 };
 
 export default function WorldMap({ myNation, onSelectNation, onOpenAdvisor }) {
