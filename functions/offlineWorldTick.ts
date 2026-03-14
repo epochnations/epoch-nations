@@ -87,7 +87,7 @@ async function tickNation(base44, nation) {
     updates.population = pop + 1;
   } else if (netFood < 0 && newFood === 0 && Math.random() < 0.5) {
     updates.population = Math.max(1, pop - 1);
-    updates.stability  = Math.max(0, stability - 2);
+    updates.stability  = Math.min(100, Math.max(0, Math.round(stability - 2)));
   } else if (stability < 20 && Math.random() < 0.2) {
     updates.population = Math.max(1, pop - 1);
   }
@@ -100,7 +100,7 @@ async function tickNation(base44, nation) {
       updates.war_started_at = "";
     }
     // gradual stability drain during war
-    updates.stability = Math.max(0, (updates.stability ?? stability) - 1);
+    updates.stability = Math.min(100, Math.max(0, Math.round((updates.stability ?? stability) - 1)));
   }
 
   await base44.asServiceRole.entities.Nation.update(nation.id, updates);
