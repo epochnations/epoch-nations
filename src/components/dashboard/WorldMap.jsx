@@ -7,7 +7,7 @@ import { base44 } from "@/api/base44Client";
 import { Globe, Wifi, Brain } from "lucide-react";
 
 import { useMapEngine } from "../map/MapEngine";
-import MapTerrain, { MAP_W, MAP_H, nationPos, CITIES } from "../map/MapTerrain";
+import MapTerrain, { MAP_W, MAP_H, nationPos, CITIES } from "../map/MapTerrain.jsx";
 import MapOverlays from "../map/MapOverlays";
 import MapNationIcon from "../map/MapNationIcon";
 import MapSearchBar from "../map/MapSearchBar";
