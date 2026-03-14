@@ -211,6 +211,30 @@ export default function Dashboard() {
           )}
 
           <button
+            onClick={() => setShowExploration(true)}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold hover:bg-amber-500/20 transition-all duration-150"
+          >
+            🧭 Explore
+          </button>
+          <button
+            onClick={() => setShowWonders(true)}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-400 text-xs font-bold hover:bg-violet-500/20 transition-all duration-150"
+          >
+            ✨ Wonders
+          </button>
+          <button
+            onClick={() => setShowCrisis(true)}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-bold hover:bg-red-500/20 transition-all duration-150"
+          >
+            🚨 Crisis
+          </button>
+          <button
+            onClick={() => setShowWarFronts(true)}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-bold hover:bg-orange-500/20 transition-all duration-150"
+          >
+            ⚔️ War Fronts
+          </button>
+          <button
             onClick={() => setShowSystemStatus(true)}
             className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold hover:bg-emerald-500/20 transition-all duration-150"
           >
