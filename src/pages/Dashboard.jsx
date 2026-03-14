@@ -196,23 +196,13 @@ export default function Dashboard() {
           >
             🏆 Hall of Nations
           </a>
-          <a
-            href={createPageUrl("ItemEncyclopedia")}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-bold hover:bg-cyan-500/20 transition-all duration-150"
-          >
-            📖 Encyclopedia
-          </a>
+
 
           {user && myNation && (
             <NotificationsPanel nationId={myNation?.id} ownerEmail={user?.email} />
           )}
 
-          <button
-            onClick={() => setShowSystemStatus(true)}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold hover:bg-emerald-500/20 transition-all duration-150"
-          >
-            <Activity size={12} /> Status
-          </button>
+
           <button
             onClick={() => setShowTour(true)}
             className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-bold hover:bg-indigo-500/20 transition-all duration-150"
