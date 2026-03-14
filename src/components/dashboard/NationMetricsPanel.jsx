@@ -1,8 +1,6 @@
 import { useRef, useEffect, useState } from "react";
 import { EPOCHS } from "../game/EpochConfig";
 import { TICKS_PER_DAY } from "../game/GameClock";
-import NationStatsOverlay from "./NationStatsOverlay";
-
 /** Flash glow when a value changes */
 function useFlash(value) {
   const prev = useRef(value);
