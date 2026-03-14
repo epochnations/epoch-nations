@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState } from "react";
 import { EPOCHS } from "../game/EpochConfig";
 import { TICKS_PER_DAY } from "../game/GameClock";
+import NationStatsOverlay from "./NationStatsOverlay";
 
 /** Flash glow when a value changes */
 function useFlash(value) {
@@ -48,7 +49,7 @@ const CORE_METRICS = [
   { key: "unit_power",   label: "Unit Power",   max: 200, color: "#fb923c" },
 ];
 
-export default function NationMetricsPanel({ nation }) {
+export default function NationMetricsPanel({ nation, allNations }) {
   if (!nation) return null;
 
   const epochIndex = EPOCHS.indexOf(nation.epoch);
@@ -132,6 +133,12 @@ export default function NationMetricsPanel({ nation }) {
             <div className="text-[15px] font-black ep-mono text-violet-400">{(nation.unlocked_techs || []).length}</div>
           </div>
         </div>
+      </div>
+
+      {/* ── Civ Score ── */}
+      <div className="shrink-0">
+        <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase mb-2">🏆 CIVILIZATION SCORE</div>
+        <NationStatsOverlay nation={nation} allNations={allNations} />
       </div>
 
     </div>
