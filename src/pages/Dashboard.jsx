@@ -297,18 +297,14 @@ export default function Dashboard() {
           <a href={createPageUrl("Marketplace")} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-green-500/10 border border-green-500/20 text-green-400 min-h-[44px] flex items-center gap-1.5">
             🏪 Market
           </a>
-          <button onClick={() => setShowSystemStatus(true)} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 min-h-[44px] flex items-center gap-1.5">
-            📡 Status
-          </button>
+
           <button onClick={() => setShowTour(true)} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 min-h-[44px] flex items-center gap-1.5">
             📖 Tutorial
           </button>
           <a href={createPageUrl("HallOfNations")} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-amber-500/10 border border-amber-500/20 text-amber-400 min-h-[44px] flex items-center gap-1.5">
             🏆 Hall
           </a>
-          <a href={createPageUrl("ItemEncyclopedia")} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 min-h-[44px] flex items-center gap-1.5">
-            📖 Items
-          </a>
+
         </div>
       </div>
 
