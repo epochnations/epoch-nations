@@ -83,7 +83,7 @@ export default function ItemEncyclopedia() {
             Item Encyclopedia
           </span>
         </div>
-        <div className="text-[10px] text-slate-600 ep-mono">{ALL_ITEMS.length.toLocaleString()} items</div>
+        <div className="text-[10px] text-slate-600 ep-mono">{ALL_ITEMS.length.toLocaleString()}+ items</div>
         <div className="flex-1" />
 
         {/* Search */}

@@ -1,6 +1,6 @@
 /**
  * ItemDatabase — Universal item registry for Epoch Nations
- * 2,600+ items organized by category, tier, and crafting chain
+ * 700+ unique items organized by category, tier, and crafting chain
  */
 
 export const RARITIES = {
