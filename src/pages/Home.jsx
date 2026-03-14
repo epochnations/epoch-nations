@@ -365,7 +365,7 @@ export default function Home() {
             </span>
           </h1>
           <p className="text-slate-400 text-base md:text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
-            Epoch Nations is a real-time geopolitical civilization simulator. Found your nation, guide it through 12 historical epochs, dominate the global economy, and leave your mark on a persistent living world.
+            Epoch Nations is a real-time geopolitical civilization simulator. Create your nation, guide it through 12 historical epochs, dominate the global economy, and leave your mark on a persistent living world.
           </p>
 
           {/* Live Clock */}

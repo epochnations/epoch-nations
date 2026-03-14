@@ -49,8 +49,6 @@ export default function ItemEncyclopedia() {
   const [showFilters,    setShowFilters]    = useState(false);
   const [activeCat,      setActiveCat]      = useState(null);
   const [page,           setPage]           = useState(1);
-  const [showInventory,  setShowInventory]  = useState(false);
-  const [showCommunity,  setShowCommunity]  = useState(false);
   const PAGE_SIZE = 48;
 
   const filtered = useMemo(() => {
@@ -117,16 +115,6 @@ export default function ItemEncyclopedia() {
           />
         </div>
 
-        <button onClick={() => setShowInventory(true)}
-          className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all"
-          style={{ background: "rgba(139,92,246,0.08)", border: "1px solid rgba(139,92,246,0.2)", color: "#a78bfa" }}>
-          <Package size={11} /> Inventory
-        </button>
-        <button onClick={() => setShowCommunity(true)}
-          className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all"
-          style={{ background: "rgba(34,211,238,0.06)", border: "1px solid rgba(34,211,238,0.15)", color: "#22d3ee" }}>
-          <Code2 size={11} /> Dev Registry
-        </button>
         <button
           onClick={() => setShowFilters(f => !f)}
           className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all"
@@ -385,34 +373,6 @@ export default function ItemEncyclopedia() {
         )}
       </AnimatePresence>
 
-      {/* Inventory Manager */}
-      <AnimatePresence>
-        {showInventory && <InventoryManager onClose={() => setShowInventory(false)} />}
-      </AnimatePresence>
-
-      {/* Community Item Registry */}
-      <AnimatePresence>
-        {showCommunity && (
-          <div className="fixed inset-0 z-[300] flex items-center justify-center p-4"
-            style={{ background: "rgba(0,0,0,0.9)", backdropFilter: "blur(16px)" }}
-            onClick={() => setShowCommunity(false)}>
-            <div className="w-full max-w-2xl max-h-[90vh] flex flex-col rounded-2xl overflow-hidden"
-              style={{ background: "#040810", border: "1px solid rgba(139,92,246,0.25)" }}
-              onClick={e => e.stopPropagation()}>
-              <div className="flex items-center justify-between px-5 py-3 border-b shrink-0"
-                style={{ borderColor: "rgba(255,255,255,0.08)", background: "rgba(0,0,0,0.4)" }}>
-                <div className="font-black text-white text-sm">Community Item Registry</div>
-                <button onClick={() => setShowCommunity(false)} className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400">
-                  <span className="text-xs">✕</span>
-                </button>
-              </div>
-              <div className="flex-1 overflow-y-auto p-5">
-                <CommunityItemRegistry nation={null} />
-              </div>
-            </div>
-          </div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
