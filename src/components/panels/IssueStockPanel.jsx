@@ -57,11 +57,20 @@ export default function IssueStockPanel({ nation, onClose, onRefresh }) {
   const sectors = SECTORS_BY_EPOCH[nation.epoch] || ["Agriculture", "Energy", "Stone", "Iron", "Gold", "Finance", "Technology", "Oil"];
 
   async function issue() {
-    if (!companyName || !ticker || atCap) return;
+    if (!companyName || !ticker) return;
     setLoading(true);
 
+    // Re-check cap server-side to prevent bypass
+    const freshStocks = await base44.entities.Stock.filter({ nation_id: nation.id });
+    if (freshStocks.length >= stockCap) {
+      alert(`Stock cap reached (${freshStocks.length}/${stockCap}) for ${nation.epoch}. Advance your epoch to issue more.`);
+      setLoading(false);
+      return;
+    }
+
     const cappedShares = Math.min(shares, maxShares);
-    // Resource modifier: add 2% of sector-relevant resources to base price
+
+    // Price: use the user's input directly, add a tiny resource bonus (max +$3), no multipliers
     let resourceMod = 0;
     if (sector === "Agriculture") resourceMod = (nation.res_food || 0) * 0.02;
     else if (sector === "Energy") resourceMod = (nation.res_oil || 0) * 0.03;
@@ -75,14 +84,9 @@ export default function IssueStockPanel({ nation, onClose, onRefresh }) {
     else if (sector === "Oil") resourceMod = (nation.res_oil || 0) * 0.05;
     else if (sector === "Gold") resourceMod = (nation.res_gold || 0) * 0.06;
 
-    // Realistic IPO price: user-set base ($1–$25) + tiny fundamentals bonus, capped at $80
-    const gdpFactor = Math.min(2.0, Math.max(0.5, (nation.gdp || 500) / 500));
-    const stabilityFactor = Math.min(1.5, Math.max(0.5, (nation.stability || 75) / 75));
-    const trustFactor = Math.min(1.5, Math.max(0.5, nation.public_trust || 1.0));
-    const clampedResource = Math.min(3, resourceMod * 0.001); // resource bonus: max +$3
-    const finalPrice = parseFloat(Math.min(80, Math.max(1,
-      price * gdpFactor * stabilityFactor * trustFactor + clampedResource
-    )).toFixed(2));
+    const clampedResource = Math.min(3, resourceMod * 0.001); // max +$3 bonus
+    // Final price = exactly what user typed + small resource bonus (no GDP/stability multipliers)
+    const finalPrice = parseFloat(Math.max(1, price + clampedResource).toFixed(2));
 
     // Treasury cost: 5% of total IPO value
     const issueCost = Math.round(finalPrice * cappedShares * 0.05);
