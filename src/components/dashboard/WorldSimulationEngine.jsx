@@ -311,6 +311,83 @@ async function executeGlobalChatAid(aiNation, targetNation, action) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// AI STOCK PURCHASE
+// AI nations buy shares in other nations' stocks using their treasury
+// ─────────────────────────────────────────────────────────────────────────────
+async function executeAIStockPurchase(aiNation) {
+  try {
+    const freshNations = await base44.entities.Nation.list();
+    const freshAI = freshNations.find(n => n.id === aiNation.id);
+    if (!freshAI || (freshAI.currency || 0) < 100) return;
+
+    // Find stocks from other nations that aren't crashed
+    const allStocks = await base44.entities.Stock.list("-market_cap", 30);
+    const eligible = allStocks.filter(s =>
+      s.nation_id !== aiNation.id &&
+      !s.is_crashed &&
+      (s.available_shares || 0) > 0 &&
+      (s.current_price || 0) > 0 &&
+      (s.current_price || 0) < (freshAI.currency || 0) * 0.3
+    );
+    if (!eligible.length) return;
+
+    // Pick a stock — prefer higher epoch, stable nations
+    const pick = eligible[Math.floor(Math.random() * Math.min(eligible.length, 8))];
+    const maxSpend = Math.min(300, Math.floor((freshAI.currency || 0) * 0.15));
+    const sharesToBuy = Math.max(1, Math.floor(maxSpend / (pick.current_price || 1)));
+    if (sharesToBuy < 1 || sharesToBuy > (pick.available_shares || 0)) return;
+
+    const totalCost = parseFloat((sharesToBuy * pick.current_price).toFixed(2));
+    if (totalCost > (freshAI.currency || 0)) return;
+
+    // Deduct from AI treasury
+    await base44.entities.Nation.update(freshAI.id, {
+      currency: Math.max(0, (freshAI.currency || 0) - totalCost),
+    });
+
+    // Update stock
+    const newAvail = Math.max(0, (pick.available_shares || 0) - sharesToBuy);
+    const newPrice = parseFloat((pick.current_price * (1 + sharesToBuy / Math.max(pick.total_shares, 1) * 0.5)).toFixed(2));
+    const history = [...(pick.price_history || []), newPrice].slice(-20);
+    await base44.entities.Stock.update(pick.id, {
+      available_shares: newAvail,
+      current_price: newPrice,
+      price_history: history,
+      market_cap: parseFloat((newPrice * (pick.total_shares || 500)).toFixed(2)),
+    });
+
+    // Upsert holding
+    const existing = await base44.entities.StockHolding.filter({ nation_id: freshAI.id, stock_id: pick.id });
+    if (existing.length) {
+      const h = existing[0];
+      const newAvgPrice = parseFloat(((h.avg_buy_price * h.shares_owned + totalCost) / (h.shares_owned + sharesToBuy)).toFixed(2));
+      await base44.entities.StockHolding.update(h.id, {
+        shares_owned: h.shares_owned + sharesToBuy,
+        avg_buy_price: newAvgPrice,
+      });
+    } else {
+      await base44.entities.StockHolding.create({
+        nation_id: freshAI.id, nation_name: freshAI.name,
+        stock_id: pick.id, stock_ticker: pick.ticker,
+        company_name: pick.company_name,
+        shares_owned: sharesToBuy, avg_buy_price: pick.current_price,
+      });
+    }
+
+    // Log transaction
+    await base44.entities.Transaction.create({
+      type: "stock_buy",
+      from_nation_id: freshAI.id, from_nation_name: freshAI.name,
+      to_nation_id: pick.nation_id, to_nation_name: pick.nation_name,
+      stock_id: pick.id, stock_ticker: pick.ticker,
+      shares: sharesToBuy, price_per_share: pick.current_price,
+      total_value: totalCost,
+      description: `${freshAI.name} AI sovereign fund bought ${sharesToBuy} shares of ${pick.ticker}`,
+    }).catch(() => {});
+  } catch { /* non-blocking */ }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // AI STOCK ISSUANCE
 // Periodically lists stocks for qualifying AI nations that haven't listed yet
 // ─────────────────────────────────────────────────────────────────────────────
