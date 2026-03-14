@@ -69,13 +69,25 @@ export function useMapEngine(containerRef) {
     lastPos.current = { x: e.clientX, y: e.clientY };
   }, []);
 
+  const savePan = useCallback((p, z) => {
+    clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => {
+      localStorage.setItem(PAN_STORAGE_KEY, JSON.stringify(p));
+      localStorage.setItem(ZOOM_STORAGE_KEY, String(z));
+    }, 300);
+  }, []);
+
   const onMouseMove = useCallback((e) => {
     if (!dragging.current) return;
     const dx = e.clientX - lastPos.current.x;
     const dy = e.clientY - lastPos.current.y;
     lastPos.current = { x: e.clientX, y: e.clientY };
-    setPan(p => ({ x: p.x + dx, y: p.y + dy }));
-  }, []);
+    setPan(p => {
+      const np = { x: p.x + dx, y: p.y + dy };
+      savePan(np, zoom);
+      return np;
+    });
+  }, [zoom, savePan]);
 
   const onMouseUp = useCallback(() => { dragging.current = false; }, []);
 
