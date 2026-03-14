@@ -348,15 +348,25 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
       nation_name: myNation.name, nation_flag: myNation.flag_emoji, nation_color: myNation.flag_color,
     }).catch(() => {});
 
-    // ── Check for annexation ─────────────────────────────────────────────────
-    const newStability = defenderUpdates.stability;
-    const newGdp = defenderUpdates.gdp;
-    const newMfg = defenderUpdates.manufacturing;
-    const newTrs = defenderUpdates.currency;
+    // ── Check for annexation — fetch fresh data to avoid stale props ─────────
     let annexed = false;
-    if (newStability <= 0 && newGdp <= 100 && newMfg <= 10 && newTrs <= 0) {
-      await handleAnnexation(damageDealt);
-      annexed = true;
+    try {
+      const freshTargets = await base44.entities.Nation.filter({ id: targetNation.id });
+      const freshTarget = freshTargets[0] || defenderUpdates;
+      const chkStab = freshTarget.stability ?? defenderUpdates.stability;
+      const chkGdp = freshTarget.gdp ?? defenderUpdates.gdp;
+      const chkMfg = freshTarget.manufacturing ?? defenderUpdates.manufacturing;
+      const chkTrs = freshTarget.currency ?? defenderUpdates.currency;
+      if (chkStab <= 0 && chkGdp <= 100 && chkMfg <= 10 && chkTrs <= 0) {
+        await handleAnnexation(damageDealt);
+        annexed = true;
+      }
+    } catch (_) {
+      // Fallback to local computed values
+      if (defenderUpdates.stability <= 0 && defenderUpdates.gdp <= 100 && defenderUpdates.manufacturing <= 10 && defenderUpdates.currency <= 0) {
+        await handleAnnexation(damageDealt);
+        annexed = true;
+      }
     }
 
     advanceTo(5); // Finalizing
@@ -507,11 +517,30 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
     const AI_NAMES = ["New Veldoria","Rising Caldeth","Restored Aethon","Reborn Morkai","Nova Herath","Phoenix Solund","Renewed Kalvos","Ascendant Thyra"];
     const FLAG_EMOJIS = ["🏴","⚔️","🦅","🐉","🌟","🔱","🛡️","🌙","☀️","🦁"];
     const FLAG_COLORS = ["#3b82f6","#ef4444","#10b981","#f59e0b","#8b5cf6","#06b6d4","#f97316","#ec4899"];
-    const GOV_TYPES = ["Democracy","Federal Republic","Technocracy","Military Junta","Oligarchy"];
-    const LEADER_FIRSTS = ["Arman","Erika","Viktor","Soren","Yuna","Marcus","Dayo","Leila","Otto","Zara"];
-    const LEADER_LASTS = ["Petrov","Vogel","Laurent","Stahl","Osei","Tanaka","Reyes","Novak","Kimura","Torres"];
+    const GOV_TYPES = ["Democracy","Federal Republic","Technocracy","Military Junta","Oligarchy","Constitutional Monarchy","Oligarchy","Corporate State"];
+    const LEADER_FIRSTS = ["Arman","Erika","Viktor","Soren","Yuna","Marcus","Dayo","Leila","Otto","Zara","Kira","Darius","Mira","Silas","Nadia"];
+    const LEADER_LASTS = ["Petrov","Vogel","Laurent","Stahl","Osei","Tanaka","Reyes","Novak","Kimura","Torres","Ashford","Okafor","Brennan","Halvorsen","Nazari"];
     const seed = Date.now();
     const pick = arr => arr[seed % arr.length];
+
+    // AI nations spawn at a random epoch between epochs 4-12 (Classical Age to Galactic Age)
+    const ALL_EPOCHS = ["Stone Age","Bronze Age","Iron Age","Classical Age","Medieval Age","Renaissance Age","Industrial Age","Modern Age","Digital Age","Information Age","Space Age","Galactic Age"];
+    const epochStartIdx = 3; // Classical Age (index 3) = epoch 4
+    const epochEndIdx = 11;  // Galactic Age (index 11) = epoch 12
+    const spawnEpochIdx = epochStartIdx + Math.floor(Math.random() * (epochEndIdx - epochStartIdx + 1));
+    const spawnEpoch = ALL_EPOCHS[spawnEpochIdx];
+    const spawnTechLevel = spawnEpochIdx + 1;
+    // Scale stats to epoch
+    const epochScale = 1 + spawnEpochIdx * 0.3;
+    const spawnGdp = Math.round(300 + spawnEpochIdx * 150);
+    const spawnMfg = Math.min(150, 30 + spawnEpochIdx * 12);
+    const spawnUnit = Math.min(100, 15 + spawnEpochIdx * 8);
+    const spawnDef  = Math.min(100, 15 + spawnEpochIdx * 7);
+    const spawnCur  = Math.round(500 + spawnEpochIdx * 200);
+    const spawnPop  = Math.round(15 + spawnEpochIdx * 5);
+    // Unlock techs based on epoch
+    const spawnTechs = ["Metal Working","Iron Smelting","Crop Rotation","Philosophy","Currency","Architecture","Scientific Method","Steam Power","Industrialization","Electricity","Computing","Rocketry"].slice(0, spawnEpochIdx);
+
     const existingNations = await base44.entities.Nation.list();
     const existingNames = new Set(existingNations.map(n => n.name));
     let newName = pick(AI_NAMES);
@@ -521,16 +550,27 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
     const leaderName = `${LEADER_FIRSTS[(seed >> 3) % LEADER_FIRSTS.length]} ${LEADER_LASTS[(seed >> 5) % LEADER_LASTS.length]}`;
     const newNation = await base44.entities.Nation.create({
       name: newName, leader: leaderName, owner_email: defeatedNation.owner_email || "",
-      government_type: pick(GOV_TYPES), epoch: "Stone Age", tech_points: 0, tech_level: 1,
-      gdp: 200, stability: 65, public_trust: 0.9, currency: 500, manufacturing: 20,
-      education_spending: 20, military_spending: 20, unit_power: 10, defense_level: 10,
-      population: 10, housing_capacity: 20, tax_rates: { income: 15, sales: 8, corporate: 12, tariff: 5 },
+      government_type: pick(GOV_TYPES), epoch: spawnEpoch, tech_points: spawnEpochIdx * 1000,
+      tech_level: spawnTechLevel,
+      gdp: spawnGdp, stability: 60 + Math.floor(Math.random() * 25), public_trust: 0.8 + Math.random() * 0.4,
+      currency: spawnCur, manufacturing: spawnMfg,
+      education_spending: 20 + Math.floor(Math.random() * 15),
+      military_spending: 20 + Math.floor(Math.random() * 20),
+      unit_power: spawnUnit, defense_level: spawnDef,
+      population: spawnPop, housing_capacity: spawnPop * 3,
+      tax_rates: { income: 12 + Math.floor(Math.random() * 10), sales: 6 + Math.floor(Math.random() * 8), corporate: 10 + Math.floor(Math.random() * 10), tariff: 4 + Math.floor(Math.random() * 8) },
       flag_color: flagColor, flag_emoji: flagEmoji, allies: [], at_war_with: [],
-      is_in_market_crash: false, crash_turns_remaining: 0, unlocked_techs: [],
-      res_wood: 100, res_stone: 100, res_gold: 50, res_oil: 0, res_food: 200, res_iron: 0,
-      workers_farmers: 3, workers_hunters: 2, workers_fishermen: 0, workers_lumberjacks: 2,
-      workers_quarry: 1, workers_miners: 1, workers_oil_engineers: 0, workers_builders: 1,
-      workers_soldiers: 0, workers_researchers: 0, workers_industrial: 0,
+      is_in_market_crash: false, crash_turns_remaining: 0, unlocked_techs: spawnTechs,
+      res_wood: Math.round(100 * epochScale), res_stone: Math.round(100 * epochScale),
+      res_gold: Math.round(50 * epochScale), res_oil: spawnEpochIdx >= 6 ? Math.round(80 * (spawnEpochIdx - 5)) : 0,
+      res_food: Math.round(200 * epochScale), res_iron: spawnEpochIdx >= 2 ? Math.round(60 * epochScale) : 0,
+      workers_farmers: 3 + Math.floor(Math.random() * 3),
+      workers_hunters: 2, workers_fishermen: 0,
+      workers_lumberjacks: 2 + Math.floor(Math.random() * 2),
+      workers_quarry: 1, workers_miners: 1 + Math.floor(Math.random() * 2),
+      workers_oil_engineers: spawnEpochIdx >= 6 ? 2 + Math.floor(Math.random() * 3) : 0,
+      workers_builders: 1, workers_soldiers: 1 + Math.floor(Math.random() * 3),
+      workers_researchers: 1 + Math.floor(Math.random() * 3), workers_industrial: spawnEpochIdx >= 4 ? 2 : 0,
     });
     await base44.entities.Stock.create({
       company_name: `${newName} Trading Co.`, ticker: newName.replace(/\s+/g,"").substring(0,3).toUpperCase()+"T",
@@ -540,7 +580,7 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
     });
     base44.entities.NewsArticle.create({
       headline: `🌱 NEW NATION RISES: ${newName} Emerges from the Ashes of ${defeatedNation.name}`,
-      body: `A new civilization — ${newName}, led by ${leaderName} — enters at Stone Age.`,
+      body: `A new civilization — ${newName}, led by ${leaderName} — rises in the ${spawnEpoch}, inheriting the territorial legacy of ${defeatedNation.name}.`,
       category: "milestone", tier: "standard", nation_name: newName, nation_flag: flagEmoji, nation_color: flagColor,
     }).catch(() => {});
   }
