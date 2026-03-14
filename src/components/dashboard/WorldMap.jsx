@@ -19,6 +19,8 @@ import ResourceLayer from "../map/strategy/ResourceLayer";
 import ArmyLayer from "../map/strategy/ArmyLayer";
 import InfrastructureLayer from "../map/strategy/InfrastructureLayer";
 import LiveMapLayer from "../map/LiveMapLayer";
+import WeatherRadar from "../map/WeatherRadar";
+import { WarCountdownBar, ProtectionBar } from "../map/MapStatusBars";
 
 const DEFAULT_LAYERS = {
   wars: true, battles: true, tradeRoutes: true, danger: true, resources: false,
@@ -38,6 +40,7 @@ export default function WorldMap({ myNation, onSelectNation, onOpenAdvisor }) {
   const [selectedCity, setSelectedCity] = useState(null);
   const [strategyCities, setStrategyCities] = useState([]);
   const [live] = useState(true);
+  const [mapUnlocked, setMapUnlocked] = useState(false);
 
   useEffect(() => {
     loadNations();
