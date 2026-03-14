@@ -13,77 +13,156 @@ import {
 import DevPortal from "@/components/home/DevPortal";
 
 // ── Live Game Clock ──────────────────────────────────────────────────────────
-function ArcRing({ radius, pct, color, strokeWidth = 5 }) {
-  const cx = 60, cy = 60;
+const SIZE = 280;
+const CX = SIZE / 2;
+const CY = SIZE / 2;
+
+// Ring definitions — outermost = year, innermost = second
+// radius, color, strokeWidth, label, glow
+const RINGS = [
+  { key: "year",   radius: 124, color: "#8b5cf6", sw: 7,  label: "YEAR",  glow: "rgba(139,92,246,0.5)" },
+  { key: "month",  radius: 112, color: "#06b6d4", sw: 7,  label: "MONTH", glow: "rgba(6,182,212,0.5)"  },
+  { key: "week",   radius: 100, color: "#f59e0b", sw: 7,  label: "WEEK",  glow: "rgba(245,158,11,0.5)" },
+  { key: "day",    radius:  88, color: "#4ade80", sw: 7,  label: "DAY",   glow: "rgba(74,222,128,0.5)" },
+  { key: "min",    radius:  72, color: "#f87171", sw: 6,  label: "MIN",   glow: "rgba(248,113,113,0.5)" },
+  { key: "sec",    radius:  58, color: "#fbbf24", sw: 6,  label: "SEC",   glow: "rgba(251,191,36,0.5)"  },
+];
+
+function ClockRing({ radius, pct, color, sw, glow, animate = true }) {
   const circumference = 2 * Math.PI * radius;
   const dash = (pct / 100) * circumference;
   return (
     <g>
-      <circle cx={cx} cy={cy} r={radius} fill="none"
-        stroke="rgba(255,255,255,0.06)" strokeWidth={strokeWidth} />
-      <circle cx={cx} cy={cy} r={radius} fill="none"
-        stroke={color} strokeWidth={strokeWidth}
+      {/* Track */}
+      <circle cx={CX} cy={CY} r={radius} fill="none"
+        stroke="rgba(255,255,255,0.05)" strokeWidth={sw} />
+      {/* Glow shadow */}
+      <circle cx={CX} cy={CY} r={radius} fill="none"
+        stroke={glow} strokeWidth={sw + 4} opacity={0.18}
         strokeDasharray={`${dash} ${circumference}`}
         strokeLinecap="round"
-        transform={`rotate(-90 ${cx} ${cy})`}
-        style={{ transition: "stroke-dasharray 1s ease" }} />
+        transform={`rotate(-90 ${CX} ${CY})`}
+        style={animate ? { transition: "stroke-dasharray 0.6s ease" } : {}} />
+      {/* Main arc */}
+      <circle cx={CX} cy={CY} r={radius} fill="none"
+        stroke={color} strokeWidth={sw}
+        strokeDasharray={`${dash} ${circumference}`}
+        strokeLinecap="round"
+        transform={`rotate(-90 ${CX} ${CY})`}
+        style={animate ? { transition: "stroke-dasharray 0.6s ease" } : {}} />
+      {/* Bright tip dot */}
+      {pct > 1 && pct < 99.5 && (() => {
+        const angle = (pct / 100) * 2 * Math.PI - Math.PI / 2;
+        const x = CX + radius * Math.cos(angle);
+        const y = CY + radius * Math.sin(angle);
+        return <circle cx={x} cy={y} r={sw / 2 + 1} fill={color} opacity={0.9} />;
+      })()}
     </g>
   );
 }
 
 function LiveClock() {
-  const [gt, setGt] = useState(getGameTime());
+  const [now, setNow] = useState(Date.now());
+
   useEffect(() => {
-    const id = setInterval(() => setGt(getGameTime()), 10_000);
+    const id = setInterval(() => setNow(Date.now()), 500);
     return () => clearInterval(id);
   }, []);
 
-  const dayPct   = ((gt.day - 1) / 30) * 100;
-  const monthPct = ((gt.month - 1) / 12) * 100;
-  const yearPct  = Math.min(100, ((gt.year % 10) / 10) * 100);
+  // ── Derive all time values from wall clock ──────────────────────────────
+  const GAME_EPOCH_START = new Date("2025-01-01T00:00:00Z").getTime();
+  const TICK_MS          = 60_000;
+  const TICKS_PER_DAY    = 30;
+  const TICKS_PER_WEEK   = 210;
+  const TICKS_PER_MONTH  = 840;
+  const TICKS_PER_YEAR   = 10_080;
+
+  const elapsed    = now - GAME_EPOCH_START;
+  const totalTicks = Math.floor(elapsed / TICK_MS);
+
+  const year   = Math.floor(totalTicks / TICKS_PER_YEAR) + 1;
+  const rem1   = totalTicks % TICKS_PER_YEAR;
+  const month  = Math.floor(rem1 / TICKS_PER_MONTH) + 1;
+  const rem2   = rem1 % TICKS_PER_MONTH;
+  const week   = Math.floor(rem2 / TICKS_PER_WEEK) + 1;
+  const rem3   = rem2 % TICKS_PER_WEEK;
+  const day    = Math.floor(rem3 / TICKS_PER_DAY) + 1;
+  const remDay = rem3 % TICKS_PER_DAY; // ticks within current day (0..29)
+
+  // Sub-tick: seconds within the current minute (0..59)
+  const msInTick  = elapsed % TICK_MS;
+  const secInTick = Math.floor(msInTick / 1000);
+  // Minutes within the current day (0..29 ticks = 0..1799 seconds)
+  const secInDay  = remDay * 60 + secInTick;
+
+  // Percentages
+  const secPct   = (secInTick / 60) * 100;
+  const minPct   = ((remDay + secInTick / 60) / TICKS_PER_DAY) * 100;   // progress within 30-tick day
+  const dayPct   = ((day - 1 + minPct / 100) / 7) * 100;                // 7 days per week
+  const weekPct  = ((week - 1 + dayPct / 100) / 4) * 100;               // 4 weeks per month (approx)
+  const monthPct = ((month - 1 + weekPct / 100) / 12) * 100;
+  const yearPct  = ((year - 1 + monthPct / 100) / 10) * 100;            // relative decade cycle
+
+  const pcts = { sec: secPct, min: minPct, day: dayPct, week: weekPct, month: monthPct, year: Math.min(99.8, yearPct) };
+
+  const labels = [
+    { key: "year",  val: `Yr ${year}`,   color: "#8b5cf6" },
+    { key: "month", val: `Mo ${month}/12`, color: "#06b6d4" },
+    { key: "week",  val: `Wk ${week}/4`,  color: "#f59e0b" },
+    { key: "day",   val: `Day ${day}/7`,  color: "#4ade80" },
+    { key: "min",   val: `${remDay}/${TICKS_PER_DAY} tks`, color: "#f87171" },
+    { key: "sec",   val: `${secInTick}s`, color: "#fbbf24" },
+  ];
 
   return (
-    <div className="rounded-2xl px-5 py-4"
-      style={{ background: "rgba(6,182,212,0.05)", border: "1px solid rgba(6,182,212,0.18)" }}>
-      <div className="flex items-center gap-5">
-        {/* SVG Arc Rings */}
-        <div className="relative shrink-0" style={{ width: 120, height: 120 }}>
-          <svg width={120} height={120} viewBox="0 0 120 120">
-            <ArcRing radius={52} pct={yearPct}  color="#8b5cf6" strokeWidth={4} />
-            <ArcRing radius={44} pct={monthPct} color="#06b6d4" strokeWidth={5} />
-            <ArcRing radius={35} pct={dayPct}   color="#4ade80"  strokeWidth={5} />
-          </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <div className="text-[9px] text-slate-500 ep-mono uppercase">TICK</div>
-            <div className="text-base font-black text-white ep-mono leading-tight">{gt.day}</div>
-          </div>
-        </div>
+    <div className="rounded-3xl p-6"
+      style={{ background: "rgba(6,182,212,0.04)", border: "1px solid rgba(6,182,212,0.15)", backdropFilter: "blur(20px)" }}>
 
-        {/* Labels */}
-        <div className="flex-1 space-y-1.5">
-          <div className="flex items-center justify-between">
-            <div className="ep-live-dot mr-1.5 inline-block" />
-            <span className="text-[10px] font-black text-green-400 ep-mono uppercase tracking-widest flex-1">WORLD CLOCK · LIVE</span>
-          </div>
-          <div className="text-cyan-300 font-black text-sm ep-mono">{formatGameTime(gt)}</div>
-          {[
-            { label: "Day",   pct: dayPct,   color: "#4ade80",  val: `${gt.day}/30` },
-            { label: "Month", pct: monthPct, color: "#06b6d4",  val: `${gt.month}/12` },
-            { label: "Year",  pct: yearPct,  color: "#8b5cf6",  val: `Yr ${gt.year}` },
-          ].map(r => (
-            <div key={r.label} className="flex items-center gap-2">
-              <span className="text-[9px] ep-mono w-10 shrink-0" style={{ color: r.color }}>{r.label}</span>
-              <div className="flex-1 h-1 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
-                <div className="h-full rounded-full transition-all duration-1000"
-                  style={{ width: `${r.pct}%`, background: r.color }} />
-              </div>
-              <span className="text-[9px] ep-mono w-10 text-right" style={{ color: r.color }}>{r.val}</span>
-            </div>
+      {/* Header */}
+      <div className="flex items-center justify-center gap-2 mb-5">
+        <div className="ep-live-dot" />
+        <span className="text-xs font-black text-green-400 ep-mono uppercase tracking-widest">WORLD CLOCK · LIVE</span>
+      </div>
+
+      {/* Clock face */}
+      <div className="relative mx-auto mb-5" style={{ width: SIZE, height: SIZE }}>
+        <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`}>
+          {/* Faint radial grid */}
+          <circle cx={CX} cy={CY} r={130} fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth={1} />
+          {RINGS.map(r => (
+            <ClockRing key={r.key} radius={r.radius} pct={pcts[r.key]}
+              color={r.color} sw={r.sw} glow={r.glow} />
           ))}
-          <div className="text-[9px] text-slate-600 ep-mono pt-0.5">
-            1 real minute = 1 game tick · 7 real days = 1 game year
-          </div>
+        </svg>
+
+        {/* Center text */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+          <div className="text-[10px] text-slate-600 ep-mono uppercase tracking-widest mb-0.5">GAME TIME</div>
+          <div className="text-2xl font-black text-white ep-mono leading-none">{String(secInTick).padStart(2,"0")}s</div>
+          <div className="text-xs font-bold text-cyan-400 ep-mono mt-1">Tick {totalTicks % TICKS_PER_DAY + 1}/{TICKS_PER_DAY}</div>
+          <div className="text-[10px] text-slate-500 ep-mono mt-0.5">Day {day} · Yr {year}</div>
         </div>
+      </div>
+
+      {/* Ring legend */}
+      <div className="grid grid-cols-3 gap-x-4 gap-y-2 mb-4">
+        {RINGS.map((r, i) => (
+          <div key={r.key} className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full shrink-0" style={{ background: r.color, boxShadow: `0 0 6px ${r.color}` }} />
+            <div className="min-w-0">
+              <div className="text-[9px] text-slate-500 ep-mono uppercase">{r.label}</div>
+              <div className="text-[11px] font-bold ep-mono truncate" style={{ color: r.color }}>{labels[i].val}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Full date string */}
+      <div className="text-center text-xs font-bold text-cyan-300 ep-mono mb-2">
+        Day {day} · Week {week} · Month {month} · Year {year}
+      </div>
+      <div className="text-center text-[10px] text-slate-600 ep-mono">
+        1 real minute = 1 game tick · 7 real days = 1 game year
       </div>
     </div>
   );
