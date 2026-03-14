@@ -18,6 +18,7 @@ import CityMarkerLayer from "../map/strategy/CityMarkerLayer";
 import ResourceLayer from "../map/strategy/ResourceLayer";
 import ArmyLayer from "../map/strategy/ArmyLayer";
 import InfrastructureLayer from "../map/strategy/InfrastructureLayer";
+import LiveMapLayer from "../map/LiveMapLayer";
 
 const DEFAULT_LAYERS = {
   wars: true, battles: true, tradeRoutes: true, danger: true, resources: false,
