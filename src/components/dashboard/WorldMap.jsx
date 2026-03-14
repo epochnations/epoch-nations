@@ -297,7 +297,7 @@ export default function WorldMap({ myNation, onSelectNation, onOpenAdvisor }) {
       )}
 
       {/* Legend */}
-      <div className="absolute bottom-3 left-3 z-20 flex flex-wrap gap-2">
+      <div className="absolute bottom-3 left-3 z-20 flex flex-wrap gap-1.5">
         {[
           { color: "bg-red-500", label: "At War" },
           { color: "bg-green-500", label: "Ally" },
@@ -308,6 +308,24 @@ export default function WorldMap({ myNation, onSelectNation, onOpenAdvisor }) {
             <span className="text-[10px] text-slate-400">{label}</span>
           </div>
         ))}
+        {layers.territories && (
+          <div className="flex items-center gap-1 bg-black/60 rounded-lg px-2 py-1 backdrop-blur-sm">
+            <div className="w-2 h-2 rounded-sm border border-cyan-400/60" style={{ background: "rgba(34,211,238,0.15)" }} />
+            <span className="text-[10px] text-slate-400">Territory</span>
+          </div>
+        )}
+        {layers.armies && (
+          <div className="flex items-center gap-1 bg-black/60 rounded-lg px-2 py-1 backdrop-blur-sm">
+            <span className="text-[10px]">🛡</span>
+            <span className="text-[10px] text-slate-400">Military</span>
+          </div>
+        )}
+        {layers.cities && (
+          <div className="flex items-center gap-1 bg-black/60 rounded-lg px-2 py-1 backdrop-blur-sm">
+            <span className="text-[10px]">🏛</span>
+            <span className="text-[10px] text-slate-400">Cities</span>
+          </div>
+        )}
       </div>
     </div>
   );
