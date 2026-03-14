@@ -468,18 +468,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <button onClick={goToLogin}
-              className="px-8 py-4 rounded-2xl font-black text-base transition-all ep-btn-lift flex items-center justify-center gap-2"
-              style={{ background: "linear-gradient(135deg, #06b6d4, #8b5cf6)", color: "white" }}>
-              <Rocket size={18} /> Create Nation — Free
-            </button>
-            <button onClick={goToLogin}
-              className="px-8 py-4 rounded-2xl font-bold text-base text-slate-300 hover:text-white transition-colors flex items-center justify-center gap-2"
-              style={{ border: "1px solid rgba(255,255,255,0.15)" }}>
-              <ArrowRight size={18} /> Log In
-            </button>
-          </div>
+
         </div>
       </section>
 
