@@ -52,11 +52,14 @@ import ConstructionHub from './pages/ConstructionHub';
 import Dashboard from './pages/Dashboard';
 import GlobalChronicles from './pages/GlobalChronicles';
 import GlobalExchange from './pages/GlobalExchange';
+import HallOfNations from './pages/HallOfNations';
 import HexWorldMap from './pages/HexWorldMap';
+import Home from './pages/Home';
 import Marketplace from './pages/Marketplace';
 import NationalProfile from './pages/NationalProfile';
 import NationwideNews from './pages/NationwideNews';
 import Onboarding from './pages/Onboarding';
+import PluginManager from './pages/PluginManager';
 import WorldChronicle from './pages/WorldChronicle';
 import __Layout from './Layout.jsx';
 
@@ -67,11 +70,14 @@ export const PAGES = {
     "Dashboard": Dashboard,
     "GlobalChronicles": GlobalChronicles,
     "GlobalExchange": GlobalExchange,
+    "HallOfNations": HallOfNations,
     "HexWorldMap": HexWorldMap,
+    "Home": Home,
     "Marketplace": Marketplace,
     "NationalProfile": NationalProfile,
     "NationwideNews": NationwideNews,
     "Onboarding": Onboarding,
+    "PluginManager": PluginManager,
     "WorldChronicle": WorldChronicle,
 }
 

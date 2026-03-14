@@ -29,6 +29,8 @@ import LoanRepaymentEngine from "../components/banking/LoanRepaymentEngine";
 import GlobalCommodityEngine from "../components/dashboard/GlobalCommodityEngine";
 import ResearchEngine from "../components/research/ResearchEngine";
 import ResearchPanel from "../components/research/ResearchPanel";
+import ProceduralWorldEngine from "../components/game/ProceduralWorldEngine";
+import WarEngine from "../components/game/WarEngine";
 import NationMetricsPanel from "../components/dashboard/NationMetricsPanel";
 
 export default function Dashboard() {
@@ -385,6 +387,12 @@ export default function Dashboard() {
 
       {/* Research Engine — advances in-progress research every 90s */}
       {myNation && <ResearchEngine nation={myNation} onRefresh={refresh} />}
+
+      {/* Procedural World Engine — infinite territory expansion & seeding */}
+      {myNation && <ProceduralWorldEngine myNation={myNation} />}
+
+      {/* War Engine — realistic attrition, territory capture, war events */}
+      {myNation && <WarEngine myNation={myNation} />}
 
       {/* Research Panel */}
       {showResearch && myNation && (
