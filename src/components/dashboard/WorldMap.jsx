@@ -122,7 +122,8 @@ export default function WorldMap({ myNation, onSelectNation, onOpenAdvisor }) {
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full bg-[#071326] rounded-2xl overflow-hidden select-none"
+      className="relative w-full h-full rounded-2xl overflow-hidden select-none"
+      style={{ background: "#0f1e33", cursor: "grab" }}
       style={{ cursor: "grab" }}
       {...handlers}
     >
