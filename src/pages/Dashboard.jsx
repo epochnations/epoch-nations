@@ -227,7 +227,7 @@ export default function Dashboard() {
         </div>
         {/* Col 3 row 1: Nation Metrics (Core Metrics, Fuel, Spending, Technology) */}
         <div style={{ gridRow: "1 / 2", overflowY: "auto" }}>
-          <NationMetricsPanel nation={myNation} />
+          <NationMetricsPanel nation={myNation} allNations={[myNation].filter(Boolean)} />
         </div>
         {/* Col 3 row 2: Market Feed (Stock Ticker) */}
         <div style={{ gridRow: "2 / 3", minHeight: 0, overflow: "hidden" }}>
@@ -251,7 +251,7 @@ export default function Dashboard() {
         </div>
         {/* Nation Metrics */}
         <div className="mx-3 mb-3">
-          <NationMetricsPanel nation={myNation} />
+          <NationMetricsPanel nation={myNation} allNations={[myNation].filter(Boolean)} />
         </div>
         {/* Stock Ticker */}
         <div className="mx-3 mb-3 h-64 shrink-0">
