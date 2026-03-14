@@ -5,7 +5,7 @@
  */
 import { useMemo, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { nationPos, MAP_W, MAP_H, CITIES } from "./MapTerrain.jsx";
+import { nationPos, MAP_W, MAP_H, CITIES } from "./MapTerrain";
 
 // ── Seeded deterministic random ─────────────────────────────────────────────
 function seededRand(seed) {
