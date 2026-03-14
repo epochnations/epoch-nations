@@ -5,6 +5,7 @@ Copyright (c) 2026 Hubzam Enterprises, LLC
 Doing Business As: Creation Lab Studios
 
 Senior Developer: Ronald Carmenate
+Senior Analyst & Graphic Designer: Christy Carmenate
 
 Permission is granted to view, study, and modify the Epoch Nations source code for personal or non-commercial use.
 
