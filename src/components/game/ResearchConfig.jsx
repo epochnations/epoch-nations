@@ -242,7 +242,7 @@ export const RESEARCH_TREE = {
       id: "tactics_training",    layer: 1, name: "Tactics & Training",
       building_req: "school",    epoch_req: "Stone Age",
       base_points: 90,           requires: [],
-      desc: "Unit Power +10, Defense +5",
+      desc: "Unit Power +10, Defense +5. Unlocks spears and bows at workbench.",
       effects: { unit_power: 10, defense_level: 5 },
       emoji: "🪖"
     },
@@ -250,16 +250,24 @@ export const RESEARCH_TREE = {
       id: "fortification_basics",layer: 1, name: "Fortification Basics",
       building_req: "school",    epoch_req: "Stone Age",
       base_points: 85,           requires: [],
-      desc: "Defense +12, Stability +3",
+      desc: "Defense +12, Stability +3. Unlocks stone walls and watchtowers.",
       effects: { defense_level: 12, stability: 3 },
       emoji: "🧱"
     },
     // Layer 2 — School
     {
+      id: "iron_weapons",        layer: 2, name: "Iron Weapons Smithing",
+      building_req: "school",    epoch_req: "Iron Age",
+      base_points: 170,          requires: ["tactics_training"],
+      desc: "Unlocks swords, shields, iron armor at the forge. Unit Power +15, Defense +10",
+      effects: { unit_power: 15, defense_level: 10 },
+      emoji: "⚔️"
+    },
+    {
       id: "siege_tactics",       layer: 2, name: "Siege Tactics",
       building_req: "school",    epoch_req: "Classical Age",
-      base_points: 200,          requires: ["tactics_training"],
-      desc: "Unit Power +20, Defense +15",
+      base_points: 200,          requires: ["iron_weapons"],
+      desc: "Unlocks crossbows, siege engines, and catapults. Unit Power +20, Defense +15",
       effects: { unit_power: 20, defense_level: 15 },
       emoji: "🏹"
     },
@@ -267,35 +275,67 @@ export const RESEARCH_TREE = {
       id: "naval_warfare",       layer: 2, name: "Naval Warfare",
       building_req: "school",    epoch_req: "Medieval Age",
       base_points: 220,          requires: ["fortification_basics"],
-      desc: "Unit Power +18, GDP +200",
+      desc: "Unlocks shipyard, warships, fishing boats. Unit Power +18, GDP +200",
       effects: { unit_power: 18, gdp: 200 },
       emoji: "⚓"
     },
     // Layer 3 — University
     {
+      id: "gunpowder_weapons",   layer: 3, name: "Gunpowder & Firearms",
+      building_req: "university", epoch_req: "Renaissance Age",
+      base_points: 380,           requires: ["siege_tactics"],
+      desc: "Unlocks muskets, flintlock pistols, and cannons at the workshop. Unit Power +25, Defense +20",
+      effects: { unit_power: 25, defense_level: 20 },
+      emoji: "💥"
+    },
+    {
       id: "ballistics",          layer: 3, name: "Advanced Ballistics",
       building_req: "university", epoch_req: "Industrial Age",
-      base_points: 500,           requires: ["siege_tactics"],
-      desc: "Unit Power +40, Defense +30",
+      base_points: 500,           requires: ["gunpowder_weapons"],
+      desc: "Unlocks weapons factory: rifles, machine guns, artillery shells. Unit Power +40, Defense +30",
       effects: { unit_power: 40, defense_level: 30 },
       emoji: "💣"
     },
+    {
+      id: "armor_plating",       layer: 3, name: "Armor & Body Protection",
+      building_req: "university", epoch_req: "Industrial Age",
+      base_points: 420,           requires: ["iron_weapons"],
+      desc: "Unlocks helmets, body armor, and ballistic vests. Defense +25, Unit Power +15",
+      effects: { defense_level: 25, unit_power: 15 },
+      emoji: "🛡️"
+    },
     // Layer 4 — University
+    {
+      id: "rocketry",            layer: 4, name: "Rocketry & Missiles",
+      building_req: "university", epoch_req: "Modern Age",
+      base_points: 900,           requires: ["ballistics"],
+      desc: "Unlocks rocket launchers, missiles, and guided systems. Unit Power +50, Defense +35",
+      effects: { unit_power: 50, defense_level: 35 },
+      emoji: "🚀"
+    },
     {
       id: "nuclear_energy",      layer: 4, name: "Nuclear Energy",
       building_req: "university", epoch_req: "Modern Age",
-      base_points: 1200,          requires: ["ballistics"],
-      desc: "GDP +2000, Unit Power +80, Defense +60",
+      base_points: 1200,          requires: ["rocketry"],
+      desc: "Unlocks nuclear reactor, uranium enrichment, and nuclear missiles. GDP +2000, Unit Power +80, Defense +60",
       effects: { gdp: 2000, unit_power: 80, defense_level: 60 },
       emoji: "☢️",
       is_global_breakthrough: true
+    },
+    {
+      id: "drone_warfare",       layer: 4, name: "Drone & Electronic Warfare",
+      building_req: "university", epoch_req: "Digital Age",
+      base_points: 1000,          requires: ["rocketry"],
+      desc: "Unlocks combat drones, drone swarms, radar jammers, and EMP devices. Unit Power +60, Defense +40",
+      effects: { unit_power: 60, defense_level: 40 },
+      emoji: "🤖"
     },
     // Layer 5 — University (Breakthrough)
     {
       id: "orbital_defense",     layer: 5, name: "Orbital Defense Grid",
       building_req: "university", epoch_req: "Space Age",
       base_points: 2000,          requires: ["nuclear_energy"],
-      desc: "Defense +200, Unit Power +150. Deterrence bonus.",
+      desc: "Unlocks satellites, space foundry military use, and orbital weapons. Defense +200, Unit Power +150.",
       effects: { defense_level: 200, unit_power: 150 },
       emoji: "🛡️",
       is_global_breakthrough: true
@@ -366,27 +406,69 @@ export const RESEARCH_TREE = {
       id: "cartography",         layer: 1, name: "Cartography",
       building_req: "school",    epoch_req: "Bronze Age",
       base_points: 100,          requires: [],
-      desc: "GDP +80, Stability +3, Tech Level +1",
+      desc: "Unlocks maps, compass, and navigation tools. GDP +80, Stability +3, Tech Level +1",
       effects: { gdp: 80, stability: 3, tech_level: 1 },
       emoji: "🗺️"
+    },
+    {
+      id: "optics",              layer: 1, name: "Optics & Lens Craft",
+      building_req: "school",    epoch_req: "Renaissance Age",
+      base_points: 120,          requires: ["cartography"],
+      desc: "Unlocks optical glass, lenses, telescopes, and microscopes. GDP +100, TP +8",
+      effects: { gdp: 100, tpBonus: 8 },
+      emoji: "🔍"
     },
     // Layer 2 — School
     {
       id: "astronomy",           layer: 2, name: "Astronomy",
       building_req: "school",    epoch_req: "Renaissance Age",
-      base_points: 200,          requires: ["cartography"],
-      desc: "Tech Level +1, GDP +150, Public Trust +0.1",
+      base_points: 200,          requires: ["optics"],
+      desc: "Unlocks telescopes and navigation systems. Tech Level +1, GDP +150, Public Trust +0.1",
       effects: { tech_level: 1, gdp: 150, public_trust: 0.1 },
       emoji: "🔭"
     },
+    {
+      id: "medicine_science",    layer: 2, name: "Medical Science",
+      building_req: "school",    epoch_req: "Classical Age",
+      base_points: 180,          requires: [],
+      desc: "Unlocks laboratory construction. Produces medicines, vaccines, surgical kits. Stability +6, Trust +0.08",
+      effects: { stability: 6, public_trust: 0.08 },
+      emoji: "💊"
+    },
     // Layer 3 — University
+    {
+      id: "advanced_medicine",   layer: 3, name: "Advanced Medicine",
+      building_req: "university", epoch_req: "Industrial Age",
+      base_points: 500,           requires: ["medicine_science"],
+      desc: "Unlocks X-ray machines, defibrillators, blood bags, and prosthetics. Stability +8, Trust +0.1",
+      effects: { stability: 8, public_trust: 0.1 },
+      emoji: "🏥"
+    },
+    {
+      id: "semiconductor_tech",  layer: 3, name: "Semiconductor Technology",
+      building_req: "university", epoch_req: "Modern Age",
+      base_points: 700,           requires: ["astronomy"],
+      desc: "Unlocks silicon processing, circuit boards, and memory chips. Manufacturing +35, TP +20",
+      effects: { manufacturing: 35, tpBonus: 20, gdp: 400 },
+      emoji: "💾"
+    },
     {
       id: "quantum_computing",   layer: 3, name: "Quantum Computing",
       building_req: "university", epoch_req: "Information Age",
-      base_points: 1000,          requires: ["astronomy"],
-      desc: "Manufacturing +60, GDP +2000, Tech Level +2",
+      base_points: 1000,          requires: ["semiconductor_tech"],
+      desc: "Unlocks quantum computers, AI chips, and quantum bits. Manufacturing +60, GDP +2000, Tech Level +2",
       effects: { manufacturing: 60, gdp: 2000, tech_level: 2 },
       emoji: "⚛️",
+      is_global_breakthrough: true
+    },
+    // Layer 4 — University
+    {
+      id: "biotech",             layer: 4, name: "Biotechnology",
+      building_req: "university", epoch_req: "Digital Age",
+      base_points: 1200,          requires: ["advanced_medicine"],
+      desc: "Unlocks gene therapy, biosuit, and advanced medical implants. GDP +800, Trust +0.2, Stability +10",
+      effects: { gdp: 800, public_trust: 0.2, stability: 10 },
+      emoji: "🧬",
       is_global_breakthrough: true
     },
     // Layer 4 — University
