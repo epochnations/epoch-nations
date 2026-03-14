@@ -129,10 +129,10 @@ const ROADMAP = [
 ];
 
 const STATS = [
-  { label: "Epochs",     value: "12",   icon: Layers },
-  { label: "Buildings",  value: "40+",  icon: Landmark },
+  { label: "Epochs",     value: "12",    icon: Layers },
+  { label: "Buildings",  value: "40+",   icon: Landmark },
   { label: "Technologies", value: "80+", icon: FlaskConical },
-  { label: "Sectors",    value: "11",   icon: TrendingUp },
+  { label: "Unique Items", value: "1,400+", icon: BookOpen },
 ];
 
 const STATUS_STYLE = {
@@ -223,9 +223,21 @@ export default function Home() {
           </p>
 
           {/* Live Clock */}
-          <div className="max-w-sm mx-auto mb-8">
+          <div className="max-w-sm mx-auto mb-6">
             <LiveClock />
           </div>
+
+          {/* Encyclopedia Highlight */}
+          <a href="/ItemEncyclopedia"
+            className="inline-flex items-center gap-3 px-5 py-3 rounded-2xl mb-8 transition-all hover:scale-[1.02]"
+            style={{ background: "rgba(139,92,246,0.1)", border: "1px solid rgba(139,92,246,0.3)" }}>
+            <BookOpen size={16} className="text-violet-400 shrink-0" />
+            <div className="text-left">
+              <div className="text-xs font-black text-violet-400 ep-mono uppercase tracking-widest">Item Encyclopedia</div>
+              <div className="text-sm font-bold text-white">Explore <span className="text-violet-300">1,400+ unique craftable items</span> across 18 categories</div>
+            </div>
+            <ArrowRight size={14} className="text-violet-400 shrink-0" />
+          </a>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button onClick={goToLogin}
