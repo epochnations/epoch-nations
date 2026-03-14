@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
-import { Bell, X, AlertTriangle, TrendingDown, Package, Swords, Zap, CheckCircle } from "lucide-react";
+import { Bell, X, AlertTriangle, TrendingDown, Package, Swords, Zap, Shield } from "lucide-react";
 
 const SEV_CONFIG = {
   info: { color: "text-blue-400", border: "border-blue-400/30", bg: "bg-blue-400/10" },
@@ -11,7 +11,7 @@ const SEV_CONFIG = {
 
 const TYPE_ICON = {
   stock_drop: TrendingDown,
-  ally_aid: Package,
+  ally_aid: Shield,
   war_declared: Swords,
   market_crash: AlertTriangle,
   tech_unlocked: Zap,
