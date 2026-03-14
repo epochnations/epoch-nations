@@ -316,6 +316,9 @@ export default function Dashboard() {
           <a href={createPageUrl("HallOfNations")} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-amber-500/10 border border-amber-500/20 text-amber-400 min-h-[44px] flex items-center gap-1.5">
             🏆 Hall
           </a>
+          <a href={createPageUrl("ItemEncyclopedia")} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 min-h-[44px] flex items-center gap-1.5">
+            📖 Items
+          </a>
         </div>
       </div>
 
