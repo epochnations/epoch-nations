@@ -2,9 +2,9 @@
  * ItemDetailPopup — Terraria-style item detail modal
  * Shows crafting recipe, station, uses, rarity, tier
  */
-import { motion, AnimatePresence } from "framer-motion";
-import { X, Hammer, Package, Zap, Star } from "lucide-react";
-import { RARITIES, TIERS, CRAFTING_STATIONS, CATEGORIES, ITEM_MAP, getItem } from "./ItemDatabase";
+import { motion } from "framer-motion";
+import { X, Hammer, Zap, Layers, Scale, Package, GitBranch } from "lucide-react";
+import { RARITIES, TIERS, CRAFTING_STATIONS, CATEGORIES, ITEM_MAP, getItem, ALL_ITEMS } from "./ItemDatabase";
 
 function RecipeIngredient({ id, qty }) {
   const item = getItem(id);
