@@ -7,6 +7,7 @@ import PageNotFound from './lib/PageNotFound';
 import PluginManager from './pages/PluginManager';
 import Home from './pages/Home';
 import HallOfNations from './pages/HallOfNations';
+import ItemEncyclopedia from './pages/ItemEncyclopedia';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 
@@ -68,6 +69,7 @@ const AuthenticatedApp = () => {
       ))}
       <Route path="/PluginManager" element={<LayoutWrapper currentPageName="PluginManager"><PluginManager /></LayoutWrapper>} />
       <Route path="/HallOfNations" element={<LayoutWrapper currentPageName="HallOfNations"><HallOfNations /></LayoutWrapper>} />
+      <Route path="/ItemEncyclopedia" element={<LayoutWrapper currentPageName="ItemEncyclopedia"><ItemEncyclopedia /></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
