@@ -6,7 +6,8 @@ import {
   Globe, Sword, FlaskConical, Landmark, TrendingUp, Users, Map,
   Shield, Zap, BookOpen, MessageSquare,
   Mail, Clock, Layers, GitBranch, Bug,
-  ArrowRight, CheckCircle, Rocket, Heart, Cpu, Scroll, Award, Puzzle, Github
+  ArrowRight, CheckCircle, Rocket, Heart, Cpu, Scroll, Award, Puzzle, Github,
+  ChevronDown, ChevronUp, ChevronRight
 } from "lucide-react";
 import DevPortal from "@/components/home/DevPortal";
 
@@ -141,12 +142,87 @@ const STATUS_STYLE = {
   upcoming: { bg: "rgba(255,255,255,0.04)", border: "rgba(255,255,255,0.1)", text: "#64748b", label: "Planned" },
 };
 
+// ── Tutorial Data ─────────────────────────────────────────────────────────────
+const TUTORIAL_TOPICS = [
+  { icon: "🏛️", color: "#22d3ee", title: "Dashboard Overview", summary: "Your command center — everything starts here.", lessons: [
+    { title: "The Command Center", body: "The Dashboard is your central hub divided into three main columns: Nation Stats (left), World Map + Chat (center), and Nation Metrics + Stock Feed (right). Every panel updates in real time — 1 real minute = 1 game tick.", tip: "The header bar contains quick-action buttons for all major game systems. On mobile, use the bottom scroll bar." },
+    { title: "Top Navigation Bar", body: "The top bar houses your most important shortcuts: Issue Stock, Tech Tree, Research, Manage, Workers, Exchange, Government, Global News, Build, Marketplace, and Profile.", tip: "On desktop all buttons are visible. On mobile they scroll horizontally in the bottom bar." },
+    { title: "Dashboard Layout", body: "The dashboard uses a 3-column bento layout on desktop. Left: Nation Stats. Center: World Map + Chat. Right: Metrics + Stock Ticker. On mobile it stacks vertically.", tip: "Spend a few minutes exploring each panel before diving into game actions." },
+    { title: "Tutorial & Help Button", body: "The '📖 Tutorial' button in the top bar opens the full guide at any time. You can jump between sections and re-read any topic.", tip: "There's a lot to learn — you don't need to memorize it all at once." },
+  ]},
+  { icon: "📊", color: "#4ade80", title: "Nation Stats Panel", summary: "Your nation's vital signs — GDP, stability, resources & more.", lessons: [
+    { title: "Epoch & Tech Progress", body: "The top of the Nation Stats panel shows your current Epoch and a progress bar toward the next epoch. Advancing epochs unlocks new buildings, units, resources, and economic systems.", tip: "Rushing to the next epoch is tempting, but make sure your economy is stable first — each epoch increases costs." },
+    { title: "Population & Housing", body: "Population grows automatically when food is abundant and housing has capacity. More population = more workers = more production.", tip: "If housing is near capacity, your population growth will stall. Always build ahead of demand." },
+    { title: "Treasury & Currency", body: "Your treasury (Credits) is the money your government holds. It increases from taxes and decreases from spending. Running out causes stability penalties.", tip: "Keep at least 200 Credits in reserve as an emergency buffer. Bankruptcy causes severe stability crashes." },
+    { title: "GDP & Economic Growth", body: "GDP represents your nation's total economic output. It grows from manufacturing, trade routes, population, and buildings.", tip: "GDP growth is compounding — small investments now pay off massively later." },
+    { title: "Resources", body: "Wood and Stone are needed for construction. Gold fuels your economy. Iron and Oil unlock in later epochs. Food is consumed by your population every tick.", tip: "Always maintain at least 3–4 days of food reserves. Run out and your people start starving!" },
+    { title: "Stability & Public Trust", body: "Stability (0–100) governs your nation's political health. Public Trust (0.1–2.0) multiplies tax effectiveness. Low stability triggers crises.", tip: "Keep stability above 50 at all times. Below 40 and your GDP starts to drag noticeably." },
+  ]},
+  { icon: "👷", color: "#f97316", title: "Workers & Resources", summary: "Assign your citizens to produce everything your nation needs.", lessons: [
+    { title: "The Workforce Panel", body: "Open Workers from the top bar to assign your population to different roles. Each role produces a specific resource every game tick. Unassigned workers are unemployed.", tip: "Total assigned workers cannot exceed your population." },
+    { title: "Farmers & Food Production", body: "Farmers produce Food each tick. Food is consumed by your entire population automatically. Assign at least 2–3 farmers per 10 population.", tip: "A Granary building doubles your food storage cap." },
+    { title: "Miners & Lumberjacks", body: "Lumberjacks produce Wood. Quarry Workers produce Stone. Miners produce Gold. Later you'll unlock Iron Miners (Iron Age) and Oil Engineers (Industrial Age).", tip: "Don't neglect Gold Miners — gold is your economic lifeline for trading." },
+    { title: "Researchers", body: "Researchers generate Tech Points every tick, which you spend in the Tech Tree to unlock upgrades and advance epochs.", tip: "Unlock the Library and University buildings to massively boost tech point generation." },
+    { title: "Soldiers", body: "Soldiers contribute to your Military Power and Defense Level. Only assign them if you're in a war or actively preparing for one.", tip: "Soldiers don't produce economic goods." },
+  ]},
+  { icon: "💰", color: "#fbbf24", title: "Economy & Budget", summary: "Tax, spend, inflate, and grow — master the economic engine.", lessons: [
+    { title: "Budget & Manage Panel", body: "Open Manage to set your Income Tax, Sales Tax, Corporate Tax, and Tariff rates. Also control Military and Education Spending.", tip: "Changes take effect on the next economic tick (~60 seconds). Plan ahead." },
+    { title: "Inflation & Money Supply", body: "Inflation rises when your money supply grows faster than goods production. High inflation (above 10%) increases all costs. Keep it below 8%.", tip: "Reduce inflation by cutting spending, raising taxes, or improving manufacturing output." },
+    { title: "Banking & Loans", body: "Access Banking through Marketplace. You can take Short-Term Loans, Development Loans, or issue Sovereign Bonds. Defaulting destroys your credit rating.", tip: "Only take loans if you have a clear plan to repay them." },
+    { title: "Trade Balance", body: "Trade Balance = Exports - Imports. A positive balance adds credits each tick. A negative balance drains it. Set up Trade Routes to control this.", tip: "Export your surplus resources. Import only what you critically lack." },
+  ]},
+  { icon: "🏗️", color: "#a78bfa", title: "Construction Hub", summary: "Build infrastructure that powers your civilization's growth.", lessons: [
+    { title: "The Construction Hub", body: "Every building requires specific resources and may require a minimum Epoch. Buildings provide permanent passive bonuses — production boosts, population capacity, tech generation.", tip: "Construction costs scale with inflation. Build during low-inflation periods." },
+    { title: "Priority Buildings — Early Game", body: "In the Stone Age, prioritize: Granary (food storage), Farm (food production), Quarry (stone), Lumberyard (wood), and Housing (population cap). Build a School ASAP.", tip: "Don't over-build military structures before Bronze Age." },
+    { title: "Building Levels", body: "Buildings can be upgraded to multiply their bonuses. A Level 2 Farm produces significantly more food than Level 1.", tip: "It's generally better to upgrade existing buildings than to build many level-1 structures." },
+  ]},
+  { icon: "🔬", color: "#818cf8", title: "Tech Tree & Research", summary: "Advance through 12 epochs and unlock powerful technologies.", lessons: [
+    { title: "Tech Points & the Tech Tree", body: "Click 'Tech Tree' to see all available technologies. Each tech costs Tech Points and may have prerequisites. Unlocking techs provides direct bonuses.", tip: "Focus on techs in a single branch before branching out — synergies compound quickly." },
+    { title: "The Research Panel", body: "The Research Panel is for advanced projects. Assign Researchers in the Workforce Panel and queue up projects. Completed research gives major breakthroughs.", tip: "Being FIRST to discover a breakthrough gives you a diplomatic advantage." },
+    { title: "Advancing Epochs", body: "When you've unlocked all required techs and have sufficient Tech Points, you'll see an 'Advance Epoch' button. 12 epochs: Stone → Bronze → Iron → Classical → Medieval → Renaissance → Industrial → Modern → Digital → Information → Space → Galactic.", tip: "Prepare your economy before advancing — each epoch increases costs and complexity." },
+  ]},
+  { icon: "🗺️", color: "#06b6d4", title: "World Map & Territory", summary: "Claim land, see your rivals, and project power across the globe.", lessons: [
+    { title: "The Interactive World Map", body: "The center panel shows a live world map with all nations' territories marked. Your hexagonal tiles are highlighted. Click any nation to view their stats.", tip: "Zoom in to see individual hex tiles with terrain and resource info." },
+    { title: "Hex Tiles & Terrain", body: "Each hex has a terrain type (plains, forest, mountains, coastal, desert, ocean, tundra) that affects its resource deposits and strategic value.", tip: "Coastal hexes are valuable for trade. Mountain hexes are defensible." },
+    { title: "Claiming Territory", body: "Expand by claiming adjacent hex tiles. Unclaimed tiles are available for free. Claimed tiles belonging to others require military conquest.", tip: "Don't expand faster than you can protect your borders." },
+  ]},
+  { icon: "⚔️", color: "#f87171", title: "Diplomacy & War", summary: "Form alliances, trade, negotiate — or conquer.", lessons: [
+    { title: "Nation Interaction", body: "Click any nation to view their profile. From there you can offer alliances, propose trade agreements, declare war, send aid, or negotiate peace.", tip: "Check a nation's military power before declaring war." },
+    { title: "Alliances", body: "Allied nations defend each other when attacked. They can also share trade routes and exchange resources more easily.", tip: "Don't ally with everyone — alliances mean you share their wars too." },
+    { title: "Declaring War", body: "When at war, both nations suffer stability penalties every tick. You can launch attacks to destroy enemy buildings, steal resources, and reduce their stability.", tip: "War drains stability, treasury, and food. Only declare if you have reserves to sustain the conflict." },
+    { title: "Peace Negotiations", body: "Either party in a war can propose peace at any time. Peace terms can include resource or credit transfers. Wars auto-expire after ~3.5 hours.", tip: "The ideal time to offer peace is after landing your strongest attacks — lock in your advantage." },
+  ]},
+  { icon: "📈", color: "#4ade80", title: "Stock Market & Exchange", summary: "IPO companies, trade shares, trigger crashes — dominate finance.", lessons: [
+    { title: "Issuing Stock (IPO)", body: "Click 'Issue Stock' to list a new company. You choose the name, sector, number of shares, and listing price. Your price is used directly.", tip: "A stronger economy = more investor confidence in your stocks." },
+    { title: "Global Exchange", body: "The Global Exchange shows all listed stocks from all nations. Buy and sell shares. Stock prices fluctuate based on the issuing nation's economic health.", tip: "Invest in nations with low inflation, high GDP growth, and stable government." },
+    { title: "Market Crashes", body: "If a nation enters severe economic distress, their stocks may crash — dropping 50-90% in value instantly.", tip: "Diversify your stock holdings across multiple nations and sectors." },
+  ]},
+  { icon: "💬", color: "#22d3ee", title: "World Chat & Communication", summary: "Talk to every civilization — negotiate, threaten, or trade in real time.", lessons: [
+    { title: "Global, Allies & System Channels", body: "World Chat has three channels: Global (all players), Allies (only your allied nations), and System (official announcements). The Activity tab shows the live Global Ledger.", tip: "Check the System channel regularly for important world events." },
+    { title: "Chat Commands", body: "Type commands in chat: /trade @Nation to propose a trade, /ally @Nation for alliance, /war @Nation to declare war, /aid @Nation to send economic aid.", tip: "Commands use the exact nation name. Type '@' first to see autocomplete." },
+    { title: "Private Messaging", body: "Click the 🔒 lock icon to open Private Messages for confidential diplomatic communications. Great for secret alliances and peace negotiations.", tip: "Private messages are ideal for backdoor diplomacy." },
+  ]},
+  { icon: "🏙️", color: "#f59e0b", title: "City Management", summary: "Zone districts, manage happiness, build services — grow your cities.", lessons: [
+    { title: "Founding a City", body: "Found cities on your hex tiles. Each city has its own population, budget, happiness score, crime rate, and service infrastructure.", tip: "Your first city should be on a fertile hex tile near resources." },
+    { title: "Zoning", body: "Allocate land into three zones: Residential (houses citizens), Commercial (tax revenue and happiness), Industrial (manufacturing and pollution).", tip: "Too much industrial zoning raises pollution and lowers happiness." },
+    { title: "City Services", body: "Build Schools, Hospitals, Police Stations, and Fire Departments. More services = higher education, better health, lower crime.", tip: "Police Stations reduce crime. High crime lowers national public trust." },
+    { title: "City Events", body: "Cities generate random events: immigration waves, disease outbreaks, crimes, protests. Left unresolved, negative events cascade into national crises.", tip: "Check the City Events tab regularly." },
+  ]},
+  { icon: "🏪", color: "#34d399", title: "Marketplace & Trade", summary: "Buy resources, trade routes, global commodity markets.", lessons: [
+    { title: "The Marketplace", body: "Buy and sell resources on the Global Commodity Market. Prices fluctuate based on worldwide supply and demand. Shortages spike prices. Surpluses crash them.", tip: "Buy resources when prices are low, not when you're desperate." },
+    { title: "Trade Routes", body: "Set up recurring Trade Routes with other nations. Define the resource, quantity per cycle, and price. Routes automatically transfer resources and credits every tick.", tip: "Trade Routes with Allied nations get a tariff discount." },
+    { title: "Crafting Marketplace", body: "The Crafting Market tab lets players buy and sell crafted items with Credits. List your items, browse other nations' offerings, and build your trading empire.", tip: "Rare and high-tier items command premium prices in the crafting marketplace." },
+  ]},
+];
+
 // ── Main Page ────────────────────────────────────────────────────────────────
 export default function Home() {
   const navigate = useNavigate();
   const [supportOpen, setSupportOpen] = useState(false);
   const [forgeOpen, setForgeOpen] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
+  const [openTopic, setOpenTopic] = useState(null);
+  const [openLesson, setOpenLesson] = useState(null);
 
   // Redirect if already logged in
   useEffect(() => {
