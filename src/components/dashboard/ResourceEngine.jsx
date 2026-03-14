@@ -214,7 +214,7 @@ export default function ResourceEngine({ nation, onRefresh }) {
       // FAMINE — population shrinks
       if (Math.random() < 0.5) {
         updates.population = Math.max(1, pop - 1);
-        updates.stability = Math.max(0, stability - 3);
+        updates.stability = Math.min(100, Math.max(0, Math.round(stability - 3)));
         updates.public_trust = Math.max(0.1, (fresh.public_trust || 1.0) - 0.05);
         notifications.push({
           type: "market_crash",
@@ -263,7 +263,7 @@ export default function ResourceEngine({ nation, onRefresh }) {
 
     // --- WAR STABILITY DRAIN (gradual: −1% per tick while at war) ---
     if ((fresh.at_war_with || []).length > 0) {
-      updates.stability = Math.max(0, (updates.stability ?? (fresh.stability || 75)) - 1);
+      updates.stability = Math.min(100, Math.max(0, Math.round((updates.stability ?? (fresh.stability || 75)) - 1)));
     }
 
     await base44.entities.Nation.update(fresh.id, updates);

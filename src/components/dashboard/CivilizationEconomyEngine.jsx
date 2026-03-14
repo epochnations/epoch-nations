@@ -268,14 +268,14 @@ export default function CivilizationEconomyEngine({ nation, onRefresh }) {
 
     if (unemploymentRate > 20) {
       const penalty = (unemploymentRate - 20) / 200;
-      updates.stability    = Math.max(0,   (fresh.stability    || 75)  - penalty * 10);
+      updates.stability    = Math.min(100, Math.max(0, Math.round((fresh.stability    || 75)  - penalty * 10)));
       updates.public_trust = Math.max(0.1, (fresh.public_trust || 1.0) - penalty * 0.02);
     }
 
     // High inflation also erodes trust and stability
     if (clampedInflation > 5) {
       const inflPenalty = (clampedInflation - 5) / 100;
-      updates.stability    = Math.max(0,   (updates.stability    ?? (fresh.stability    || 75))  - inflPenalty * 5);
+      updates.stability    = Math.min(100, Math.max(0, Math.round((updates.stability    ?? (fresh.stability    || 75))  - inflPenalty * 5)));
       updates.public_trust = Math.max(0.1, (updates.public_trust ?? (fresh.public_trust || 1.0)) - inflPenalty * 0.01);
     }
 
