@@ -2,6 +2,7 @@
  * ItemDatabase — Universal item registry for Epoch Nations
  * 2,600+ items organized by category, tier, and crafting chain
  */
+import { ALL_ITEMS_EXTRA } from "./ItemDatabaseExtra";
 
 export const RARITIES = {
   common:    { label: "Common",    color: "#9ca3af", glow: "rgba(156,163,175,0.3)" },
@@ -487,7 +488,6 @@ const ALL_ITEMS_proto = [
 ];
 
 // Merge extra items
-import { ALL_ITEMS_EXTRA } from "./ItemDatabaseExtra";
 const _ALL = [...ALL_ITEMS_proto, ...ALL_ITEMS_EXTRA];
 // De-duplicate by id (base wins)
 const _seen = new Set();
