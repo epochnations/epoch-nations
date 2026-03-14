@@ -62,19 +62,35 @@ export const RESEARCH_TREE = {
     },
     // Layer 3 — University
     {
+      id: "food_preservation",   layer: 3, name: "Food Preservation & Canning",
+      building_req: "university", epoch_req: "Industrial Age",
+      base_points: 350,           requires: ["selective_breeding"],
+      desc: "Unlocks canned food, rations, and tin-can production. Food stability +10%, GDP +150",
+      effects: { food_prod_bonus: 0.10, gdp: 150, stability: 5 },
+      emoji: "🥫"
+    },
+    {
       id: "mechanized_agriculture", layer: 3, name: "Mechanized Agriculture",
       building_req: "university", epoch_req: "Industrial Age",
       base_points: 400,           requires: ["irrigation_systems"],
-      desc: "Food prod +50%, Manufacturing +20",
+      desc: "Food prod +50%, Manufacturing +20. Unlocks tractor & harvester.",
       effects: { food_prod_bonus: 0.50, manufacturing: 20 },
       emoji: "🚜"
     },
     // Layer 4 — University
     {
+      id: "advanced_brewing",    layer: 4, name: "Advanced Brewing & Distilling",
+      building_req: "university", epoch_req: "Modern Age",
+      base_points: 600,           requires: ["food_preservation"],
+      desc: "Unlocks wine, spirits, and premium beverages. GDP +300, Stability +5",
+      effects: { gdp: 300, stability: 5 },
+      emoji: "🍷"
+    },
+    {
       id: "precision_farming",   layer: 4, name: "Precision Farming",
       building_req: "university", epoch_req: "Digital Age",
       base_points: 800,           requires: ["mechanized_agriculture"],
-      desc: "Food prod +80%, GDP +500",
+      desc: "Food prod +80%, GDP +500. Unlocks soil sensors and crop monitoring drones.",
       effects: { food_prod_bonus: 0.80, gdp: 500 },
       emoji: "🛰️"
     },
@@ -96,7 +112,7 @@ export const RESEARCH_TREE = {
       id: "basic_metallurgy",    layer: 1, name: "Basic Metallurgy",
       building_req: "school",    epoch_req: "Stone Age",
       base_points: 80,           requires: [],
-      desc: "Manufacturing +8, Unit Power +5",
+      desc: "Unlocks forge smelting of iron & copper ingots. Manufacturing +8, Unit Power +5",
       effects: { manufacturing: 8, unit_power: 5 },
       emoji: "⚒️"
     },
@@ -104,16 +120,24 @@ export const RESEARCH_TREE = {
       id: "woodworking",         layer: 1, name: "Advanced Woodworking",
       building_req: "school",    epoch_req: "Stone Age",
       base_points: 70,           requires: [],
-      desc: "Wood production +20%, GDP +50",
+      desc: "Unlocks planks, beams, and wooden furniture at workbench. Wood production +20%, GDP +50",
       effects: { wood_prod_bonus: 0.20, gdp: 50 },
       emoji: "🪵"
+    },
+    {
+      id: "rope_textiles",       layer: 1, name: "Rope & Basic Textiles",
+      building_req: "school",    epoch_req: "Stone Age",
+      base_points: 65,           requires: [],
+      desc: "Unlocks cloth, rope, and leather at the loom/workbench. Stability +2, GDP +40",
+      effects: { stability: 2, gdp: 40 },
+      emoji: "🧶"
     },
     // Layer 2 — School
     {
       id: "metal_tools",         layer: 2, name: "Metal Tools",
       building_req: "school",    epoch_req: "Iron Age",
       base_points: 180,          requires: ["basic_metallurgy"],
-      desc: "Manufacturing +20, GDP +150",
+      desc: "Unlocks workshop tools: wrench, drill, soldering iron. Manufacturing +20, GDP +150",
       effects: { manufacturing: 20, gdp: 150 },
       emoji: "🔧"
     },
@@ -121,29 +145,86 @@ export const RESEARCH_TREE = {
       id: "masonry",             layer: 2, name: "Advanced Masonry",
       building_req: "school",    epoch_req: "Bronze Age",
       base_points: 150,          requires: ["woodworking"],
-      desc: "Stone prod +25%, Stability +6",
+      desc: "Unlocks stone blocks, columns, and reinforced concrete. Stone prod +25%, Stability +6",
       effects: { stone_prod_bonus: 0.25, stability: 6 },
       emoji: "🧱"
+    },
+    {
+      id: "glass_making",        layer: 2, name: "Glass Making",
+      building_req: "school",    epoch_req: "Bronze Age",
+      base_points: 140,          requires: ["pottery_crafting"],
+      desc: "Unlocks glass, tempered glass, and glass panels at the kiln. GDP +100, Manufacturing +10",
+      effects: { gdp: 100, manufacturing: 10 },
+      emoji: "🪟"
+    },
+    {
+      id: "bronze_alloys",       layer: 2, name: "Bronze & Brass Alloys",
+      building_req: "school",    epoch_req: "Bronze Age",
+      base_points: 130,          requires: ["basic_metallurgy"],
+      desc: "Unlocks bronze and brass smelting at the forge. GDP +80, Manufacturing +12",
+      effects: { gdp: 80, manufacturing: 12 },
+      emoji: "🟠"
     },
     // Layer 3 — University
     {
       id: "industrial_foundations", layer: 3, name: "Industrial Foundations",
       building_req: "university",   epoch_req: "Industrial Age",
       base_points: 450,             requires: ["metal_tools"],
-      desc: "Manufacturing +40, GDP +400",
+      desc: "Unlocks factory construction. Manufacturing +40, GDP +400",
       effects: { manufacturing: 40, gdp: 400 },
       emoji: "🏗️"
     },
+    {
+      id: "chemical_synthesis",  layer: 3, name: "Chemical Synthesis",
+      building_req: "university", epoch_req: "Industrial Age",
+      base_points: 420,           requires: ["glass_making"],
+      desc: "Unlocks chemical plant: acids, plastics, rubber, explosives, and synthetic materials. Manufacturing +25",
+      effects: { manufacturing: 25, gdp: 200 },
+      emoji: "🧪"
+    },
+    {
+      id: "steel_production",    layer: 3, name: "Steel Production",
+      building_req: "university", epoch_req: "Industrial Age",
+      base_points: 380,           requires: ["bronze_alloys"],
+      desc: "Unlocks steel, steel beams, and rebar at the forge/factory. Manufacturing +30, Unit Power +15",
+      effects: { manufacturing: 30, unit_power: 15 },
+      emoji: "🔩"
+    },
     // Layer 4 — University
+    {
+      id: "electronics_manufacturing", layer: 4, name: "Electronics Manufacturing",
+      building_req: "university", epoch_req: "Modern Age",
+      base_points: 750,           requires: ["chemical_synthesis"],
+      desc: "Unlocks electronics lab: circuit boards, processors, batteries, sensors. Manufacturing +40, TP +20",
+      effects: { manufacturing: 40, tpBonus: 20, gdp: 400 },
+      emoji: "💻"
+    },
     {
       id: "automation",          layer: 4, name: "Automation Systems",
       building_req: "university", epoch_req: "Modern Age",
       base_points: 900,           requires: ["industrial_foundations"],
-      desc: "Manufacturing +80, GDP +800, Unemployment -5",
+      desc: "Unlocks advanced factory components: motors, conveyors, CNC machines. Manufacturing +80, GDP +800",
       effects: { manufacturing: 80, gdp: 800 },
       emoji: "🤖"
     },
+    {
+      id: "vehicle_engineering", layer: 4, name: "Vehicle Engineering",
+      building_req: "university", epoch_req: "Modern Age",
+      base_points: 700,           requires: ["steel_production"],
+      desc: "Unlocks vehicle plant: cars, trucks, buses, tanks. Manufacturing +50, GDP +500",
+      effects: { manufacturing: 50, gdp: 500 },
+      emoji: "🚗"
+    },
     // Layer 5 — University (Breakthrough)
+    {
+      id: "advanced_materials",  layer: 5, name: "Advanced Materials Science",
+      building_req: "university", epoch_req: "Digital Age",
+      base_points: 1400,          requires: ["electronics_manufacturing"],
+      desc: "Unlocks titanium alloys, carbon fiber, graphene. Enables advanced factory. Manufacturing +60, GDP +1500",
+      effects: { manufacturing: 60, gdp: 1500 },
+      emoji: "⚗️",
+      is_global_breakthrough: true
+    },
     {
       id: "global_logistics",    layer: 5, name: "Global Logistics Network",
       building_req: "university", epoch_req: "Digital Age",
