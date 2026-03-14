@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
-import { ArrowLeft, Trophy, Search, Filter, X, TrendingUp } from "lucide-react";
+import { ArrowLeft, Trophy, Search, Filter, X, TrendingUp, Activity } from "lucide-react";
+import SystemStatusDashboard from "../components/dashboard/SystemStatusDashboard";
 import { getGameTime, formatGameTime, TICK_MS, TICKS_PER_DAY } from "../components/game/GameClock";
 import { EPOCHS, EPOCH_COLOR, EPOCH_EMOJI } from "../components/game/EpochConfig";
 import NationHistoryCard from "../components/hall/NationHistoryCard";
@@ -34,6 +35,14 @@ export default function HallOfNations() {
   const [activeMetric, setActiveMetric] = useState("epoch");
   const [activeTab, setActiveTab] = useState("leaderboard"); // leaderboard | history | firsts
   const [selectedNation, setSelectedNation] = useState(null);
+  const [showStatus, setShowStatus] = useState(false);
+  const [myNation, setMyNation] = useState(null);
+
+  useEffect(() => {
+    base44.auth.me().then(u => {
+      base44.entities.Nation.filter({ owner_email: u.email }).then(ns => setMyNation(ns[0] || null));
+    }).catch(() => {});
+  }, []);
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({
     epoch: "all",
@@ -133,9 +142,15 @@ export default function HallOfNations() {
           </div>
           <div className="text-[10px] text-slate-600 ep-mono">Eternal leaderboard & national archives — {nations.length} civilizations on record</div>
         </div>
-        <div className="ml-auto text-right hidden sm:block">
-          <div className="text-[10px] text-slate-500 ep-mono">GAME TIME</div>
-          <div className="text-[10px] text-amber-400 ep-mono font-bold">{formatGameTime(gameTime)}</div>
+        <div className="ml-auto flex items-center gap-3">
+          <div className="text-right hidden sm:block">
+            <div className="text-[10px] text-slate-500 ep-mono">GAME TIME</div>
+            <div className="text-[10px] text-amber-400 ep-mono font-bold">{formatGameTime(gameTime)}</div>
+          </div>
+          <button onClick={() => setShowStatus(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold hover:bg-emerald-500/20 transition-all">
+            <Activity size={12} /> Status
+          </button>
         </div>
       </div>
 
@@ -256,6 +271,9 @@ export default function HallOfNations() {
         )}
       </div>
 
+      {showStatus && myNation && (
+        <SystemStatusDashboard myNation={myNation} onClose={() => setShowStatus(false)} />
+      )}
       {selectedNation && (
         <NationDetailModal
           nation={selectedNation}
