@@ -404,6 +404,52 @@ export default function LiveMapLayer({ nations, myNation, nationIndexMap, zoom }
         });
       })}
 
+      {/* ── City activity animations (traffic rings + industrial smoke) ── */}
+      {zoom >= 0.8 && CITIES.map((city, i) => (
+        <g key={`city_anim_${city.name}`}>
+          {/* City heartbeat ring */}
+          <motion.circle cx={city.x} cy={city.y}
+            r={city.size + 3}
+            fill="none"
+            stroke={city.pop > 15 ? "#e08020" : "#a06010"}
+            strokeWidth="0.8"
+            animate={{ r: [city.size+2, city.size+12, city.size+2], opacity: [0.5, 0, 0.5] }}
+            transition={{ duration: 2.5 + city.pop * 0.08, repeat: Infinity, delay: i * 0.18 }}/>
+          {/* Large city second ring */}
+          {city.pop > 10 && (
+            <motion.circle cx={city.x} cy={city.y}
+              r={city.size + 8}
+              fill="none"
+              stroke="#c07020"
+              strokeWidth="0.5"
+              animate={{ r: [city.size+6, city.size+18, city.size+6], opacity: [0.3, 0, 0.3] }}
+              transition={{ duration: 3.5 + city.pop * 0.1, repeat: Infinity, delay: i * 0.18 + 1.2 }}/>
+          )}
+          {/* Smoke puff from industrial cities */}
+          {zoom > 1.5 && city.pop > 8 && (
+            <motion.circle cx={city.x + 5} cy={city.y - city.size - 6}
+              r={3}
+              fill="#404840"
+              animate={{
+                cy: [city.y - city.size - 6, city.y - city.size - 18, city.y - city.size - 30],
+                r: [2, 5, 1],
+                opacity: [0.4, 0.2, 0]
+              }}
+              transition={{ duration: 3, repeat: Infinity, delay: i * 0.4, ease: "easeOut" }}/>
+          )}
+          {/* Population label at high zoom */}
+          {zoom > 2 && (
+            <motion.text x={city.x} y={city.y - city.size - 14}
+              textAnchor="middle" fill="#e09030" fontSize="7"
+              fontFamily="'Courier New',monospace"
+              animate={{ opacity: [0.5, 0.9, 0.5] }}
+              transition={{ duration: 4, repeat: Infinity, delay: i * 0.2 }}>
+              {city.pop.toFixed(1)}M
+            </motion.text>
+          )}
+        </g>
+      ))}
+
       {/* ── Live event bubbles (zoom ≥ 1.0) ── */}
       {liveEvents.map(evt => (
         <LiveEventBubble key={evt.id} event={evt} zoom={zoom}/>
