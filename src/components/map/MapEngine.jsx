@@ -8,9 +8,22 @@ const MIN_ZOOM = 0.35;
 const MAX_ZOOM = 6;
 const ZOOM_STEP = 0.25;
 
+const PAN_STORAGE_KEY = "epoch_map_pan";
+const ZOOM_STORAGE_KEY = "epoch_map_zoom";
+
+function loadSavedView() {
+  try {
+    const z = parseFloat(localStorage.getItem(ZOOM_STORAGE_KEY));
+    const p = JSON.parse(localStorage.getItem(PAN_STORAGE_KEY));
+    return { zoom: isNaN(z) ? 0.85 : z, pan: p || { x: 0, y: 0 } };
+  } catch { return { zoom: 0.85, pan: { x: 0, y: 0 } }; }
+}
+
 export function useMapEngine(containerRef) {
-  const [zoom, setZoom] = useState(1);
-  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const saved = loadSavedView();
+  const [zoom, setZoom] = useState(saved.zoom);
+  const [pan, setPan] = useState(saved.pan);
+  const saveTimer = useRef(null);
   const dragging = useRef(false);
   const lastPos = useRef({ x: 0, y: 0 });
   const lastTouchDist = useRef(null);
