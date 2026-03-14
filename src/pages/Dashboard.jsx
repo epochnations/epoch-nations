@@ -57,6 +57,10 @@ export default function Dashboard() {
   const [showResearch, setShowResearch] = useState(false);
   const [showTour, setShowTour] = useState(false);
   const [showSystemStatus, setShowSystemStatus] = useState(false);
+  const [showExploration, setShowExploration] = useState(false);
+  const [showWonders, setShowWonders] = useState(false);
+  const [showCrisis, setShowCrisis] = useState(false);
+  const [showWarFronts, setShowWarFronts] = useState(false);
 
   const refreshDebounceRef = useRef(null);
   const userEmailRef = useRef(null);
