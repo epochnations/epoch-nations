@@ -15,27 +15,96 @@ import DevPortal from "@/components/home/DevPortal";
 // ── Live Game Clock ──────────────────────────────────────────────────────────
 function LiveClock() {
   const [gt, setGt] = useState(getGameTime());
+  const [tick, setTick] = useState(0);
   useEffect(() => {
-    const id = setInterval(() => setGt(getGameTime()), 10_000);
+    const id = setInterval(() => { setGt(getGameTime()); setTick(t => t + 1); }, 10_000);
     return () => clearInterval(id);
   }, []);
 
-  const pct = ((gt.day - 1) / 30) * 100;
+  const dayPct   = ((gt.day   - 1) / 30)  * 100;
+  const monthPct = ((gt.month - 1) / 12)  * 100;
+  const yearPct  = (gt.year   % 10) / 10  * 100;
+
+  const segments = [
+    { label: "DAY",   value: gt.day,   max: 30,  pct: dayPct,   color: "#22d3ee",  glow: "rgba(34,211,238,0.4)" },
+    { label: "MONTH", value: gt.month, max: 12,  pct: monthPct, color: "#818cf8",  glow: "rgba(129,140,248,0.4)" },
+    { label: "YEAR",  value: gt.year,  max: null, pct: yearPct,  color: "#f59e0b",  glow: "rgba(245,158,11,0.4)" },
+  ];
 
   return (
-    <div className="rounded-2xl p-4 text-center"
-      style={{ background: "rgba(6,182,212,0.06)", border: "1px solid rgba(6,182,212,0.2)" }}>
-      <div className="flex items-center justify-center gap-2 mb-2">
+    <div className="rounded-3xl p-5 relative overflow-hidden"
+      style={{
+        background: "linear-gradient(135deg, rgba(6,182,212,0.06) 0%, rgba(139,92,246,0.06) 50%, rgba(245,158,11,0.04) 100%)",
+        border: "1px solid rgba(255,255,255,0.08)",
+        boxShadow: "0 0 40px rgba(6,182,212,0.08), inset 0 1px 0 rgba(255,255,255,0.05)"
+      }}>
+      {/* Subtle animated bg glow */}
+      <div className="absolute inset-0 pointer-events-none"
+        style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(34,211,238,0.06) 0%, transparent 70%)" }} />
+
+      {/* Header */}
+      <div className="flex items-center justify-center gap-2 mb-4 relative">
         <div className="ep-live-dot" />
-        <span className="text-[10px] font-bold text-green-400 ep-mono uppercase tracking-widest">WORLD CLOCK — LIVE</span>
+        <span className="text-[10px] font-black ep-mono tracking-[0.2em] uppercase"
+          style={{ background: "linear-gradient(90deg,#22d3ee,#818cf8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+          WORLD CLOCK — LIVE
+        </span>
       </div>
-      <div className="text-cyan-400 font-black text-lg ep-mono">{formatGameTime(gt)}</div>
-      <div className="mt-2 h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
-        <div className="h-full rounded-full transition-all duration-1000"
-          style={{ width: `${pct}%`, background: "linear-gradient(90deg, #06b6d4, #8b5cf6)" }} />
+
+      {/* Big epoch display */}
+      <div className="text-center mb-5 relative">
+        <div className="text-[10px] text-slate-600 ep-mono uppercase tracking-widest mb-1">CURRENT EPOCH</div>
+        <div className="font-black text-2xl ep-mono"
+          style={{ background: "linear-gradient(135deg, #22d3ee 0%, #818cf8 50%, #f59e0b 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+          YEAR {gt.year}
+        </div>
+        <div className="text-slate-400 text-xs ep-mono mt-0.5">
+          Month {gt.month} · Week {gt.week} · Day {gt.day}
+        </div>
       </div>
-      <div className="text-[10px] text-slate-500 mt-1 ep-mono">
-        1 real minute = 1 game tick · 7 days = 1 game year
+
+      {/* Circular / arc indicators */}
+      <div className="flex items-center justify-center gap-4 mb-4">
+        {segments.map(({ label, value, max, pct, color, glow }) => (
+          <div key={label} className="flex flex-col items-center gap-1.5">
+            <div className="relative w-14 h-14">
+              <svg viewBox="0 0 56 56" className="w-full h-full -rotate-90">
+                <circle cx="28" cy="28" r="23" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="4" />
+                <circle cx="28" cy="28" r="23" fill="none"
+                  stroke={color} strokeWidth="4"
+                  strokeLinecap="round"
+                  strokeDasharray={`${2 * Math.PI * 23}`}
+                  strokeDashoffset={`${2 * Math.PI * 23 * (1 - pct / 100)}`}
+                  style={{ transition: "stroke-dashoffset 1s ease", filter: `drop-shadow(0 0 4px ${glow})` }}
+                />
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-xs font-black ep-mono" style={{ color }}>{value}</span>
+              </div>
+            </div>
+            <span className="text-[9px] font-black ep-mono tracking-widest" style={{ color: "rgba(255,255,255,0.3)" }}>{label}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Linear tick bar */}
+      <div className="relative">
+        <div className="h-1 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.05)" }}>
+          <div className="h-full rounded-full transition-all duration-[2s]"
+            style={{
+              width: `${dayPct}%`,
+              background: "linear-gradient(90deg, #06b6d4, #8b5cf6, #f59e0b)",
+              boxShadow: "0 0 8px rgba(34,211,238,0.6)"
+            }} />
+        </div>
+        <div className="flex justify-between mt-1">
+          <span className="text-[9px] ep-mono text-slate-700">Day 1</span>
+          <span className="text-[9px] ep-mono text-slate-700">Day 30</span>
+        </div>
+      </div>
+
+      <div className="text-center mt-2">
+        <span className="text-[10px] text-slate-600 ep-mono">1 min = 1 tick · 7 days = 1 game year</span>
       </div>
     </div>
   );

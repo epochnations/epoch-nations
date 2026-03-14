@@ -4,7 +4,7 @@
  */
 import { useState, useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Search, Filter, ChevronLeft, BookOpen, Package, Code2, GitBranch } from "lucide-react";
+import { Search, Filter, ChevronLeft, BookOpen } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import { useNavigate } from "react-router-dom";
 import {
@@ -15,8 +15,6 @@ import ItemCard from "../components/crafting/ItemCard";
 import ItemDetailPopup from "../components/crafting/ItemDetailPopup";
 import CraftChainModal from "../components/crafting/CraftChainModal";
 import CraftingTreeVisualizer from "../components/crafting/CraftingTreeVisualizer";
-import InventoryManager from "../components/crafting/InventoryManager";
-import CommunityItemRegistry from "../components/crafting/CommunityItemRegistry";
 
 const SORT_OPTIONS = [
   { value: "name",   label: "Name A–Z"      },
