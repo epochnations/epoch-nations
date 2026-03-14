@@ -74,8 +74,9 @@ export default function NationMetricsPanel({ nation, allNations }) {
       <div className="shrink-0">
         <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase mb-2">CORE METRICS</div>
         <div className="space-y-2.5">
-          {CORE_METRICS.map(({ key, label, max, color, format }) => {
-            const val = nation[key] ?? 0;
+          {CORE_METRICS.map(({ key, label, max, color, format, clamp }) => {
+            const rawVal = nation[key] ?? 0;
+            const val = clamp ? Math.min(max, Math.max(0, rawVal)) : rawVal;
             const display = format ? format(val) : Math.round(val);
             return (
               <div key={key}>
