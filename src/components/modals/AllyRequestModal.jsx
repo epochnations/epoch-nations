@@ -96,6 +96,8 @@ export default function AllyRequestModal({ mode, nation, myNation, existingAgree
   }
 
   async function declineRequest() {
+    if (responded) return;
+    setResponded(true);
     setLoading(true);
     await base44.entities.DiplomacyAgreement.update(existingAgreement.id, {
       status: "rejected",
