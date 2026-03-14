@@ -334,6 +334,18 @@ export default function Dashboard() {
           <a href={createPageUrl("Marketplace")} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-green-500/10 border border-green-500/20 text-green-400 min-h-[44px] flex items-center gap-1.5">
             🏪 Market
           </a>
+          <button onClick={() => setShowExploration(true)} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-amber-500/10 border border-amber-500/20 text-amber-400 min-h-[44px]">
+            🧭 Explore
+          </button>
+          <button onClick={() => setShowWonders(true)} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-violet-500/10 border border-violet-500/20 text-violet-400 min-h-[44px]">
+            ✨ Wonders
+          </button>
+          <button onClick={() => setShowCrisis(true)} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-red-500/10 border border-red-500/20 text-red-400 min-h-[44px]">
+            🚨 Crisis
+          </button>
+          <button onClick={() => setShowWarFronts(true)} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-orange-500/10 border border-orange-500/20 text-orange-400 min-h-[44px]">
+            ⚔️ Fronts
+          </button>
           <button onClick={() => setShowSystemStatus(true)} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 min-h-[44px] flex items-center gap-1.5">
             📡 Status
           </button>
