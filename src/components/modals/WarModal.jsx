@@ -211,19 +211,24 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
   const defGdp = targetNation.gdp || 0;
   const defMfg = targetNation.manufacturing || 0;
   const defTreasury = targetNation.currency || 0;
-  const dmgStab = Math.floor(damage * 0.4);
-  const dmgGdp = Math.floor(damage * 3);
-  const dmgMfg = Math.floor(damage * 0.2);
-  const dmgTrs = Math.floor(damage * 5);
-  const hitsNeeded = dmgStab > 0 ? Math.ceil(defStab / dmgStab) : Infinity;
-  const hitsGdp = dmgGdp > 0 ? Math.ceil((defGdp - 100) / dmgGdp) : Infinity;
-  const hitsMfg = dmgMfg > 0 ? Math.ceil((defMfg - 10) / dmgMfg) : Infinity;
-  const hitsTrs = dmgTrs > 0 ? Math.ceil(defTreasury / dmgTrs) : Infinity;
-  const conquestHits = Math.max(hitsNeeded, Math.max(hitsGdp, Math.max(hitsMfg, hitsTrs)));
-  const stabPct = Math.min(100, (defStab / 100) * 100);
-  const gdpPct = Math.min(100, Math.max(0, (defGdp - 100) / (defGdp || 1) * 100));
-  const mfgPct = Math.min(100, Math.max(0, (defMfg - 10) / (defMfg || 1) * 100));
-  const trsPct = Math.min(100, (defTreasury / Math.max(defTreasury, 1)) * 100);
+  const dmgStab = Math.max(1, Math.floor(damage * 0.4));
+  const dmgGdp  = Math.max(1, Math.floor(damage * 3));
+  const dmgMfg  = Math.max(1, Math.floor(damage * 0.2));
+  const dmgTrs  = Math.max(1, Math.floor(damage * 5));
+
+  // Each stat needs to reach its floor. Hits required per stat:
+  const hitsNeeded = Math.ceil(Math.max(0, defStab)        / dmgStab);           // stab → 0
+  const hitsGdp    = Math.ceil(Math.max(0, defGdp - 100)   / dmgGdp);            // gdp  → 100
+  const hitsMfg    = Math.ceil(Math.max(0, defMfg - 10)    / dmgMfg);            // mfg  → 10
+  const hitsTrs    = Math.ceil(Math.max(0, defTreasury)     / dmgTrs);            // trs  → 0
+
+  // Conquest requires ALL four floors simultaneously → worst case (highest hits)
+  const conquestHits = Math.max(hitsNeeded, hitsGdp, hitsMfg, hitsTrs);
+
+  const stabPct = defStab > 0 ? Math.min(100, (defStab / Math.max(defStab, 100)) * 100) : 0;
+  const gdpPct  = defGdp  > 100 ? Math.min(100, ((defGdp - 100) / defGdp) * 100) : 0;
+  const mfgPct  = defMfg  > 10  ? Math.min(100, ((defMfg - 10)  / defMfg) * 100) : 0;
+  const trsPct  = defTreasury > 0 ? 100 : 0;
 
   // Helper to advance phase
   const phaseRef = useRef(0);
