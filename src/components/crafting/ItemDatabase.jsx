@@ -1,7 +1,8 @@
 /**
  * ItemDatabase — Universal item registry for Epoch Nations
- * 700+ unique items organized by category, tier, and crafting chain
+ * 1,400+ unique items organized by category, tier, and crafting chain
  */
+import { ALL_ITEMS_B } from "./ItemDatabaseB";
 
 export const RARITIES = {
   common:    { label: "Common",    color: "#9ca3af", glow: "rgba(156,163,175,0.3)" },
@@ -945,6 +946,7 @@ export const ALL_ITEMS = [
   ...MILITARY_EXTRA, ...ELECTRONICS_EXTRA, ...MEDICAL_EXTRA, ...AGRICULTURE_EXTRA,
   ...FOOD_EXTRA, ...ENERGY_EXTRA, ...INFRASTRUCTURE_EXTRA, ...CHEMICALS_EXTRA,
   ...TEXTILES_EXTRA, ...MISC_EXTRA,
+  ...ALL_ITEMS_B,
 ].filter(i => { if (_seen.has(i.id)) return false; _seen.add(i.id); return true; });
 
 // Quick lookup map
