@@ -1,6 +1,7 @@
 /**
- * MapTerrain – Realistic SVG world map with detailed continents, ocean depth,
- * terrain textures, mountain ranges, and geographic features.
+ * MapTerrain – Vintage paper / rustic atlas world map.
+ * Rich earthy parchment tones, hand-drawn contours, aged textures.
+ * Includes progressive zoom detail levels.
  */
 export const MAP_W = 1600;
 export const MAP_H = 900;
@@ -19,470 +20,465 @@ export function nationPos(index) {
   return NATION_POSITIONS[index % NATION_POSITIONS.length];
 }
 
-const RIVERS = [
-  "M 680,120 Q 720,160 700,220 Q 690,280 710,340",
-  "M 800,280 Q 860,300 900,360 Q 940,420 920,500",
-  "M 340,380 Q 380,440 370,520 Q 360,600 380,680",
-  "M 1080,200 Q 1120,250 1100,320 Q 1090,380 1110,430",
-  "M 1240,180 Q 1280,220 1260,280 Q 1250,350 1270,400",
-  "M 200,180 Q 260,220 300,280 Q 320,320 300,380",
-  "M 820,150 Q 860,180 880,240 Q 900,290 880,340",
-];
-
 export const CITIES = [
-  { name:"New York",    x:390,  y:185, size:5 },
-  { name:"London",      x:720,  y:145, size:5 },
-  { name:"Paris",       x:745,  y:170, size:4 },
-  { name:"Moscow",      x:950,  y:120, size:5 },
-  { name:"Cairo",       x:880,  y:340, size:4 },
-  { name:"Mumbai",      x:1150, y:320, size:4 },
-  { name:"Beijing",     x:1290, y:180, size:5 },
-  { name:"Tokyo",       x:1400, y:195, size:5 },
-  { name:"Sydney",      x:1430, y:620, size:4 },
-  { name:"Sao Paulo",   x:420,  y:600, size:4 },
-  { name:"Lagos",       x:760,  y:440, size:4 },
-  { name:"Nairobi",     x:940,  y:520, size:3 },
-  { name:"Dubai",       x:1020, y:300, size:4 },
-  { name:"Singapore",   x:1330, y:430, size:4 },
-  { name:"Toronto",     x:340,  y:160, size:3 },
-  { name:"Berlin",      x:800,  y:140, size:3 },
-  { name:"Delhi",       x:1160, y:260, size:4 },
-  { name:"Jakarta",     x:1340, y:490, size:3 },
-  { name:"Cape Town",   x:820,  y:680, size:3 },
-  { name:"Buenos Aires",x:390,  y:680, size:3 },
-];
-
-// Mountain ranges as polyline paths
-const MOUNTAIN_RANGES = [
-  // Rockies
-  { d: "M 195,100 L 210,130 L 205,160 L 215,200 L 210,240", stroke: "#1a3d5c", width: 3 },
-  // Andes
-  { d: "M 330,490 L 325,560 L 318,640 L 320,720 L 315,790", stroke: "#0e5c3a", width: 3 },
-  // Alps
-  { d: "M 740,170 L 770,165 L 800,172 L 825,168", stroke: "#3d2a70", width: 2.5 },
-  // Himalayas
-  { d: "M 1120,230 L 1160,220 L 1200,215 L 1240,222 L 1270,235", stroke: "#1a4a6a", width: 3.5 },
-  // Caucasus
-  { d: "M 970,180 L 1010,175 L 1040,182", stroke: "#1a4a6a", width: 2 },
-  // Atlas
-  { d: "M 700,235 L 740,228 L 770,235", stroke: "#7a3a05", width: 2 },
-  // Urals
-  { d: "M 1010,80 L 1020,120 L 1015,160", stroke: "#1a4a6a", width: 2 },
-  // Great Dividing Range
-  { d: "M 1440,570 L 1450,620 L 1445,670 L 1440,720", stroke: "#8b3a05", width: 2 },
-];
-
-// Forest/jungle patches
-const FOREST_PATCHES = [
-  { cx: 350, cy: 500, rx: 40, ry: 60, fill: "#0a3020" },  // Amazon
-  { cx: 890, cy: 480, rx: 50, ry: 80, fill: "#0d2810" },  // Congo
-  { cx: 1340, cy: 380, rx: 35, ry: 40, fill: "#0a2810" }, // SE Asia jungle
-  { cx: 250, cy: 160, rx: 30, ry: 40, fill: "#102830" },  // Canadian boreal
-];
-
-// Desert patches
-const DESERT_PATCHES = [
-  { cx: 880, cy: 290, rx: 60, ry: 40, fill: "#3d1e00", opacity: 0.4 },  // Sahara
-  { cx: 1040, cy: 270, rx: 40, ry: 25, fill: "#3d1e00", opacity: 0.35 }, // Arabian
-  { cx: 1380, cy: 660, rx: 50, ry: 35, fill: "#3a1800", opacity: 0.4 },  // Australian outback
-  { cx: 310, cy: 700, rx: 30, ry: 20, fill: "#3a1800", opacity: 0.3 },   // Patagonia
-];
-
-// Ice caps
-const ICE_CAPS = [
-  "M 0,0 L 600,0 L 540,40 L 450,55 L 380,45 L 300,60 L 150,50 L 80,40 L 0,50 Z",
-  "M 0,900 L 1600,900 L 1600,860 L 1400,850 L 1000,855 L 600,845 L 200,855 L 0,860 Z",
-];
-
-// Ocean depth rings
-const OCEAN_RINGS = [
-  { cx: 580, cy: 400, rx: 280, ry: 200, stroke: "#0a1f3d", opacity: 0.4 },  // Atlantic
-  { cx: 1100, cy: 500, rx: 340, ry: 220, stroke: "#071528", opacity: 0.4 }, // Pacific/Indian
-  { cx: 800, cy: 820, rx: 200, ry: 60, stroke: "#0a1f3d", opacity: 0.3 },   // Southern Ocean
+  { name:"New York",     x:390,  y:185, size:5, pop: 8.3 },
+  { name:"London",       x:720,  y:145, size:5, pop: 9.0 },
+  { name:"Paris",        x:745,  y:170, size:4, pop: 2.1 },
+  { name:"Moscow",       x:950,  y:120, size:5, pop: 12.5 },
+  { name:"Cairo",        x:880,  y:340, size:4, pop: 10.1 },
+  { name:"Mumbai",       x:1150, y:320, size:4, pop: 20.7 },
+  { name:"Beijing",      x:1290, y:180, size:5, pop: 21.5 },
+  { name:"Tokyo",        x:1410, y:195, size:5, pop: 37.4 },
+  { name:"Sydney",       x:1440, y:625, size:4, pop: 5.3 },
+  { name:"Sao Paulo",    x:420,  y:600, size:4, pop: 22.0 },
+  { name:"Lagos",        x:760,  y:445, size:4, pop: 14.8 },
+  { name:"Nairobi",      x:940,  y:525, size:3, pop: 4.7 },
+  { name:"Dubai",        x:1025, y:305, size:4, pop: 3.3 },
+  { name:"Singapore",    x:1335, y:435, size:4, pop: 5.9 },
+  { name:"Toronto",      x:340,  y:162, size:3, pop: 6.2 },
+  { name:"Berlin",       x:800,  y:138, size:3, pop: 3.7 },
+  { name:"Delhi",        x:1160, y:262, size:4, pop: 32.0 },
+  { name:"Jakarta",      x:1340, y:492, size:3, pop: 10.6 },
+  { name:"Cape Town",    x:820,  y:685, size:3, pop: 4.6 },
+  { name:"Buenos Aires", x:390,  y:682, size:3, pop: 15.2 },
+  { name:"Chicago",      x:350,  y:175, size:3, pop: 9.5 },
+  { name:"Shanghai",     x:1330, y:220, size:4, pop: 24.1 },
+  { name:"Istanbul",     x:870,  y:178, size:3, pop: 15.5 },
+  { name:"Mexico City",  x:290,  y:375, size:4, pop: 21.6 },
+  { name:"Riyadh",       x:1000, y:310, size:3, pop: 7.7 },
 ];
 
 export default function MapTerrain({ zoom }) {
-  const showCityLabels = zoom >= 1.5;
-  const showRivers     = zoom >= 0.5;
-  const showCities     = zoom >= 0.7;
-  const showMountains  = zoom >= 0.6;
-  const showForests    = zoom >= 0.5;
-
   return (
     <g>
-      {/* ── Ocean base with depth gradient ── */}
       <defs>
-        <radialGradient id="oceanDepth" cx="50%" cy="50%" r="70%">
-          <stop offset="0%"   stopColor="#071b35"/>
-          <stop offset="40%"  stopColor="#051526"/>
-          <stop offset="100%" stopColor="#020a14"/>
+        {/* ── Parchment / aged paper base ── */}
+        <radialGradient id="parchBase" cx="50%" cy="45%" r="70%">
+          <stop offset="0%"   stopColor="#c8a96e"/>
+          <stop offset="35%"  stopColor="#b8965c"/>
+          <stop offset="70%"  stopColor="#a07840"/>
+          <stop offset="100%" stopColor="#7a5828"/>
         </radialGradient>
 
-        {/* Atlantic deep */}
-        <radialGradient id="atlanticDeep" cx="36%" cy="44%" r="30%">
-          <stop offset="0%"   stopColor="#061830"/>
-          <stop offset="100%" stopColor="#020a14" stopOpacity="0"/>
+        {/* Ocean — deep ink blue, aged */}
+        <radialGradient id="oceanInk" cx="50%" cy="50%" r="70%">
+          <stop offset="0%"   stopColor="#2a4a6e"/>
+          <stop offset="45%"  stopColor="#1e3655"/>
+          <stop offset="100%" stopColor="#0f1e33"/>
+        </radialGradient>
+        <radialGradient id="atlanticDeep" cx="36%" cy="44%" r="28%">
+          <stop offset="0%"   stopColor="#1a3050"/>
+          <stop offset="100%" stopColor="#0f1e33" stopOpacity="0"/>
+        </radialGradient>
+        <radialGradient id="pacificDeep" cx="68%" cy="55%" r="32%">
+          <stop offset="0%"   stopColor="#12253e"/>
+          <stop offset="100%" stopColor="#0f1e33" stopOpacity="0"/>
         </radialGradient>
 
-        {/* Pacific deep */}
-        <radialGradient id="pacificDeep" cx="68%" cy="55%" r="35%">
-          <stop offset="0%"   stopColor="#04111e"/>
-          <stop offset="100%" stopColor="#020a14" stopOpacity="0"/>
-        </radialGradient>
-
-        {/* Land gradients — more realistic earthy tones */}
-        <linearGradient id="naGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%"   stopColor="#1e4a2e"/>
-          <stop offset="50%"  stopColor="#163a22"/>
-          <stop offset="100%" stopColor="#0f2a18"/>
+        {/* Land continent fills — warm earthy parchment tones */}
+        <linearGradient id="naLand" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%"   stopColor="#c4a055"/>
+          <stop offset="60%"  stopColor="#b08840"/>
+          <stop offset="100%" stopColor="#957030"/>
         </linearGradient>
-        <linearGradient id="naGradNorth" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%"   stopColor="#1a3a28"/>
-          <stop offset="100%" stopColor="#2a5a34"/>
+        <linearGradient id="saLand" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%"   stopColor="#b89048"/>
+          <stop offset="60%"  stopColor="#a07838"/>
+          <stop offset="100%" stopColor="#886025"/>
         </linearGradient>
-        <linearGradient id="saGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%"   stopColor="#0e3d20"/>
-          <stop offset="60%"  stopColor="#0a2e18"/>
-          <stop offset="100%" stopColor="#061e10"/>
+        <linearGradient id="euLand" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%"   stopColor="#c0a858"/>
+          <stop offset="60%"  stopColor="#a89040"/>
+          <stop offset="100%" stopColor="#907828"/>
         </linearGradient>
-        <linearGradient id="euGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%"   stopColor="#1e3a60"/>
-          <stop offset="50%"  stopColor="#162c4a"/>
-          <stop offset="100%" stopColor="#0f1e34"/>
+        <linearGradient id="afLand" x1="0" y1="0" x2="0.5" y2="1">
+          <stop offset="0%"   stopColor="#c09848"/>
+          <stop offset="50%"  stopColor="#a87c35"/>
+          <stop offset="100%" stopColor="#8c6020"/>
         </linearGradient>
-        <linearGradient id="afGrad" x1="0" y1="0" x2="0.5" y2="1">
-          <stop offset="0%"   stopColor="#3d2005"/>
-          <stop offset="40%"  stopColor="#2a1500"/>
-          <stop offset="100%" stopColor="#1a0d00"/>
+        <linearGradient id="asLand" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%"   stopColor="#bea050"/>
+          <stop offset="60%"  stopColor="#a08838"/>
+          <stop offset="100%" stopColor="#887025"/>
         </linearGradient>
-        <linearGradient id="asGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%"   stopColor="#1a3a4a"/>
-          <stop offset="50%"  stopColor="#122a38"/>
-          <stop offset="100%" stopColor="#0a1e28"/>
-        </linearGradient>
-        <linearGradient id="asGradRussia" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%"   stopColor="#162032"/>
-          <stop offset="100%" stopColor="#1e3a50"/>
-        </linearGradient>
-        <linearGradient id="auGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%"   stopColor="#3d1e05"/>
-          <stop offset="50%"  stopColor="#2a1500"/>
-          <stop offset="100%" stopColor="#1a0d00"/>
+        <linearGradient id="auLand" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%"   stopColor="#c8a050"/>
+          <stop offset="60%"  stopColor="#b08040"/>
+          <stop offset="100%" stopColor="#8c6025"/>
         </linearGradient>
         <linearGradient id="iceGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%"   stopColor="#c8e8f8"/>
-          <stop offset="100%" stopColor="#8ab8d8"/>
-        </linearGradient>
-        <linearGradient id="greenlandGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%"   stopColor="#a0c8e0"/>
-          <stop offset="100%" stopColor="#6090b0"/>
+          <stop offset="0%"   stopColor="#e8f0f8"/>
+          <stop offset="100%" stopColor="#c0d0e0"/>
         </linearGradient>
 
-        {/* Terrain noise filter */}
-        <filter id="terrainNoise">
-          <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" result="noise"/>
-          <feColorMatrix type="saturate" values="0" in="noise" result="grayNoise"/>
-          <feBlend in="SourceGraphic" in2="grayNoise" mode="overlay" result="blend"/>
+        {/* Paper texture noise */}
+        <filter id="paperTexture" x="0%" y="0%" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" seed="2" result="noise"/>
+          <feColorMatrix type="saturate" values="0" in="noise" result="gray"/>
+          <feBlend in="SourceGraphic" in2="gray" mode="multiply" result="blend"/>
           <feComposite in="blend" in2="SourceGraphic" operator="in"/>
         </filter>
-
-        {/* Soft shadow/border */}
-        <filter id="landShadow">
-          <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#000000" floodOpacity="0.5"/>
+        <filter id="paperNoise" x="0%" y="0%" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" seed="5" result="noise"/>
+          <feColorMatrix type="saturate" values="0" in="noise" result="gray"/>
+          <feBlend in="SourceGraphic" in2="gray" mode="overlay"/>
         </filter>
 
-        {/* Coastal glow */}
-        <filter id="coastalGlow">
-          <feGaussianBlur stdDeviation="6" result="blur"/>
+        {/* Aged vignette edges */}
+        <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
+          <stop offset="40%"  stopColor="transparent"/>
+          <stop offset="100%" stopColor="#3a1e00" stopOpacity="0.55"/>
+        </radialGradient>
+
+        {/* Ink border / coastline shadow */}
+        <filter id="coastInk">
+          <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#4a2800" floodOpacity="0.5"/>
+        </filter>
+        <filter id="inkBleed">
+          <feGaussianBlur stdDeviation="1.5" result="blur"/>
           <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
 
-        {/* Shallow water pattern */}
-        <pattern id="shallowWater" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-          <rect width="40" height="40" fill="transparent"/>
-          <path d="M 0 20 Q 10 15 20 20 Q 30 25 40 20" fill="none" stroke="#0e2a4a" strokeWidth="0.4" opacity="0.4"/>
+        {/* Aged map hatch/stipple pattern */}
+        <pattern id="oceanHatch" x="0" y="0" width="18" height="18" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="9" x2="18" y2="9" stroke="#3a5880" strokeWidth="0.4" opacity="0.25"/>
+          <line x1="0" y1="0" x2="18" y2="18" stroke="#3a5880" strokeWidth="0.2" opacity="0.12"/>
+        </pattern>
+        <pattern id="landStipple" x="0" y="0" width="12" height="12" patternUnits="userSpaceOnUse">
+          <circle cx="6" cy="6" r="0.6" fill="#6a4010" opacity="0.18"/>
         </pattern>
 
-        {/* Grid dot pattern */}
-        <pattern id="gridDots" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-          <circle cx="50" cy="50" r="0.8" fill="#0e2040" opacity="0.5"/>
-        </pattern>
-
-        {/* Cloud/atmosphere at poles */}
-        <radialGradient id="northPole" cx="50%" cy="0%" r="20%">
-          <stop offset="0%"   stopColor="#8ac4e0" stopOpacity="0.3"/>
-          <stop offset="100%" stopColor="#8ac4e0" stopOpacity="0"/>
+        {/* Compass rose gradient */}
+        <radialGradient id="compassGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%"   stopColor="#d4a840" stopOpacity="0.3"/>
+          <stop offset="100%" stopColor="#d4a840" stopOpacity="0"/>
         </radialGradient>
-        <radialGradient id="southPole" cx="50%" cy="100%" r="20%">
-          <stop offset="0%"   stopColor="#a0d0e8" stopOpacity="0.3"/>
-          <stop offset="100%" stopColor="#a0d0e8" stopOpacity="0"/>
+
+        {/* City glow */}
+        <radialGradient id="cityGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%"   stopColor="#f0c840" stopOpacity="0.6"/>
+          <stop offset="100%" stopColor="#f0c840" stopOpacity="0"/>
         </radialGradient>
       </defs>
 
-      {/* Ocean base */}
-      <rect x="0" y="0" width={MAP_W} height={MAP_H} fill="url(#oceanDepth)" />
-      <rect x="0" y="0" width={MAP_W} height={MAP_H} fill="url(#atlanticDeep)" />
-      <rect x="0" y="0" width={MAP_W} height={MAP_H} fill="url(#pacificDeep)" />
-      {/* Shallow water pattern overlay */}
-      <rect x="0" y="0" width={MAP_W} height={MAP_H} fill="url(#shallowWater)" opacity="0.3"/>
-      <rect x="0" y="0" width={MAP_W} height={MAP_H} fill="url(#gridDots)"/>
+      {/* ── Ocean base ── */}
+      <rect x="0" y="0" width={MAP_W} height={MAP_H} fill="url(#oceanInk)"/>
+      <rect x="0" y="0" width={MAP_W} height={MAP_H} fill="url(#atlanticDeep)" opacity="0.6"/>
+      <rect x="0" y="0" width={MAP_W} height={MAP_H} fill="url(#pacificDeep)"  opacity="0.6"/>
+      {/* Ocean hatch lines — vintage cartographic effect */}
+      <rect x="0" y="0" width={MAP_W} height={MAP_H} fill="url(#oceanHatch)"/>
 
-      {/* Ocean depth rings */}
-      {OCEAN_RINGS.map((r, i) => (
-        <ellipse key={i} cx={r.cx} cy={r.cy} rx={r.rx} ry={r.ry}
-          fill="none" stroke={r.stroke} strokeWidth="1" opacity={r.opacity}/>
-      ))}
-
-      {/* Longitude / latitude grid */}
-      {Array.from({length:16}).map((_,i) => (
+      {/* ── Lat/lon grid lines — aged ink ── */}
+      {Array.from({length:17}).map((_,i) => (
         <line key={`v${i}`} x1={i*100} y1={0} x2={i*100} y2={MAP_H}
-          stroke="#0d2040" strokeWidth="0.4" opacity="0.6"/>
+          stroke="#4a6890" strokeWidth="0.5" opacity="0.3" strokeDasharray="4,8"/>
       ))}
       {Array.from({length:10}).map((_,i) => (
         <line key={`h${i}`} x1={0} y1={i*100} x2={MAP_W} y2={i*100}
-          stroke="#0d2040" strokeWidth="0.4" opacity="0.6"/>
+          stroke="#4a6890" strokeWidth="0.5" opacity="0.3" strokeDasharray="4,8"/>
       ))}
-      {/* Tropic of Cancer */}
-      <line x1={0} y1={MAP_H*0.33} x2={MAP_W} y2={MAP_H*0.33}
-        stroke="#1a2a40" strokeWidth="0.8" strokeDasharray="6,14" opacity="0.5"/>
-      {/* Tropic of Capricorn */}
-      <line x1={0} y1={MAP_H*0.64} x2={MAP_W} y2={MAP_H*0.64}
-        stroke="#1a2a40" strokeWidth="0.8" strokeDasharray="6,14" opacity="0.5"/>
-      {/* Equator */}
+      {/* Equator — bolder */}
       <line x1={0} y1={MAP_H/2} x2={MAP_W} y2={MAP_H/2}
-        stroke="#1e3d60" strokeWidth="1.2" strokeDasharray="12,8" opacity="0.8"/>
-      {/* Prime Meridian */}
-      <line x1={MAP_W*0.47} y1={0} x2={MAP_W*0.47} y2={MAP_H}
-        stroke="#1e3d60" strokeWidth="0.8" strokeDasharray="8,12" opacity="0.6"/>
+        stroke="#6a88b0" strokeWidth="1.2" strokeDasharray="10,6" opacity="0.5"/>
+      {/* Tropics */}
+      <line x1={0} y1={MAP_H*0.33} x2={MAP_W} y2={MAP_H*0.33}
+        stroke="#6a88b0" strokeWidth="0.7" strokeDasharray="5,12" opacity="0.35"/>
+      <line x1={0} y1={MAP_H*0.64} x2={MAP_W} y2={MAP_H*0.64}
+        stroke="#6a88b0" strokeWidth="0.7" strokeDasharray="5,12" opacity="0.35"/>
 
-      {/* ── Coastal shallow water halos (makes coasts feel real) ── */}
-      {/* NA coast */}
-      <path d="M 120,80 L 280,60 L 380,80 L 460,130 L 500,200 L 480,280 L 420,340 L 380,400 L 330,430 L 270,420 L 220,380 L 180,320 L 140,260 L 110,190 L 100,130 Z"
-        fill="none" stroke="#1a4a6e" strokeWidth="8" opacity="0.12" filter="url(#coastalGlow)"/>
-      {/* Africa coast */}
-      <path d="M 680,200 L 840,180 L 940,220 L 980,320 L 1000,450 L 980,600 L 930,720 L 860,760 L 780,740 L 720,660 L 680,520 L 660,380 L 660,270 Z"
-        fill="none" stroke="#7a3a05" strokeWidth="8" opacity="0.15" filter="url(#coastalGlow)"/>
+      {/* ── CONTINENTS — parchment fills with ink borders ── */}
 
-      {/* ── CONTINENTS ── */}
       {/* North America */}
       <path d="M 120,80 L 280,60 L 380,80 L 460,130 L 500,200 L 480,280
                L 420,340 L 380,400 L 330,430 L 270,420 L 220,380
                L 180,320 L 140,260 L 110,190 L 100,130 Z"
-        fill="url(#naGrad)" stroke="#265a34" strokeWidth="1.5" opacity="0.95"
-        filter="url(#landShadow)"/>
-      {/* Interior plains texture */}
-      <path d="M 200,150 L 350,140 L 400,180 L 380,250 L 330,280 L 250,270 L 200,220 Z"
-        fill="#1a3d24" opacity="0.3"/>
+        fill="url(#naLand)" stroke="#5a3010" strokeWidth="1.8" filter="url(#coastInk)"/>
+      <path d="M 120,80 L 280,60 L 380,80 L 460,130 L 500,200 L 480,280
+               L 420,340 L 380,400 L 330,430 L 270,420 L 220,380
+               L 180,320 L 140,260 L 110,190 L 100,130 Z"
+        fill="url(#landStipple)" opacity="0.5"/>
       {/* Greenland */}
       <path d="M 420,20 L 520,15 L 540,60 L 500,90 L 430,80 Z"
-        fill="url(#greenlandGrad)" stroke="#6090b0" strokeWidth="1" opacity="0.8"/>
+        fill="url(#iceGrad)" stroke="#5a3010" strokeWidth="1.2" opacity="0.85"/>
       {/* Central America */}
-      <path d="M 310,420 L 360,400 L 390,430 L 370,490 L 330,480 Z"
-        fill="url(#naGrad)" stroke="#265a34" strokeWidth="1" opacity="0.8"/>
-      {/* Caribbean islands */}
-      <ellipse cx="425" cy="410" rx="20" ry="8" fill="#163a22" stroke="#265a34" strokeWidth="0.8" opacity="0.6"/>
-      <ellipse cx="455" cy="425" rx="10" ry="5" fill="#163a22" stroke="#265a34" strokeWidth="0.6" opacity="0.5"/>
+      <path d="M 310,420 L 360,400 L 392,432 L 372,492 L 330,482 Z"
+        fill="url(#naLand)" stroke="#5a3010" strokeWidth="1.2"/>
+      {/* Caribbean */}
+      <ellipse cx="427" cy="412" rx="20" ry="8" fill="url(#naLand)" stroke="#5a3010" strokeWidth="0.8" opacity="0.7"/>
+      <ellipse cx="456" cy="426" rx="10" ry="5" fill="url(#naLand)" stroke="#5a3010" strokeWidth="0.6" opacity="0.6"/>
 
       {/* South America */}
       <path d="M 340,490 L 440,460 L 510,500 L 530,600 L 520,720
                L 470,800 L 400,810 L 340,770 L 290,680 L 280,580 L 300,510 Z"
-        fill="url(#saGrad)" stroke="#0e5c3a" strokeWidth="1.5" opacity="0.95"
-        filter="url(#landShadow)"/>
-      {/* Amazon basin */}
-      <path d="M 330,510 L 450,480 L 510,540 L 490,620 L 390,640 L 310,580 Z"
-        fill="#072010" opacity="0.4"/>
+        fill="url(#saLand)" stroke="#5a3010" strokeWidth="1.8" filter="url(#coastInk)"/>
+      <path d="M 340,490 L 440,460 L 510,500 L 530,600 L 520,720
+               L 470,800 L 400,810 L 340,770 L 290,680 L 280,580 L 300,510 Z"
+        fill="url(#landStipple)" opacity="0.4"/>
 
       {/* Europe */}
       <path d="M 650,60 L 800,40 L 870,70 L 890,140 L 860,180 L 820,200
                L 780,220 L 740,210 L 700,180 L 660,150 L 640,100 Z"
-        fill="url(#euGrad)" stroke="#4c2d9e" strokeWidth="1.5" opacity="0.95"
-        filter="url(#landShadow)"/>
-      {/* Iberian Peninsula */}
+        fill="url(#euLand)" stroke="#5a3010" strokeWidth="1.8" filter="url(#coastInk)"/>
       <path d="M 650,160 L 700,150 L 720,200 L 700,240 L 660,230 L 645,190 Z"
-        fill="url(#euGrad)" stroke="#4c2d9e" strokeWidth="1" opacity="0.85"/>
-      {/* Italy */}
+        fill="url(#euLand)" stroke="#5a3010" strokeWidth="1.2"/>
       <path d="M 780,180 L 800,175 L 810,210 L 800,255 L 790,250 L 778,215 Z"
-        fill="url(#euGrad)" stroke="#4c2d9e" strokeWidth="0.8" opacity="0.75"/>
-      {/* Scandinavia */}
+        fill="url(#euLand)" stroke="#5a3010" strokeWidth="0.8" opacity="0.85"/>
       <path d="M 740,30 L 800,20 L 830,55 L 810,90 L 760,80 L 730,55 Z"
-        fill="url(#euGrad)" stroke="#4c2d9e" strokeWidth="1" opacity="0.85"/>
-      {/* UK */}
+        fill="url(#euLand)" stroke="#5a3010" strokeWidth="1.2"/>
       <path d="M 680,80 L 710,70 L 720,100 L 700,115 L 675,105 Z"
-        fill="url(#euGrad)" stroke="#4c2d9e" strokeWidth="0.8" opacity="0.75"/>
-      {/* Ireland */}
+        fill="url(#euLand)" stroke="#5a3010" strokeWidth="0.8" opacity="0.8"/>
       <path d="M 660,85 L 675,80 L 678,100 L 662,108 Z"
-        fill="url(#euGrad)" stroke="#4c2d9e" strokeWidth="0.7" opacity="0.65"/>
-      {/* Iceland */}
-      <ellipse cx="610" cy="60" rx="30" ry="15" fill="url(#euGrad)" stroke="#4c2d9e" strokeWidth="0.8" opacity="0.6"/>
-      {/* Greece/Balkans */}
+        fill="url(#euLand)" stroke="#5a3010" strokeWidth="0.7" opacity="0.7"/>
+      <ellipse cx="612" cy="60" rx="30" ry="15" fill="url(#euLand)" stroke="#5a3010" strokeWidth="0.8" opacity="0.65"/>
       <path d="M 830,175 L 870,165 L 880,200 L 860,210 L 840,200 Z"
-        fill="url(#euGrad)" stroke="#4c2d9e" strokeWidth="0.8" opacity="0.7"/>
+        fill="url(#euLand)" stroke="#5a3010" strokeWidth="0.8" opacity="0.75"/>
 
       {/* Africa */}
       <path d="M 680,200 L 840,180 L 940,220 L 980,320 L 1000,450
                L 980,600 L 930,720 L 860,760 L 780,740 L 720,660
                L 680,520 L 660,380 L 660,270 Z"
-        fill="url(#afGrad)" stroke="#7a3a05" strokeWidth="1.5" opacity="0.95"
-        filter="url(#landShadow)"/>
-      {/* Sahara region */}
-      <path d="M 690,220 L 940,205 L 960,280 L 870,310 L 730,300 L 680,260 Z"
-        fill="#3a1500" opacity="0.35"/>
-      {/* Madagascar */}
-      <ellipse cx="1010" cy="640" rx="18" ry="45" fill="url(#afGrad)" stroke="#7a3a05" strokeWidth="0.8" opacity="0.7"/>
-      {/* Horn of Africa */}
-      <path d="M 1000,440 L 1040,420 L 1060,470 L 1030,490 L 1000,475 Z"
-        fill="url(#afGrad)" stroke="#7a3a05" strokeWidth="0.8" opacity="0.7"/>
+        fill="url(#afLand)" stroke="#5a3010" strokeWidth="1.8" filter="url(#coastInk)"/>
+      <path d="M 680,200 L 840,180 L 940,220 L 980,320 L 1000,450
+               L 980,600 L 930,720 L 860,760 L 780,740 L 720,660
+               L 680,520 L 660,380 L 660,270 Z"
+        fill="url(#landStipple)" opacity="0.4"/>
+      <ellipse cx="1012" cy="642" rx="18" ry="45" fill="url(#afLand)" stroke="#5a3010" strokeWidth="0.8" opacity="0.8"/>
+      <path d="M 1000,440 L 1042,420 L 1062,472 L 1032,492 L 1000,477 Z"
+        fill="url(#afLand)" stroke="#5a3010" strokeWidth="0.8" opacity="0.75"/>
 
       {/* Middle East */}
       <path d="M 950,200 L 1080,180 L 1120,240 L 1100,320 L 1040,360 L 980,340 L 950,270 Z"
-        fill="#1e3040" stroke="#2e6090" strokeWidth="1.2" opacity="0.9"
-        filter="url(#landShadow)"/>
+        fill="url(#asLand)" stroke="#5a3010" strokeWidth="1.4"/>
       {/* Arabian Peninsula */}
       <path d="M 980,260 L 1080,250 L 1100,360 L 1060,420 L 990,400 L 965,320 Z"
-        fill="#2d1500" stroke="#5a3010" strokeWidth="1" opacity="0.85"/>
+        fill="url(#afLand)" stroke="#5a3010" strokeWidth="1.2" opacity="0.9"/>
 
-      {/* Russia / North Asia — massive landmass */}
+      {/* Russia / North Asia */}
       <path d="M 820,40 L 1200,20 L 1380,60 L 1470,100 L 1500,140
                L 1420,180 L 1300,200 L 1150,190 L 1000,180 L 880,160 L 840,100 Z"
-        fill="url(#asGradRussia)" stroke="#2e6090" strokeWidth="1.5" opacity="0.95"
-        filter="url(#landShadow)"/>
-      {/* Siberian interior */}
-      <path d="M 1000,40 L 1300,30 L 1380,80 L 1300,150 L 1100,160 L 980,130 Z"
-        fill="#101828" opacity="0.4"/>
+        fill="url(#asLand)" stroke="#5a3010" strokeWidth="1.8" filter="url(#coastInk)"/>
 
       {/* Central/South Asia (Indian subcontinent) */}
       <path d="M 1080,200 L 1200,190 L 1260,250 L 1280,340 L 1240,440
                L 1180,490 L 1120,460 L 1085,370 L 1075,270 Z"
-        fill="url(#asGrad)" stroke="#2e6090" strokeWidth="1.2" opacity="0.9"
-        filter="url(#landShadow)"/>
-      {/* Sri Lanka */}
-      <ellipse cx="1195" cy="510" rx="10" ry="14" fill="url(#asGrad)" stroke="#2e6090" strokeWidth="0.7" opacity="0.7"/>
+        fill="url(#asLand)" stroke="#5a3010" strokeWidth="1.5" filter="url(#coastInk)"/>
+      <ellipse cx="1196" cy="512" rx="10" ry="14" fill="url(#asLand)" stroke="#5a3010" strokeWidth="0.7" opacity="0.75"/>
 
       {/* China / East Asia */}
       <path d="M 1160,120 L 1380,80 L 1470,140 L 1460,230 L 1380,300
                L 1260,310 L 1170,280 L 1145,200 Z"
-        fill="url(#asGrad)" stroke="#2e6090" strokeWidth="1.5" opacity="0.9"
-        filter="url(#landShadow)"/>
-      {/* Korean Peninsula */}
-      <path d="M 1380,165 L 1400,155 L 1410,190 L 1390,205 L 1374,188 Z"
-        fill="url(#asGrad)" stroke="#2e6090" strokeWidth="0.8" opacity="0.75"/>
+        fill="url(#asLand)" stroke="#5a3010" strokeWidth="1.6" filter="url(#coastInk)"/>
+      <path d="M 1380,165 L 1402,155 L 1412,192 L 1392,207 L 1376,190 Z"
+        fill="url(#asLand)" stroke="#5a3010" strokeWidth="0.8" opacity="0.75"/>
 
       {/* SE Asia mainland */}
       <path d="M 1280,300 L 1400,280 L 1470,360 L 1450,430 L 1360,440 L 1280,380 Z"
-        fill="url(#asGrad)" stroke="#2e6090" strokeWidth="1" opacity="0.85"
-        filter="url(#landShadow)"/>
-      {/* Indonesia / Philippines island chains */}
-      <ellipse cx="1380" cy="490" rx="30" ry="12" fill="url(#asGrad)" stroke="#2e6090" strokeWidth="0.7" opacity="0.7"/>
-      <ellipse cx="1430" cy="505" rx="22" ry="10" fill="url(#asGrad)" stroke="#2e6090" strokeWidth="0.7" opacity="0.65"/>
-      <ellipse cx="1460" cy="480" rx="16" ry="8"  fill="url(#asGrad)" stroke="#2e6090" strokeWidth="0.6" opacity="0.6"/>
-      <ellipse cx="1350" cy="510" rx="18" ry="8"  fill="url(#asGrad)" stroke="#2e6090" strokeWidth="0.6" opacity="0.6"/>
+        fill="url(#asLand)" stroke="#5a3010" strokeWidth="1.2"/>
+      {/* Indonesia */}
+      <ellipse cx="1380" cy="490" rx="30" ry="12" fill="url(#asLand)" stroke="#5a3010" strokeWidth="0.7" opacity="0.8"/>
+      <ellipse cx="1432" cy="506" rx="22" ry="10" fill="url(#asLand)" stroke="#5a3010" strokeWidth="0.7" opacity="0.7"/>
+      <ellipse cx="1350" cy="512" rx="18" ry="8"  fill="url(#asLand)" stroke="#5a3010" strokeWidth="0.6" opacity="0.65"/>
 
       {/* Japan */}
       <path d="M 1440,130 L 1480,110 L 1510,160 L 1490,200 L 1455,190 Z"
-        fill="url(#asGrad)" stroke="#2e6090" strokeWidth="0.8" opacity="0.75"/>
-      {/* Hokkaido */}
-      <path d="M 1480,110 L 1510,100 L 1525,125 L 1508,140 L 1485,130 Z"
-        fill="url(#asGrad)" stroke="#2e6090" strokeWidth="0.7" opacity="0.7"/>
+        fill="url(#asLand)" stroke="#5a3010" strokeWidth="1" opacity="0.85"/>
+      <path d="M 1480,110 L 1510,100 L 1526,126 L 1510,140 L 1486,132 Z"
+        fill="url(#asLand)" stroke="#5a3010" strokeWidth="0.8" opacity="0.75"/>
 
       {/* Australia */}
       <path d="M 1290,560 L 1480,520 L 1570,590 L 1580,720 L 1510,800
                L 1370,820 L 1240,770 L 1210,660 L 1240,580 Z"
-        fill="url(#auGrad)" stroke="#8b3a05" strokeWidth="1.5" opacity="0.95"
-        filter="url(#landShadow)"/>
-      {/* Outback */}
-      <path d="M 1310,600 L 1480,570 L 1540,650 L 1500,730 L 1360,750 L 1290,660 Z"
-        fill="#3a1500" opacity="0.3"/>
-      {/* Tasmania */}
-      <ellipse cx="1445" cy="825" rx="18" ry="14" fill="url(#auGrad)" stroke="#8b3a05" strokeWidth="0.7" opacity="0.65"/>
-      {/* New Zealand */}
-      <path d="M 1540,720 L 1562,705 L 1575,740 L 1558,762 Z"
-        fill="url(#auGrad)" stroke="#8b3a05" strokeWidth="0.8" opacity="0.65"/>
-      <path d="M 1548,760 L 1565,748 L 1572,775 L 1556,790 Z"
-        fill="url(#auGrad)" stroke="#8b3a05" strokeWidth="0.7" opacity="0.6"/>
+        fill="url(#auLand)" stroke="#5a3010" strokeWidth="1.8" filter="url(#coastInk)"/>
+      <path d="M 1290,560 L 1480,520 L 1570,590 L 1580,720 L 1510,800
+               L 1370,820 L 1240,770 L 1210,660 L 1240,580 Z"
+        fill="url(#landStipple)" opacity="0.45"/>
+      <ellipse cx="1447" cy="827" rx="18" ry="14" fill="url(#auLand)" stroke="#5a3010" strokeWidth="0.7" opacity="0.7"/>
+      <path d="M 1542,722 L 1564,707 L 1577,742 L 1560,764 Z"
+        fill="url(#auLand)" stroke="#5a3010" strokeWidth="0.8" opacity="0.7"/>
+      <path d="M 1550,762 L 1567,750 L 1574,777 L 1558,792 Z"
+        fill="url(#auLand)" stroke="#5a3010" strokeWidth="0.7" opacity="0.65"/>
 
-      {/* ── Forest/jungle patches ── */}
-      {showForests && FOREST_PATCHES.map((f, i) => (
-        <ellipse key={i} cx={f.cx} cy={f.cy} rx={f.rx} ry={f.ry}
-          fill={f.fill} opacity="0.5"/>
-      ))}
+      {/* ── Paper stipple / land texture overlay ── */}
+      <rect x="0" y="0" width={MAP_W} height={MAP_H} fill="url(#parchBase)" opacity="0.06" filter="url(#paperNoise)"/>
 
-      {/* ── Desert patches ── */}
-      {DESERT_PATCHES.map((d, i) => (
-        <ellipse key={i} cx={d.cx} cy={d.cy} rx={d.rx} ry={d.ry}
-          fill={d.fill} opacity={d.opacity}/>
-      ))}
-
-      {/* ── Mountain ranges ── */}
-      {showMountains && MOUNTAIN_RANGES.map((m, i) => (
-        <g key={i}>
-          {/* Shadow */}
-          <path d={m.d} fill="none" stroke="#000" strokeWidth={m.width + 2} opacity="0.2" strokeLinecap="round"/>
-          {/* Ridge */}
-          <path d={m.d} fill="none" stroke={m.stroke} strokeWidth={m.width} opacity="0.7" strokeLinecap="round"/>
-          {/* Snow highlight */}
-          <path d={m.d} fill="none" stroke="#c8e0f0" strokeWidth="0.8" opacity="0.25" strokeLinecap="round"/>
+      {/* ── Mountain symbols (ink hatch style) ── */}
+      {zoom >= 0.6 && [
+        // Rockies
+        { x:205, y:130, a:-15 }, { x:215, y:158, a:5 }, { x:200, y:182, a:-5 },
+        // Andes
+        { x:324, y:520, a:0  }, { x:320, y:560, a:5  }, { x:318, y:610, a:-5 },
+        // Alps
+        { x:762, y:168, a:10 }, { x:785, y:165, a:-5 }, { x:810, y:170, a:8  },
+        // Himalayas
+        { x:1128, y:230, a:5 }, { x:1165, y:222, a:-5}, { x:1200, y:218, a:5 }, { x:1240, y:228, a:-3},
+        // Caucasus
+        { x:978, y:182, a:5 }, { x:1010, y:178, a:-3 },
+        // Atlas
+        { x:712, y:232, a:5 }, { x:745, y:228, a:-5 },
+        // Urals
+        { x:1016, y:95, a:0  }, { x:1018, y:118, a:5 },
+        // Great Dividing Range
+        { x:1448, y:580, a:5 }, { x:1452, y:620, a:-5 },
+      ].map((m, i) => (
+        <g key={i} transform={`translate(${m.x},${m.y}) rotate(${m.a})`}>
+          <path d="M -7 6 L 0 -7 L 7 6 Z"
+            fill="#8a6030" stroke="#5a3010" strokeWidth="0.6" opacity="0.65"/>
+          <path d="M -3.5 0 L 0 -7 L 3.5 0" fill="#c8a870" opacity="0.4"/>
         </g>
       ))}
 
-      {/* ── Rivers ── */}
-      {showRivers && RIVERS.map((d, i) => (
-        <g key={i}>
-          <path d={d} fill="none" stroke="#0a2240" strokeWidth="2.5" opacity="0.5" strokeLinecap="round"/>
-          <path d={d} fill="none" stroke="#1a5a8a" strokeWidth="1.2" opacity="0.6" strokeLinecap="round"/>
+      {/* ── Forest symbols (ink tree dots) ── */}
+      {zoom >= 0.5 && [
+        // Amazon
+        ...[
+          [340,520],[355,535],[370,520],[345,548],[360,552],[375,540],[350,510],
+        ].map((p,i) => ({ x:p[0], y:p[1], r:5, key:`am${i}` })),
+        // Congo
+        ...[
+          [842,465],[860,478],[875,468],[850,490],[865,502],
+        ].map((p,i) => ({ x:p[0], y:p[1], r:4.5, key:`co${i}` })),
+        // SE Asia
+        ...[
+          [1320,370],[1340,358],[1360,370],[1330,385],[1350,382],
+        ].map((p,i) => ({ x:p[0], y:p[1], r:4, key:`sea${i}` })),
+        // Canadian boreal
+        ...[
+          [185,135],[200,122],[218,138],[234,128],[245,140],
+        ].map((p,i) => ({ x:p[0], y:p[1], r:4, key:`ca${i}` })),
+      ].map(({ x, y, r, key }) => (
+        <g key={key}>
+          <circle cx={x} cy={y} r={r} fill="#6a8830" opacity="0.45" stroke="#4a5820" strokeWidth="0.5"/>
+          <line x1={x} y1={y+r} x2={x} y2={y+r+3} stroke="#4a5820" strokeWidth="0.6" opacity="0.4"/>
         </g>
       ))}
 
-      {/* ── Latitude labels ── */}
-      {zoom >= 1.0 && (
-        <>
-          <text x={8} y={MAP_H*0.33+4} fill="#1e3a5a" fontSize="8" fontFamily="monospace" opacity="0.6">23°N</text>
-          <text x={8} y={MAP_H*0.50+4} fill="#1e3a5a" fontSize="8" fontFamily="monospace" opacity="0.8">EQ</text>
-          <text x={8} y={MAP_H*0.64+4} fill="#1e3a5a" fontSize="8" fontFamily="monospace" opacity="0.6">23°S</text>
-        </>
-      )}
+      {/* ── Desert stipple (dots) ── */}
+      {zoom >= 0.5 && [
+        // Sahara
+        ...[880,260,920,252,950,265,970,278,890,278,930,270].map((v,i,arr) =>
+          i%2===0 ? { x:arr[i], y:arr[i+1] } : null).filter(Boolean),
+        // Arabian
+        ...[1040,280,1065,272,1080,285].map((v,i,arr) =>
+          i%2===0 ? { x:arr[i], y:arr[i+1] } : null).filter(Boolean),
+        // Australian outback
+        ...[1380,660,1420,648,1450,660,1400,672].map((v,i,arr) =>
+          i%2===0 ? { x:arr[i], y:arr[i+1] } : null).filter(Boolean),
+      ].map((d, i) => (
+        <circle key={i} cx={d.x} cy={d.y} r="2" fill="#8a5818" opacity="0.35"/>
+      ))}
 
-      {/* ── Cities ── */}
-      {showCities && CITIES.map((c) => (
-        <g key={c.name}>
-          {/* Glow */}
-          <circle cx={c.x} cy={c.y} r={c.size + 5} fill="#f0e8c0" opacity="0.04"/>
-          {/* Outer ring */}
-          <circle cx={c.x} cy={c.y} r={c.size + 2} fill="none" stroke="#e2c870" strokeWidth="0.6" opacity="0.3"/>
-          {/* City dot */}
-          <circle cx={c.x} cy={c.y} r={c.size} fill="#f0e8d0" opacity="0.85"/>
-          {/* Inner bright */}
-          <circle cx={c.x} cy={c.y} r={c.size * 0.5} fill="#fff8e0" opacity="0.6"/>
-          {showCityLabels && (
-            <text x={c.x + c.size + 4} y={c.y + 3.5} fill="#c8b880"
-              fontSize="9" fontFamily="monospace" opacity="0.9"
-              style={{textShadow: "0 0 4px #000"}}>{c.name}</text>
-          )}
-        </g>
+      {/* ── Rivers (hand-drawn ink lines) ── */}
+      {zoom >= 0.5 && [
+        "M 680,120 Q 720,160 700,222 Q 688,280 710,342",    // Nile
+        "M 800,280 Q 862,302 902,362 Q 942,422 922,502",    // Congo
+        "M 340,380 Q 382,442 370,522 Q 360,602 382,682",    // Amazon
+        "M 1082,202 Q 1122,252 1102,322 Q 1090,382 1112,432", // Ganges
+        "M 1242,182 Q 1282,222 1262,282 Q 1252,352 1272,402", // Yangtze
+        "M 200,182 Q 262,222 300,282 Q 322,322 300,382",    // Mississippi
+        "M 822,152 Q 862,182 882,242 Q 902,292 882,342",    // Rhine/Danube
+        "M 1000,90 Q 1015,130 1010,165",                    // Ob
+        "M 870,185 Q 895,210 908,250",                      // Tigris
+      ].map((d, i) => (
+        <path key={i} d={d} fill="none"
+          stroke="#2a4a80" strokeWidth={zoom > 1.5 ? 1.8 : 1.2}
+          opacity="0.55" strokeLinecap="round"/>
       ))}
 
       {/* ── Ice caps ── */}
-      {ICE_CAPS.map((d, i) => (
-        <path key={i} d={d} fill="url(#iceGrad)" opacity={i === 0 ? 0.7 : 0.5}/>
-      ))}
+      <path d="M 0,0 L 600,0 L 540,40 L 450,55 L 380,45 L 300,60 L 150,50 L 80,40 L 0,50 Z"
+        fill="url(#iceGrad)" opacity="0.75" stroke="#8ab0cc" strokeWidth="0.8"/>
+      <path d="M 0,900 L 1600,900 L 1600,858 L 1400,848 L 1000,853 L 600,843 L 200,853 L 0,858 Z"
+        fill="url(#iceGrad)" opacity="0.55" stroke="#8ab0cc" strokeWidth="0.8"/>
 
-      {/* ── Polar atmosphere glow ── */}
-      <rect x="0" y="0" width={MAP_W} height={MAP_H} fill="url(#northPole)" opacity="0.4"/>
-      <rect x="0" y="0" width={MAP_W} height={MAP_H} fill="url(#southPole)" opacity="0.3"/>
-
-      {/* ── Ocean shimmer highlights ── */}
+      {/* ── Ocean depth rings (faded ink circles) ── */}
       {[
-        [580,350,3],[300,500,2],[1100,500,2.5],[1500,350,2],[450,750,2],
-        [700,800,2],[1300,650,2.5],[200,700,2],[900,450,2],[1100,350,1.5],
-        [600,250,1.5],[400,650,2],[1450,400,1.5],[800,550,2],[1200,450,1.5],
-      ].map(([x,y,r],i) => (
-        <circle key={i} cx={x} cy={y} r={r} fill="#38bdf8" opacity="0.06"/>
+        [580,400,280,200],[1100,500,340,220],[800,820,200,60],
+      ].map(([cx,cy,rx,ry],i) => (
+        <ellipse key={i} cx={cx} cy={cy} rx={rx} ry={ry}
+          fill="none" stroke="#3a5878" strokeWidth="0.6" opacity="0.2"
+          strokeDasharray="3,9"/>
       ))}
 
-      {/* ── Ocean current lines ── */}
-      <path d="M 0,350 Q 200,300 400,360 Q 600,420 800,360 Q 1000,300 1200,360 Q 1400,420 1600,360"
-        fill="none" stroke="#0e2a4a" strokeWidth="1.5" opacity="0.25" strokeDasharray="4,8"/>
-      <path d="M 0,500 Q 300,540 600,500 Q 900,460 1200,500 Q 1400,520 1600,490"
-        fill="none" stroke="#0e2a4a" strokeWidth="1" opacity="0.2" strokeDasharray="4,10"/>
+      {/* ── Ocean current arrows (vintage sailing chart) ── */}
+      <path d="M 60,400 Q 200,360 400,400 Q 580,440 700,380 Q 850,320 1050,380 Q 1250,440 1440,380 Q 1540,350 1590,360"
+        fill="none" stroke="#4a6888" strokeWidth="1" opacity="0.3" strokeDasharray="6,14"/>
+      <path d="M 60,480 Q 300,510 560,480 Q 800,448 1100,480 Q 1350,505 1590,478"
+        fill="none" stroke="#4a6888" strokeWidth="0.8" opacity="0.2" strokeDasharray="4,12"/>
+
+      {/* ── Latitude/longitude labels ── */}
+      {zoom >= 0.9 && (
+        <>
+          <text x="8" y={MAP_H*0.33+4} fill="#7a9ab8" fontSize="9" fontFamily="'Times New Roman',serif" opacity="0.65" fontStyle="italic">23°N</text>
+          <text x="8" y={MAP_H*0.50+4} fill="#7a9ab8" fontSize="9" fontFamily="'Times New Roman',serif" opacity="0.9"  fontStyle="italic">EQ</text>
+          <text x="8" y={MAP_H*0.64+4} fill="#7a9ab8" fontSize="9" fontFamily="'Times New Roman',serif" opacity="0.65" fontStyle="italic">23°S</text>
+        </>
+      )}
+
+      {/* ── Cities (vintage cartographic dots + labels) ── */}
+      {zoom >= 0.7 && CITIES.map((c) => {
+        const isLarge = c.pop > 10;
+        const r = isLarge ? c.size + 1 : c.size;
+        return (
+          <g key={c.name}>
+            {/* Star / cross for major cities */}
+            {isLarge ? (
+              <>
+                <circle cx={c.x} cy={c.y} r={r+4} fill="url(#cityGlow)" opacity="0.5"/>
+                <circle cx={c.x} cy={c.y} r={r+2} fill="none" stroke="#c8a030" strokeWidth="0.7" opacity="0.5"/>
+                <circle cx={c.x} cy={c.y} r={r}   fill="#f0e0a0" stroke="#8a5818" strokeWidth="1"/>
+                <line x1={c.x-r-3} y1={c.y} x2={c.x+r+3} y2={c.y} stroke="#8a5818" strokeWidth="0.5" opacity="0.5"/>
+                <line x1={c.x} y1={c.y-r-3} x2={c.x} y2={c.y+r+3} stroke="#8a5818" strokeWidth="0.5" opacity="0.5"/>
+              </>
+            ) : (
+              <>
+                <circle cx={c.x} cy={c.y} r={r+1} fill="#e8c870" opacity="0.2"/>
+                <circle cx={c.x} cy={c.y} r={r}   fill="#d4a840" stroke="#8a5818" strokeWidth="0.8"/>
+              </>
+            )}
+            {zoom >= 1.2 && (
+              <text x={c.x + r + 4} y={c.y + 4}
+                fill="#c8980a" fontSize={isLarge ? 10 : 8}
+                fontFamily="'Times New Roman',serif" fontStyle="italic"
+                opacity="0.9">{c.name}</text>
+            )}
+          </g>
+        );
+      })}
+
+      {/* ── Compass Rose (bottom-right corner) ── */}
+      {zoom >= 0.7 && (
+        <g transform="translate(1540, 820)">
+          <circle cx="0" cy="0" r="28" fill="url(#compassGlow)" opacity="0.6"/>
+          <circle cx="0" cy="0" r="24" fill="none" stroke="#c8a030" strokeWidth="0.8" opacity="0.4"/>
+          {/* Cardinal points */}
+          {[0,90,180,270].map((angle, i) => (
+            <g key={i} transform={`rotate(${angle})`}>
+              <path d="M 0,-22 L 4,-8 L 0,-14 L -4,-8 Z" fill={i===0 ? "#c84030" : "#c8a030"} opacity="0.8"/>
+              <path d="M 0,-22 L -4,-8 L 0,-14 Z" fill="#8a6010" opacity="0.5"/>
+            </g>
+          ))}
+          <circle cx="0" cy="0" r="3" fill="#c8a030" opacity="0.8"/>
+          <text x="0" y="-28" textAnchor="middle" fill="#c8a030" fontSize="8" fontFamily="serif" opacity="0.8">N</text>
+          <text x="0" y="36"  textAnchor="middle" fill="#c8a030" fontSize="8" fontFamily="serif" opacity="0.8">S</text>
+          <text x="32" y="4"  textAnchor="middle" fill="#c8a030" fontSize="8" fontFamily="serif" opacity="0.8">E</text>
+          <text x="-32" y="4" textAnchor="middle" fill="#c8a030" fontSize="8" fontFamily="serif" opacity="0.8">W</text>
+        </g>
+      )}
+
+      {/* ── Map title block (top-left) ── */}
+      {zoom <= 1.2 && (
+        <g transform="translate(18, 18)">
+          <rect x="0" y="0" width="160" height="38" rx="3"
+            fill="#b89040" fillOpacity="0.18" stroke="#8a6020" strokeWidth="0.8" opacity="0.6"/>
+          <text x="8" y="16" fill="#d4a030" fontSize="11" fontFamily="'Times New Roman',serif"
+            fontWeight="bold" opacity="0.85">EPOCH NATIONS</text>
+          <text x="8" y="30" fill="#c8900a" fontSize="8"  fontFamily="'Times New Roman',serif"
+            fontStyle="italic" opacity="0.65">World Atlas — Live Map</text>
+        </g>
+      )}
+
+      {/* ── Aged vignette overlay ── */}
+      <rect x="0" y="0" width={MAP_W} height={MAP_H} fill="url(#vignette)"/>
     </g>
   );
 }
