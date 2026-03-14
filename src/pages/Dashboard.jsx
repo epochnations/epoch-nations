@@ -458,6 +458,29 @@ export default function Dashboard() {
       {showSystemStatus && myNation && (
         <SystemStatusDashboard myNation={myNation} onClose={() => setShowSystemStatus(false)} />
       )}
+
+      {/* Exploration & Discovery */}
+      {showExploration && myNation && (
+        <ExplorationPanel nation={myNation} onClose={() => setShowExploration(false)} onRefresh={refresh} />
+      )}
+
+      {/* Wonders & Mega Structures */}
+      {showWonders && myNation && (
+        <WondersPanel nation={myNation} onClose={() => setShowWonders(false)} onRefresh={refresh} />
+      )}
+
+      {/* Crisis Management */}
+      {showCrisis && myNation && (
+        <CrisisPanel nation={myNation} onClose={() => setShowCrisis(false)} onRefresh={refresh} />
+      )}
+
+      {/* War Fronts */}
+      {showWarFronts && myNation && (
+        <WarFrontPanel nation={myNation} onClose={() => setShowWarFronts(false)} onRefresh={refresh} />
+      )}
+
+      {/* Crisis Engine — background crisis spawner */}
+      {myNation && <CrisisEngine nation={myNation} onCrisis={refresh} />}
     </div>
   );
 }
