@@ -426,22 +426,47 @@ export default function Home() {
             Epoch Nations is a real-time geopolitical civilization simulator. Create your nation, guide it through 12 historical epochs, dominate the global economy, and leave your mark on a persistent living world.
           </p>
 
-          {/* Live Clock */}
-          <div className="max-w-sm mx-auto mb-6">
-            <LiveClock />
-          </div>
-
-          {/* Encyclopedia Highlight */}
-          <a href="/ItemEncyclopedia"
-            className="inline-flex items-center gap-3 px-5 py-3 rounded-2xl mb-8 transition-all hover:scale-[1.02]"
-            style={{ background: "rgba(139,92,246,0.1)", border: "1px solid rgba(139,92,246,0.3)" }}>
-            <BookOpen size={16} className="text-violet-400 shrink-0" />
-            <div className="text-left">
-              <div className="text-xs font-black text-violet-400 ep-mono uppercase tracking-widest">Item Encyclopedia</div>
-              <div className="text-sm font-bold text-white">Explore <span className="text-violet-300">1,400+ unique craftable items</span> across 18 categories</div>
+          {/* Live Clock + Encyclopedia side by side on wide, stacked on mobile */}
+          <div className="flex flex-col lg:flex-row items-center justify-center gap-8 mb-10 mt-6">
+            {/* Live Clock */}
+            <div className="w-full max-w-xs shrink-0">
+              <LiveClock />
             </div>
-            <ArrowRight size={14} className="text-violet-400 shrink-0" />
-          </a>
+
+            {/* Divider — vertical on desktop, horizontal on mobile */}
+            <div className="hidden lg:block w-px self-stretch"
+              style={{ background: "linear-gradient(to bottom, transparent, rgba(255,255,255,0.1), transparent)" }} />
+            <div className="lg:hidden w-20 h-px"
+              style={{ background: "linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent)" }} />
+
+            {/* Encyclopedia + CTA stacked */}
+            <div className="flex flex-col items-center gap-5 w-full max-w-xs">
+              <a href="/ItemEncyclopedia"
+                className="w-full flex items-center gap-3 px-5 py-4 rounded-2xl transition-all hover:scale-[1.02]"
+                style={{ background: "rgba(139,92,246,0.1)", border: "1px solid rgba(139,92,246,0.3)" }}>
+                <BookOpen size={20} className="text-violet-400 shrink-0" />
+                <div className="text-left flex-1">
+                  <div className="text-xs font-black text-violet-400 ep-mono uppercase tracking-widest">Item Encyclopedia</div>
+                  <div className="text-sm font-bold text-white mt-0.5">Explore <span className="text-violet-300">1,400+ craftable items</span></div>
+                  <div className="text-[11px] text-slate-500 mt-0.5">18 categories · tiers 1–5 · full crafting chains</div>
+                </div>
+                <ArrowRight size={14} className="text-violet-400 shrink-0" />
+              </a>
+
+              <div className="w-full flex flex-col gap-2">
+                <button onClick={goToLogin}
+                  className="w-full py-4 rounded-2xl font-black text-base transition-all ep-btn-lift flex items-center justify-center gap-2"
+                  style={{ background: "linear-gradient(135deg, #06b6d4, #8b5cf6)", color: "white" }}>
+                  <Rocket size={18} /> Create Nation — Free
+                </button>
+                <button onClick={goToLogin}
+                  className="w-full py-3 rounded-2xl font-bold text-sm text-slate-300 hover:text-white transition-colors flex items-center justify-center gap-2"
+                  style={{ border: "1px solid rgba(255,255,255,0.15)" }}>
+                  <ArrowRight size={16} /> Log In
+                </button>
+              </div>
+            </div>
+          </div>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button onClick={goToLogin}
