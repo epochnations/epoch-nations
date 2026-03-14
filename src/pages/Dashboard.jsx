@@ -34,11 +34,6 @@ import WarEngine from "../components/game/WarEngine";
 import AdvancedWarEngine from "../components/game/AdvancedWarEngine";
 import NationMetricsPanel from "../components/dashboard/NationMetricsPanel";
 import SystemStatusDashboard from "../components/dashboard/SystemStatusDashboard";
-import ExplorationPanel from "../components/exploration/ExplorationPanel";
-import WondersPanel from "../components/wonders/WondersPanel";
-import CrisisPanel from "../components/crisis/CrisisPanel";
-import WarFrontPanel from "../components/war/WarFrontPanel";
-import CrisisEngine from "../components/crisis/CrisisEngine";
 
 export default function Dashboard() {
   const [myNation, setMyNation] = useState(null);
@@ -57,10 +52,6 @@ export default function Dashboard() {
   const [showResearch, setShowResearch] = useState(false);
   const [showTour, setShowTour] = useState(false);
   const [showSystemStatus, setShowSystemStatus] = useState(false);
-  const [showExploration, setShowExploration] = useState(false);
-  const [showWonders, setShowWonders] = useState(false);
-  const [showCrisis, setShowCrisis] = useState(false);
-  const [showWarFronts, setShowWarFronts] = useState(false);
 
   const refreshDebounceRef = useRef(null);
   const userEmailRef = useRef(null);
@@ -211,30 +202,6 @@ export default function Dashboard() {
           )}
 
           <button
-            onClick={() => setShowExploration(true)}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold hover:bg-amber-500/20 transition-all duration-150"
-          >
-            🧭 Explore
-          </button>
-          <button
-            onClick={() => setShowWonders(true)}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-400 text-xs font-bold hover:bg-violet-500/20 transition-all duration-150"
-          >
-            ✨ Wonders
-          </button>
-          <button
-            onClick={() => setShowCrisis(true)}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-bold hover:bg-red-500/20 transition-all duration-150"
-          >
-            🚨 Crisis
-          </button>
-          <button
-            onClick={() => setShowWarFronts(true)}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-bold hover:bg-orange-500/20 transition-all duration-150"
-          >
-            ⚔️ War Fronts
-          </button>
-          <button
             onClick={() => setShowSystemStatus(true)}
             className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold hover:bg-emerald-500/20 transition-all duration-150"
           >
@@ -334,18 +301,6 @@ export default function Dashboard() {
           <a href={createPageUrl("Marketplace")} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-green-500/10 border border-green-500/20 text-green-400 min-h-[44px] flex items-center gap-1.5">
             🏪 Market
           </a>
-          <button onClick={() => setShowExploration(true)} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-amber-500/10 border border-amber-500/20 text-amber-400 min-h-[44px]">
-            🧭 Explore
-          </button>
-          <button onClick={() => setShowWonders(true)} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-violet-500/10 border border-violet-500/20 text-violet-400 min-h-[44px]">
-            ✨ Wonders
-          </button>
-          <button onClick={() => setShowCrisis(true)} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-red-500/10 border border-red-500/20 text-red-400 min-h-[44px]">
-            🚨 Crisis
-          </button>
-          <button onClick={() => setShowWarFronts(true)} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-orange-500/10 border border-orange-500/20 text-orange-400 min-h-[44px]">
-            ⚔️ Fronts
-          </button>
           <button onClick={() => setShowSystemStatus(true)} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 min-h-[44px] flex items-center gap-1.5">
             📡 Status
           </button>
@@ -470,29 +425,6 @@ export default function Dashboard() {
       {showSystemStatus && myNation && (
         <SystemStatusDashboard myNation={myNation} onClose={() => setShowSystemStatus(false)} />
       )}
-
-      {/* Exploration & Discovery */}
-      {showExploration && myNation && (
-        <ExplorationPanel nation={myNation} onClose={() => setShowExploration(false)} onRefresh={refresh} />
-      )}
-
-      {/* Wonders & Mega Structures */}
-      {showWonders && myNation && (
-        <WondersPanel nation={myNation} onClose={() => setShowWonders(false)} onRefresh={refresh} />
-      )}
-
-      {/* Crisis Management */}
-      {showCrisis && myNation && (
-        <CrisisPanel nation={myNation} onClose={() => setShowCrisis(false)} onRefresh={refresh} />
-      )}
-
-      {/* War Fronts */}
-      {showWarFronts && myNation && (
-        <WarFrontPanel nation={myNation} onClose={() => setShowWarFronts(false)} onRefresh={refresh} />
-      )}
-
-      {/* Crisis Engine — background crisis spawner */}
-      {myNation && <CrisisEngine nation={myNation} onCrisis={refresh} />}
     </div>
   );
 }
