@@ -158,7 +158,10 @@ export function useMapEngine(containerRef) {
   }, []);
 
   useEffect(() => {
-    return () => cancelAnimationFrame(animFrame.current);
+    return () => {
+      cancelAnimationFrame(animFrame.current);
+      clearTimeout(saveTimer.current);
+    };
   }, []);
 
   return {
