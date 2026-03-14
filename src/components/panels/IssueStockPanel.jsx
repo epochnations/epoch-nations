@@ -209,7 +209,7 @@ export default function IssueStockPanel({ nation, onClose, onRefresh }) {
             const canAfford = (nation.currency || 0) >= previewCost;
             return (
               <div className="rounded-xl bg-white/5 p-3 text-xs text-slate-400 space-y-1.5">
-                <div>Final IPO price: <b className="text-white">{previewFinalPrice} cr/share</b> (base {price} + index + resource bonus)</div>
+                <div>Final IPO price: <b className="text-white">{previewFinalPrice} cr/share</b> (your price {price} + resource bonus max +3)</div>
                 <div className="text-amber-400">📋 Stock cap for {nation.epoch}: <b>{existingCount}/{stockCap}</b> issued</div>
                 <div>Shares to issue: <b>{cappedShares.toLocaleString()}</b> (max {maxShares.toLocaleString()})</div>
                 <div className="border-t border-white/10 pt-1.5 mt-1 grid grid-cols-2 gap-x-3">
