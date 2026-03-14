@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { getGameTime, formatGameTime } from "@/components/game/GameClock";
@@ -533,44 +534,100 @@ export default function Home() {
 
       {/* ── FULL TUTORIAL SECTION ── */}
       <section id="tutorial" className="py-20 px-6" style={{ background: "rgba(255,255,255,0.012)", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-10">
             <div className="text-xs font-black text-amber-400 ep-mono uppercase tracking-widest mb-2">LEARNING CENTER</div>
             <h2 className="text-3xl font-black text-white mb-3">Master Every System</h2>
-            <p className="text-slate-500 text-sm max-w-lg mx-auto">An in-depth guide to every game mechanic. New player or veteran — there's always more to learn.</p>
+            <p className="text-slate-500 text-sm max-w-lg mx-auto">Click any topic to explore the full guide — no account needed.</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-            {[
-              { icon: "🏛️", color: "#22d3ee", title: "Dashboard Overview",       desc: "Your command center — layout, quick-actions, live stats, and navigation shortcuts." },
-              { icon: "📊", color: "#4ade80", title: "Nation Stats Panel",         desc: "GDP, stability, population, housing, resources, tax streams, and public trust." },
-              { icon: "👷", color: "#f97316", title: "Workers & Resources",        desc: "Assign citizens to roles: farmers, miners, researchers, soldiers, and more." },
-              { icon: "💰", color: "#fbbf24", title: "Economy & Budget",           desc: "Manage taxes, inflation, national wealth, banking, loans, and trade balance." },
-              { icon: "🏗️", color: "#a78bfa", title: "Construction Hub",          desc: "Build infrastructure from Stone Age huts to Space Age megastructures." },
-              { icon: "🔬", color: "#818cf8", title: "Tech Tree & Research",       desc: "Unlock 80+ technologies and advance through 12 historical epochs." },
-              { icon: "🗺️", color: "#06b6d4", title: "World Map & Territory",     desc: "Claim hex tiles, build cities, expand borders, and project military power." },
-              { icon: "⚔️", color: "#f87171", title: "Diplomacy & War",           desc: "Form alliances, declare war, sign peace treaties, and manage foreign aid." },
-              { icon: "📈", color: "#4ade80", title: "Stock Market & Exchange",   desc: "IPO companies, trade shares globally, trigger market crashes, and dominate finance." },
-              { icon: "💬", color: "#22d3ee", title: "World Chat & Diplomacy",    desc: "Chat commands, private messages, alliance channels, and the Global Activity Feed." },
-              { icon: "🏙️", color: "#f59e0b", title: "City Management",          desc: "Zone districts, manage happiness, fight crime, and grow your cities." },
-              { icon: "🏪", color: "#34d399", title: "Marketplace & Trade",       desc: "Commodity markets, trade routes, agreements, and the crafting player marketplace." },
-            ].map(({ icon, color, title, desc }) => (
-              <div key={title} className="rounded-2xl p-4 transition-all hover:scale-[1.01]"
-                style={{ background: `${color}07`, border: `1px solid ${color}18` }}>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xl">{icon}</span>
-                  <div className="font-bold text-white text-xs">{title}</div>
+          <div className="space-y-2 mb-8">
+            {TUTORIAL_TOPICS.map((topic, ti) => {
+              const isOpen = openTopic === ti;
+              return (
+                <div key={topic.title} className="rounded-2xl overflow-hidden transition-all"
+                  style={{ border: `1px solid ${isOpen ? topic.color + "40" : "rgba(255,255,255,0.07)"}`, background: isOpen ? `${topic.color}06` : "rgba(255,255,255,0.02)" }}>
+                  {/* Topic Header */}
+                  <button
+                    onClick={() => { setOpenTopic(isOpen ? null : ti); setOpenLesson(null); }}
+                    className="w-full flex items-center gap-3 px-5 py-4 text-left transition-all hover:bg-white/5">
+                    <span className="text-2xl shrink-0">{topic.icon}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-bold text-white text-sm">{topic.title}</div>
+                      <div className="text-[11px] text-slate-500 truncate">{topic.summary}</div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className="text-[10px] ep-mono px-2 py-0.5 rounded-full"
+                        style={{ background: `${topic.color}18`, color: topic.color }}>
+                        {topic.lessons.length} lessons
+                      </span>
+                      {isOpen ? <ChevronUp size={14} className="text-slate-500" /> : <ChevronDown size={14} className="text-slate-500" />}
+                    </div>
+                  </button>
+
+                  {/* Expanded lessons */}
+                  <AnimatePresence>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden">
+                        <div className="px-5 pb-5 space-y-2">
+                          {topic.lessons.map((lesson, li) => {
+                            const lOpen = openLesson === `${ti}-${li}`;
+                            return (
+                              <div key={lesson.title} className="rounded-xl overflow-hidden"
+                                style={{ border: `1px solid ${lOpen ? topic.color + "30" : "rgba(255,255,255,0.06)"}`, background: lOpen ? `${topic.color}08` : "rgba(255,255,255,0.02)" }}>
+                                <button
+                                  onClick={() => setOpenLesson(lOpen ? null : `${ti}-${li}`)}
+                                  className="w-full flex items-center gap-3 px-4 py-3 text-left">
+                                  <span className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black shrink-0"
+                                    style={{ background: `${topic.color}25`, color: topic.color }}>
+                                    {li + 1}
+                                  </span>
+                                  <span className="flex-1 text-xs font-bold text-white">{lesson.title}</span>
+                                  {lOpen ? <ChevronUp size={12} className="text-slate-600 shrink-0" /> : <ChevronRight size={12} className="text-slate-600 shrink-0" />}
+                                </button>
+                                <AnimatePresence>
+                                  {lOpen && (
+                                    <motion.div
+                                      initial={{ height: 0, opacity: 0 }}
+                                      animate={{ height: "auto", opacity: 1 }}
+                                      exit={{ height: 0, opacity: 0 }}
+                                      className="overflow-hidden">
+                                      <div className="px-4 pb-4 space-y-3">
+                                        <div className="rounded-xl p-3" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                                          <div className="text-xs text-slate-300 leading-relaxed">{lesson.body}</div>
+                                        </div>
+                                        {lesson.tip && (
+                                          <div className="flex items-start gap-2 rounded-xl px-3 py-2.5"
+                                            style={{ background: "rgba(251,191,36,0.06)", border: "1px solid rgba(251,191,36,0.15)" }}>
+                                            <span className="text-amber-400 shrink-0 text-sm">💡</span>
+                                            <div className="text-[11px] text-amber-200/80 leading-relaxed">{lesson.tip}</div>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </motion.div>
+                                  )}
+                                </AnimatePresence>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
-                <div className="text-[11px] text-slate-400 leading-relaxed">{desc}</div>
-              </div>
-            ))}
+              );
+            })}
           </div>
           <div className="text-center">
             <button onClick={goToLogin}
               className="px-8 py-4 rounded-2xl font-black text-sm transition-all ep-btn-lift inline-flex items-center gap-2"
               style={{ background: "linear-gradient(135deg, #fbbf24, #f59e0b)", color: "black" }}>
-              <BookOpen size={16} /> Access Full In-Game Tutorial
+              <BookOpen size={16} /> Play & Access Full In-Game Tutorial
             </button>
-            <div className="text-xs text-slate-600 mt-2 ep-mono">Available inside the game via the 📖 Tutorial button</div>
+            <div className="text-xs text-slate-600 mt-2 ep-mono">Full tutorial with Deep Dives available in-game via the 📖 Tutorial button</div>
           </div>
         </div>
       </section>
