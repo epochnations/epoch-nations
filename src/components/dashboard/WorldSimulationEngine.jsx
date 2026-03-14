@@ -139,8 +139,11 @@ function pickStrategicAction(nation, goal, culture, allNations) {
   if (goal.id === "expand_military" && roll < 0.25) return "military_posture";
   if (goal.id === "secure_food" && (nation.res_food || 0) < 80 && roll < 0.4) return "request_food_aid";
 
-  // Aid — resource/credit-wealthy AI nations can send aid to player nations
+  // Aid — resource/credit-wealthy AI nations can send aid
   if ((nation.currency || 0) > 500 && roll < 0.12) return "send_aid";
+
+  // AI stock buying — AI nations invest in other nations' stocks
+  if ((nation.currency || 0) > 200 && roll < 0.18) return "buy_stock";
 
   // General diplomacy
   if (roll < 0.2) return "diplomatic_statement";
@@ -185,6 +188,11 @@ async function executeStrategicAction(nation, action, goal, allNations) {
     executeGlobalChatAid(nation, target, action).catch(() => {});
   }
 
+  // Execute AI stock purchase
+  if (action === "buy_stock") {
+    executeAIStockPurchase(nation).catch(() => {});
+  }
+
   // Record in chronicle for high-importance actions
   if (["propose_alliance", "oil_trade_offer", "war_statement"].includes(action)) {
     await recordChronicle({
@@ -218,6 +226,7 @@ Target nation for message: ${target?.name || "the global community"}`.trim();
     war_statement:    `You are the leader of ${nation.name}, currently at war with ${(nation.at_war_with || []).join(", ")}. Make a brief wartime public statement on the global channel. Assertive, determined. 1 sentence, no prefix.`,
     diplomatic_statement: `You are the leader of ${nation.name}. Make a brief, authentic diplomatic statement on the world stage that reflects your culture (${culture.label}) and current strategic goal. 1–2 sentences, no prefix.`,
     send_aid: `You are the leader of ${nation.name}. You are sending financial aid or resources to ${target?.name || "a nation in need"}. Announce this generosity on the world stage. Mention the act of aid. 1–2 sentences, no prefix.`,
+    buy_stock: `You are the leader of ${nation.name}. Your nation's sovereign wealth fund is investing in foreign stock markets. Announce this investment strategy briefly. 1 sentence, no prefix.`,
   };
 
   return `${gameCtx}\n\n${actionPrompts[action] || actionPrompts.diplomatic_statement}`;
