@@ -42,7 +42,7 @@ function Bar({ value, max, color }) {
 }
 
 const CORE_METRICS = [
-  { key: "stability",    label: "Stability",    max: 100, color: "#22d3ee" },
+  { key: "stability",    label: "Stability",    max: 100, color: "#22d3ee", clamp: true },
   { key: "public_trust", label: "Public Trust", max: 1,   color: "#a78bfa", format: v => `${Math.round(v * 100)}%` },
   { key: "manufacturing",label: "Manufacturing",max: 200, color: "#34d399" },
   { key: "defense_level",label: "Defense",      max: 200, color: "#f87171" },
