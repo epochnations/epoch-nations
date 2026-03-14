@@ -34,6 +34,11 @@ import WarEngine from "../components/game/WarEngine";
 import AdvancedWarEngine from "../components/game/AdvancedWarEngine";
 import NationMetricsPanel from "../components/dashboard/NationMetricsPanel";
 import SystemStatusDashboard from "../components/dashboard/SystemStatusDashboard";
+import ExplorationPanel from "../components/exploration/ExplorationPanel";
+import WondersPanel from "../components/wonders/WondersPanel";
+import CrisisPanel from "../components/crisis/CrisisPanel";
+import WarFrontPanel from "../components/war/WarFrontPanel";
+import CrisisEngine from "../components/crisis/CrisisEngine";
 
 export default function Dashboard() {
   const [myNation, setMyNation] = useState(null);
