@@ -52,6 +52,8 @@ export default function AllyRequestModal({ mode, nation, myNation, existingAgree
   }
 
   async function acceptRequest() {
+    if (responded) return;
+    setResponded(true);
     setLoading(true);
     // Update agreement
     await base44.entities.DiplomacyAgreement.update(existingAgreement.id, { status: "active" });
