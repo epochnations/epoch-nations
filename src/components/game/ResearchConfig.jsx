@@ -20,6 +20,14 @@ export const RESEARCH_TREE = {
   agriculture: [
     // Layer 1 — School
     {
+      id: "pottery_crafting",    layer: 1, name: "Pottery & Kiln Craft",
+      building_req: "school",    epoch_req: "Stone Age",
+      base_points: 60,           requires: [],
+      desc: "Unlocks kiln-based crafting: bricks, ceramic tiles, roof tiles, mortar. Manufacturing +5",
+      effects: { manufacturing: 5 },
+      emoji: "🧱"
+    },
+    {
       id: "crop_rotation",       layer: 1, name: "Crop Rotation",
       building_req: "school",    epoch_req: "Stone Age",
       base_points: 80,           requires: [],
