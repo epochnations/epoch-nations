@@ -35,17 +35,27 @@ export default function WorldMap({ myNation, onSelectNation, onOpenAdvisor }) {
   const [hoveredNation, setHoveredNation] = useState(null);
   const [selectedNation, setSelectedNation] = useState(null);
   const [selectedCity, setSelectedCity] = useState(null);
+  const [strategyCities, setStrategyCities] = useState([]);
   const [live] = useState(true);
 
   useEffect(() => {
     loadNations();
+    loadCities();
     const unsub = base44.entities.Nation.subscribe(() => loadNations());
-    return unsub;
+    const unsub2 = base44.entities.City.subscribe(() => loadCities());
+    return () => { unsub(); unsub2(); };
   }, []);
 
   async function loadNations() {
     const data = await base44.entities.Nation.list("-gdp", 60);
     setNations(data);
+  }
+
+  async function loadCities() {
+    try {
+      const data = await base44.entities.City.list("-population", 100);
+      setStrategyCities(data);
+    } catch (_) {}
   }
 
   const nationIndexMap = useMemo(() => {
