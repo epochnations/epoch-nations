@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
-import { Cpu, Plus, SlidersHorizontal, Users, Hammer, BookOpen, Activity } from "lucide-react";
+import { Cpu, Plus, SlidersHorizontal, Users, Hammer, BookOpen } from "lucide-react";
 import AdvancedTutorial from "../components/tutorial/AdvancedTutorial";
 
 
