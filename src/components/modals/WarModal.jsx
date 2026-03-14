@@ -250,7 +250,7 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
 
     let defenderUpdates = {
       at_war_with: defenderWarList,
-      stability: Math.max(0, targetNation.stability - Math.floor(damageDealt * 0.4)),
+      stability: Math.min(100, Math.max(0, Math.round(targetNation.stability - Math.floor(damageDealt * 0.4)))),
       gdp: Math.max(100, targetNation.gdp - Math.floor(damageDealt * 3)),
       manufacturing: Math.max(10, targetNation.manufacturing - Math.floor(damageDealt * 0.2)),
       public_trust: Math.max(0.1, (targetNation.public_trust || 1.0) - (damageDealt * 0.005)),
