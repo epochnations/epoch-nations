@@ -137,25 +137,21 @@ export default function NationalAdvisorPanel({ nation, onClose }) {
         <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
           {/* Advisory Feed */}
           <div className="px-3 py-2 space-y-1.5 border-b border-white/5 shrink-0">
-            {advisories.length > 0 && advisories.map((a, i) => {
-                const s = SEV[a.severity];
-                return (
-                  <div key={i} className="flex items-start gap-2 rounded-xl px-3 py-2"
-                    style={{ background: s.bg, border: `1px solid ${s.border}` }}>
-                    <div className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0"
-                      style={{ background: s.dot, boxShadow: `0 0 6px ${s.dot}`, animation: a.severity === "critical" ? "ep-live-pulse 1.5s infinite" : "none" }} />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-xs font-bold text-white">{a.title}</span>
-                        <span className="text-[9px] font-black px-1.5 py-0.5 rounded ep-mono"
-                          style={{ background: s.badge, color: s.badgeText }}>{a.system}</span>
-                      </div>
-                      <p className="text-[10px] text-slate-400 mt-0.5 leading-relaxed">{a.summary}</p>
-                    </div>
+            {advisories.length > 0 && advisories.map((a, i) => (
+              <div key={i} className="flex items-start gap-2 rounded-xl px-3 py-2"
+                style={{ background: SEV[a.severity].bg, border: `1px solid ${SEV[a.severity].border}` }}>
+                <div className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0"
+                  style={{ background: SEV[a.severity].dot, boxShadow: `0 0 6px ${SEV[a.severity].dot}`, animation: a.severity === "critical" ? "ep-live-pulse 1.5s infinite" : "none" }} />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs font-bold text-white">{a.title}</span>
+                    <span className="text-[9px] font-black px-1.5 py-0.5 rounded ep-mono"
+                      style={{ background: SEV[a.severity].badge, color: SEV[a.severity].badgeText }}>{a.system}</span>
                   </div>
-                );
-              })
-            }
+                  <p className="text-[10px] text-slate-400 mt-0.5 leading-relaxed">{a.summary}</p>
+                </div>
+              </div>
+            ))}
           </div>
 
           {/* Chat */}
