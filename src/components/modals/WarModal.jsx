@@ -207,7 +207,7 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
   const damage = baseDamage * fundMultiplier;
   const isCritical = damage > 40;
 
-  const defStab = targetNation.stability || 0;
+  const defStab = Math.min(100, Math.max(0, targetNation.stability || 0));
   const defGdp = targetNation.gdp || 0;
   const defMfg = targetNation.manufacturing || 0;
   const defTreasury = targetNation.currency || 0;
