@@ -788,12 +788,12 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
               <div className="text-xs font-bold text-orange-300 uppercase tracking-wider">Conquest Progress</div>
               <div className="text-xs ep-mono px-2 py-0.5 rounded-full font-bold"
                 style={{
-                  background: conquestHits <= 1 ? "rgba(239,68,68,0.2)" : conquestHits <= 3 ? "rgba(251,146,60,0.2)" : "rgba(255,255,255,0.06)",
-                  color: conquestHits <= 1 ? "#f87171" : conquestHits <= 3 ? "#fb923c" : "#94a3b8",
-                  border: `1px solid ${conquestHits <= 1 ? "rgba(239,68,68,0.3)" : conquestHits <= 3 ? "rgba(251,146,60,0.3)" : "rgba(255,255,255,0.1)"}`
+                  background: conquestHits <= 1 ? "rgba(239,68,68,0.2)" : conquestHits <= 4 ? "rgba(251,146,60,0.2)" : "rgba(255,255,255,0.06)",
+                  color: conquestHits <= 1 ? "#f87171" : conquestHits <= 4 ? "#fb923c" : "#94a3b8",
+                  border: `1px solid ${conquestHits <= 1 ? "rgba(239,68,68,0.3)" : conquestHits <= 4 ? "rgba(251,146,60,0.3)" : "rgba(255,255,255,0.1)"}`
                 }}
               >
-                {conquestHits === Infinity ? "∞ strikes" : conquestHits <= 1 ? "⚠ 1 strike left!" : `~${conquestHits} strikes`}
+                {conquestHits <= 1 ? "⚠ 1 strike to conquer!" : `${conquestHits} strikes to conquer`}
               </div>
             </div>
             {[
