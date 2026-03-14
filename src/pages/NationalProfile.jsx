@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
-import { Shield, TrendingUp, Swords, BookOpen, Globe, Sun, Moon, Share2 } from "lucide-react";
+import { Shield, TrendingUp, Swords, BookOpen, Globe, Share2 } from "lucide-react";
 import IdentityHeader from "../components/profile/IdentityHeader.jsx";
 import EconomicLedger from "../components/profile/EconomicLedger.jsx";
 import WarRoom from "../components/profile/WarRoom.jsx";
@@ -28,14 +28,6 @@ export default function NationalProfile() {
   const [activeTab, setActiveTab] = useState("economy");
   const [showEpochTransition, setShowEpochTransition] = useState(false);
   const [newEpoch, setNewEpoch] = useState(null);
-  const [isDark, setIsDark] = useState(() => localStorage.getItem("theme") !== "light");
-
-  useEffect(() => {
-    document.documentElement.style.setProperty("--page-bg", isDark ? "#080c14" : "#f1f5f9");
-    document.body.style.background = isDark ? "#080c14" : "#f1f5f9";
-    localStorage.setItem("theme", isDark ? "dark" : "light");
-  }, [isDark]);
-
   useEffect(() => {
     init();
   }, []);
@@ -95,7 +87,7 @@ export default function NationalProfile() {
   const theme = EPOCH_THEME[myNation.epoch] || EPOCH_THEME.Industrial;
 
   return (
-    <div className="min-h-screen text-white relative" style={{ background: isDark ? "#080c14" : "#1e293b" }}>
+    <div className="min-h-screen text-white relative" style={{ background: "#080c14" }}>
       {/* Epoch Transition Overlay */}
       {showEpochTransition && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center backdrop-blur-2xl bg-black/80">
@@ -128,21 +120,9 @@ export default function NationalProfile() {
           EPOCH NATIONS
         </div>
         <div className="flex gap-2 items-center">
-          <a href={createPageUrl("GlobalChronicles")} className="px-3 py-1.5 rounded-xl text-xs font-bold border border-white/10 text-slate-400 hover:bg-white/5 transition-all">
-            📰 News
-          </a>
           <a href={createPageUrl("Dashboard")} className="px-3 py-1.5 rounded-xl text-xs font-bold border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 transition-all">
             → Dashboard
           </a>
-          {/* Dark / Light toggle */}
-          <button
-            onClick={() => setIsDark(d => !d)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border border-white/10 text-slate-400 hover:bg-white/10 transition-all"
-            title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
-          >
-            {isDark ? <Sun size={13} /> : <Moon size={13} />}
-            {isDark ? "Light" : "Dark"}
-          </button>
         </div>
       </header>
 

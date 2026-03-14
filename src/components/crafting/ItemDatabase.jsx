@@ -463,9 +463,9 @@ const MISC = [
 ].map(i => ({ ...i, category: "misc" }));
 
 // ─────────────────────────────────────────────────────────────────────────────
-// MASTER REGISTRY — merge all categories
+// MASTER REGISTRY — base items (extra items merged below)
 // ─────────────────────────────────────────────────────────────────────────────
-export const ALL_ITEMS = [
+const ALL_ITEMS_proto = [
   ...RAW_RESOURCES,
   ...REFINED_MATERIALS,
   ...TOOLS,
@@ -485,6 +485,13 @@ export const ALL_ITEMS = [
   ...TEXTILES,
   ...MISC,
 ];
+
+// Merge extra items
+import { ALL_ITEMS_EXTRA } from "./ItemDatabaseExtra";
+const _ALL = [...ALL_ITEMS_proto, ...ALL_ITEMS_EXTRA];
+// De-duplicate by id (base wins)
+const _seen = new Set();
+export const ALL_ITEMS = _ALL.filter(i => { if (_seen.has(i.id)) return false; _seen.add(i.id); return true; });
 
 // Quick lookup map
 export const ITEM_MAP = Object.fromEntries(ALL_ITEMS.map(i => [i.id, i]));
