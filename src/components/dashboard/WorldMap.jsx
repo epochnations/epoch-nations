@@ -194,6 +194,28 @@ export default function WorldMap({ myNation, onSelectNation, onOpenAdvisor }) {
             nationIndexMap={nationIndexMap}
           />
 
+          {/* ── Army movement + military indicators ── */}
+          {layers.armies && (
+            <ArmyLayer
+              nations={displayNations}
+              myNation={myNation}
+              nationIndexMap={nationIndexMap}
+              zoom={zoom}
+            />
+          )}
+
+          {/* ── Player city markers ── */}
+          {layers.cities && (
+            <CityMarkerLayer
+              nations={displayNations}
+              cities={strategyCities}
+              myNation={myNation}
+              nationIndexMap={nationIndexMap}
+              zoom={zoom}
+              onCityClick={null}
+            />
+          )}
+
           {cityClickTargets.map(city => (
             <g key={city.name} style={{ cursor: "pointer" }}
               onClick={(e) => { e.stopPropagation(); focusCity(city); }}>
