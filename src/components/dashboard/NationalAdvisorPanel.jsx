@@ -75,8 +75,7 @@ export default function NationalAdvisorPanel({ nation, onClose }) {
     const text = input.trim();
     setInput("");
     setSending(true);
-    const context = `[Nation: ${nation?.name}, Epoch: ${nation?.epoch}, GDP: ${nation?.gdp}, Stability: ${nation?.stability}%, Treasury: ${nation?.currency}] `;
-    await base44.agents.addMessage(conversation, { role: "user", content: context + text });
+    await base44.agents.addMessage(conversation, { role: "user", content: text });
     setSending(false);
   }
 
@@ -138,9 +137,7 @@ export default function NationalAdvisorPanel({ nation, onClose }) {
         <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
           {/* Advisory Feed */}
           <div className="px-3 py-2 space-y-1.5 border-b border-white/5 shrink-0">
-            {advisories.length === 0 ? (
-              <div className="text-[11px] text-slate-500 text-center py-2 ep-mono">✓ All systems nominal</div>
-            ) : (
+            {advisories.length === 0 ? null : (
               advisories.map((a, i) => {
                 const s = SEV[a.severity];
                 return (
@@ -159,7 +156,7 @@ export default function NationalAdvisorPanel({ nation, onClose }) {
                   </div>
                 );
               })
-            )}
+            }
           </div>
 
           {/* Chat */}
