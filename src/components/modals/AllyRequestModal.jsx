@@ -12,6 +12,7 @@ export default function AllyRequestModal({ mode, nation, myNation, existingAgree
   const [showDeclineReason, setShowDeclineReason] = useState(false);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(null);
+  const [responded, setResponded] = useState(false);
 
   // mode: "send" | "respond"
 
