@@ -807,7 +807,7 @@ export default function WarModal({ targetNation, myNation, onClose, onRefresh })
                   <span className="text-slate-500">{label}</span>
                   <span className="font-mono" style={{ color }}>
                     {cur.toLocaleString()} → {floor}
-                    <span className="text-slate-600 ml-1">({hits === Infinity ? "∞" : hits <= 1 ? "💀 1" : hits} hits)</span>
+                    <span className="text-slate-600 ml-1">({hits} hits)</span>
                   </span>
                 </div>
                 <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
