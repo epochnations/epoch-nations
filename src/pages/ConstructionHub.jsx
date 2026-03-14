@@ -165,6 +165,9 @@ export default function ConstructionHub() {
               <Landmark size={11} /> 🏦 Bank
             </button>
           )}
+          <a href={createPageUrl("ItemEncyclopedia")} className="px-3 py-1.5 rounded-xl text-xs font-bold border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 transition-all flex items-center gap-1.5">
+            📖 Encyclopedia
+          </a>
           <a href={createPageUrl("Dashboard")} className="px-3 py-1.5 rounded-xl text-xs font-bold border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 transition-all">
             ← Dashboard
           </a>
