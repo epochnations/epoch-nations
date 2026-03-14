@@ -307,7 +307,7 @@ export default function WorldMap({ myNation, onSelectNation, onOpenAdvisor }) {
           </div>
           <div className="grid grid-cols-2 gap-1 text-[10px]">
             <div className="text-slate-500">GDP</div><div className="text-green-400 font-mono">{hoveredNation.gdp}</div>
-            <div className="text-slate-500">Stability</div><div className="text-cyan-400 font-mono">{hoveredNation.stability}%</div>
+            <div className="text-slate-500">Stability</div><div className="text-cyan-400 font-mono">{Math.min(100, Math.max(0, hoveredNation.stability || 0))}%</div>
             <div className="text-slate-500">Tech Lvl</div><div className="text-violet-400 font-mono">T{hoveredNation.tech_level}</div>
             {(hoveredNation.at_war_with || []).length > 0 && (
               <><div className="text-slate-500">Status</div><div className="text-red-400 font-bold">⚔ At War</div></>
