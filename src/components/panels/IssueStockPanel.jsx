@@ -75,8 +75,14 @@ export default function IssueStockPanel({ nation, onClose, onRefresh }) {
     else if (sector === "Oil") resourceMod = (nation.res_oil || 0) * 0.05;
     else if (sector === "Gold") resourceMod = (nation.res_gold || 0) * 0.06;
 
-    const stockValue = (nation.gdp + nation.stability) * nation.public_trust;
-    const finalPrice = parseFloat(((price + stockValue * 0.01 + resourceMod)).toFixed(2));
+    // Realistic IPO price: user-set base ($1–$25) + tiny fundamentals bonus, capped at $80
+    const gdpFactor = Math.min(2.0, Math.max(0.5, (nation.gdp || 500) / 500));
+    const stabilityFactor = Math.min(1.5, Math.max(0.5, (nation.stability || 75) / 75));
+    const trustFactor = Math.min(1.5, Math.max(0.5, nation.public_trust || 1.0));
+    const clampedResource = Math.min(3, resourceMod * 0.001); // resource bonus: max +$3
+    const finalPrice = parseFloat(Math.min(80, Math.max(1,
+      price * gdpFactor * stabilityFactor * trustFactor + clampedResource
+    )).toFixed(2));
 
     // Treasury cost: 5% of total IPO value
     const issueCost = Math.round(finalPrice * cappedShares * 0.05);
