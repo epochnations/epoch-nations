@@ -13,6 +13,24 @@ import {
 import DevPortal from "@/components/home/DevPortal";
 
 // ── Live Game Clock ──────────────────────────────────────────────────────────
+function ArcRing({ radius, pct, color, strokeWidth = 5 }) {
+  const cx = 60, cy = 60;
+  const circumference = 2 * Math.PI * radius;
+  const dash = (pct / 100) * circumference;
+  return (
+    <g>
+      <circle cx={cx} cy={cy} r={radius} fill="none"
+        stroke="rgba(255,255,255,0.06)" strokeWidth={strokeWidth} />
+      <circle cx={cx} cy={cy} r={radius} fill="none"
+        stroke={color} strokeWidth={strokeWidth}
+        strokeDasharray={`${dash} ${circumference}`}
+        strokeLinecap="round"
+        transform={`rotate(-90 ${cx} ${cy})`}
+        style={{ transition: "stroke-dasharray 1s ease" }} />
+    </g>
+  );
+}
+
 function LiveClock() {
   const [gt, setGt] = useState(getGameTime());
   useEffect(() => {
@@ -20,22 +38,52 @@ function LiveClock() {
     return () => clearInterval(id);
   }, []);
 
-  const pct = ((gt.day - 1) / 30) * 100;
+  const dayPct   = ((gt.day - 1) / 30) * 100;
+  const monthPct = ((gt.month - 1) / 12) * 100;
+  const yearPct  = Math.min(100, ((gt.year % 10) / 10) * 100);
 
   return (
-    <div className="rounded-2xl p-4 text-center"
-      style={{ background: "rgba(6,182,212,0.06)", border: "1px solid rgba(6,182,212,0.2)" }}>
-      <div className="flex items-center justify-center gap-2 mb-2">
-        <div className="ep-live-dot" />
-        <span className="text-[10px] font-bold text-green-400 ep-mono uppercase tracking-widest">WORLD CLOCK — LIVE</span>
-      </div>
-      <div className="text-cyan-400 font-black text-lg ep-mono">{formatGameTime(gt)}</div>
-      <div className="mt-2 h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
-        <div className="h-full rounded-full transition-all duration-1000"
-          style={{ width: `${pct}%`, background: "linear-gradient(90deg, #06b6d4, #8b5cf6)" }} />
-      </div>
-      <div className="text-[10px] text-slate-500 mt-1 ep-mono">
-        1 real minute = 1 game tick · 7 days = 1 game year
+    <div className="rounded-2xl px-5 py-4"
+      style={{ background: "rgba(6,182,212,0.05)", border: "1px solid rgba(6,182,212,0.18)" }}>
+      <div className="flex items-center gap-5">
+        {/* SVG Arc Rings */}
+        <div className="relative shrink-0" style={{ width: 120, height: 120 }}>
+          <svg width={120} height={120} viewBox="0 0 120 120">
+            <ArcRing radius={52} pct={yearPct}  color="#8b5cf6" strokeWidth={4} />
+            <ArcRing radius={44} pct={monthPct} color="#06b6d4" strokeWidth={5} />
+            <ArcRing radius={35} pct={dayPct}   color="#4ade80"  strokeWidth={5} />
+          </svg>
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <div className="text-[9px] text-slate-500 ep-mono uppercase">TICK</div>
+            <div className="text-base font-black text-white ep-mono leading-tight">{gt.day}</div>
+          </div>
+        </div>
+
+        {/* Labels */}
+        <div className="flex-1 space-y-1.5">
+          <div className="flex items-center justify-between">
+            <div className="ep-live-dot mr-1.5 inline-block" />
+            <span className="text-[10px] font-black text-green-400 ep-mono uppercase tracking-widest flex-1">WORLD CLOCK · LIVE</span>
+          </div>
+          <div className="text-cyan-300 font-black text-sm ep-mono">{formatGameTime(gt)}</div>
+          {[
+            { label: "Day",   pct: dayPct,   color: "#4ade80",  val: `${gt.day}/30` },
+            { label: "Month", pct: monthPct, color: "#06b6d4",  val: `${gt.month}/12` },
+            { label: "Year",  pct: yearPct,  color: "#8b5cf6",  val: `Yr ${gt.year}` },
+          ].map(r => (
+            <div key={r.label} className="flex items-center gap-2">
+              <span className="text-[9px] ep-mono w-10 shrink-0" style={{ color: r.color }}>{r.label}</span>
+              <div className="flex-1 h-1 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
+                <div className="h-full rounded-full transition-all duration-1000"
+                  style={{ width: `${r.pct}%`, background: r.color }} />
+              </div>
+              <span className="text-[9px] ep-mono w-10 text-right" style={{ color: r.color }}>{r.val}</span>
+            </div>
+          ))}
+          <div className="text-[9px] text-slate-600 ep-mono pt-0.5">
+            1 real minute = 1 game tick · 7 real days = 1 game year
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -296,7 +344,7 @@ export default function Home() {
             </span>
           </h1>
           <p className="text-slate-400 text-base md:text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
-            Epoch Nations is a real-time geopolitical civilization simulator. Found your nation, guide it through 12 historical epochs, dominate the global economy, and leave your mark on a persistent living world.
+            Epoch Nations is a real-time geopolitical civilization simulator. Create your nation, guide it through 12 historical epochs, dominate the global economy, and leave your mark on a persistent living world.
           </p>
 
           {/* Live Clock */}
