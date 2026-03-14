@@ -102,13 +102,14 @@ export function useMapEngine(containerRef) {
     setZoom(prev => {
       const newZ = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, prev + delta));
       const ratio = newZ / prev;
-      setPan(p => ({
-        x: cx - ratio * (cx - p.x),
-        y: cy - ratio * (cy - p.y),
-      }));
+      setPan(p => {
+        const np = { x: cx - ratio * (cx - p.x), y: cy - ratio * (cy - p.y) };
+        savePan(np, newZ);
+        return np;
+      });
       return newZ;
     });
-  }, [containerRef]);
+  }, [containerRef, savePan]);
 
   // Touch events
   const onTouchStart = useCallback((e) => {
