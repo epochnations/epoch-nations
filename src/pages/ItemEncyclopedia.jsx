@@ -6,6 +6,7 @@ import { useState, useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Search, Filter, ChevronLeft, BookOpen, Package, Code2, GitBranch } from "lucide-react";
 import { createPageUrl } from "@/utils";
+import { useNavigate } from "react-router-dom";
 import {
   ALL_ITEMS, CATEGORIES, RARITIES, TIERS, CRAFTING_STATIONS,
   searchItems
@@ -27,6 +28,20 @@ const SORT_OPTIONS = [
 const RARITY_ORDER = ["common", "uncommon", "rare", "epic", "legendary"];
 
 export default function ItemEncyclopedia() {
+  // Detect if we came from the homepage (no auth) or the game
+  const fromHome = !document.referrer.includes("/Dashboard") && (
+    document.referrer.includes(window.location.origin + "/") &&
+    !document.referrer.includes("/Dashboard")
+  );
+  const returnHref = window.history.length > 1 ? null : "/";
+  function handleReturn() {
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      window.location.href = "/";
+    }
+  }
+
   const [query,  setQuery]  = useState("");
   const [filters, setFilters] = useState({});
   const [sort,   setSort]   = useState("name");
@@ -79,10 +94,10 @@ export default function ItemEncyclopedia() {
       {/* Header */}
       <header className="sticky top-0 z-20 border-b px-6 py-3 flex items-center gap-4"
         style={{ background: "rgba(4,8,16,0.95)", backdropFilter: "blur(20px)", borderColor: "rgba(255,255,255,0.08)" }}>
-        <a href={createPageUrl("Dashboard")}
+        <button onClick={handleReturn}
           className="flex items-center gap-1.5 text-slate-400 hover:text-white transition-colors text-xs font-bold">
-          <ChevronLeft size={14} /> Dashboard
-        </a>
+          <ChevronLeft size={14} /> Return
+        </button>
         <div className="flex items-center gap-2">
           <BookOpen size={16} className="text-cyan-400" />
           <span className="font-black text-white ep-glow-cyan" style={{ background: "linear-gradient(90deg,#22d3ee,#818cf8)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>
