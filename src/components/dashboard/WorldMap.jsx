@@ -190,6 +190,9 @@ export default function WorldMap({ myNation, onSelectNation, onOpenAdvisor }) {
         >
           <MapTerrain zoom={zoom} />
 
+          {/* ── Live Weather Radar ── */}
+          <WeatherRadar zoom={zoom} />
+
           {/* ── Strategy Game Layers (sit above terrain, below nation icons) ── */}
           {layers.territories && (
             <TerritoryLayer
