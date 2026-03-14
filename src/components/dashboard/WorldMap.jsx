@@ -205,6 +205,14 @@ export default function WorldMap({ myNation, onSelectNation, onOpenAdvisor }) {
             />
           )}
 
+          {/* ── Live animated layer: weather, war fire, trade ships, events ── */}
+          <LiveMapLayer
+            nations={displayNations}
+            myNation={myNation}
+            nationIndexMap={nationIndexMap}
+            zoom={zoom}
+          />
+
           {/* ── Player city markers ── */}
           {layers.cities && (
             <CityMarkerLayer
