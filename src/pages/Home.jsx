@@ -175,7 +175,7 @@ export default function Home() {
           <span className="font-black text-white text-lg tracking-tight">Epoch <span className="text-cyan-400">Nations</span></span>
         </div>
         <div className="hidden md:flex items-center gap-6 text-xs font-bold text-slate-400">
-          {[["Features", "#features"], ["Roadmap", "#roadmap"], ["Forge SDK", "#forge"], ["About", "#about"], ["Support", "#support"]].map(([label, href]) => (
+          {[["Features", "#features"], ["Tutorial", "#tutorial"], ["Roadmap", "#roadmap"], ["Forge SDK", "#forge"], ["About", "#about"], ["Support", "#support"]].map(([label, href]) => (
             <a key={label} href={href} className="hover:text-white transition-colors">{label}</a>
           ))}
           <a href="https://github.com/epochnations" target="_blank" rel="noopener noreferrer"
