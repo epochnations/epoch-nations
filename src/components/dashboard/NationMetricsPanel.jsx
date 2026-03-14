@@ -136,11 +136,7 @@ export default function NationMetricsPanel({ nation, allNations }) {
         </div>
       </div>
 
-      {/* ── Civ Score ── */}
-      <div className="shrink-0">
-        <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase mb-2">🏆 CIVILIZATION SCORE</div>
-        <NationStatsOverlay nation={nation} allNations={allNations} />
-      </div>
+
 
     </div>
   );
