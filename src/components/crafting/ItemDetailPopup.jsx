@@ -27,7 +27,7 @@ function RecipeIngredient({ id, qty }) {
   );
 }
 
-export default function ItemDetailPopup({ item, onClose, onViewRecipe }) {
+export default function ItemDetailPopup({ item, onClose, onViewRecipe, onViewTree }) {
   if (!item) return null;
 
   const rarity   = RARITIES[item.rarity]  || RARITIES.common;
