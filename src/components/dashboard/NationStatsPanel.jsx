@@ -111,7 +111,7 @@ export default function NationStatsPanel({ nation }) {
   );
 
   // Always clamp stability to valid range for display
-  const stability    = Math.min(100, Math.max(0, nation.stability || 75));
+  const stability    = Math.min(100, Math.max(0, Math.floor(nation.stability || 75)));
   const epochIndex   = EPOCHS.indexOf(nation.epoch);
   const epochPct     = Math.round(((epochIndex + 1) / EPOCHS.length) * 100);
   const allies       = nation.allies || [];
