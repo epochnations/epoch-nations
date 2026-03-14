@@ -455,6 +455,50 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── FULL TUTORIAL SECTION ── */}
+      <section id="tutorial" className="py-20 px-6" style={{ background: "rgba(255,255,255,0.012)", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="text-xs font-black text-amber-400 ep-mono uppercase tracking-widest mb-2">LEARNING CENTER</div>
+            <h2 className="text-3xl font-black text-white mb-3">Master Every System</h2>
+            <p className="text-slate-500 text-sm max-w-lg mx-auto">An in-depth guide to every game mechanic. New player or veteran — there's always more to learn.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+            {[
+              { icon: "🏛️", color: "#22d3ee", title: "Dashboard Overview",       desc: "Your command center — layout, quick-actions, live stats, and navigation shortcuts." },
+              { icon: "📊", color: "#4ade80", title: "Nation Stats Panel",         desc: "GDP, stability, population, housing, resources, tax streams, and public trust." },
+              { icon: "👷", color: "#f97316", title: "Workers & Resources",        desc: "Assign citizens to roles: farmers, miners, researchers, soldiers, and more." },
+              { icon: "💰", color: "#fbbf24", title: "Economy & Budget",           desc: "Manage taxes, inflation, national wealth, banking, loans, and trade balance." },
+              { icon: "🏗️", color: "#a78bfa", title: "Construction Hub",          desc: "Build infrastructure from Stone Age huts to Space Age megastructures." },
+              { icon: "🔬", color: "#818cf8", title: "Tech Tree & Research",       desc: "Unlock 80+ technologies and advance through 12 historical epochs." },
+              { icon: "🗺️", color: "#06b6d4", title: "World Map & Territory",     desc: "Claim hex tiles, build cities, expand borders, and project military power." },
+              { icon: "⚔️", color: "#f87171", title: "Diplomacy & War",           desc: "Form alliances, declare war, sign peace treaties, and manage foreign aid." },
+              { icon: "📈", color: "#4ade80", title: "Stock Market & Exchange",   desc: "IPO companies, trade shares globally, trigger market crashes, and dominate finance." },
+              { icon: "💬", color: "#22d3ee", title: "World Chat & Diplomacy",    desc: "Chat commands, private messages, alliance channels, and the Global Activity Feed." },
+              { icon: "🏙️", color: "#f59e0b", title: "City Management",          desc: "Zone districts, manage happiness, fight crime, and grow your cities." },
+              { icon: "🏪", color: "#34d399", title: "Marketplace & Trade",       desc: "Commodity markets, trade routes, agreements, and the crafting player marketplace." },
+            ].map(({ icon, color, title, desc }) => (
+              <div key={title} className="rounded-2xl p-4 transition-all hover:scale-[1.01]"
+                style={{ background: `${color}07`, border: `1px solid ${color}18` }}>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xl">{icon}</span>
+                  <div className="font-bold text-white text-xs">{title}</div>
+                </div>
+                <div className="text-[11px] text-slate-400 leading-relaxed">{desc}</div>
+              </div>
+            ))}
+          </div>
+          <div className="text-center">
+            <button onClick={goToLogin}
+              className="px-8 py-4 rounded-2xl font-black text-sm transition-all ep-btn-lift inline-flex items-center gap-2"
+              style={{ background: "linear-gradient(135deg, #fbbf24, #f59e0b)", color: "black" }}>
+              <BookOpen size={16} /> Access Full In-Game Tutorial
+            </button>
+            <div className="text-xs text-slate-600 mt-2 ep-mono">Available inside the game via the 📖 Tutorial button</div>
+          </div>
+        </div>
+      </section>
+
       {/* ── SUPPORT ── */}
       <section id="support" className="py-20 px-6">
         <div className="max-w-2xl mx-auto text-center">
