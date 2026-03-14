@@ -20,6 +20,12 @@ Players manage:
 
 Unlike traditional strategy games, **Epoch Nations runs as a living world simulation** where nations evolve continuously and the global economy changes over time.
 
+Technology used:
+- Base44
+- JavaScript
+- React
+- etc.
+
 ---
 
 # 📖 Table of Contents
