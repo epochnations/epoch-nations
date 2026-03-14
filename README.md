@@ -120,9 +120,6 @@ Epoch Nations includes a **Forge SDK plugin system** allowing developers to add 
 - Storage: 5 GB
 - Node.js: v18+
 
-
-
-
 ## Recommended
 
 - CPU: 4+ cores
