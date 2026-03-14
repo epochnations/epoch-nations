@@ -214,13 +214,13 @@ export default function AllyRequestModal({ mode, nation, myNation, existingAgree
 
               {!showDeclineReason ? (
                 <div className="flex gap-3">
-                  <button onClick={acceptRequest} disabled={loading}
-                    className="flex-1 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-40"
+                  <button onClick={acceptRequest} disabled={loading || responded}
+                    className="flex-1 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                     style={{ background: "rgba(74,222,128,0.15)", border: "1px solid rgba(74,222,128,0.3)", color: "#4ade80" }}>
                     <Check size={14}/> Accept
                   </button>
-                  <button onClick={() => setShowDeclineReason(true)} disabled={loading}
-                    className="flex-1 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all"
+                  <button onClick={() => setShowDeclineReason(true)} disabled={loading || responded}
+                    className="flex-1 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                     style={{ background: "rgba(248,113,113,0.12)", border: "1px solid rgba(248,113,113,0.25)", color: "#f87171" }}>
                     <XCircle size={14}/> Decline
                   </button>
