@@ -6,10 +6,12 @@ import TradeRoutePanel from "../components/marketplace/TradeRoutePanel";
 import TradeAgreementPanel from "../components/marketplace/TradeAgreementPanel";
 import ImportPanel from "../components/marketplace/ImportPanel";
 import GlobalCommodityPanel from "../components/marketplace/GlobalCommodityPanel";
+import CraftingMarketplacePanel from "../components/marketplace/CraftingMarketplacePanel";
 
 const TABS = [
   { id: "sell",       label: "🏪 Sell",         desc: "Sell resources for treasury" },
   { id: "commodities",label: "🌐 Commodities",  desc: "Live global commodity market" },
+  { id: "crafting",   label: "⚒️ Crafting Market",desc: "Buy & sell crafted items" },
   { id: "routes",     label: "🗺️ Trade Routes",  desc: "Establish ongoing trade channels" },
   { id: "agreements", label: "📜 Agreements",    desc: "Tariffs & trade pacts" },
   { id: "import",     label: "📥 Import",        desc: "Buy from global market" },
