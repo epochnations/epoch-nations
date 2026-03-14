@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
-import { Cpu, Plus, SlidersHorizontal, Users, Hammer, BookOpen } from "lucide-react";
+import { Cpu, Plus, SlidersHorizontal, Users, Hammer, BookOpen, Activity } from "lucide-react";
 import AdvancedTutorial from "../components/tutorial/AdvancedTutorial";
 
 
@@ -31,7 +31,9 @@ import ResearchEngine from "../components/research/ResearchEngine";
 import ResearchPanel from "../components/research/ResearchPanel";
 import ProceduralWorldEngine from "../components/game/ProceduralWorldEngine";
 import WarEngine from "../components/game/WarEngine";
+import AdvancedWarEngine from "../components/game/AdvancedWarEngine";
 import NationMetricsPanel from "../components/dashboard/NationMetricsPanel";
+import SystemStatusDashboard from "../components/dashboard/SystemStatusDashboard";
 
 export default function Dashboard() {
   const [myNation, setMyNation] = useState(null);
@@ -49,6 +51,7 @@ export default function Dashboard() {
   const [showAdvisor, setShowAdvisor] = useState(false);
   const [showResearch, setShowResearch] = useState(false);
   const [showTour, setShowTour] = useState(false);
+  const [showSystemStatus, setShowSystemStatus] = useState(false);
 
   const refreshDebounceRef = useRef(null);
   const userEmailRef = useRef(null);
@@ -198,6 +201,12 @@ export default function Dashboard() {
             <NotificationsPanel nationId={myNation?.id} ownerEmail={user?.email} />
           )}
 
+          <button
+            onClick={() => setShowSystemStatus(true)}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold hover:bg-emerald-500/20 transition-all duration-150"
+          >
+            <Activity size={12} /> Status
+          </button>
           <button
             onClick={() => setShowTour(true)}
             className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-bold hover:bg-indigo-500/20 transition-all duration-150"
@@ -394,6 +403,9 @@ export default function Dashboard() {
       {/* War Engine — realistic attrition, territory capture, war events */}
       {myNation && <WarEngine myNation={myNation} />}
 
+      {/* Advanced War Engine — unit types, weapons, tanks, warships, soldiers */}
+      {myNation && <AdvancedWarEngine myNation={myNation} />}
+
       {/* Research Panel */}
       {showResearch && myNation && (
         <ResearchPanel nation={myNation} onClose={() => setShowResearch(false)} />
@@ -405,6 +417,11 @@ export default function Dashboard() {
       )}
 
       {showTour && <AdvancedTutorial onClose={() => setShowTour(false)} />}
+
+      {/* System Status Dashboard */}
+      {showSystemStatus && myNation && (
+        <SystemStatusDashboard myNation={myNation} onClose={() => setShowSystemStatus(false)} />
+      )}
     </div>
   );
 }
