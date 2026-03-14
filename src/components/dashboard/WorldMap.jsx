@@ -165,6 +165,27 @@ export default function WorldMap({ myNation, onSelectNation, onOpenAdvisor }) {
         >
           <MapTerrain zoom={zoom} />
 
+          {/* ── Strategy Game Layers (sit above terrain, below nation icons) ── */}
+          {layers.territories && (
+            <TerritoryLayer
+              nations={displayNations}
+              myNation={myNation}
+              nationIndexMap={nationIndexMap}
+              zoom={zoom}
+            />
+          )}
+          {layers.resources && (
+            <ResourceLayer zoom={zoom} layers={layers} />
+          )}
+          {layers.infra && (
+            <InfrastructureLayer
+              nations={displayNations}
+              allies={myNation ? displayNations.filter(n => (myNation.allies || []).includes(n.id)) : []}
+              nationIndexMap={nationIndexMap}
+              zoom={zoom}
+            />
+          )}
+
           <MapOverlays
             nations={nations}
             myNation={myNation}
