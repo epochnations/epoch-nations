@@ -1319,9 +1319,69 @@ Please ensure your code follows the project standards and includes clear documen
 
 ## 📄 License
 
-Epoch Nations is distributed under a **source-available royalty-based license**.
 
-See the `LICENSE` file for full licensing terms and usage permissions.
+Epoch Nations is distributed under a **Source-Available, Royalty-Based License** designed to encourage community innovation while protecting the long-term development of the project.
+
+The source code is available for viewing, learning, and contributing, but certain uses — particularly commercial distribution or hosted services — may require permission from the project owner.
+
+---
+
+### 📜 License Summary
+
+Under this license you may:
+
+- View and study the source code
+- Run the software for personal or educational use
+- Modify the code for experimentation
+- Submit improvements or contributions to the project
+
+However, you may **not**:
+
+- Redistribute the software commercially without permission
+- Sell modified versions of the software
+- Operate a commercial hosted service using the software without a licensing agreement
+- Remove copyright or attribution notices
+
+---
+
+### 💼 Commercial Use
+
+Organizations or individuals interested in using **Epoch Nations** in commercial environments — such as hosting public servers, integrating the technology into other products, or distributing modified versions — may require a **commercial license agreement**.
+
+Commercial licensing options may include:
+
+- hosted server deployments
+- enterprise simulation environments
+- educational or research programs
+- custom integrations
+
+For licensing inquiries, please contact the project owner.
+
+---
+
+### 🤝 Open Source Contributions
+
+Contributions to Epoch Nations are welcome and encouraged.
+
+By submitting code, documentation, or other improvements to the repository, you agree that your contribution may become part of the project and distributed under the project's licensing terms.
+
+See the **Contributing** section for guidelines on submitting pull requests.
+
+---
+
+### ⚖️ Disclaimer
+
+This software is provided **"as is"**, without warranty of any kind, express or implied. The authors and contributors are not liable for any damages or losses arising from the use of this software.
+
+Use of the software is at your own risk.
+
+---
+
+### 📂 Full License Text
+
+The complete license terms can be found in the `LICENSE` file located in the root of this repository.
+
+Please review the full license before using the software in production or commercial environments.
 
 ---
 
