@@ -69,7 +69,7 @@ function ResourceCell({ label, resKey, value }) {
     : "none";
   return (
     <div
-      className="rounded-xl p-2 flex flex-col items-center gap-0.5"
+      className="rounded-xl p-1.5 flex flex-col items-center gap-0"
       style={{
         background: `${color}0d`,
         border: `1px solid ${color}22`,
@@ -77,13 +77,13 @@ function ResourceCell({ label, resKey, value }) {
         transition: "box-shadow 0.6s"
       }}
     >
-      <span style={{ fontSize: 20, lineHeight: 1, userSelect: "none" }}>{emoji}</span>
-      <span className="text-[10px] text-slate-500 ep-mono">{label}</span>
-      <span className="text-[13px] font-black ep-mono" style={{ color }}>
+      <span style={{ fontSize: 16, lineHeight: 1, userSelect: "none" }}>{emoji}</span>
+      <span className="text-[9px] text-slate-500 ep-mono">{label}</span>
+      <span className="text-[12px] font-black ep-mono" style={{ color }}>
         {fmtRes(displayVal)}
       </span>
       {warehouseOverflow > 0 && (
-        <span className="text-[9px] ep-mono text-amber-400 font-bold" title="Stored in warehouse">
+        <span className="text-[8px] ep-mono text-amber-400 font-bold" title="Stored in warehouse">
           🏚️ +{fmtRes(warehouseOverflow)}
         </span>
       )}
@@ -171,7 +171,7 @@ export default function NationStatsPanel({ nation }) {
 
   return (
     <div
-      className="flex flex-col gap-3 p-4 rounded-2xl h-full overflow-y-auto"
+      className="flex flex-col gap-1.5 p-3 rounded-2xl h-full overflow-hidden"
       style={{
         background: "linear-gradient(160deg, rgba(6,182,212,0.05) 0%, rgba(4,8,16,0.97) 60%)",
         border: "1px solid rgba(6,182,212,0.14)",
@@ -179,10 +179,10 @@ export default function NationStatsPanel({ nation }) {
       }}
     >
       {/* ── Nation identity ── */}
-      <div className="flex items-center gap-3 shrink-0">
+      <div className="flex items-center gap-2 shrink-0">
         <div className="relative shrink-0">
           <div
-            className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl"
+            className="w-11 h-11 rounded-xl flex items-center justify-center text-2xl"
             style={{
               background: `radial-gradient(circle at 40% 40%, ${nation.flag_color || "#3b82f6"}33, ${nation.flag_color || "#3b82f6"}11)`,
               border: `1.5px solid ${nation.flag_color || "#3b82f6"}55`,
@@ -193,52 +193,52 @@ export default function NationStatsPanel({ nation }) {
               ? <img src={nation.flag_image_url} alt="" className="w-10 h-10 rounded-xl object-cover" />
               : nation.flag_emoji || "🏴"}
           </div>
-          <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full border-2 border-[#080c14]" style={{ background: "#4ade80", boxShadow: "0 0 6px #4ade8088" }} />
+          <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-[#080c14]" style={{ background: "#4ade80", boxShadow: "0 0 6px #4ade8088" }} />
         </div>
         <div className="min-w-0">
-          <h2 className="text-base font-black text-white leading-tight truncate">{nation.name}</h2>
-          <div className="text-[13px] text-slate-400 truncate">{nation.leader}</div>
-          <div className="text-[12px] font-bold mt-0.5" style={{ color: "#22d3ee" }}>{nation.epoch}</div>
+          <h2 className="text-sm font-black text-white leading-tight truncate">{nation.name}</h2>
+          <div className="text-[11px] text-slate-400 truncate">{nation.leader}</div>
+          <div className="text-[11px] font-bold" style={{ color: "#22d3ee" }}>{nation.epoch}</div>
         </div>
       </div>
 
       {/* ── Epoch progress ── */}
       <div className="shrink-0">
-        <div className="flex justify-between text-[12px] mb-1.5">
+        <div className="flex justify-between text-[11px] mb-1">
           <span className="text-slate-500 ep-mono font-bold">EPOCH PROGRESS</span>
           <span className="ep-mono font-black text-cyan-400">{epochPct}%</span>
         </div>
-        <div className="w-full h-2.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
+        <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
           <div
             className="h-full rounded-full transition-all duration-700"
             style={{ width: `${epochPct}%`, background: "linear-gradient(90deg, #06b6d4, #818cf8)", boxShadow: "0 0 8px rgba(6,182,212,0.5)" }}
           />
         </div>
-        <div className="flex justify-between text-[11px] mt-1 text-slate-600 ep-mono">
+        <div className="flex justify-between text-[10px] mt-0.5 text-slate-600 ep-mono">
           <span>Epoch {epochIndex + 1}/{EPOCHS.length}</span>
           <span>Tech LVL {nation.tech_level || 1}</span>
         </div>
       </div>
 
       {/* ── Top 3 quick stats: Allies | Cities | Pop ── */}
-      <div className="grid grid-cols-3 gap-2 shrink-0">
+      <div className="grid grid-cols-3 gap-1.5 shrink-0">
         {/* Allies */}
-        <div className="rounded-xl p-2.5 flex flex-col items-center gap-0.5"
+        <div className="rounded-xl p-2 flex flex-col items-center gap-0"
           style={{ background: "rgba(34,211,238,0.07)", border: "1px solid rgba(34,211,238,0.15)" }}>
-          <span className="text-[11px] text-slate-500 font-bold ep-mono uppercase">Allies</span>
-          <span className="text-xl font-black ep-mono text-cyan-400">{allyCount}</span>
+          <span className="text-[10px] text-slate-500 font-bold ep-mono uppercase">Allies</span>
+          <span className="text-lg font-black ep-mono text-cyan-400">{allyCount}</span>
         </div>
         {/* Cities */}
-        <div className="rounded-xl p-2.5 flex flex-col items-center gap-0.5"
+        <div className="rounded-xl p-2 flex flex-col items-center gap-0"
           style={{ background: "rgba(251,146,60,0.07)", border: "1px solid rgba(251,146,60,0.15)" }}>
-          <span className="text-[11px] text-slate-500 font-bold ep-mono uppercase">Cities</span>
-          <span className="text-xl font-black ep-mono" style={{ color: "#fb923c" }}>{cityCount}</span>
+          <span className="text-[10px] text-slate-500 font-bold ep-mono uppercase">Cities</span>
+          <span className="text-lg font-black ep-mono" style={{ color: "#fb923c" }}>{cityCount}</span>
         </div>
         {/* Population */}
-        <div className="rounded-xl p-2.5 flex flex-col items-center gap-0.5"
+        <div className="rounded-xl p-2 flex flex-col items-center gap-0"
           style={{ background: "rgba(167,139,250,0.07)", border: "1px solid rgba(167,139,250,0.15)" }}>
-          <span className="text-[11px] text-slate-500 font-bold ep-mono uppercase">Pop</span>
-          <FlashStat value={nation.population || 0} className="text-xl font-black ep-mono text-violet-400">
+          <span className="text-[10px] text-slate-500 font-bold ep-mono uppercase">Pop</span>
+          <FlashStat value={nation.population || 0} className="text-lg font-black ep-mono text-violet-400">
             {pop >= 1_000_000
               ? `${(pop / 1_000_000).toFixed(2)}M`
               : pop >= 1_000
@@ -249,26 +249,26 @@ export default function NationStatsPanel({ nation }) {
       </div>
 
       {/* ── Treasury ── */}
-      <div className="rounded-xl px-3 py-2.5 shrink-0"
+      <div className="rounded-xl px-3 py-2 shrink-0"
         style={{ background: "rgba(251,191,36,0.06)", border: "1px solid rgba(251,191,36,0.14)" }}>
-        <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center justify-between mb-1.5">
           <div>
-            <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase">Treasury</div>
-            <FlashStat value={Math.round(nation.currency || 0)} className="text-lg font-black ep-mono text-amber-400">
-              {(nation.currency || 0).toLocaleString()} <span className="text-[11px] text-amber-600">{nation.currency_name || "Credits"}</span>
+            <div className="text-[10px] text-slate-500 font-bold ep-mono uppercase">Treasury</div>
+            <FlashStat value={Math.round(nation.currency || 0)} className="text-[14px] font-black ep-mono text-amber-400">
+              {(nation.currency || 0).toLocaleString()} <span className="text-[10px] text-amber-600">{nation.currency_name || "Credits"}</span>
             </FlashStat>
           </div>
           <div className="text-right">
-            <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase">GDP</div>
-            <FlashStat value={Math.round(nation.gdp || 0)} className="text-lg font-black ep-mono text-green-400">
+            <div className="text-[10px] text-slate-500 font-bold ep-mono uppercase">GDP</div>
+            <FlashStat value={Math.round(nation.gdp || 0)} className="text-[14px] font-black ep-mono text-green-400">
               {(nation.gdp || 0).toLocaleString()}
             </FlashStat>
           </div>
         </div>
         {/* Nation Stock Index — placed directly under Treasury */}
-        <div className="flex justify-between items-center pt-2 border-t border-amber-500/10">
-          <span className="text-[11px] text-slate-500 font-bold ep-mono uppercase">Stock Index</span>
-          <span className="text-[15px] font-black ep-mono text-cyan-400 ep-glow-cyan">
+        <div className="flex justify-between items-center pt-1.5 border-t border-amber-500/10">
+          <span className="text-[10px] text-slate-500 font-bold ep-mono uppercase">Stock Index</span>
+          <span className="text-[13px] font-black ep-mono text-cyan-400 ep-glow-cyan">
             {Math.round((nation.gdp || 0) * (nation.stability || 75) / 100 * (nation.public_trust || 1)).toLocaleString()}
           </span>
         </div>
@@ -278,8 +278,8 @@ export default function NationStatsPanel({ nation }) {
 
       {/* ── Natural Resources (moved above economy) ── */}
       <div className="shrink-0">
-        <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase mb-2">NATURAL RESOURCES</div>
-        <div className="grid grid-cols-3 gap-1.5">
+        <div className="text-[10px] text-slate-500 font-bold ep-mono uppercase mb-1">NATURAL RESOURCES</div>
+        <div className="grid grid-cols-3 gap-1">
           {RESOURCE_DEFS.map(({ key, label, resKey }) => {
             const val = nation[key] || 0;
             return (
@@ -290,47 +290,44 @@ export default function NationStatsPanel({ nation }) {
       </div>
 
       {/* ── Income / Expense per tick (1 tick = 1 real min) ── */}
-      <div className="rounded-xl px-3 py-2.5 shrink-0" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
-        <div className="flex items-center justify-between mb-2">
-          <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase">ECONOMY / MIN</div>
+      <div className="rounded-xl px-3 py-2 shrink-0" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+        <div className="flex items-center justify-between mb-1">
+          <div className="text-[10px] text-slate-500 font-bold ep-mono uppercase">ECONOMY / MIN</div>
           <div className="text-[9px] text-slate-600 ep-mono">1 tick = 1 min</div>
         </div>
-        <div className="grid grid-cols-3 gap-2 text-center">
+        <div className="grid grid-cols-3 gap-1 text-center">
           <div>
-            <div className="text-[11px] text-slate-500">Income</div>
-            <div className="text-[14px] font-black ep-mono text-green-400">+{incomePerMin}</div>
-            <div className="text-[9px] text-slate-600 ep-mono">cr/min</div>
+            <div className="text-[10px] text-slate-500">Income</div>
+            <div className="text-[13px] font-black ep-mono text-green-400">+{incomePerMin}</div>
           </div>
           <div>
-            <div className="text-[11px] text-slate-500">Expense</div>
-            <div className="text-[14px] font-black ep-mono text-red-400">-{spendingPerMin}</div>
-            <div className="text-[9px] text-slate-600 ep-mono">cr/min</div>
+            <div className="text-[10px] text-slate-500">Expense</div>
+            <div className="text-[13px] font-black ep-mono text-red-400">-{spendingPerMin}</div>
           </div>
           <div>
-            <div className="text-[11px] text-slate-500">Net</div>
-            <div className={`text-[14px] font-black ep-mono ${netPerMin >= 0 ? "text-cyan-400" : "text-red-400"}`}>
+            <div className="text-[10px] text-slate-500">Net</div>
+            <div className={`text-[13px] font-black ep-mono ${netPerMin >= 0 ? "text-cyan-400" : "text-red-400"}`}>
               {netPerMin >= 0 ? "+" : ""}{netPerMin}
             </div>
-            <div className="text-[9px] text-slate-600 ep-mono">cr/min</div>
           </div>
         </div>
       </div>
 
       {/* ── Food production / consumption per min ── */}
-      <div className="rounded-xl px-3 py-2.5 shrink-0" style={{ background: "rgba(74,222,128,0.04)", border: "1px solid rgba(74,222,128,0.10)" }}>
-        <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase mb-2">FOOD / MIN</div>
-        <div className="grid grid-cols-3 gap-2 text-center">
+      <div className="rounded-xl px-3 py-2 shrink-0" style={{ background: "rgba(74,222,128,0.04)", border: "1px solid rgba(74,222,128,0.10)" }}>
+        <div className="text-[10px] text-slate-500 font-bold ep-mono uppercase mb-1">FOOD / MIN</div>
+        <div className="grid grid-cols-3 gap-1 text-center">
           <div>
-            <div className="text-[11px] text-slate-500">Produce</div>
-            <div className="text-[14px] font-black ep-mono text-green-400">+{foodProd}</div>
+            <div className="text-[10px] text-slate-500">Produce</div>
+            <div className="text-[13px] font-black ep-mono text-green-400">+{foodProd}</div>
           </div>
           <div>
-            <div className="text-[11px] text-slate-500">Consume</div>
-            <div className="text-[14px] font-black ep-mono text-red-400">-{foodCons}</div>
+            <div className="text-[10px] text-slate-500">Consume</div>
+            <div className="text-[13px] font-black ep-mono text-red-400">-{foodCons}</div>
           </div>
           <div>
-            <div className="text-[11px] text-slate-500">Net</div>
-            <div className={`text-[14px] font-black ep-mono ${foodNet >= 0 ? "text-green-400" : "text-red-400"}`}>
+            <div className="text-[10px] text-slate-500">Net</div>
+            <div className={`text-[13px] font-black ep-mono ${foodNet >= 0 ? "text-green-400" : "text-red-400"}`}>
               {foodNet >= 0 ? "+" : ""}{foodNet}
             </div>
           </div>
@@ -338,10 +335,10 @@ export default function NationStatsPanel({ nation }) {
       </div>
 
       {/* ── Housing Cap ── */}
-      <div className="rounded-xl px-3 py-2.5 shrink-0" style={{ background: "rgba(251,146,60,0.05)", border: "1px solid rgba(251,146,60,0.12)" }}>
-        <div className="flex items-center justify-between mb-1.5">
-          <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase">HOUSING CAPACITY</div>
-          <div className="text-[11px] ep-mono font-black text-orange-400">{pop.toLocaleString()} / {(nation.housing_capacity || 20).toLocaleString()}</div>
+      <div className="rounded-xl px-3 py-2 shrink-0" style={{ background: "rgba(251,146,60,0.05)", border: "1px solid rgba(251,146,60,0.12)" }}>
+        <div className="flex items-center justify-between mb-1">
+          <div className="text-[10px] text-slate-500 font-bold ep-mono uppercase">HOUSING CAPACITY</div>
+          <div className="text-[10px] ep-mono font-black text-orange-400">{pop.toLocaleString()} / {(nation.housing_capacity || 20).toLocaleString()}</div>
         </div>
         <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
           <div
@@ -355,7 +352,7 @@ export default function NationStatsPanel({ nation }) {
             }}
           />
         </div>
-        <div className="flex justify-between text-[9px] ep-mono text-slate-600 mt-1">
+        <div className="flex justify-between text-[9px] ep-mono text-slate-600 mt-0.5">
           <span>Population</span>
           <span>{Math.min(100, Math.round((pop / Math.max(1, nation.housing_capacity || 20)) * 100))}% full</span>
         </div>
