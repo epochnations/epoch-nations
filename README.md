@@ -29,159 +29,165 @@ Unlike traditional strategy games, **Epoch Nations runs as a living world simula
 
 ## 📖 Table of Contents
 
-- [About Epoch Nations](#-about-epoch-nations)
-- [Why Play Epoch Nations](#-why-play-epoch-nations)
-- [Features](#-features)
-- [System Requirements](#-system-requirements)
-- [Running the Game Locally](#-running-the-game-locally)
-- [Hosting a Server](#-hosting-epoch-nations-on-a-vps)
-- [Forge SDK (Plugin System)](#-forge-sdk-plugin-system)
-- [Economic Simulation Engine](#-economic-simulation-engine)
-- [Plugin Marketplace Roadmap](#-plugin-marketplace-roadmap)
-- [Contributing](#-contributing)
-- [License](#-license)
+- [About Epoch Nations](#about-epoch-nations)
+- [Why Play Epoch Nations](#why-play-epoch-nations)
+- [Features](#features)
+- [System Requirements](#system-requirements)
+- [Running the Game Locally](#running-the-game-locally)
+- [Hosting a Server](#hosting-epoch-nations-on-a-vps)
+- [Forge SDK (Plugin System)](#forge-sdk-plugin-system)
+- [Economic Simulation Engine](#economic-simulation-engine)
+- [Plugin Marketplace Roadmap](#plugin-marketplace-roadmap)
+- [Contributing](#contributing)
+- [License](#license)
+
+<a id="about-epoch-nations"></a>
 
 ## 📖 About Epoch Nations
 
-**Epoch Nations** is an ambitious civilization simulation game that blends deep crafting systems, technological progress, industrial strategy, and player-driven economies into a persistent evolving world.
+**Epoch Nations** is a persistent civilization simulation game where players guide the development of nations across the major eras of human history. From primitive survival technologies to advanced industrial and digital civilizations, the game allows players to shape the trajectory of entire societies through strategic decisions, technological innovation, and economic planning.
 
-Designed as both a strategy sandbox and an expandable simulation platform, Epoch Nations allows players to guide the development of societies across the major eras of human advancement — from primitive survival tools to advanced industrial and technological civilizations.
+Unlike traditional strategy games, **Epoch Nations operates as a living world simulation**. Nations evolve continuously through player activity, resource production, trade networks, and scientific discovery. The world economy adapts dynamically as industries emerge, technologies advance, and civilizations specialize in different sectors.
 
-At its core, Epoch Nations explores a simple but powerful idea:
-
-> **What happens when a living world evolves through the decisions of its players?**
+> **Civilizations are not scripted — they evolve through the decisions of players.**
 
 ---
 
 ### 🌍 A Living Civilization Simulator
 
-Epoch Nations simulates the growth of civilizations through interconnected systems of research, production, trade, and discovery.
+At its core, Epoch Nations models how civilizations grow and interact through interconnected systems of research, production, trade, and discovery.
 
-Players shape the world by:
+Players influence the world by:
 
-- Developing industries  
-- Advancing scientific knowledge  
-- Manufacturing new technologies  
-- Building complex production networks  
-- Participating in global markets  
+- Developing industries and infrastructure  
+- Researching new technologies  
+- Producing resources and manufactured goods  
+- Building complex industrial supply chains  
+- Participating in global trade markets  
 
-Every new discovery unlocks additional opportunities for progress, allowing civilizations to transform from small communities into technologically advanced societies.
+Every action contributes to a broader simulation where the decisions of one nation can influence the development of others.
 
 ---
 
-### ⚙ Designed Around Systems and Progress
+### ⚙ Civilization Through Technological Epochs
 
-The game world evolves through multiple major epochs of technological advancement, each introducing new capabilities and industries.
+Progress in Epoch Nations is organized into major technological eras known as **Epochs**. Each epoch introduces new tools, industries, and capabilities that expand the scale of civilization.
 
 Examples include:
 
-- **Stone Age** – early tools, pottery, and primitive crafting  
-- **Bronze & Iron Ages** – metallurgy, improved tools, and early industry  
-- **Classical & Medieval Ages** – scientific discovery and infrastructure  
-- **Industrial Age** – factories, chemicals, and mass production  
-- **Modern & Digital Ages** – electronics, vehicles, and advanced engineering  
-- **Information & Space Ages** – cutting-edge research and futuristic manufacturing  
+- **Stone Age** — primitive tools, pottery, and early crafting  
+- **Bronze Age** — metallurgy and improved resource production  
+- **Iron Age** — stronger tools, weapons, and infrastructure  
+- **Classical & Medieval Ages** — knowledge expansion and early engineering  
+- **Industrial Age** — factories, mass production, and chemistry  
+- **Modern & Digital Ages** — electronics, vehicles, and automation  
+- **Information & Space Ages** — advanced science, computing, and aerospace technologies  
 
-Each epoch expands the complexity and scale of civilization.
-
----
-
-### ⚒ A Massive Crafting Ecosystem
-
-Epoch Nations features an expanding crafting system with **over 1,100 unique items** and dozens of production stations.
-
-Players can construct industries that transform raw materials into increasingly complex technologies.
-
-Production chains may include:
-
-- mining raw resources  
-- refining materials  
-- assembling components  
-- manufacturing advanced products  
-
-These systems create an interconnected industrial economy where strategy, logistics, and planning become key to success.
+As civilizations progress through these epochs, the complexity of the world increases and new opportunities for growth emerge.
 
 ---
 
-### 🔬 Research Drives Civilization Forward
+### ⚒ A Massive Crafting and Production Ecosystem
 
-Scientific progress is the engine that powers development.
+Epoch Nations features a deep industrial crafting system with **over 1,100 unique items** and dozens of production stations.
 
-Players unlock technologies through a branching research system that expands crafting capabilities, production efficiency, and industrial complexity.
+Players build production networks that transform raw materials into increasingly complex technologies. These chains may include:
 
-Research areas include fields such as:
+- Mining natural resources  
+- Refining raw materials  
+- Producing industrial components  
+- Assembling advanced technologies  
 
-- materials science  
-- metallurgy  
-- engineering  
-- medicine  
-- military technology  
-- advanced manufacturing  
-
-Each breakthrough opens new paths for civilization to evolve.
+Industries become interconnected as supply chains expand, encouraging nations to specialize and collaborate through trade.
 
 ---
 
-### 💰 A Player-Driven Economy
+### 🔬 Research Drives Progress
 
-The economy of Epoch Nations is shaped by players.
+Technological discovery is one of the most important drivers of civilization development.
 
-Through the global **Crafting Marketplace**, nations can trade goods, specialize in industries, and establish supply chains that support large-scale production.
+Epoch Nations includes a branching research system where players unlock new capabilities by investing in scientific advancement.
+
+Research fields include:
+
+- Materials science  
+- Metallurgy  
+- Engineering  
+- Medicine  
+- Military technology  
+- Advanced manufacturing  
+
+Each discovery unlocks new crafting stations, industries, and production possibilities.
+
+---
+
+### 💰 A Player-Driven Global Economy
+
+The global economy in Epoch Nations is shaped by player activity.
+
+Through the **Crafting Marketplace**, nations can trade goods, specialize in production, and establish supply chains that support large-scale industries. Economic specialization naturally emerges as players focus on different sectors of production.
 
 Players may become:
 
-- industrial manufacturers  
-- technological innovators  
-- trade specialists  
-- resource suppliers  
+- Industrial manufacturers  
+- Technological innovators  
+- Trade specialists  
+- Resource suppliers  
 
-The market transforms creativity and strategy into economic influence.
+This player-driven system transforms production capabilities into economic influence within the global marketplace.
 
 ---
 
-### 📚 A Deep Knowledge System
+### 📚 Knowledge and Strategy
 
-To support its complex world, Epoch Nations includes powerful information systems such as the **Item Encyclopedia**, **Inventory Manager**, and **Crafting Tree Visualizer**.
+To support its complex simulation systems, Epoch Nations includes powerful tools that help players understand and plan within the world.
 
-These tools allow players to explore production chains, research dependencies, and economic opportunities while planning long-term strategies.
+These include:
 
-Understanding the systems of the world is just as important as mastering them.
+- **Item Encyclopedia** for exploring crafting recipes  
+- **Inventory Manager** for tracking resources and materials  
+- **Crafting Tree Visualizer** for understanding production chains  
+
+These systems allow players to plan long-term industrial strategies and manage large-scale economic operations.
 
 ---
 
 ### 🧠 Built for Community Creativity
 
-Epoch Nations is designed as an expandable platform.
+Epoch Nations is designed as an expandable platform where the community can help shape the world.
 
-Developers and modders can contribute new ideas through the **Community Item Registry**, submitting new crafting recipes and technologies that expand the ecosystem of the game.
+Developers and modders can contribute through systems such as the **Community Item Registry**, allowing new items, technologies, and production chains to be introduced into the ecosystem.
 
-This collaborative approach allows the world to grow organically as the community participates in its evolution.
+This collaborative model enables the game world to evolve continuously as players and developers contribute new ideas.
 
 ---
 
-### 🚀 The Vision
+### 🚀 The Long-Term Vision
 
-The long-term goal of Epoch Nations is to create a persistent simulation where civilizations continuously evolve through the contributions of players and developers alike.
+The long-term goal of Epoch Nations is to create a persistent simulation where civilizations continuously evolve through the creativity and decisions of its community.
 
-Future expansions aim to introduce:
+Future expansions aim to introduce systems such as:
 
 - AI-driven nations  
-- global diplomacy and alliances  
-- strategic conflict and defense systems  
-- dynamic economic simulations  
-- persistent shared worlds  
+- Global diplomacy and alliances  
+- Strategic conflict and defense systems  
+- Dynamic economic simulations  
+- Persistent shared worlds  
 
-Every new system brings the world closer to a fully realized living civilization simulator.
+Each new system expands the depth and scale of the simulation.
 
 ---
 
-### 🌟 A World Built by Innovation
+### 🌟 A World Shaped by Innovation
 
-Epoch Nations is not just about reaching the next technological era.
+Epoch Nations is not just about reaching the next technological era — it is about exploring how civilizations grow through creativity, discovery, and collaboration.
 
-It is about exploring how societies grow, industries emerge, and civilizations evolve through creativity, discovery, and collaboration.
+Whether you are a strategist, builder, economist, developer, or explorer, Epoch Nations offers a world where your decisions can shape the future of civilization.
 
-Whether you are a strategist, builder, developer, or explorer, Epoch Nations offers a world where your ideas can shape the future of civilization.
+
+
+
+<a id="why-play-epoch-nations"></a>
 
 ## 🌍 Why Play Epoch Nations
 
@@ -326,53 +332,57 @@ Shape the future of a persistent world.
 
 **The next great civilization could be yours.**
 
+<a id="features"></a>
+
 ## ✨ Features
 
-Epoch Nations combines deep simulation mechanics with a player-driven economy and technological progression system. The game is designed to create an evolving world where industry, discovery, and strategy shape the future of civilization.
+Epoch Nations combines deep simulation mechanics, technological progression, and a player-driven economy to create a dynamic world where civilizations evolve through innovation, industry, and strategic decision-making.
+
+The game is designed as both a **civilization simulator and a living economic ecosystem**, where every item, resource, and technological breakthrough contributes to the development of a global world.
 
 ---
 
 ### 🏛 Multi-Epoch Civilization Progression
 
-Advance through the major eras of human development, unlocking new technologies, industries, and capabilities along the way.
+Civilizations in Epoch Nations advance through multiple technological eras, known as **Epochs**, each introducing new tools, industries, and capabilities.
 
-Epoch Nations currently spans multiple technological periods including:
+Examples of major epochs include:
 
-- **Stone Age**
-- **Bronze Age**
-- **Iron Age**
-- **Classical Age**
-- **Medieval Age**
-- **Industrial Age**
-- **Modern Age**
-- **Digital Age**
-- **Information Age**
-- **Space Age**
+- **Stone Age** – primitive tools and early crafting  
+- **Bronze Age** – early metallurgy and improved production  
+- **Iron Age** – stronger tools, weapons, and infrastructure  
+- **Classical Age** – engineering advancements and organized societies  
+- **Medieval Age** – expanding industries and knowledge systems  
+- **Industrial Age** – factories, chemicals, and mass production  
+- **Modern Age** – electronics, transportation, and automation  
+- **Digital Age** – advanced computing and communication technologies  
+- **Information Age** – high-tech manufacturing and data systems  
+- **Space Age** – aerospace engineering and futuristic industries  
 
-Each epoch introduces new crafting stations, research discoveries, and production chains that expand the complexity of the world.
+Each epoch expands the scale and complexity of civilization.
 
 ---
 
-### ⚒ Extensive Crafting System
+### ⚒ Extensive Crafting and Production Systems
 
-Epoch Nations features a massive crafting ecosystem with **1,161+ unique craftable items**.
+Epoch Nations includes a massive crafting ecosystem with **over 1,100 unique items** and growing.
 
-Players can manufacture everything from simple tools to advanced industrial technologies by building complex production chains.
+Players can build production chains that transform raw resources into complex technologies through multiple stages of manufacturing.
 
-Crafting involves:
+Production processes may include:
 
-- gathering raw resources  
-- refining materials  
-- assembling intermediate components  
-- producing advanced technologies  
+- extracting natural resources  
+- refining raw materials  
+- producing intermediate components  
+- manufacturing advanced technologies  
 
-Every item plays a role in the evolving economy.
+These interconnected systems create a living industrial economy where planning and logistics play a critical role.
 
 ---
 
 ### 🏭 Specialized Crafting Stations
 
-Civilizations build and operate specialized crafting buildings that unlock new production capabilities.
+As civilizations advance, players gain access to specialized crafting buildings that unlock new production capabilities.
 
 Examples include:
 
@@ -386,354 +396,550 @@ Examples include:
 - Chemical Plant  
 - Electronics Lab  
 - Vehicle Plant  
-- Advanced Factory  
 - Research Lab  
 - Space Foundry  
 
-Each crafting station is **epoch-locked**, ensuring technology progresses naturally as civilizations evolve.
+Each station represents a technological milestone and expands what civilizations can produce.
 
 ---
 
 ### 🌳 Crafting Tree Visualizer
 
-The **Crafting Tree Visualizer** provides an interactive layered graph showing how items connect across production chains.
+The **Crafting Tree Visualizer** provides an interactive layered graph that helps players understand complex production dependencies.
 
-Players can instantly view:
+Players can easily view:
 
 - required crafting materials  
 - upstream production dependencies  
-- required crafting stations  
-- technology requirements  
+- crafting station requirements  
+- technology prerequisites  
 
-This powerful system makes complex industrial planning intuitive and accessible.
+This system makes large-scale industrial planning easier and more intuitive.
 
 ---
 
-### 🔬 Deep Research System
+### 🔬 Research and Technology System
 
-Technological discovery drives civilization forward.
+Scientific discovery drives the progress of civilization.
 
-Epoch Nations includes a growing research system with technologies spanning multiple branches of science and engineering.
+Epoch Nations includes a growing research system with multiple technology branches such as:
 
-Examples include:
-
-- Pottery & Kiln Craft  
-- Glass Making  
-- Iron Weapons Smithing  
-- Chemical Synthesis  
-- Steel Production  
+- Engineering  
+- Materials Science  
+- Metallurgy  
+- Military Technology  
+- Industrial Chemistry  
 - Electronics Manufacturing  
-- Vehicle Engineering  
-- Semiconductor Technology  
-- Biotechnology  
-- Drone Warfare  
-- Rocketry & Missiles  
+- Advanced Robotics  
 
-Research unlocks new buildings, production capabilities, and advanced technologies.
+Each research breakthrough unlocks new crafting stations, industries, and technologies.
 
 ---
 
-### 💰 Player-Driven Crafting Marketplace
+### 💰 Player-Driven Marketplace
 
-The **Crafting Market** allows nations to trade manufactured goods and resources using Credits.
+The global **Crafting Marketplace** allows civilizations to trade goods and resources using Credits.
 
 Players can:
 
-- sell crafted items  
-- purchase industrial goods from other nations  
-- specialize in production industries  
+- sell manufactured goods  
+- buy resources from other nations  
+- specialize in specific industries  
 - build trade networks  
 
-This creates a dynamic economy where supply, demand, and innovation shape the market.
+The marketplace creates a dynamic economy shaped by player decisions.
 
 ---
 
 ### 📦 Advanced Inventory Management
 
-The **Inventory Manager** provides powerful tools for tracking and organizing resources.
+The **Inventory Manager** allows players to efficiently manage large collections of resources and materials.
 
 Features include:
 
 - real-time inventory tracking  
 - advanced filtering and sorting  
-- credit value estimation  
-- quick material lookup  
+- material lookup tools  
+- estimated credit value calculations  
 
-Players can easily manage large inventories while planning future production chains.
+These tools help players manage production chains and plan future industries.
 
 ---
 
 ### 📚 Interactive Item Encyclopedia
 
-The built-in **Encyclopedia** acts as a knowledge hub for the entire game world.
+The built-in **Item Encyclopedia** acts as a knowledge hub for the entire world of Epoch Nations.
 
 Players can explore:
 
-- detailed item descriptions  
+- item descriptions  
 - crafting recipes  
 - research requirements  
 - production dependencies  
 
-With powerful search and filtering tools, players can quickly discover how any item fits into the broader economy.
+With powerful search and filtering tools, players can quickly discover how items fit into the global economy.
 
 ---
 
 ### 💻 Community Item Registry
 
-Epoch Nations encourages community creativity through the **Developer Registry**.
+Epoch Nations encourages community participation through a **Developer Registry** that allows developers and modders to contribute new content.
 
-Developers can submit new items using structured JSON recipe formats. The community can review and vote on submissions, and approved content can become part of the official crafting ecosystem.
+Developers can:
 
-This system enables continuous expansion of the game world through community contributions.
+- submit new items using JSON recipes  
+- propose new crafting chains  
+- expand production industries  
+- introduce new technological ideas  
+
+Community-approved contributions can become part of the evolving ecosystem.
 
 ---
 
-### 🌐 Built for Expansion
+### 🌐 Designed for Expansion
 
-Epoch Nations is designed as a long-term evolving simulation platform.
+Epoch Nations is built as a long-term simulation platform capable of expanding with new systems and features.
 
 Planned future systems include:
 
-- AI-driven nations and diplomacy  
+- AI-driven civilizations  
+- global diplomacy and alliances  
 - dynamic supply and demand economics  
-- global trade routes and logistics  
-- strategic conflict systems  
-- persistent shared worlds  
+- strategic conflict and defense systems  
+- persistent shared multiplayer worlds  
 
-Every update expands the depth and scale of the simulation.
+Every update expands the depth of the simulation.
 
 ---
 
-### 🚀 Endless Possibilities
+### 🚀 Endless Strategic Possibilities
 
-With its layered crafting systems, technological progression, and player-driven economy, Epoch Nations offers a sandbox where strategy, innovation, and collaboration shape the course of civilization.
+With its layered crafting systems, technological progression, and player-driven economy, Epoch Nations offers a sandbox where strategy, innovation, and collaboration determine the future of civilization.
 
-Every item crafted, technology discovered, and trade completed contributes to the growth of a living world.
+Every item crafted, technology discovered, and trade completed contributes to the evolution of a living world.
 
+<a id="system-requirements"></a>
 
-# ⚙️ System Requirements
+## ⚙️ System Requirements
 
-## Minimum
+Epoch Nations is designed to run efficiently on most modern systems while still supporting large-scale simulations and complex production networks. The game is built with modern web technologies and requires **Node.js v18 or higher** for development and server environments.
 
+Below are the recommended system specifications for running the game locally or hosting a server instance.
 
-- CPU: 2 cores
-- RAM: 4 GB
-- Storage: 5 GB
-- Node.js: v18+
+---
 
-## Recommended
+### 💻 Minimum Requirements
 
-- CPU: 4+ cores
-- RAM: 8–16 GB
-- Storage: SSD
-- Node.js: v18+
+These specifications are sufficient for running the game locally for development, testing, or small-scale simulations.
 
+| Component | Requirement |
+|----------|-------------|
+| **CPU** | Dual Core Processor |
+| **Memory (RAM)** | 4 GB |
+| **Storage** | 5 GB available space |
+| **Node.js** | Version 18 or higher |
+| **Package Manager** | npm |
+| **Operating System** | Windows, macOS, or Linux |
+| **Browser** | Modern browser (Chrome, Firefox, Edge, Safari) |
 
-# 💻 Running the Game Locally
+These requirements are suitable for:
 
-## Clone the Repository
+- local development
+- testing game mechanics
+- running small simulation environments
+
+---
+
+### 🚀 Recommended Requirements
+
+For larger simulations, multiplayer environments, or hosting persistent game servers, the following configuration is recommended.
+
+| Component | Recommended |
+|----------|-------------|
+| **CPU** | 4+ Core Processor |
+| **Memory (RAM)** | 8–16 GB |
+| **Storage** | SSD Storage |
+| **Node.js** | Version 18 or higher |
+| **Package Manager** | npm |
+| **Operating System** | Linux Server (Ubuntu recommended) |
+| **Network** | Stable broadband connection |
+
+These specifications provide better performance when:
+
+- running large industrial simulations
+- hosting persistent worlds
+- supporting multiple players
+- managing complex crafting economies
+
+---
+
+<a id="hosting-epoch-nations-on-a-vps"></a>
+
+## 🌐 Hosting Epoch Nations on a VPS
+
+If you plan to host Epoch Nations on a VPS or dedicated server, the following platforms are commonly used for Node.js applications:
+
+- AWS
+- DigitalOcean
+- Linode
+- Hetzner
+- Vultr
+
+A Linux-based server environment with Node.js and npm installed is recommended for stability and performance.
+
+---
+
+### 🧰 Required Software
+
+To develop or run Epoch Nations locally, the following tools must be installed:
+
+- **Node.js v18+**
+- **npm (Node Package Manager)**
+- **Git** for cloning the repository
+- A modern web browser for accessing the game interface
+
+Optional developer tools:
+
+- **Visual Studio Code**
+- **Docker** (for containerized environments)
+- **PM2** for managing production Node.js processes
+
+---
+
+### ⚡ Performance Notes
+
+Epoch Nations includes complex simulation systems such as:
+
+- crafting production chains
+- dynamic economies
+- research progression
+- inventory and marketplace systems
+
+While the game can run on modest hardware, systems with additional CPU cores and memory will provide smoother performance when managing large industrial networks or persistent worlds.
+
+<a id="running-the-game-locally"></a>
+
+## 💻 Running the Game Locally
+
+This section explains how to set up and run **Epoch Nations** on your local machine for development or testing. The project uses modern JavaScript tooling and requires **Node.js v18 or higher**.
+
+Running the game locally allows developers to experiment with features, test gameplay systems, and contribute improvements to the project.
+
+---
+
+### 📦 Prerequisites
+
+Before running the project, ensure the following software is installed:
+
+- **Node.js v18+**
+- **npm (Node Package Manager)**
+- **Git**
+- A modern web browser (Chrome, Firefox, Edge, or Safari)
+
+You can verify your Node installation with:
+
+```bash
+node -v
+npm -v
+```
+
+### 📥 Clone the Repository
+
+First, clone the Epoch Nations repository to your local machine.
 
 ```
 git clone https://github.com/YOUR_REPO/epoch-nations.git
 cd epoch-nations
 ```
+Replace YOUR_REPO with the actual repository owner if needed.
 
-## Install Dependencies
+### 📦 Install Project Dependencies
+
+Install all required Node.js packages using npm.
 
 ```
 npm install
 ```
+This command installs the dependencies listed in the project's package.json file.
 
-## Configure Environment Variables
+### ⚙ Configure Environment Variables
 
-### Create a file named:
+Epoch Nations uses environment variables to connect the frontend to backend services.
+
+Create a new file in the root of the project called:
 
 ```
 .env.local
 ```
-### Add:
+Add the following configuration variables:
 
 ```
 VITE_BASE44_APP_ID=your_app_id
 VITE_BASE44_APP_BASE_URL=your_backend_url
 ```
 
-### Example:
+Example configuration:
 
 ```
 VITE_BASE44_APP_ID=cbef744a8545c389ef439ea6
 VITE_BASE44_APP_BASE_URL=https://example.base44.app
 ```
+These values connect your local development environment to the backend API.
 
-## Start Development Server
+### ▶ Start the Development Server
+
+Once dependencies are installed and environment variables are configured, start the development server.
 
 ```
 npm run dev
 ```
+This will start the local development environment and compile the frontend application.
 
-### Open:
+### 🌐 Open the Game in Your Browser
+
+After the development server starts successfully, open the following URL in your browser:
 
 ```
 http://localhost:5173
 ```
+You should now see the Epoch Nations interface running locally.
 
-# 🌐 Hosting Epoch Nations on a VPS
-### Epoch Nations can run on any Node.js compatible server.
+The development server supports hot-reloading, meaning any code changes you make will automatically refresh the application.
 
-#### Examples:
+### 🧪 Development Workflow
 
-- AWS
+While running locally, developers can:
 
-- DigitalOcean
+- modify game mechanics
 
-- Linode
+- add crafting items
 
-- Hetzner
+- expand research systems
 
-- Vultr
+- test economic simulation changes
 
-## Install Node.js
+- experiment with UI improvements
+
+Changes to the code will automatically reload in the browser during development.
+
+### 🛠 Troubleshooting
+
+If you encounter issues running the project, try the following:
+
+Reinstall dependencies
 
 ```
-sudo apt update
-sudo apt install nodejs npm
+rm -rf node_modules
+npm install
 ```
 
-### Verify installation:
+Ensure Node version is correct
 
 ```
 node -v
-npm -v
 ```
+Node.js v18 or higher is required.
 
-## Install and Build
-
-```
-git clone https://github.com/YOUR_REPO/epoch-nations.git
-cd epoch-nations
-npm install
-npm run build
-```
-## Run Server
+Clear npm cache
 
 ```
-npm run preview
+npm cache clean --force
 ```
 
-## Run Server in Background
+### 🚀 Next Steps
 
-### Install PM2:
+Once you have the game running locally, you may want to:
+
+- host your own server instance
+
+- develop Forge SDK plugins
+
+- contribute new crafting items
+
+- expand the research system
+
+- improve economic simulation mechanics
+
+- See the following sections for more information:
+
+- Hosting Epoch Nations on a VPS
+
+- Forge SDK (Plugin System)
+
+- Contributing
+
+### 🌐 Optional: Configure a Domain with Nginx
+
+To host Epoch Nations under a domain name, install Nginx.
 
 ```
-npm install pm2 -g
+sudo apt install nginx -y
+```
+Example Nginx configuration:
+
+```
+server {
+    listen 80;
+    server_name yourdomain.com;
+
+    location / {
+        proxy_pass http://localhost:5173;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+    }
+}
+```
+Restart Nginx:
+
+```
+sudo systemctl restart nginx
 ```
 
-### Start server:
+Your game will now be accessible at:
 
 ```
-pm2 start npm --name "epoch-nations" -- run preview
+http://yourdomain.com
 ```
+
+### 🔒 Optional: Enable HTTPS with Let's Encrypt
+
+Install Certbot:
+
+```
+sudo apt install certbot python3-certbot-nginx -y
+```
+
+Run the SSL setup:
+
+```
+sudo certbot --nginx
+```
+
+Follow the prompts to enable HTTPS.
+
+After setup, your game will be available securely at:
+
+```
+https://yourdomain.com
+```
+
+### 📈 Monitoring the Server
+
+Useful PM2 commands:
+
+```
+pm2 list
+pm2 logs
+pm2 restart epoch-nations
+pm2 stop epoch-nations
+```
+
+These commands help monitor and manage the game server.
+
+
+<a id="forge-sdk-plugin-system"></a>
 
 ## 🔧 Forge SDK (Plugin System)
 
 The **Forge SDK** is the official plugin framework for **Epoch Nations**, designed to transform the game from a single experience into a **fully extensible platform for innovation**.
 
-Rather than limiting the world to the content shipped with the base game, the Forge SDK enables developers, modders, and creators to **extend the systems of civilization itself**. Through plugins, the community can introduce new technologies, industries, mechanics, and entire gameplay layers that seamlessly integrate with the core simulation.
+Rather than limiting the world to the content shipped with the base game, the Forge SDK allows developers, modders, and creators to extend the systems of civilization itself. Through plugins, the community can introduce new technologies, industries, mechanics, and gameplay systems that integrate directly into the core simulation.
 
-The goal of the Forge SDK is simple:
-
-> **Empower creators to expand the universe of Epoch Nations.**
+> **The mission of the Forge SDK is simple: empower creators to expand the universe of Epoch Nations.**
 
 ---
 
-### 🧩 A Modular Architecture for Infinite Expansion
+### 🧩 Modular Plugin Architecture
 
-The Forge SDK is built on a **modular plugin architecture** that allows new systems to integrate safely with the core game engine.
+The Forge SDK is built on a modular architecture that allows external plugins to integrate safely with the game engine.
 
-Plugins interact with defined APIs and schemas, ensuring that extensions remain compatible with the core simulation while still providing immense creative freedom.
+Plugins interact with defined APIs and structured data schemas, ensuring compatibility with the core systems while still allowing creators significant flexibility.
 
-Plugins can extend or enhance systems such as:
+Plugins can extend systems such as:
 
-- Crafting and manufacturing
-- Resource production and logistics
-- Research and technology trees
-- Buildings and industrial infrastructure
-- Economic mechanics and trade systems
-- User interface components
-- Data visualization and analytics
-- Gameplay automation and management tools
+- crafting and manufacturing
+- research and technology trees
+- resource production
+- buildings and infrastructure
+- economic systems and trade mechanics
+- data visualization tools
+- user interface components
+- automation and management utilities
 
-This modular approach ensures that the game can grow organically as new ideas are introduced.
+This modular design allows the ecosystem of Epoch Nations to grow organically as new ideas are introduced by the community.
 
 ---
 
-### ⚒ Expand the Crafting Ecosystem
+### ⚒ Expanding the Crafting Ecosystem
 
-Epoch Nations features a massive crafting system with **thousands of potential production chains**, and the Forge SDK allows creators to expand this ecosystem even further.
+Epoch Nations features a massive crafting system with thousands of possible production chains. The Forge SDK allows creators to expand this ecosystem even further.
 
 Plugins can introduce:
 
-- New resources and raw materials
-- Advanced refined materials
-- Industrial components
-- High-technology products
-- Entirely new production stations
-- Complex multi-stage manufacturing chains
+- new resources and raw materials
+- refined industrial materials
+- advanced manufacturing components
+- high-technology products
+- entirely new crafting stations
+- complex multi-stage production chains
 
-Developers can design industries that span multiple technological eras, creating entirely new economic sectors within the game world.
+These additions can interact directly with existing crafting systems, allowing creators to design entirely new industries.
 
-For example, a plugin might introduce:
+Example industries a plugin might introduce:
 
-- Advanced aerospace manufacturing
-- Renewable energy production
-- Quantum computing technologies
-- Interplanetary logistics industries
+- renewable energy infrastructure
+- aerospace manufacturing
+- advanced robotics
+- quantum computing technologies
+- planetary exploration equipment
 
-Each new addition can interact with existing production systems and markets.
-
----
-
-### 🔬 Extend the Research Tree
-
-Technological advancement is a core pillar of civilization development in Epoch Nations.
-
-Using the Forge SDK, developers can extend the research system with new scientific discoveries that unlock additional gameplay possibilities.
-
-Plugins may introduce:
-
-- New research branches
-- Advanced technologies
-- Industrial breakthroughs
-- Economic efficiency upgrades
-- Military or defensive innovations
-- Scientific discoveries that reshape production
-
-These technologies integrate directly with the existing research system, expanding the progression paths available to civilizations.
+Each new production chain can integrate into the global economy.
 
 ---
 
-### 🏭 Introduce New Buildings and Infrastructure
+### 🔬 Extending the Research System
 
-Civilizations grow through infrastructure, and plugins can introduce entirely new structures that expand industrial capabilities.
+Technological progress is a core pillar of Epoch Nations, and the Forge SDK allows developers to expand the research tree with new discoveries.
+
+Plugins can introduce:
+
+- new research branches
+- advanced technologies
+- industrial breakthroughs
+- efficiency upgrades
+- military innovations
+- experimental scientific discoveries
+
+These technologies integrate with the core research system and unlock new crafting capabilities, industries, and buildings.
+
+---
+
+### 🏭 Custom Buildings and Infrastructure
+
+Civilizations grow through infrastructure, and Forge SDK plugins can introduce entirely new structures.
 
 Examples include:
 
-- New crafting stations
-- Industrial facilities
-- energy production systems
-- research laboratories
+- specialized crafting stations
+- industrial processing facilities
+- energy generation systems
+- advanced laboratories
 - logistics hubs
-- advanced manufacturing complexes
+- automated production complexes
 
-Each building can define its own production rules, input materials, and output products, enabling creators to design entirely new industrial sectors.
+Each building can define its own input materials, crafting rules, and output products.
+
+This allows plugin developers to create entirely new industrial sectors.
 
 ---
 
 ### 📦 JSON-Driven Content Creation
 
-To make content creation accessible to both developers and modders, many Forge SDK systems support **JSON-based content definitions**.
+To make development accessible to both programmers and modders, many Forge SDK systems support **JSON-based content definitions**.
 
-This allows creators to introduce new content without modifying the core engine code.
+This allows creators to add new items, recipes, and technologies without modifying the core game engine.
 
 Example item definition:
 
@@ -749,6 +955,8 @@ Example item definition:
   "description": "A high-strength alloy used in advanced aerospace and industrial manufacturing."
 }
 ```
+
+<a id="economic-simulation-engine"></a>
 
 ## 💰 Economic Simulation Engine
 
@@ -1028,7 +1236,9 @@ Many experimental plugins may eventually inspire new official features for the b
 
 ---
 
-### 🏗 Planned Development Phases
+<a id="plugin-marketplace-roadmap"></a>
+
+## 🛒 Plugin Marketplace Roadmap
 
 The Plugin Marketplace will evolve in several stages as the Forge SDK ecosystem grows.
 
@@ -1087,7 +1297,35 @@ Developers can experiment, modders can expand the world, and players can experie
 
 Together, we can build a universe of systems, industries, and ideas that continues to evolve for years to come.
 
+---
 
+<a id="contributing"></a>
+
+## 🤝 Contributing
+
+Contributions are welcome! If you'd like to help improve Epoch Nations, please follow these steps:
+
+1. Fork the repository
+2. Create a new branch for your feature or fix
+3. Commit your changes
+4. Push the branch to your fork
+5. Open a Pull Request describing your changes
+
+Please ensure your code follows the project standards and includes clear documentation when appropriate.
+
+---
+
+<a id="license"></a>
+
+## 📄 License
+
+Epoch Nations is distributed under a **source-available royalty-based license**.
+
+See the `LICENSE` file for full licensing terms and usage permissions.
+
+---
+
+**Epoch Nations — Build civilizations. Shape history. Create the future.**
 
 
 
