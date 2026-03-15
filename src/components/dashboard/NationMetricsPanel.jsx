@@ -104,19 +104,6 @@ export default function NationMetricsPanel({ nation, allNations }) {
         </div>
       </div>
 
-      {/* ── Spending & Education ── */}
-      <div className="rounded-xl px-3 py-2.5 shrink-0 grid grid-cols-2 gap-3"
-        style={{ background: "rgba(248,113,113,0.05)", border: "1px solid rgba(248,113,113,0.12)" }}>
-        <div>
-          <div className="text-[11px] text-slate-500 ep-mono uppercase">Military</div>
-          <div className="text-[14px] font-black ep-mono text-red-400">{nation.military_spending || 20}%</div>
-        </div>
-        <div>
-          <div className="text-[11px] text-slate-500 ep-mono uppercase">Education</div>
-          <div className="text-[14px] font-black ep-mono text-blue-400">{nation.education_spending || 20}%</div>
-        </div>
-      </div>
-
       {/* ── Technology ── */}
       <div className="shrink-0">
         <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase mb-2">TECHNOLOGY</div>
