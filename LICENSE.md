@@ -1,30 +1,56 @@
-Epoch Nations Community & Commercial License
-Version 1.0
+# Epoch Nations Community & Commercial License
+## Version 1.0
 
-Copyright (c) 2026 Hubzam Enterprises, LLC
-Doing Business As: Creation Lab Studios
+Copyright © 2026  
+**Hubzam Enterprises, LLC**  
+Doing Business As: **Creation Lab Studios**
 
-Senior Developer: Ronald Carmenate
-Senior Analyst & Graphic Designer: Christy Carmenate
+Senior Developer: **Ronald Carmenate**  
+Senior Analyst & Graphic Designer: **Christy Carmenate**
 
-Permission is granted to view, study, and modify the Epoch Nations source code for personal or non-commercial use.
+---
 
-Attribution must remain visible in all copies or derivative works.
+## 1. Overview
 
-Commercial Use:
-Any individual or organization generating revenue from the software or derivative works must pay a royalty of 4% of gross revenue derived from the software.
+The **Epoch Nations Community & Commercial License** governs the use, modification, and distribution of the Epoch Nations software.
 
-Examples include but are not limited to:
+This license allows individuals and organizations to study and modify the source code for personal or non-commercial use while requiring royalties for commercial exploitation of the software or derivative works.
 
-• In-game purchases
-• Subscriptions
-• Advertising revenue
-• Marketplace transactions
-• Paid access to servers
-• Sale of game-related digital goods
+By accessing, using, copying, modifying, or distributing the software, you agree to the terms of this license.
 
-Non-commercial private use is permitted without royalty.
+---
 
-Failure to comply with attribution or royalty requirements terminates the rights granted by this license.
+## 2. Definitions
 
-The software is provided "AS IS", without warranty of any kind.
+For the purposes of this license:
+
+**Software** refers to the Epoch Nations source code, assets, documentation, and any related materials contained within this repository.
+
+**Derivative Works** refers to any modified version of the software, including forks, builds, plugins, or extended systems created using the original source code.
+
+**Commercial Use** refers to any activity that generates revenue directly or indirectly from the software or derivative works.
+
+**Non-Commercial Use** refers to personal, educational, or research use where no revenue is generated.
+
+---
+
+## 3. Permissions
+
+Subject to the terms of this license, permission is granted to:
+
+- View and study the source code
+- Use the software for personal purposes
+- Modify the source code for experimentation or learning
+- Create derivative works for **non-commercial purposes**
+- Share non-commercial modifications provided attribution remains intact
+
+These permissions apply only when the license conditions described below are followed.
+
+---
+
+## 4. Attribution Requirement
+
+All copies of the software or derivative works must retain visible attribution to the original creators.
+
+The following attribution must remain visible in source code, documentation, and distributed builds:
+
