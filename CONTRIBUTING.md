@@ -1,21 +1,43 @@
-# Contributing to Epoch Nations
+<a id="contributing"></a>
 
-Thank you for your interest in contributing.
+## 🤝 Contributing
 
-## Ways to Contribute
+Contributions to **Epoch Nations** are welcome and encouraged. The project is designed to grow through collaboration from developers, designers, modders, and creative thinkers who want to expand the world of the simulation.
 
-• Bug fixes  
-• UI improvements  
-• Crafting items  
-• Documentation  
-• Performance improvements  
+Whether you are fixing bugs, improving documentation, creating new gameplay systems, or contributing ideas for future features, your help is greatly appreciated.
 
-## Contribution Rules
+---
 
-1. Keep existing copyright notices intact.
-2. Contributions must follow project coding standards.
-3. All contributions are licensed under the Epoch Nations Community & Commercial License.
+### 🌍 Ways You Can Contribute
 
-## Contributor License Grant
+There are many ways to participate in the development of Epoch Nations:
 
-By submitting code to this repository you grant Hubzam Enterprises, LLC the right to use, modify, distribute, and commercialize your contribution as part of the Epoch Nations project.
+- Fix bugs or improve existing systems
+- Expand crafting recipes and production chains
+- Add new technologies to the research system
+- Improve the user interface or gameplay experience
+- Develop plugins using the Forge SDK
+- Improve documentation and tutorials
+- Suggest new gameplay mechanics or systems
+
+Every contribution helps make the project stronger.
+
+---
+
+### 🛠 Development Setup
+
+To contribute to the project, you will first need to run the game locally.
+
+1. Fork the repository
+2. Clone your fork to your local machine
+3. Install dependencies
+4. Start the development server
+
+Example setup:
+
+```bash
+git clone https://github.com/YOUR_USERNAME/epoch-nations.git
+cd epoch-nations
+```
+npm install
+npm run dev
