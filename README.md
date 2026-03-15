@@ -2,47 +2,44 @@
 
 ![Version](https://img.shields.io/badge/version-alpha-blue)
 ![Node](https://img.shields.io/badge/node-%3E%3D18-green)
-![License](https://img.shields.io/badge/license-open--source-brightgreen)
+![License](https://img.shields.io/badge/license-royalty--based%20source--available-brightgreen)
 ![Contributions](https://img.shields.io/badge/contributions-welcome-orange)
 
-Epoch Nations is a **persistent civilization simulation game** where players build nations from the earliest stages of human development to advanced global civilizations.
+**Epoch Nations** is a persistent civilization simulation game where players build nations from the earliest stages of human development to advanced global civilizations.
 
 Players manage:
 
-- Resources  
-- Population  
-- Cities  
-- Global Trade  
-- Diplomacy  
-- Research  
-- Economic Systems  
-- Military Strategy  
+- Resources
+- Population
+- Cities
+- Global Trade
+- Diplomacy
+- Research
+- Economic Systems
+- Military Strategy
 
 Unlike traditional strategy games, **Epoch Nations runs as a living world simulation** where nations evolve continuously and the global economy changes over time.
 
-Technology used:
+### Technology Stack
+
 - Base44
 - JavaScript
 - React
-- etc.
+- Node.js
 
----
+## 📖 Table of Contents
 
-# 📖 Table of Contents
-
-- About Epoch Nations
-- Why Play Epoch Nations
-- Features
-- System Requirements
-- Running the Game Locally
-- Hosting a Server
-- Forge SDK (Plugin System)
-- Plugin Development
-- Architecture Overview
-- Economic Simulation Engine
-- Plugin Marketplace Roadmap
-- Contributing
-- License
+- [About Epoch Nations](#-about-epoch-nations)
+- [Why Play Epoch Nations](#-why-play-epoch-nations)
+- [Features](#-features)
+- [System Requirements](#-system-requirements)
+- [Running the Game Locally](#-running-the-game-locally)
+- [Hosting a Server](#-hosting-epoch-nations-on-a-vps)
+- [Forge SDK (Plugin System)](#-forge-sdk-plugin-system)
+- [Economic Simulation Engine](#-economic-simulation-engine)
+- [Plugin Marketplace Roadmap](#-plugin-marketplace-roadmap)
+- [Contributing](#-contributing)
+- [License](#-license)
 
 ## 📖 About Epoch Nations
 
