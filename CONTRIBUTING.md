@@ -38,6 +38,6 @@ Example setup:
 ```bash
 git clone https://github.com/YOUR_USERNAME/epoch-nations.git
 cd epoch-nations
-```
 npm install
 npm run dev
+```
