@@ -219,9 +219,9 @@ export default function Dashboard() {
       </header>
 
       {/* DESKTOP BENTO GRID — 3 cols: [Nation Stats] [World Map + Chat] [Metrics top / Market Feed bottom] */}
-      <main className="relative z-10 p-4 hidden lg:grid gap-4" style={{ height: "calc(100vh - 57px)", gridTemplateColumns: "320px 1fr 380px", gridTemplateRows: "1fr 28%", overflow: "hidden" }}>
-        {/* Col 1: Nation Stats — full height */}
-        <div style={{ gridRow: "1 / 3", overflowY: "auto" }}><NationStatsPanel nation={myNation} /></div>
+      <main className="relative z-10 p-4 hidden lg:grid gap-4" style={{ height: "calc(100vh - 57px)", gridTemplateColumns: "300px 1fr 360px", gridTemplateRows: "auto 1fr", overflow: "hidden" }}>
+        {/* Col 1: Nation Stats — full height, no scroll */}
+        <div style={{ gridRow: "1 / 3", overflow: "hidden" }}><NationStatsPanel nation={myNation} /></div>
         {/* Col 2 row 1: World Map */}
         <div style={{ gridRow: "1 / 2", overflow: "hidden" }}>
           <WorldMap myNation={myNation} onSelectNation={n => setSelectedNation(n)} onOpenAdvisor={() => setShowAdvisor(true)} />
@@ -230,11 +230,11 @@ export default function Dashboard() {
         <div style={{ gridColumn: "2 / 3", gridRow: "2 / 3", minWidth: 0, overflow: "hidden" }}>
           <WorldChat myNation={myNation} user={user} />
         </div>
-        {/* Col 3 row 1: Nation Metrics (Core Metrics, Fuel, Spending, Technology) */}
+        {/* Col 3: Metrics (top, auto height) + Market Feed (fills remaining) */}
         <div style={{ gridRow: "1 / 2", overflowY: "auto" }}>
           <NationMetricsPanel nation={myNation} allNations={[myNation].filter(Boolean)} />
         </div>
-        {/* Col 3 row 2: Market Feed (Stock Ticker) */}
+        {/* Col 3 row 2: Market Feed (Stock Ticker) — expands to fill remaining height */}
         <div style={{ gridRow: "2 / 3", minHeight: 0, overflow: "hidden" }}>
           <StockTicker onSelectStock={s => setSelectedStock(s)} />
         </div>
