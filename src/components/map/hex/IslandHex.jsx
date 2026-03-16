@@ -49,10 +49,19 @@ export default function IslandHex({ tile, myNation, isSelected, zoom }) {
 
   const hexPts = hexCornerPoints(cx, cy);
 
+  const glowFilter = isSelected ? "url(#hoverGlow)" : isMe ? "url(#myGlow)" : isEnemy ? "url(#enemyGlow)" : isAlly ? "url(#myGlow)" : "none";
+
   return (
-    <g style={{ cursor: "pointer" }}>
+    <g style={{ cursor: "pointer" }} filter={glowFilter}>
       {/* Shallow water base */}
       <polygon points={hexPts} fill="#1a5a8a" opacity="0.65"/>
+
+      {/* Animated shimmer ring for my islands */}
+      {isMe && (
+        <polygon points={hexPts} fill="none" stroke="#22d3ee" strokeWidth="2">
+          <animate attributeName="stroke-opacity" values="0.6;0.15;0.6" dur="2.5s" repeatCount="indefinite"/>
+        </polygon>
+      )}
 
       {/* Shore/beach ring */}
       <ellipse cx={cx+ox} cy={cy+oy} rx={rx+HEX_SIZE*0.1} ry={ry+HEX_SIZE*0.09}
