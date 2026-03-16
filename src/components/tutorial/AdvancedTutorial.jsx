@@ -106,6 +106,8 @@ const SECTIONS_INLINE = [
   ]},
 ];
 
+const SECTIONS = SECTIONS_DEEP || SECTIONS_INLINE;
+
 export default function AdvancedTutorial({ onClose }) {
   const [activeSection, setActiveSection] = useState(0);
   const [activeStep, setActiveStep] = useState(0);
