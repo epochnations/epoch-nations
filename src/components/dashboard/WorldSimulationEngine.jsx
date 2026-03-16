@@ -538,8 +538,8 @@ async function executeAITradeRoute(aiNation, allNations) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// AI NATION GROWTH
-// AI nations autonomously improve their stats, workers, and can advance epochs
+// AI NATION GROWTH — SMART & AGGRESSIVE
+// AI nations autonomously improve stats, optimize workers, advance epochs fast
 // ─────────────────────────────────────────────────────────────────────────────
 async function executeAINationGrowth(aiNation) {
   try {
@@ -548,43 +548,100 @@ async function executeAINationGrowth(aiNation) {
     const gdp = aiNation.gdp || 200;
     const stability = aiNation.stability || 65;
     const pop = aiNation.population || 10;
+    const epochIdx = EPOCHS.indexOf(aiNation.epoch || "Stone Age");
+    const isAtWar = (aiNation.at_war_with || []).length > 0;
 
-    // Boost GDP slowly
-    updates.gdp = Math.round(gdp * (1 + 0.01 + Math.random() * 0.02));
-    // Improve manufacturing
-    updates.manufacturing = Math.min(200, (aiNation.manufacturing || 50) + Math.floor(Math.random() * 3));
-    // Grow tech points
-    updates.tech_points = (aiNation.tech_points || 0) + Math.floor(5 + Math.random() * 10);
-    // Stability drift toward 70
-    if (stability < 70) updates.stability = Math.min(100, stability + 1);
-    // Add a worker if pop allows
+    // Smart GDP growth: scales with epoch, tech, manufacturing
+    const growthRate = 0.03 + (epochIdx * 0.008) + (Math.random() * 0.025);
+    updates.gdp = Math.round(gdp * (1 + growthRate));
+    updates.gdp_prev_tick = gdp;
+    updates.national_wealth = Math.round((updates.gdp || gdp) * (1.2 + epochIdx * 0.1));
+
+    // Manufacturing grows faster with higher epoch
+    updates.manufacturing = Math.min(300, (aiNation.manufacturing || 50) + Math.floor(2 + Math.random() * (4 + epochIdx)));
+
+    // Tech points grow faster — AI is intellectually aggressive
+    const techGain = Math.floor(20 + epochIdx * 8 + Math.random() * 20);
+    updates.tech_points = (aiNation.tech_points || 0) + techGain;
+
+    // Population growth when stable
+    if (stability >= 55 && pop < (aiNation.housing_capacity || 20)) {
+      updates.population = pop + 1;
+      updates.housing_capacity = (aiNation.housing_capacity || 20) + Math.round(Math.random() * 2);
+    }
+
+    // Stability management — AI stabilizes quickly
+    if (stability < 75 && !isAtWar) updates.stability = Math.min(100, stability + 3);
+    else if (stability < 60 && isAtWar) updates.stability = Math.min(100, stability + 1);
+
+    // Resources: boost based on worker allocation
+    const foodWorkers = (aiNation.workers_farmers || 0) + (aiNation.workers_hunters || 0) + (aiNation.workers_fishermen || 0);
+    updates.res_food = Math.min(5000, (aiNation.res_food || 200) + foodWorkers * (8 + epochIdx * 2));
+    updates.res_wood = Math.min(3000, (aiNation.res_wood || 100) + (aiNation.workers_lumberjacks || 0) * (6 + epochIdx));
+    updates.res_stone = Math.min(3000, (aiNation.res_stone || 100) + (aiNation.workers_quarry || 0) * 5);
+    updates.res_gold = Math.min(2000, (aiNation.res_gold || 50) + (aiNation.workers_miners || 0) * 4);
+    if (epochIdx >= 1) updates.res_iron = Math.min(2000, (aiNation.res_iron || 0) + (aiNation.workers_iron_miners || 0) * 5);
+    if (epochIdx >= 3) updates.res_oil = Math.min(2000, (aiNation.res_oil || 0) + (aiNation.workers_oil_engineers || 0) * 6);
+
+    // Smart worker reallocation: prioritize scarce resources
     const totalWorkers =
       (aiNation.workers_farmers || 0) + (aiNation.workers_lumberjacks || 0) +
       (aiNation.workers_quarry || 0) + (aiNation.workers_miners || 0) +
       (aiNation.workers_soldiers || 0) + (aiNation.workers_researchers || 0) +
-      (aiNation.workers_hunters || 0);
-    if (totalWorkers < pop - 1 && Math.random() < 0.5) {
-      // Prioritize based on lowest resource
-      if ((aiNation.res_food || 0) < 100) updates.workers_farmers = (aiNation.workers_farmers || 0) + 1;
-      else if ((aiNation.res_wood || 0) < 80) updates.workers_lumberjacks = (aiNation.workers_lumberjacks || 0) + 1;
-      else if ((aiNation.res_gold || 0) < 80) updates.workers_miners = (aiNation.workers_miners || 0) + 1;
-      else updates.workers_researchers = (aiNation.workers_researchers || 0) + 1;
+      (aiNation.workers_hunters || 0) + (aiNation.workers_iron_miners || 0) +
+      (aiNation.workers_oil_engineers || 0) + (aiNation.workers_industrial || 0);
+    if (totalWorkers < (updates.population || pop) - 1 && Math.random() < 0.75) {
+      // AI smartly fills most needed roles
+      if ((aiNation.res_food || 0) < 150) updates.workers_farmers = (aiNation.workers_farmers || 0) + 1;
+      else if ((aiNation.workers_researchers || 0) < 4 + epochIdx) updates.workers_researchers = (aiNation.workers_researchers || 0) + 1;
+      else if (epochIdx >= 1 && (aiNation.res_iron || 0) < 200) updates.workers_iron_miners = (aiNation.workers_iron_miners || 0) + 1;
+      else if (epochIdx >= 3 && (aiNation.res_oil || 0) < 300) updates.workers_oil_engineers = (aiNation.workers_oil_engineers || 0) + 1;
+      else if (epochIdx >= 2) updates.workers_industrial = (aiNation.workers_industrial || 0) + 1;
+      else updates.workers_lumberjacks = (aiNation.workers_lumberjacks || 0) + 1;
     }
-    // Epoch advancement when tech points are high enough
-    const epochIdx = EPOCHS.indexOf(aiNation.epoch || "Stone Age");
+
+    // Military growth in war
+    if (isAtWar) {
+      updates.unit_power = Math.min(500, (aiNation.unit_power || 10) + Math.round(2 + Math.random() * 4));
+      updates.defense_level = Math.min(500, (aiNation.defense_level || 10) + Math.round(1 + Math.random() * 3));
+    } else if (Math.random() < 0.3) {
+      // Gradual military buildup in peace
+      updates.unit_power = Math.min(500, (aiNation.unit_power || 10) + Math.round(Math.random() * 2));
+    }
+
+    // Currency growth from economic activity
+    const currencyGain = Math.round((updates.gdp || gdp) * 0.04 + Math.random() * 20);
+    updates.currency = (aiNation.currency || 400) + currencyGain;
+    updates.savings_balance = Math.min((aiNation.savings_balance || 0) + Math.round(currencyGain * 0.2), (updates.currency || 400) * 0.5);
+
+    // Inflation stays low for AI
+    updates.inflation_rate = Math.max(-2, Math.min(8, (aiNation.inflation_rate || 0) + (Math.random() - 0.55) * 0.5));
+    updates.currency_stability = Math.min(1.8, Math.max(0.7, (aiNation.currency_stability || 1.0) + (Math.random() - 0.4) * 0.02));
+
+    // Epoch advancement — AI advances aggressively
     const nextEpoch = EPOCHS[epochIdx + 1];
-    const techNeeded = (epochIdx + 1) * 150;
-    if (nextEpoch && (aiNation.tech_points || 0) >= techNeeded && stability >= 50 && pop >= (epochIdx + 1) * 5) {
+    const techNeeded = Math.max(50, (epochIdx + 1) * 80); // lower threshold = faster advancement
+    if (nextEpoch && (updates.tech_points || 0) >= techNeeded && stability >= 45 && pop >= (epochIdx + 1) * 3) {
       updates.epoch = nextEpoch;
       updates.tech_points = 0;
       updates.tech_level = (aiNation.tech_level || 1) + 1;
+
       await base44.entities.ChatMessage.create({
         channel: "global",
         sender_nation_name: "WORLD HERALD",
         sender_flag: "📜",
         sender_color: "#f59e0b",
         sender_role: "system",
-        content: `🌟 EPOCH ADVANCE — ${aiNation.name} has entered the ${nextEpoch}!`,
+        content: `🌟 EPOCH ADVANCE — ${aiNation.name} has entered the ${nextEpoch}! Their civilization leaps forward with new technology and capabilities.`,
+      }).catch(() => {});
+
+      await base44.entities.WorldChronicle.create({
+        event_type: "tech",
+        title: `${aiNation.name} Advances to ${nextEpoch}`,
+        summary: `${aiNation.name} has advanced to the ${nextEpoch} under ${aiNation.leader || "their leader"}'s governance.`,
+        actors: [aiNation.name],
+        importance: "high",
+        era_tag: nextEpoch,
       }).catch(() => {});
     }
 
