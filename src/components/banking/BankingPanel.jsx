@@ -211,13 +211,26 @@ export default function BankingPanel({ nation, onClose, onRefresh }) {
   return (
     <PanelShell onClose={onClose}>
       {/* Header */}
-      <div className="flex items-center justify-between mb-5">
+      <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center">
             <Landmark size={16} className="text-cyan-400" />
           </div>
           <div>
-            <div className="font-bold text-white">National Bank</div>
+            <div className="font-bold text-white flex items-center gap-3">
+              National Bank
+              {/* Checking / Savings quick tabs inline with title */}
+              <div className="flex gap-1">
+                <button onClick={() => setTab("checking")}
+                  className={`px-2.5 py-0.5 rounded-lg text-[10px] font-bold transition-all ${tab === "checking" ? "bg-cyan-500/25 text-cyan-300 border border-cyan-500/40" : "text-slate-500 hover:text-slate-300 border border-transparent"}`}>
+                  Checking
+                </button>
+                <button onClick={() => setTab("savings")}
+                  className={`px-2.5 py-0.5 rounded-lg text-[10px] font-bold transition-all ${tab === "savings" ? "bg-amber-500/25 text-amber-300 border border-amber-500/40" : "text-slate-500 hover:text-slate-300 border border-transparent"}`}>
+                  Savings
+                </button>
+              </div>
+            </div>
             <div className="text-xs text-slate-500">Lending &amp; Financial Services</div>
           </div>
         </div>
@@ -225,6 +238,13 @@ export default function BankingPanel({ nation, onClose, onRefresh }) {
           <X size={16} />
         </button>
       </div>
+
+      {/* Checking & Savings tabs — full content */}
+      {tab === "checking" && <CheckingTab nation={nation} onRefresh={onRefresh} />}
+      {tab === "savings" && <SavingsTab nation={nation} onRefresh={onRefresh} />}
+
+      {/* Loans section — only shown when on a loans tab */}
+      {(tab === "loans" || tab === "my_loans" || tab === "debt_market") && (<>
 
       {/* Debt summary bar */}
       <div className="grid grid-cols-3 gap-3 mb-5">
