@@ -4,8 +4,8 @@
  */
 import { useState, useRef, useEffect, useCallback } from "react";
 
-const MIN_ZOOM = 0.35;
-const MAX_ZOOM = 6;
+const MIN_ZOOM = 0.05; // essentially infinite zoom out
+const MAX_ZOOM = 8;
 const ZOOM_STEP = 0.25;
 
 const PAN_STORAGE_KEY = "epoch_map_pan";

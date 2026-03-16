@@ -444,6 +444,22 @@ export default function MapTerrain({ zoom }) {
       {/* ── Aged paper vignette / edge burn ── */}
       <rect x="0" y="0" width={MAP_W} height={MAP_H} fill="url(#paperVignette)"/>
 
+      {/* ── Infinite ocean extension tiles (beyond map edges) ── */}
+      {/* Extends the parchment/ocean in all directions for infinite world feel */}
+      {[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]].map(([tx,ty]) => (
+        <rect key={`${tx}_${ty}`}
+          x={tx * MAP_W} y={ty * MAP_H}
+          width={MAP_W} height={MAP_H}
+          fill="url(#oceanPaper)" opacity="0.85"/>
+      ))}
+      {/* Subtle extended parchment border fade on extensions */}
+      {[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]].map(([tx,ty]) => (
+        <rect key={`hatch_${tx}_${ty}`}
+          x={tx * MAP_W} y={ty * MAP_H}
+          width={MAP_W} height={MAP_H}
+          fill="url(#oceanHatch)" opacity="0.6"/>
+      ))}
+
       {/* ── Border frame — ink margin ── */}
       <rect x="0" y="0" width={MAP_W} height={MAP_H}
         fill="none" stroke="#5a3a10" strokeWidth="4" opacity="0.4"/>
