@@ -234,7 +234,12 @@ export default function BankingPanel({ nation, onClose, onRefresh }) {
             <div className="text-xs text-slate-500">Lending &amp; Financial Services</div>
           </div>
         </div>
-        <button onClick={onClose} className="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-slate-400 hover:text-white">
+        <div className="flex items-center gap-2">
+          <button onClick={() => setTab("loans")}
+            className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all ${["loans","my_loans","debt_market"].includes(tab) ? "bg-green-500/20 text-green-300 border border-green-500/30" : "text-slate-500 hover:text-slate-300 border border-transparent"}`}>
+            Loans
+          </button>
+          <button onClick={onClose} className="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-slate-400 hover:text-white">
           <X size={16} />
         </button>
       </div>
