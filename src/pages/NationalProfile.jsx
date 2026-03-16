@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
-import { Shield, TrendingUp, Swords, BookOpen, Globe, Share2 } from "lucide-react";
+import { Shield, TrendingUp, Swords, BookOpen, Globe, Share2, Landmark } from "lucide-react";
+import BankingPanel from "../components/banking/BankingPanel.jsx";
 import IdentityHeader from "../components/profile/IdentityHeader.jsx";
 import EconomicLedger from "../components/profile/EconomicLedger.jsx";
 import WarRoom from "../components/profile/WarRoom.jsx";
