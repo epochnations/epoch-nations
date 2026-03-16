@@ -65,7 +65,7 @@ function colorClasses(color) {
 }
 
 export default function BankingPanel({ nation, onClose, onRefresh }) {
-  const [tab, setTab] = useState("loans");        // loans | debt_market | my_loans
+  const [tab, setTab] = useState("checking");     // checking | savings | loans | debt_market | my_loans
   const [loans, setLoans] = useState([]);
   const [debtMarket, setDebtMarket] = useState([]); // defaulted loans from other nations
   const [loading, setLoading] = useState(true);
