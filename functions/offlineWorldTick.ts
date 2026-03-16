@@ -106,9 +106,29 @@ async function tickNation(base44, nation) {
   await base44.asServiceRole.entities.Nation.update(nation.id, updates);
 }
 
-const LEADER_FIRSTS = ["Arman","Erika","Viktor","Soren","Yuna","Marcus","Dayo","Leila","Otto","Zara","Cyrus","Petra","Rael","Nora","Idris"];
-const LEADER_LASTS  = ["Petrov","Vogel","Laurent","Stahl","Osei","Tanaka","Reyes","Novak","Kimura","Torres","Ashford","Miran","Voss","Khalid","Stern"];
+const LEADER_FIRSTS = ["Arman","Erika","Viktor","Soren","Yuna","Marcus","Dayo","Leila","Otto","Zara","Cyrus","Petra","Rael","Nora","Idris","Tariq","Svea","Kofi","Mira","Alexei","Yolanda","Fenrir","Ingrid","Obinna","Celeste"];
+const LEADER_LASTS  = ["Petrov","Vogel","Laurent","Stahl","Osei","Tanaka","Reyes","Novak","Kimura","Torres","Ashford","Miran","Voss","Khalid","Stern","Eriksson","Mbeki","Vasquez","Whitmore","Nakamura","Dragan","Ferreira","Holst","Szabo","Okafor"];
 const AI_SECTORS    = ["Agriculture","Defense","Technology","Finance","Energy","Stone","Iron","Timber"];
+
+const AI_NATION_PREFIXES = ["Republic of","Kingdom of","Empire of","Commonwealth of","Dominion of","Federation of","Sultanate of","Duchy of","Principality of","Union of","Confederation of","State of"];
+const AI_NATION_ROOTS = [
+  "Valdoria","Keshar","Morneth","Arvalia","Strenholm","Quelindra","Borrath","Caldenmere","Thraxis","Vestara",
+  "Galthorn","Sorvaine","Eldaryn","Korrath","Prismoor","Halcyonis","Sunderveil","Novantis","Draxholm","Aelindra",
+  "Caeldrath","Thymorin","Valdenmere","Estorath","Lirannos","Orvantis","Keshmara","Brudhaven","Aulindra","Tharenmoor",
+  "Solventis","Vraxton","Mirethia","Orstholm","Quelvaros","Ashenveil","Valdrath","Norrindal","Kaelthos","Serenthal",
+  "Dravenmoor","Elystara","Vorthane","Grethindal","Sundrath","Maelindra","Cresthaven","Irenmoor","Belsorath","Arendholm"
+];
+
+function generateAINationName(seed) {
+  const s = seed || Date.now();
+  // 40% chance of prefix, 60% just root name
+  if ((s % 10) < 4) {
+    const prefix = AI_NATION_PREFIXES[s % AI_NATION_PREFIXES.length];
+    const root = AI_NATION_ROOTS[(s * 7) % AI_NATION_ROOTS.length];
+    return `${prefix} ${root}`;
+  }
+  return AI_NATION_ROOTS[s % AI_NATION_ROOTS.length];
+}
 
 function randomLeader(seed) {
   const s = seed || Date.now();

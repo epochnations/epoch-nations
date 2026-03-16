@@ -131,14 +131,23 @@ function pickStrategicAction(nation, goal, culture, allNations) {
   // War-related
   const isAtWar = (nation.at_war_with || []).length > 0;
   if (isAtWar && roll < 0.15) return "war_statement";
-  // Aid nations at war (including player nations)
+  // Aid nations at war
   const nationsAtWar = allNations.filter(n => n.id !== nation.id && (n.at_war_with || []).length > 0);
   if (nationsAtWar.length > 0 && (nation.currency || 0) > 300 && roll < 0.15) return "war_aid";
-  // Declare war on non-allied, non-war nations (military empires / warrior clans more likely)
+  // Declare war
   const canDeclareWar = !isAtWar && (culture.diplomacyBias === "aggressive" || goal.id === "expand_military");
   if (canDeclareWar && roll < 0.08) return "declare_war";
 
-  // Trade/alliance proposals
+  // Real alliance formation (writes to DB)
+  if (goal.id === "forge_alliances" && (nation.allies || []).length < 3 && roll < 0.18) return "form_alliance";
+
+  // Real trade route creation (writes to DB)
+  if ((goal.id === "economic_growth" || goal.id === "dominate_oil") && roll < 0.15) return "create_trade_route";
+
+  // Grow workers / improve nation
+  if (roll < 0.12) return "grow_nation";
+
+  // Chat diplomacy
   if (goal.id === "forge_alliances" && roll < 0.4) return "propose_alliance";
   if (goal.id === "dominate_oil" && (nation.res_oil || 0) > 30 && roll < 0.35) return "oil_trade_offer";
   if (goal.id === "economic_growth" && roll < 0.3) return "trade_proposal";
@@ -148,7 +157,7 @@ function pickStrategicAction(nation, goal, culture, allNations) {
   // Aid — resource/credit-wealthy AI nations can send aid
   if ((nation.currency || 0) > 500 && roll < 0.12) return "send_aid";
 
-  // AI stock buying — AI nations invest in other nations' stocks
+  // AI stock buying
   if ((nation.currency || 0) > 200 && roll < 0.18) return "buy_stock";
 
   // General diplomacy
@@ -202,6 +211,22 @@ async function executeStrategicAction(nation, action, goal, allNations) {
   // Execute war declaration
   if (action === "declare_war") {
     executeAIWarDeclaration(nation, allNations).catch(() => {});
+  }
+
+  // Execute real alliance formation
+  if (action === "form_alliance") {
+    executeAIAllianceFormation(nation, allNations).catch(() => {});
+  }
+
+  // Execute real trade route creation
+  if (action === "create_trade_route") {
+    executeAITradeRoute(nation, allNations).catch(() => {});
+  }
+
+  // Grow nation stats
+  if (action === "grow_nation") {
+    executeAINationGrowth(nation).catch(() => {});
+    return; // no chat message for silent growth
   }
 
   // Execute AI stock purchase
