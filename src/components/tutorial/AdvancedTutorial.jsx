@@ -3,8 +3,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronRight, ChevronLeft, BookOpen, Search, ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
 import DeepDivePanel from "./DeepDivePanel.jsx";
 import { DEEP_DIVES } from "./deepDiveData";
+import { TUTORIAL_SECTIONS as SECTIONS_DEEP } from "./advancedTutorialData";
 
-const SECTIONS = [
+// Use deep sections if available, fall back to inline
+const SECTIONS_INLINE = [
   { id: "dashboard", icon: "🏛️", color: "#22d3ee", title: "Dashboard Overview", summary: "Your command center — everything starts here.", steps: [
     { title: "The Command Center", body: "The Dashboard is your central hub divided into three main columns: Nation Stats (left), World Map + Chat (center), and Nation Metrics + Stock Feed (right). Every panel updates in real time — 1 real minute = 1 game tick.", tip: "The header bar contains quick-action buttons for all major game systems. On mobile, use the bottom scroll bar.", deepDive: "#clock" },
     { title: "Top Navigation Bar", body: "The top bar houses your most important shortcuts: Issue Stock, Tech Tree, Research, Manage, Workers, Exchange, Government, Global News, Build, Marketplace, and Profile.", tip: "On desktop all buttons are visible. On mobile they scroll horizontally in the bottom bar.", deepDive: "#nav" },
