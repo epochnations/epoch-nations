@@ -417,6 +417,9 @@ export default function Dashboard() {
 
       {showTour && <AdvancedTutorial onClose={() => setShowTour(false)} />}
 
+      {/* Kingdom Quest-style advisor tips — random, non-repeating */}
+      {myNation && <AdvisorTipPopup nation={myNation} />}
+
       {/* System Status Dashboard */}
       {showSystemStatus && myNation && (
         <SystemStatusDashboard myNation={myNation} onClose={() => setShowSystemStatus(false)} />
