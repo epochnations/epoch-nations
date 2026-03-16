@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { X, Landmark, TrendingDown, AlertTriangle, Clock, CheckCircle, ShoppingCart } from "lucide-react";
+import CheckingTab from "./CheckingTab.jsx";
+import SavingsTab from "./SavingsTab.jsx";
 
 const LOAN_TYPES = {
   short_term: {
