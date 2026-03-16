@@ -122,6 +122,12 @@ export default function NationalProfile() {
           EPOCH NATIONS
         </div>
         <div className="flex gap-2 items-center">
+          {myNation && (
+            <button onClick={() => setShowBank(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border border-amber-500/30 text-amber-400 hover:bg-amber-500/10 transition-all">
+              <Landmark size={12} /> Bank
+            </button>
+          )}
           <a href={createPageUrl("Dashboard")} className="px-3 py-1.5 rounded-xl text-xs font-bold border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 transition-all">
             → Dashboard
           </a>
