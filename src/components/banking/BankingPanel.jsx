@@ -250,7 +250,7 @@ export default function BankingPanel({ nation, onClose, onRefresh }) {
       {tab === "savings" && <SavingsTab nation={nation} onRefresh={onRefresh} />}
 
       {/* Loans section — only shown when on a loans tab */}
-      {(tab === "loans" || tab === "my_loans" || tab === "debt_market") && (<>
+      {(tab === "loans" || tab === "my_loans" || tab === "debt_market") && (<div>
 
       {/* Debt summary bar */}
       <div className="grid grid-cols-3 gap-3 mb-5">
