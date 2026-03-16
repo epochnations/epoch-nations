@@ -116,13 +116,10 @@ body { margin: 0; background: #040810; font-family: 'Inter', -apple-system, Blin
   transition: all 0.2s ease;
 }
 
-/* ── Shadcn/UI inputs use white bg by default — ensure black text ── */
-.bg-background input,
-.bg-white input,
-[class*="bg-white"] input,
-input[class*="bg-background"],
-input.bg-white {
-  color: #000000 !important;
+/* ── Shadcn inputs inherit foreground color correctly ── */
+input[class*="text-foreground"],
+input:not([class*="text-"]):not(.ep-input):not([class*="ep-"]) {
+  color: var(--foreground);
 }
 .ep-input:focus {
   outline: none;
