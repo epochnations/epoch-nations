@@ -23,27 +23,67 @@ export function useMapEngine(containerRef) {
   const saved = loadSavedView();
   const [zoom, setZoom] = useState(saved.zoom);
   const [pan, setPan] = useState(saved.pan);
+
+  // Smooth zoom animation
+  const targetZoomRef = useRef(saved.zoom);
+  const currentZoomRef = useRef(saved.zoom);
+  const zoomAnimRef = useRef(null);
+  const zoomCenterRef = useRef({ x: 0, y: 0 });
+  const panRef = useRef(saved.pan);
+
   const saveTimer = useRef(null);
   const dragging = useRef(false);
   const lastPos = useRef({ x: 0, y: 0 });
   const lastTouchDist = useRef(null);
   const animFrame = useRef(null);
 
-  // Zoom to a point (world coords)
-  const zoomTo = useCallback((newZoom, centerX, centerY) => {
-    const clamped = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, newZoom));
-    setZoom(prev => {
-      const ratio = clamped / prev;
-      setPan(p => ({
-        x: centerX - ratio * (centerX - p.x),
-        y: centerY - ratio * (centerY - p.y),
-      }));
-      return clamped;
-    });
+  // Keep panRef in sync
+  useEffect(() => { panRef.current = pan; }, [pan]);
+
+  const savePan = useCallback((p, z) => {
+    clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => {
+      localStorage.setItem(PAN_STORAGE_KEY, JSON.stringify(p));
+      localStorage.setItem(ZOOM_STORAGE_KEY, String(z));
+    }, 300);
   }, []);
 
+  // Smooth zoom animation loop
+  const startZoomAnimation = useCallback(() => {
+    cancelAnimationFrame(zoomAnimRef.current);
+    const animate = () => {
+      const target = targetZoomRef.current;
+      const current = currentZoomRef.current;
+      const diff = target - current;
+      if (Math.abs(diff) < 0.001) {
+        currentZoomRef.current = target;
+        setZoom(target);
+        return;
+      }
+      const next = current + diff * 0.14;
+      const ratio = next / current;
+      const cx = zoomCenterRef.current.x;
+      const cy = zoomCenterRef.current.y;
+      currentZoomRef.current = next;
+      setZoom(next);
+      setPan(p => {
+        const np = { x: cx - ratio * (cx - p.x), y: cy - ratio * (cy - p.y) };
+        savePan(np, next);
+        return np;
+      });
+      zoomAnimRef.current = requestAnimationFrame(animate);
+    };
+    zoomAnimRef.current = requestAnimationFrame(animate);
+  }, [savePan]);
+
+  const zoomTo = useCallback((newZoom, centerX, centerY) => {
+    const clamped = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, newZoom));
+    zoomCenterRef.current = { x: centerX, y: centerY };
+    targetZoomRef.current = clamped;
+    startZoomAnimation();
+  }, [startZoomAnimation]);
+
   const smoothPanTo = useCallback((targetPx, targetPy, currentZoom) => {
-    // Animate pan to center a world-percent point
     const container = containerRef.current;
     if (!container) return;
     const { width, height } = container.getBoundingClientRect();
@@ -63,18 +103,9 @@ export function useMapEngine(containerRef) {
     animFrame.current = requestAnimationFrame(animate);
   }, [containerRef]);
 
-  // Mouse events
   const onMouseDown = useCallback((e) => {
     dragging.current = true;
     lastPos.current = { x: e.clientX, y: e.clientY };
-  }, []);
-
-  const savePan = useCallback((p, z) => {
-    clearTimeout(saveTimer.current);
-    saveTimer.current = setTimeout(() => {
-      localStorage.setItem(PAN_STORAGE_KEY, JSON.stringify(p));
-      localStorage.setItem(ZOOM_STORAGE_KEY, String(z));
-    }, 300);
   }, []);
 
   const onMouseMove = useCallback((e) => {
@@ -84,10 +115,10 @@ export function useMapEngine(containerRef) {
     lastPos.current = { x: e.clientX, y: e.clientY };
     setPan(p => {
       const np = { x: p.x + dx, y: p.y + dy };
-      savePan(np, zoom);
+      savePan(np, currentZoomRef.current);
       return np;
     });
-  }, [zoom, savePan]);
+  }, [savePan]);
 
   const onMouseUp = useCallback(() => { dragging.current = false; }, []);
 
@@ -99,19 +130,12 @@ export function useMapEngine(containerRef) {
     const cx = e.clientX - rect.left;
     const cy = e.clientY - rect.top;
     const delta = e.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP;
-    setZoom(prev => {
-      const newZ = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, prev + delta));
-      const ratio = newZ / prev;
-      setPan(p => {
-        const np = { x: cx - ratio * (cx - p.x), y: cy - ratio * (cy - p.y) };
-        savePan(np, newZ);
-        return np;
-      });
-      return newZ;
-    });
-  }, [containerRef, savePan]);
+    const newTarget = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, targetZoomRef.current + delta));
+    zoomCenterRef.current = { x: cx, y: cy };
+    targetZoomRef.current = newTarget;
+    startZoomAnimation();
+  }, [containerRef, startZoomAnimation]);
 
-  // Touch events
   const onTouchStart = useCallback((e) => {
     if (e.touches.length === 1) {
       dragging.current = true;
@@ -142,16 +166,14 @@ export function useMapEngine(containerRef) {
         const rect = container.getBoundingClientRect();
         const cx = midX - rect.left;
         const cy = midY - rect.top;
-        setZoom(prev => {
-          const newZ = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, prev * ratio));
-          const r2 = newZ / prev;
-          setPan(p => ({ x: cx - r2 * (cx - p.x), y: cy - r2 * (cy - p.y) }));
-          return newZ;
-        });
+        const newTarget = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, targetZoomRef.current * ratio));
+        zoomCenterRef.current = { x: cx, y: cy };
+        targetZoomRef.current = newTarget;
+        startZoomAnimation();
       }
       lastTouchDist.current = dist;
     }
-  }, [containerRef]);
+  }, [containerRef, startZoomAnimation]);
 
   const onTouchEnd = useCallback(() => {
     dragging.current = false;
@@ -161,12 +183,24 @@ export function useMapEngine(containerRef) {
   useEffect(() => {
     return () => {
       cancelAnimationFrame(animFrame.current);
+      cancelAnimationFrame(zoomAnimRef.current);
       clearTimeout(saveTimer.current);
     };
   }, []);
 
   return {
-    zoom, pan, setZoom, setPan,
+    zoom, pan, setZoom: (z) => {
+      const clamped = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, typeof z === 'function' ? z(targetZoomRef.current) : z));
+      // For button-based zoom, use center of container
+      const container = containerRef.current;
+      if (container) {
+        const { width, height } = container.getBoundingClientRect();
+        zoomCenterRef.current = { x: width / 2, y: height / 2 };
+      }
+      targetZoomRef.current = clamped;
+      startZoomAnimation();
+    },
+    setPan,
     zoomTo, smoothPanTo,
     handlers: { onMouseDown, onMouseMove, onMouseUp, onWheel, onTouchStart, onTouchMove, onTouchEnd }
   };

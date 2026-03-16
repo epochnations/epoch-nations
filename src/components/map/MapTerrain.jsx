@@ -1,7 +1,7 @@
 /**
- * MapTerrain – Rustic Industrial world map.
- * Dark green land masses with iron/steel tones, riveted steel borders,
- * factory smoke districts, aged military-industrial aesthetic.
+ * MapTerrain – Aged paper / antique cartography world map.
+ * Warm parchment ocean, sepia land masses, hand-drawn ink aesthetic,
+ * vintage compass rose, classic cartographic styling.
  */
 export const MAP_W = 1600;
 export const MAP_H = 900;
@@ -52,122 +52,141 @@ export default function MapTerrain({ zoom }) {
   return (
     <g>
       <defs>
-        {/* ── Ocean — deep steel-blue industrial ── */}
-        <radialGradient id="oceanInk" cx="50%" cy="50%" r="70%">
-          <stop offset="0%"   stopColor="#1a2d3a"/>
-          <stop offset="45%"  stopColor="#0f1e28"/>
-          <stop offset="100%" stopColor="#060d12"/>
-        </radialGradient>
-        <radialGradient id="atlanticDeep" cx="36%" cy="44%" r="28%">
-          <stop offset="0%"   stopColor="#162230"/>
-          <stop offset="100%" stopColor="#060d12" stopOpacity="0"/>
-        </radialGradient>
-        <radialGradient id="pacificDeep" cx="68%" cy="55%" r="32%">
-          <stop offset="0%"   stopColor="#0e1a22"/>
-          <stop offset="100%" stopColor="#060d12" stopOpacity="0"/>
+        {/* ── Parchment paper base ── */}
+        <radialGradient id="parchmentBg" cx="50%" cy="50%" r="75%">
+          <stop offset="0%"   stopColor="#c8b882"/>
+          <stop offset="40%"  stopColor="#b8a86a"/>
+          <stop offset="80%"  stopColor="#a89858"/>
+          <stop offset="100%" stopColor="#8a7a40"/>
         </radialGradient>
 
-        {/* ── Land fills — dark industrial green ── */}
+        {/* ── Ocean — aged tea-stained water ── */}
+        <radialGradient id="oceanPaper" cx="50%" cy="45%" r="75%">
+          <stop offset="0%"   stopColor="#7a9ab2"/>
+          <stop offset="40%"  stopColor="#6a8aa0"/>
+          <stop offset="75%"  stopColor="#587890"/>
+          <stop offset="100%" stopColor="#485870"/>
+        </radialGradient>
+        <radialGradient id="oceanShallow1" cx="35%" cy="44%" r="25%">
+          <stop offset="0%"   stopColor="#8ab2ca" stopOpacity="0.5"/>
+          <stop offset="100%" stopColor="#6a8aa0" stopOpacity="0"/>
+        </radialGradient>
+        <radialGradient id="oceanShallow2" cx="70%" cy="55%" r="30%">
+          <stop offset="0%"   stopColor="#7aaac2" stopOpacity="0.4"/>
+          <stop offset="100%" stopColor="#587890" stopOpacity="0"/>
+        </radialGradient>
+
+        {/* ── Land fills — aged parchment sepia ── */}
         <linearGradient id="naLand" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%"   stopColor="#2d4a2d"/>
-          <stop offset="60%"  stopColor="#1e3320"/>
-          <stop offset="100%" stopColor="#162618"/>
+          <stop offset="0%"   stopColor="#d4b87a"/>
+          <stop offset="50%"  stopColor="#c4a868"/>
+          <stop offset="100%" stopColor="#b09050"/>
         </linearGradient>
         <linearGradient id="saLand" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%"   stopColor="#2a4828"/>
-          <stop offset="60%"  stopColor="#1c3018"/>
-          <stop offset="100%" stopColor="#142214"/>
+          <stop offset="0%"   stopColor="#ceb870"/>
+          <stop offset="50%"  stopColor="#bea860"/>
+          <stop offset="100%" stopColor="#a89050"/>
         </linearGradient>
         <linearGradient id="euLand" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%"   stopColor="#344e34"/>
-          <stop offset="60%"  stopColor="#243824"/>
-          <stop offset="100%" stopColor="#1a2c1a"/>
+          <stop offset="0%"   stopColor="#d8c080"/>
+          <stop offset="50%"  stopColor="#c8b070"/>
+          <stop offset="100%" stopColor="#b49858"/>
         </linearGradient>
         <linearGradient id="afLand" x1="0" y1="0" x2="0.5" y2="1">
-          <stop offset="0%"   stopColor="#2e4a2c"/>
-          <stop offset="50%"  stopColor="#1e3220"/>
-          <stop offset="100%" stopColor="#142216"/>
+          <stop offset="0%"   stopColor="#d2b87a"/>
+          <stop offset="50%"  stopColor="#c2a868"/>
+          <stop offset="100%" stopColor="#ae9050"/>
         </linearGradient>
         <linearGradient id="asLand" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%"   stopColor="#2c4a2c"/>
-          <stop offset="60%"  stopColor="#1e3420"/>
-          <stop offset="100%" stopColor="#162618"/>
+          <stop offset="0%"   stopColor="#d0bc78"/>
+          <stop offset="50%"  stopColor="#c0ac68"/>
+          <stop offset="100%" stopColor="#ac9450"/>
         </linearGradient>
         <linearGradient id="auLand" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%"   stopColor="#385030"/>
-          <stop offset="60%"  stopColor="#263820"/>
-          <stop offset="100%" stopColor="#1a2a16"/>
+          <stop offset="0%"   stopColor="#d8b870"/>
+          <stop offset="50%"  stopColor="#c8a860"/>
+          <stop offset="100%" stopColor="#b09050"/>
         </linearGradient>
         <linearGradient id="iceGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%"   stopColor="#c8d8d0"/>
-          <stop offset="100%" stopColor="#8aa8a0"/>
+          <stop offset="0%"   stopColor="#f0ece0"/>
+          <stop offset="100%" stopColor="#d8d0c0"/>
         </linearGradient>
 
-        {/* ── Industrial steel border filter ── */}
-        <filter id="steelEdge">
-          <feDropShadow dx="0" dy="0" stdDeviation="2.5" floodColor="#4a6a3a" floodOpacity="0.7"/>
+        {/* ── Ink drop shadow for land ── */}
+        <filter id="inkEdge">
+          <feDropShadow dx="1" dy="1" stdDeviation="2" floodColor="#5a3a10" floodOpacity="0.5"/>
+        </filter>
+        <filter id="inkEdgeSoft">
+          <feDropShadow dx="0.5" dy="0.5" stdDeviation="1.5" floodColor="#5a3a10" floodOpacity="0.35"/>
         </filter>
 
-        {/* ── Riveted steel texture ── */}
-        <pattern id="steelRivet" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-          <circle cx="10" cy="10" r="1.2" fill="#2a3a2a" opacity="0.4"/>
-          <circle cx="0"  cy="0"  r="0.8" fill="#2a3a2a" opacity="0.25"/>
-          <circle cx="20" cy="0"  r="0.8" fill="#2a3a2a" opacity="0.25"/>
-          <circle cx="0"  cy="20" r="0.8" fill="#2a3a2a" opacity="0.25"/>
-          <circle cx="20" cy="20" r="0.8" fill="#2a3a2a" opacity="0.25"/>
+        {/* ── Paper texture — fine grain ── */}
+        <filter id="paperGrain">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch" result="noise"/>
+          <feColorMatrix type="saturate" values="0" in="noise" result="grayNoise"/>
+          <feBlend in="SourceGraphic" in2="grayNoise" mode="multiply" result="blend"/>
+          <feComponentTransfer in="blend">
+            <feFuncA type="linear" slope="1"/>
+          </feComponentTransfer>
+        </filter>
+
+        {/* ── Hatching for ocean depth ── */}
+        <pattern id="oceanHatch" x="0" y="0" width="12" height="12" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="6" x2="12" y2="6" stroke="#5a7a96" strokeWidth="0.35" opacity="0.25"/>
+          <line x1="0" y1="0" x2="12" y2="12" stroke="#5a7a96" strokeWidth="0.2" opacity="0.12"/>
         </pattern>
 
-        {/* ── Ocean hatch — industrial crosshatch ── */}
-        <pattern id="oceanHatch" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
-          <line x1="0" y1="8" x2="16" y2="8" stroke="#1a3040" strokeWidth="0.4" opacity="0.3"/>
-          <line x1="8" y1="0" x2="8" y2="16" stroke="#1a3040" strokeWidth="0.2" opacity="0.15"/>
+        {/* ── Cross-hatch for land (vintage cartographic) ── */}
+        <pattern id="landHatch" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="4" x2="8" y2="4" stroke="#8a6030" strokeWidth="0.3" opacity="0.15"/>
+          <line x1="4" y1="0" x2="4" y2="8" stroke="#8a6030" strokeWidth="0.3" opacity="0.1"/>
         </pattern>
 
-        {/* ── Land detail overlay ── */}
-        <pattern id="landDetail" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-          <circle cx="5" cy="5" r="0.5" fill="#3a5a30" opacity="0.2"/>
-        </pattern>
-
-        {/* Vignette */}
-        <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
-          <stop offset="40%"  stopColor="transparent"/>
-          <stop offset="100%" stopColor="#020508" stopOpacity="0.7"/>
+        {/* ── Vignette — aged paper edges ── */}
+        <radialGradient id="paperVignette" cx="50%" cy="50%" r="70%">
+          <stop offset="35%"  stopColor="transparent"/>
+          <stop offset="100%" stopColor="#3a2808" stopOpacity="0.55"/>
         </radialGradient>
 
-        {/* City glow — industrial amber */}
+        {/* City dot */}
         <radialGradient id="cityGlow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%"   stopColor="#e08020" stopOpacity="0.7"/>
-          <stop offset="100%" stopColor="#e08020" stopOpacity="0"/>
+          <stop offset="0%"   stopColor="#8a3010" stopOpacity="0.5"/>
+          <stop offset="100%" stopColor="#8a3010" stopOpacity="0"/>
         </radialGradient>
 
         {/* Compass glow */}
         <radialGradient id="compassGlow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%"   stopColor="#4a7a40" stopOpacity="0.4"/>
-          <stop offset="100%" stopColor="#4a7a40" stopOpacity="0"/>
+          <stop offset="0%"   stopColor="#8a6030" stopOpacity="0.3"/>
+          <stop offset="100%" stopColor="#8a6030" stopOpacity="0"/>
         </radialGradient>
       </defs>
 
-      {/* ── Ocean base ── */}
-      <rect x="0" y="0" width={MAP_W} height={MAP_H} fill="url(#oceanInk)"/>
-      <rect x="0" y="0" width={MAP_W} height={MAP_H} fill="url(#atlanticDeep)" opacity="0.6"/>
-      <rect x="0" y="0" width={MAP_W} height={MAP_H} fill="url(#pacificDeep)"  opacity="0.6"/>
+      {/* ── Parchment base ── */}
+      <rect x="0" y="0" width={MAP_W} height={MAP_H} fill="url(#parchmentBg)"/>
+
+      {/* ── Ocean fill ── */}
+      <rect x="0" y="0" width={MAP_W} height={MAP_H} fill="url(#oceanPaper)"/>
+      <rect x="0" y="0" width={MAP_W} height={MAP_H} fill="url(#oceanShallow1)" opacity="0.7"/>
+      <rect x="0" y="0" width={MAP_W} height={MAP_H} fill="url(#oceanShallow2)" opacity="0.6"/>
       <rect x="0" y="0" width={MAP_W} height={MAP_H} fill="url(#oceanHatch)"/>
 
-      {/* ── Industrial grid lines ── */}
+      {/* ── Latitude / meridian lines (cartographic grid) ── */}
       {Array.from({length:17}).map((_,i) => (
         <line key={`v${i}`} x1={i*100} y1={0} x2={i*100} y2={MAP_H}
-          stroke="#2a4030" strokeWidth="0.6" opacity="0.35" strokeDasharray="3,10"/>
+          stroke="#4a6888" strokeWidth="0.5" opacity="0.2" strokeDasharray="2,14"/>
       ))}
       {Array.from({length:10}).map((_,i) => (
         <line key={`h${i}`} x1={0} y1={i*100} x2={MAP_W} y2={i*100}
-          stroke="#2a4030" strokeWidth="0.6" opacity="0.35" strokeDasharray="3,10"/>
+          stroke="#4a6888" strokeWidth="0.5" opacity="0.2" strokeDasharray="2,14"/>
       ))}
+      {/* Equator — darker */}
       <line x1={0} y1={MAP_H/2} x2={MAP_W} y2={MAP_H/2}
-        stroke="#3a6040" strokeWidth="1.5" strokeDasharray="12,6" opacity="0.55"/>
+        stroke="#4a5870" strokeWidth="1.2" strokeDasharray="8,6" opacity="0.4"/>
+      {/* Tropics */}
       <line x1={0} y1={MAP_H*0.33} x2={MAP_W} y2={MAP_H*0.33}
-        stroke="#3a5035" strokeWidth="0.8" strokeDasharray="5,14" opacity="0.35"/>
+        stroke="#4a5870" strokeWidth="0.6" strokeDasharray="4,12" opacity="0.25"/>
       <line x1={0} y1={MAP_H*0.64} x2={MAP_W} y2={MAP_H*0.64}
-        stroke="#3a5035" strokeWidth="0.8" strokeDasharray="5,14" opacity="0.35"/>
+        stroke="#4a5870" strokeWidth="0.6" strokeDasharray="4,12" opacity="0.25"/>
 
       {/* ══ CONTINENTS ══ */}
 
@@ -175,91 +194,96 @@ export default function MapTerrain({ zoom }) {
       <path d="M 120,80 L 280,60 L 380,80 L 460,130 L 500,200 L 480,280
                L 420,340 L 380,400 L 330,430 L 270,420 L 220,380
                L 180,320 L 140,260 L 110,190 L 100,130 Z"
-        fill="url(#naLand)" stroke="#4a6a3a" strokeWidth="2" filter="url(#steelEdge)"/>
+        fill="url(#naLand)" stroke="#7a5020" strokeWidth="1.8" filter="url(#inkEdge)"/>
       <path d="M 120,80 L 280,60 L 380,80 L 460,130 L 500,200 L 480,280
                L 420,340 L 380,400 L 330,430 L 270,420 L 220,380
                L 180,320 L 140,260 L 110,190 L 100,130 Z"
-        fill="url(#steelRivet)" opacity="0.6"/>
+        fill="url(#landHatch)" opacity="0.8"/>
+      {/* Greenland */}
       <path d="M 420,20 L 520,15 L 540,60 L 500,90 L 430,80 Z"
-        fill="url(#iceGrad)" stroke="#4a6060" strokeWidth="1.2" opacity="0.8"/>
+        fill="url(#iceGrad)" stroke="#8a7060" strokeWidth="1.2" opacity="0.9"/>
+      {/* Central America */}
       <path d="M 310,420 L 360,400 L 392,432 L 372,492 L 330,482 Z"
-        fill="url(#naLand)" stroke="#4a6a3a" strokeWidth="1.2"/>
-      <ellipse cx="427" cy="412" rx="20" ry="8" fill="url(#naLand)" stroke="#4a6a3a" strokeWidth="0.8" opacity="0.7"/>
+        fill="url(#naLand)" stroke="#7a5020" strokeWidth="1.2" filter="url(#inkEdgeSoft)"/>
+      <ellipse cx="427" cy="412" rx="20" ry="8" fill="url(#naLand)" stroke="#7a5020" strokeWidth="0.8" opacity="0.8"/>
 
       {/* South America */}
       <path d="M 340,490 L 440,460 L 510,500 L 530,600 L 520,720
                L 470,800 L 400,810 L 340,770 L 290,680 L 280,580 L 300,510 Z"
-        fill="url(#saLand)" stroke="#4a6a3a" strokeWidth="2" filter="url(#steelEdge)"/>
+        fill="url(#saLand)" stroke="#7a5020" strokeWidth="1.8" filter="url(#inkEdge)"/>
       <path d="M 340,490 L 440,460 L 510,500 L 530,600 L 520,720
                L 470,800 L 400,810 L 340,770 L 290,680 L 280,580 L 300,510 Z"
-        fill="url(#steelRivet)" opacity="0.5"/>
+        fill="url(#landHatch)" opacity="0.7"/>
 
       {/* Europe */}
       <path d="M 650,60 L 800,40 L 870,70 L 890,140 L 860,180 L 820,200
                L 780,220 L 740,210 L 700,180 L 660,150 L 640,100 Z"
-        fill="url(#euLand)" stroke="#4a6a3a" strokeWidth="2" filter="url(#steelEdge)"/>
+        fill="url(#euLand)" stroke="#7a5020" strokeWidth="1.8" filter="url(#inkEdge)"/>
       <path d="M 650,160 L 700,150 L 720,200 L 700,240 L 660,230 L 645,190 Z"
-        fill="url(#euLand)" stroke="#4a6a3a" strokeWidth="1.2"/>
+        fill="url(#euLand)" stroke="#7a5020" strokeWidth="1.2" filter="url(#inkEdgeSoft)"/>
       <path d="M 780,180 L 800,175 L 810,210 L 800,255 L 790,250 L 778,215 Z"
-        fill="url(#euLand)" stroke="#4a6a3a" strokeWidth="0.8" opacity="0.85"/>
+        fill="url(#euLand)" stroke="#7a5020" strokeWidth="0.8" opacity="0.9"/>
       <path d="M 740,30 L 800,20 L 830,55 L 810,90 L 760,80 L 730,55 Z"
-        fill="url(#euLand)" stroke="#4a6a3a" strokeWidth="1.2"/>
-      <ellipse cx="612" cy="60" rx="30" ry="15" fill="url(#euLand)" stroke="#4a6a3a" strokeWidth="0.8" opacity="0.65"/>
+        fill="url(#euLand)" stroke="#7a5020" strokeWidth="1.2" filter="url(#inkEdgeSoft)"/>
+      <ellipse cx="612" cy="60" rx="30" ry="15" fill="url(#euLand)" stroke="#7a5020" strokeWidth="0.8" opacity="0.7"/>
 
       {/* Africa */}
       <path d="M 680,200 L 840,180 L 940,220 L 980,320 L 1000,450
                L 980,600 L 930,720 L 860,760 L 780,740 L 720,660
                L 680,520 L 660,380 L 660,270 Z"
-        fill="url(#afLand)" stroke="#4a6a3a" strokeWidth="2" filter="url(#steelEdge)"/>
+        fill="url(#afLand)" stroke="#7a5020" strokeWidth="1.8" filter="url(#inkEdge)"/>
       <path d="M 680,200 L 840,180 L 940,220 L 980,320 L 1000,450
                L 980,600 L 930,720 L 860,760 L 780,740 L 720,660
                L 680,520 L 660,380 L 660,270 Z"
-        fill="url(#steelRivet)" opacity="0.4"/>
-      <ellipse cx="1012" cy="642" rx="18" ry="45" fill="url(#afLand)" stroke="#4a6a3a" strokeWidth="0.8" opacity="0.8"/>
+        fill="url(#landHatch)" opacity="0.6"/>
+      <ellipse cx="1012" cy="642" rx="18" ry="45" fill="url(#afLand)" stroke="#7a5020" strokeWidth="0.8" opacity="0.85"/>
 
       {/* Middle East */}
       <path d="M 950,200 L 1080,180 L 1120,240 L 1100,320 L 1040,360 L 980,340 L 950,270 Z"
-        fill="url(#asLand)" stroke="#4a6a3a" strokeWidth="1.4"/>
+        fill="url(#asLand)" stroke="#7a5020" strokeWidth="1.4" filter="url(#inkEdgeSoft)"/>
       <path d="M 980,260 L 1080,250 L 1100,360 L 1060,420 L 990,400 L 965,320 Z"
-        fill="url(#afLand)" stroke="#4a6a3a" strokeWidth="1.2" opacity="0.9"/>
+        fill="url(#afLand)" stroke="#7a5020" strokeWidth="1.2" opacity="0.95"/>
 
       {/* Russia / North Asia */}
       <path d="M 820,40 L 1200,20 L 1380,60 L 1470,100 L 1500,140
                L 1420,180 L 1300,200 L 1150,190 L 1000,180 L 880,160 L 840,100 Z"
-        fill="url(#asLand)" stroke="#4a6a3a" strokeWidth="2" filter="url(#steelEdge)"/>
+        fill="url(#asLand)" stroke="#7a5020" strokeWidth="1.8" filter="url(#inkEdge)"/>
 
       {/* Central/South Asia */}
       <path d="M 1080,200 L 1200,190 L 1260,250 L 1280,340 L 1240,440
                L 1180,490 L 1120,460 L 1085,370 L 1075,270 Z"
-        fill="url(#asLand)" stroke="#4a6a3a" strokeWidth="1.5" filter="url(#steelEdge)"/>
+        fill="url(#asLand)" stroke="#7a5020" strokeWidth="1.5" filter="url(#inkEdge)"/>
 
       {/* China / East Asia */}
       <path d="M 1160,120 L 1380,80 L 1470,140 L 1460,230 L 1380,300
                L 1260,310 L 1170,280 L 1145,200 Z"
-        fill="url(#asLand)" stroke="#4a6a3a" strokeWidth="1.6" filter="url(#steelEdge)"/>
+        fill="url(#asLand)" stroke="#7a5020" strokeWidth="1.6" filter="url(#inkEdge)"/>
 
       {/* SE Asia */}
       <path d="M 1280,300 L 1400,280 L 1470,360 L 1450,430 L 1360,440 L 1280,380 Z"
-        fill="url(#asLand)" stroke="#4a6a3a" strokeWidth="1.2"/>
-      <ellipse cx="1380" cy="490" rx="30" ry="12" fill="url(#asLand)" stroke="#4a6a3a" strokeWidth="0.7" opacity="0.8"/>
-      <ellipse cx="1432" cy="506" rx="22" ry="10" fill="url(#asLand)" stroke="#4a6a3a" strokeWidth="0.7" opacity="0.7"/>
+        fill="url(#asLand)" stroke="#7a5020" strokeWidth="1.2" filter="url(#inkEdgeSoft)"/>
+      <ellipse cx="1380" cy="490" rx="30" ry="12" fill="url(#asLand)" stroke="#7a5020" strokeWidth="0.7" opacity="0.85"/>
+      <ellipse cx="1432" cy="506" rx="22" ry="10" fill="url(#asLand)" stroke="#7a5020" strokeWidth="0.7" opacity="0.75"/>
 
       {/* Japan */}
       <path d="M 1440,130 L 1480,110 L 1510,160 L 1490,200 L 1455,190 Z"
-        fill="url(#asLand)" stroke="#4a6a3a" strokeWidth="1" opacity="0.85"/>
+        fill="url(#asLand)" stroke="#7a5020" strokeWidth="1" opacity="0.9"/>
 
       {/* Australia */}
       <path d="M 1290,560 L 1480,520 L 1570,590 L 1580,720 L 1510,800
                L 1370,820 L 1240,770 L 1210,660 L 1240,580 Z"
-        fill="url(#auLand)" stroke="#4a6a3a" strokeWidth="2" filter="url(#steelEdge)"/>
+        fill="url(#auLand)" stroke="#7a5020" strokeWidth="1.8" filter="url(#inkEdge)"/>
       <path d="M 1290,560 L 1480,520 L 1570,590 L 1580,720 L 1510,800
                L 1370,820 L 1240,770 L 1210,660 L 1240,580 Z"
-        fill="url(#steelRivet)" opacity="0.45"/>
+        fill="url(#landHatch)" opacity="0.6"/>
 
-      {/* ── Land detail ── */}
-      <rect x="0" y="0" width={MAP_W} height={MAP_H} fill="url(#landDetail)" opacity="0.3"/>
+      {/* ── Ice caps ── */}
+      <path d="M 0,0 L 600,0 L 540,40 L 450,55 L 380,45 L 300,60 L 150,50 L 80,40 L 0,50 Z"
+        fill="url(#iceGrad)" opacity="0.85" stroke="#a09080" strokeWidth="0.8"/>
+      <path d="M 0,900 L 1600,900 L 1600,858 L 1400,848 L 1000,853 L 600,843 L 200,853 L 0,858 Z"
+        fill="url(#iceGrad)" opacity="0.65" stroke="#a09080" strokeWidth="0.8"/>
 
-      {/* ── Mountains ── */}
+      {/* ── Mountains — hand-drawn style ── */}
       {zoom >= 0.6 && [
         { x:205, y:130, a:-15 }, { x:215, y:158, a:5  }, { x:200, y:182, a:-5 },
         { x:324, y:520, a:0   }, { x:320, y:560, a:5  }, { x:318, y:610, a:-5 },
@@ -271,26 +295,29 @@ export default function MapTerrain({ zoom }) {
         { x:1448,y:580, a:5   }, { x:1452,y:620, a:-5 },
       ].map((m, i) => (
         <g key={i} transform={`translate(${m.x},${m.y}) rotate(${m.a})`}>
-          <path d="M -7 6 L 0 -8 L 7 6 Z" fill="#3a5a30" stroke="#5a7a48" strokeWidth="0.8" opacity="0.75"/>
-          <path d="M -3 0 L 0 -8 L 3 0" fill="#5a8040" opacity="0.4"/>
+          <path d="M -8 7 L 0 -10 L 8 7 Z" fill="#a07840" stroke="#7a5020" strokeWidth="0.9" opacity="0.8"/>
+          <path d="M -3 0 L 0 -10 L 3 0" fill="#d8c888" opacity="0.5"/>
+          {/* Snow cap */}
+          <path d="M -2 -5 L 0 -10 L 2 -5" fill="#f0ece0" opacity="0.7"/>
         </g>
       ))}
 
-      {/* ── Forests ── */}
+      {/* ── Trees / forests ── */}
       {zoom >= 0.5 && [
-        { x:340, y:520, r:5 }, { x:355, y:535, r:5 }, { x:370, y:520, r:5 },
-        { x:345, y:548, r:5 }, { x:360, y:552, r:5 }, { x:375, y:540, r:5 },
-        { x:842, y:465, r:4.5 }, { x:860, y:478, r:4.5 }, { x:875, y:468, r:4.5 },
-        { x:1320,y:370, r:4 }, { x:1340,y:358, r:4 }, { x:1360,y:370, r:4 },
-        { x:185, y:135, r:4 }, { x:200, y:122, r:4 }, { x:218, y:138, r:4 },
-      ].map(({ x, y, r }, i) => (
+        { x:340, y:520 }, { x:355, y:535 }, { x:370, y:520 },
+        { x:345, y:548 }, { x:360, y:552 }, { x:375, y:540 },
+        { x:842, y:465 }, { x:860, y:478 }, { x:875, y:468 },
+        { x:1320,y:370 }, { x:1340,y:358 }, { x:1360,y:370 },
+        { x:185, y:135 }, { x:200, y:122 }, { x:218, y:138 },
+      ].map(({ x, y }, i) => (
         <g key={i}>
-          <circle cx={x} cy={y} r={r} fill="#2a4a22" opacity="0.6" stroke="#3a5a30" strokeWidth="0.6"/>
-          <line x1={x} y1={y+r} x2={x} y2={y+r+3} stroke="#3a5030" strokeWidth="0.8" opacity="0.5"/>
+          {/* Ink-drawn tree — classic cartographic dot-tree */}
+          <circle cx={x} cy={y} r={4} fill="#7a9050" opacity="0.7" stroke="#5a6830" strokeWidth="0.6"/>
+          <line x1={x} y1={y+4} x2={x} y2={y+7} stroke="#6a5030" strokeWidth="0.8" opacity="0.6"/>
         </g>
       ))}
 
-      {/* ── Rivers ── */}
+      {/* ── Rivers — ink lines ── */}
       {zoom >= 0.5 && [
         "M 680,120 Q 720,160 700,222 Q 688,280 710,342",
         "M 800,280 Q 862,302 902,362 Q 942,422 922,502",
@@ -300,48 +327,31 @@ export default function MapTerrain({ zoom }) {
         "M 822,152 Q 862,182 882,242 Q 902,292 882,342",
       ].map((d, i) => (
         <path key={i} d={d} fill="none"
-          stroke="#1a3a50" strokeWidth={zoom > 1.5 ? 1.8 : 1.2}
-          opacity="0.6" strokeLinecap="round"/>
+          stroke="#5a7a96" strokeWidth={zoom > 1.5 ? 1.6 : 1.0}
+          opacity="0.55" strokeLinecap="round"/>
       ))}
 
-      {/* ── Ice caps ── */}
-      <path d="M 0,0 L 600,0 L 540,40 L 450,55 L 380,45 L 300,60 L 150,50 L 80,40 L 0,50 Z"
-        fill="url(#iceGrad)" opacity="0.7" stroke="#6a8a80" strokeWidth="0.8"/>
-      <path d="M 0,900 L 1600,900 L 1600,858 L 1400,848 L 1000,853 L 600,843 L 200,853 L 0,858 Z"
-        fill="url(#iceGrad)" opacity="0.5" stroke="#6a8a80" strokeWidth="0.8"/>
-
-      {/* ── Ocean depth rings ── */}
+      {/* ── Ocean depth rings — cartographic soundings ── */}
       {[[580,400,280,200],[1100,500,340,220],[800,820,200,60]].map(([cx,cy,rx,ry],i) => (
         <ellipse key={i} cx={cx} cy={cy} rx={rx} ry={ry}
-          fill="none" stroke="#1a3040" strokeWidth="0.6" opacity="0.25"
-          strokeDasharray="3,9"/>
+          fill="none" stroke="#4a6888" strokeWidth="0.5" opacity="0.2"
+          strokeDasharray="2,10"/>
       ))}
 
-      {/* ── Ocean currents ── */}
+      {/* ── Ocean current lines ── */}
       <path d="M 60,400 Q 200,360 400,400 Q 580,440 700,380 Q 850,320 1050,380 Q 1250,440 1440,380"
-        fill="none" stroke="#1a3a50" strokeWidth="1" opacity="0.3" strokeDasharray="6,14"/>
-
-      {/* ── Factory smokestacks (at industrial cities, zoom >= 0.8) ── */}
-      {zoom >= 0.8 && [
-        { x:388, y:182 }, { x:716, y:142 }, { x:948, y:118 },
-        { x:1288, y:178 }, { x:1408, y:192 }, { x:350, y:172 },
-      ].map((s,i) => (
-        <g key={i}>
-          <rect x={s.x-1.5} y={s.y-10} width="3" height="10" fill="#2a3a28" opacity="0.7"/>
-          <rect x={s.x+3}   y={s.y-8}  width="2.5" height="8" fill="#2a3a28" opacity="0.6"/>
-        </g>
-      ))}
+        fill="none" stroke="#4a6888" strokeWidth="0.8" opacity="0.22" strokeDasharray="5,12"/>
 
       {/* ── Lat/lon labels ── */}
       {zoom >= 0.9 && (
         <>
-          <text x="8" y={MAP_H*0.33+4} fill="#4a7a50" fontSize="9" fontFamily="'Courier New',monospace" opacity="0.7">23°N</text>
-          <text x="8" y={MAP_H*0.50+4} fill="#4a7a50" fontSize="9" fontFamily="'Courier New',monospace" opacity="0.9">EQ</text>
-          <text x="8" y={MAP_H*0.64+4} fill="#4a7a50" fontSize="9" fontFamily="'Courier New',monospace" opacity="0.7">23°S</text>
+          <text x="10" y={MAP_H*0.33+4} fill="#5a4020" fontSize="9" fontFamily="'Georgia',serif" opacity="0.75" fontStyle="italic">23°N</text>
+          <text x="10" y={MAP_H*0.50+4} fill="#5a4020" fontSize="9" fontFamily="'Georgia',serif" opacity="0.9"  fontStyle="italic">EQ</text>
+          <text x="10" y={MAP_H*0.64+4} fill="#5a4020" fontSize="9" fontFamily="'Georgia',serif" opacity="0.75" fontStyle="italic">23°S</text>
         </>
       )}
 
-      {/* ── Cities ── */}
+      {/* ── Cities — classic cartographic dots ── */}
       {zoom >= 0.7 && CITIES.map((c) => {
         const isLarge = c.pop > 10;
         const r = isLarge ? c.size + 1 : c.size;
@@ -349,61 +359,96 @@ export default function MapTerrain({ zoom }) {
           <g key={c.name}>
             {isLarge ? (
               <>
-                <circle cx={c.x} cy={c.y} r={r+5} fill="url(#cityGlow)" opacity="0.5"/>
-                <circle cx={c.x} cy={c.y} r={r+2} fill="none" stroke="#a06020" strokeWidth="0.8" opacity="0.5"/>
-                <rect x={c.x-r} y={c.y-r} width={r*2} height={r*2}
-                  fill="#c07020" stroke="#6a3a10" strokeWidth="1" transform={`rotate(45,${c.x},${c.y})`}/>
-                <line x1={c.x-r-4} y1={c.y} x2={c.x+r+4} y2={c.y} stroke="#6a3a10" strokeWidth="0.6" opacity="0.5"/>
-                <line x1={c.x} y1={c.y-r-4} x2={c.x} y2={c.y+r+4} stroke="#6a3a10" strokeWidth="0.6" opacity="0.5"/>
+                <circle cx={c.x} cy={c.y} r={r+5} fill="url(#cityGlow)" opacity="0.45"/>
+                {/* Star symbol for major cities */}
+                {[0,72,144,216,288].map((angle, ai) => {
+                  const rad = (angle - 90) * Math.PI / 180;
+                  const x2 = c.x + Math.cos(rad) * (r + 3);
+                  const y2 = c.y + Math.sin(rad) * (r + 3);
+                  return <line key={ai} x1={c.x} y1={c.y} x2={x2} y2={y2} stroke="#8a3010" strokeWidth="1" opacity="0.7"/>;
+                })}
+                <circle cx={c.x} cy={c.y} r={r} fill="#c05020" stroke="#6a2010" strokeWidth="1.2"/>
+                <circle cx={c.x} cy={c.y} r={r-1.5} fill="#d07038" opacity="0.7"/>
               </>
             ) : (
               <>
-                <circle cx={c.x} cy={c.y} r={r+1} fill="#e07020" opacity="0.2"/>
-                <circle cx={c.x} cy={c.y} r={r} fill="#b06020" stroke="#6a3a10" strokeWidth="0.8"/>
+                <circle cx={c.x} cy={c.y} r={r+1} fill="#8a3010" opacity="0.15"/>
+                {/* Square dot for smaller cities */}
+                <rect x={c.x - r*0.7} y={c.y - r*0.7} width={r*1.4} height={r*1.4}
+                  fill="#a04020" stroke="#6a2010" strokeWidth="0.8" transform={`rotate(45,${c.x},${c.y})`}/>
               </>
             )}
             {zoom >= 1.2 && (
-              <text x={c.x + r + 4} y={c.y + 4}
-                fill="#c87030" fontSize={isLarge ? 10 : 8}
-                fontFamily="'Courier New',monospace"
-                opacity="0.95">{c.name}</text>
+              <text x={c.x + r + 5} y={c.y + 4}
+                fill="#4a2808"
+                fontSize={isLarge ? 10 : 8}
+                fontFamily="'Georgia', 'Times New Roman', serif"
+                fontStyle="italic"
+                opacity="0.9">{c.name}</text>
             )}
           </g>
         );
       })}
 
-      {/* ── Compass Rose ── */}
+      {/* ── Compass Rose — ornate cartographic ── */}
       {zoom >= 0.7 && (
         <g transform="translate(1540, 820)">
-          <circle cx="0" cy="0" r="28" fill="url(#compassGlow)" opacity="0.5"/>
-          <circle cx="0" cy="0" r="24" fill="none" stroke="#4a7a40" strokeWidth="1" opacity="0.5"/>
-          {[0,90,180,270].map((angle, i) => (
-            <g key={i} transform={`rotate(${angle})`}>
-              <path d="M 0,-22 L 4,-8 L 0,-14 L -4,-8 Z" fill={i===0 ? "#a03020" : "#4a7a40"} opacity="0.9"/>
-            </g>
-          ))}
-          <circle cx="0" cy="0" r="3" fill="#4a7a40" opacity="0.9"/>
-          <text x="0" y="-28" textAnchor="middle" fill="#4a7a40" fontSize="8" fontFamily="'Courier New',monospace" opacity="0.9">N</text>
-          <text x="0" y="36"  textAnchor="middle" fill="#4a7a40" fontSize="8" fontFamily="'Courier New',monospace" opacity="0.9">S</text>
-          <text x="32" y="4"  textAnchor="middle" fill="#4a7a40" fontSize="8" fontFamily="'Courier New',monospace" opacity="0.9">E</text>
-          <text x="-32" y="4" textAnchor="middle" fill="#4a7a40" fontSize="8" fontFamily="'Courier New',monospace" opacity="0.9">W</text>
+          <circle cx="0" cy="0" r="30" fill="url(#compassGlow)" opacity="0.6"/>
+          <circle cx="0" cy="0" r="26" fill="#c8b070" opacity="0.7" stroke="#7a5020" strokeWidth="1.2"/>
+          <circle cx="0" cy="0" r="22" fill="none" stroke="#7a5020" strokeWidth="0.7" opacity="0.5"/>
+          {/* 8-point compass */}
+          {[0,45,90,135,180,225,270,315].map((angle, i) => {
+            const isCardinal = i % 2 === 0;
+            const len = isCardinal ? 20 : 13;
+            const w = isCardinal ? 5 : 3;
+            return (
+              <g key={i} transform={`rotate(${angle})`}>
+                <path d={`M 0,-${len} L ${w/2},-6 L 0,-10 L -${w/2},-6 Z`}
+                  fill={i === 0 ? "#8a2010" : "#6a4820"}
+                  stroke="#4a2808" strokeWidth="0.5" opacity="0.9"/>
+                <path d={`M 0,${6} L ${w/2},${8} L 0,${len} L -${w/2},${8} Z`}
+                  fill="#a08040" stroke="#4a2808" strokeWidth="0.5" opacity="0.7"/>
+              </g>
+            );
+          })}
+          <circle cx="0" cy="0" r="4" fill="#7a5020" stroke="#4a2808" strokeWidth="0.8"/>
+          <circle cx="0" cy="0" r="2" fill="#c8b070"/>
+          <text x="0"  y="-30" textAnchor="middle" fill="#4a2808" fontSize="9"  fontFamily="'Georgia',serif" fontWeight="bold">N</text>
+          <text x="0"  y="38"  textAnchor="middle" fill="#4a2808" fontSize="9"  fontFamily="'Georgia',serif" fontWeight="bold">S</text>
+          <text x="34" y="4"   textAnchor="middle" fill="#4a2808" fontSize="9"  fontFamily="'Georgia',serif" fontWeight="bold">E</text>
+          <text x="-34" y="4"  textAnchor="middle" fill="#4a2808" fontSize="9"  fontFamily="'Georgia',serif" fontWeight="bold">W</text>
         </g>
       )}
 
-      {/* ── Map title ── */}
+      {/* ── Map title cartouche ── */}
       {zoom <= 1.2 && (
         <g transform="translate(18, 18)">
-          <rect x="0" y="0" width="168" height="38" rx="2"
-            fill="#1a2a18" fillOpacity="0.85" stroke="#4a6a38" strokeWidth="1" opacity="0.8"/>
-          <text x="8" y="16" fill="#6a9a48" fontSize="11" fontFamily="'Courier New',monospace"
-            fontWeight="bold" opacity="0.9">EPOCH NATIONS</text>
-          <text x="8" y="30" fill="#4a7a38" fontSize="8" fontFamily="'Courier New',monospace"
-            opacity="0.7">TACTICAL WORLD MAP — LIVE</text>
+          {/* Cartouche border */}
+          <rect x="-2" y="-2" width="188" height="50" rx="4"
+            fill="#c8b070" fillOpacity="0.9" stroke="#7a5020" strokeWidth="2"/>
+          <rect x="1" y="1" width="182" height="44" rx="3"
+            fill="none" stroke="#a08040" strokeWidth="0.8" opacity="0.6"/>
+          <text x="8" y="17" fill="#4a2808" fontSize="11"
+            fontFamily="'Georgia', 'Times New Roman', serif"
+            fontWeight="bold" fontStyle="italic" opacity="0.95">EPOCH NATIONS</text>
+          <text x="8" y="31" fill="#6a4020" fontSize="8"
+            fontFamily="'Georgia', serif"
+            fontStyle="italic" opacity="0.8">Carta Mundi — Anno Domini MMXXVI</text>
+          {/* Decorative line */}
+          <line x1="8" y1="35" x2="176" y2="35" stroke="#9a7030" strokeWidth="0.7" opacity="0.5"/>
+          <text x="8" y="43" fill="#6a4020" fontSize="7"
+            fontFamily="'Georgia', serif" fontStyle="italic" opacity="0.65">LIVE TACTICAL WORLD MAP</text>
         </g>
       )}
 
-      {/* ── Vignette ── */}
-      <rect x="0" y="0" width={MAP_W} height={MAP_H} fill="url(#vignette)"/>
+      {/* ── Aged paper vignette / edge burn ── */}
+      <rect x="0" y="0" width={MAP_W} height={MAP_H} fill="url(#paperVignette)"/>
+
+      {/* ── Border frame — ink margin ── */}
+      <rect x="0" y="0" width={MAP_W} height={MAP_H}
+        fill="none" stroke="#5a3a10" strokeWidth="4" opacity="0.4"/>
+      <rect x="6" y="6" width={MAP_W-12} height={MAP_H-12}
+        fill="none" stroke="#7a5020" strokeWidth="1.2" opacity="0.25"/>
     </g>
   );
 }
