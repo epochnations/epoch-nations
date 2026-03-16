@@ -7,7 +7,8 @@ import AdvancedTutorial from "../components/tutorial/AdvancedTutorial";
 
 import NationStatsPanel from "../components/dashboard/NationStatsPanel";
 import StockTicker from "../components/dashboard/StockTicker";
-import WorldMap from "../components/dashboard/WorldMap";
+import HexOceanMap from "../components/map/HexOceanMap";
+import HexWorldEngine from "../components/game/HexWorldEngine";
 
 import NotificationsPanel from "../components/dashboard/NotificationsPanel";
 import StockModal from "../components/modals/StockModal";
@@ -223,9 +224,9 @@ export default function Dashboard() {
       <main className="relative z-10 p-4 hidden lg:grid gap-4" style={{ height: "calc(100vh - 57px)", gridTemplateColumns: "300px 1fr 360px", gridTemplateRows: "auto 1fr", overflow: "hidden" }}>
         {/* Col 1: Nation Stats — full height, no scroll */}
         <div style={{ gridRow: "1 / 3", overflow: "hidden" }}><NationStatsPanel nation={myNation} /></div>
-        {/* Col 2 row 1: World Map */}
+        {/* Col 2 row 1: World Map — Hex Ocean */}
         <div style={{ gridRow: "1 / 2", overflow: "hidden" }}>
-          <WorldMap myNation={myNation} onSelectNation={n => setSelectedNation(n)} onOpenAdvisor={() => setShowAdvisor(true)} />
+          <HexOceanMap myNation={myNation} onSelectNation={n => setSelectedNation(n)} onOpenAdvisor={() => setShowAdvisor(true)} />
         </div>
         {/* Col 2 row 2: World Chat (includes Global Activity tab) */}
         <div style={{ gridColumn: "2 / 3", gridRow: "2 / 3", minWidth: 0, overflow: "hidden" }}>
@@ -243,9 +244,9 @@ export default function Dashboard() {
 
       {/* MOBILE LAYOUT */}
       <main className="relative z-10 lg:hidden flex flex-col pb-28 overflow-y-auto" style={{ minHeight: "calc(100vh - 57px)" }}>
-        {/* World Map */}
+        {/* World Map — Hex Ocean */}
         <div className="h-52 m-3 rounded-2xl overflow-hidden shrink-0">
-          <WorldMap myNation={myNation} onSelectNation={n => setSelectedNation(n)} />
+          <HexOceanMap myNation={myNation} onSelectNation={n => setSelectedNation(n)} />
         </div>
         {/* Nation Stats */}
         <div className="mx-3 mb-3">
@@ -404,6 +405,9 @@ export default function Dashboard() {
 
       {/* Advanced War Engine — unit types, weapons, tanks, warships, soldiers */}
       {myNation && <AdvancedWarEngine myNation={myNation} />}
+
+      {/* Hex World Engine — seeds home islands, expands AI territories */}
+      {myNation && <HexWorldEngine myNation={myNation} />}
 
       {/* Research Panel */}
       {showResearch && myNation && (
