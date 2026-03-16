@@ -591,7 +591,13 @@ export default function AIDiplomacyEngine({ myNation, onReady }) {
     });
     if (!responders.length) return;
 
-    for (const { nation, traitKey, delay, isPrimary, isSecondary } of responders) {
+    // When a specific nation is directly addressed or replied to, only that nation responds
+    const limitedResponders = (addressedNation || replyTargetNation)
+      ? responders.filter(r => r.isPrimary).slice(0, 1)
+      : responders;
+    if (!limitedResponders.length) return;
+
+    for (const { nation, traitKey, delay, isPrimary, isSecondary } of limitedResponders) {
       setTimeout(async () => {
         const leader          = getLeader(nation);
         const personality     = getPersonality(nation);
