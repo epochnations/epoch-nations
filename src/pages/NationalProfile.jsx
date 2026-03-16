@@ -29,6 +29,7 @@ export default function NationalProfile() {
   const [activeTab, setActiveTab] = useState("economy");
   const [showEpochTransition, setShowEpochTransition] = useState(false);
   const [newEpoch, setNewEpoch] = useState(null);
+  const [showBank, setShowBank] = useState(false);
   useEffect(() => {
     init();
   }, []);
