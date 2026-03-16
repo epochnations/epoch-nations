@@ -9,6 +9,7 @@ import NationStatsPanel from "../components/dashboard/NationStatsPanel";
 import StockTicker from "../components/dashboard/StockTicker";
 import HexOceanMap from "../components/map/HexOceanMap";
 import HexWorldEngine from "../components/game/HexWorldEngine";
+import LivingWorldEngine from "../components/game/LivingWorldEngine";
 
 import NotificationsPanel from "../components/dashboard/NotificationsPanel";
 import StockModal from "../components/modals/StockModal";
@@ -408,6 +409,9 @@ export default function Dashboard() {
 
       {/* Hex World Engine — seeds home islands, expands AI territories */}
       {myNation && <HexWorldEngine myNation={myNation} />}
+
+      {/* Living World Engine — procedural events, AI expansion, world activity */}
+      {myNation && <LivingWorldEngine myNation={myNation} />}
 
       {/* Research Panel */}
       {showResearch && myNation && (
