@@ -128,9 +128,15 @@ async function runStrategicTick(myNationId) {
 function pickStrategicAction(nation, goal, culture, allNations) {
   const roll = Math.random();
 
-  // War-related (rare, only when at conflict or high military)
+  // War-related
   const isAtWar = (nation.at_war_with || []).length > 0;
   if (isAtWar && roll < 0.15) return "war_statement";
+  // Aid nations at war (including player nations)
+  const nationsAtWar = allNations.filter(n => n.id !== nation.id && (n.at_war_with || []).length > 0);
+  if (nationsAtWar.length > 0 && (nation.currency || 0) > 300 && roll < 0.15) return "war_aid";
+  // Declare war on non-allied, non-war nations (military empires / warrior clans more likely)
+  const canDeclareWar = !isAtWar && (culture.diplomacyBias === "aggressive" || goal.id === "expand_military");
+  if (canDeclareWar && roll < 0.08) return "declare_war";
 
   // Trade/alliance proposals
   if (goal.id === "forge_alliances" && roll < 0.4) return "propose_alliance";
@@ -188,13 +194,23 @@ async function executeStrategicAction(nation, action, goal, allNations) {
     executeGlobalChatAid(nation, target, action).catch(() => {});
   }
 
+  // Execute war aid to nations at war
+  if (action === "war_aid") {
+    executeWarAid(nation, allNations).catch(() => {});
+  }
+
+  // Execute war declaration
+  if (action === "declare_war") {
+    executeAIWarDeclaration(nation, allNations).catch(() => {});
+  }
+
   // Execute AI stock purchase
   if (action === "buy_stock") {
     executeAIStockPurchase(nation).catch(() => {});
   }
 
   // Record in chronicle for high-importance actions
-  if (["propose_alliance", "oil_trade_offer", "war_statement"].includes(action)) {
+  if (["propose_alliance", "oil_trade_offer", "war_statement", "declare_war"].includes(action)) {
     await recordChronicle({
       event_type: action === "propose_alliance" ? "alliance" : action === "war_statement" ? "war" : "trade",
       title: `${nation.name}: ${goal.label}`,
@@ -227,6 +243,8 @@ Target nation for message: ${target?.name || "the global community"}`.trim();
     diplomatic_statement: `You are the leader of ${nation.name}. Make a brief, authentic diplomatic statement on the world stage that reflects your culture (${culture.label}) and current strategic goal. 1–2 sentences, no prefix.`,
     send_aid: `You are the leader of ${nation.name}. You are sending financial aid or resources to ${target?.name || "a nation in need"}. Announce this generosity on the world stage. Mention the act of aid. 1–2 sentences, no prefix.`,
     buy_stock: `You are the leader of ${nation.name}. Your nation's sovereign wealth fund is investing in foreign stock markets. Announce this investment strategy briefly. 1 sentence, no prefix.`,
+    declare_war: `You are the leader of ${nation.name}, a ${culture.label}. You are declaring war on a rival nation. Make a fierce, brief declaration of war on the world stage. 1 sentence, no quotes, no prefix.`,
+    war_aid: `You are the leader of ${nation.name}. You are sending military and financial aid to a nation currently at war. Announce your support publicly. 1 sentence, no prefix.`,
   };
 
   return `${gameCtx}\n\n${actionPrompts[action] || actionPrompts.diplomatic_statement}`;
