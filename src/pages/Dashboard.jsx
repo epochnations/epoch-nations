@@ -320,14 +320,7 @@ export default function Dashboard() {
           onRefresh={refresh}
         />
       )}
-      {selectedNation && (
-        <NationModal
-          nation={selectedNation}
-          myNation={myNation}
-          onClose={() => setSelectedNation(null)}
-          onRefresh={refresh}
-        />
-      )}
+      {/* Nation modal removed — interact with nations via island panels */}
       {showTechTree && (
         <TechTreePanel
           nation={myNation}

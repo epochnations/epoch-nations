@@ -236,8 +236,8 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
 
   const handleMouseMove = useCallback((e) => {
     if (selectedHex) return; // panel open — ignore
-    // Hover detection
-    if (svgRef.current && !dragging.current) {
+    // Hover detection (always, no button required)
+    if (svgRef.current) {
       try {
         const pt = svgRef.current.createSVGPoint();
         pt.x = e.clientX; pt.y = e.clientY;
@@ -246,6 +246,7 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
         setHoveredHex(h => (h?.q === q && h?.r === r) ? h : { q, r });
       } catch (_) {}
     }
+    // Only pan when button held
     if (!dragging.current) return;
     const dx = e.clientX - lastMousePos.current.x;
     const dy = e.clientY - lastMousePos.current.y;
@@ -510,10 +511,10 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
       ref={containerRef}
       className="relative w-full h-full rounded-2xl select-none"
       style={{ background: "#071428", cursor: selectedHex ? "default" : dragging.current ? "grabbing" : "grab", overflow: "hidden" }}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseLeave}
+      onPointerDown={handleMouseDown}
+      onPointerMove={handleMouseMove}
+      onPointerUp={handleMouseUp}
+      onPointerLeave={handleMouseLeave}
       onDoubleClick={handleDblClick}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
