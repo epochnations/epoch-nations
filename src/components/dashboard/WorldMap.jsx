@@ -139,11 +139,10 @@ export default function WorldMap({ myNation, onSelectNation, onOpenAdvisor }) {
       {/* Map lock overlay — click to unlock */}
       {!mapUnlocked && (
         <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none"
-          style={{ background: "rgba(0,0,0,0.15)" }}>
-          <div className="flex flex-col items-center gap-2 px-4 py-3 rounded-2xl"
-            style={{ background: "rgba(0,0,0,0.6)", border: "1px solid rgba(74,122,64,0.4)", backdropFilter: "blur(4px)" }}>
-            <span className="text-2xl">🗺️</span>
-            <span className="text-xs font-bold text-green-300 tracking-widest uppercase">Click to interact</span>
+          style={{ background: "rgba(0,0,0,0.1)" }}>
+          <div className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl"
+            style={{ background: "rgba(0,0,0,0.5)", border: "1px solid rgba(74,122,64,0.3)", backdropFilter: "blur(4px)" }}>
+            <span className="text-xl">🗺️</span>
           </div>
         </div>
       )}

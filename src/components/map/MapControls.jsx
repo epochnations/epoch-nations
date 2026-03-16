@@ -22,7 +22,7 @@ export default function MapControls({
   showLayerPanel, onToggleLayerPanel
 }) {
   return (
-    <div className="absolute right-3 top-12 z-30 flex flex-col gap-2 items-end">
+    <div className="absolute right-3 bottom-12 z-30 flex flex-col gap-2 items-end">
       {/* Mode toggle */}
       <div className="flex bg-black/70 border border-white/20 rounded-xl overflow-hidden backdrop-blur-sm">
         <button
