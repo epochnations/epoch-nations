@@ -431,6 +431,168 @@ async function executeAIStockPurchase(aiNation) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// AI ALLIANCE FORMATION
+// AI nations form real alliances written to DB
+// ─────────────────────────────────────────────────────────────────────────────
+async function executeAIAllianceFormation(aiNation, allNations) {
+  try {
+    // Pick a compatible target not already allied and not at war
+    const candidates = allNations.filter(n =>
+      n.id !== aiNation.id &&
+      !(aiNation.allies || []).includes(n.id) &&
+      !(aiNation.at_war_with || []).includes(n.id) &&
+      !(n.at_war_with || []).includes(aiNation.id)
+    );
+    if (!candidates.length) return;
+
+    const target = candidates[Math.floor(Math.random() * Math.min(candidates.length, 6))];
+    const freshNations = await base44.entities.Nation.list();
+    const freshAI = freshNations.find(n => n.id === aiNation.id);
+    const freshTarget = freshNations.find(n => n.id === target.id);
+    if (!freshAI || !freshTarget) return;
+
+    // Update both nations' allies lists
+    const aiAllies = [...new Set([...(freshAI.allies || []), freshTarget.id])];
+    const targetAllies = [...new Set([...(freshTarget.allies || []), freshAI.id])];
+    await base44.entities.Nation.update(freshAI.id, { allies: aiAllies });
+    await base44.entities.Nation.update(freshTarget.id, { allies: targetAllies });
+
+    // Create a DiplomacyAgreement record
+    await base44.entities.DiplomacyAgreement.create({
+      nation_a_id: freshAI.id, nation_a_name: freshAI.name,
+      nation_b_id: freshTarget.id, nation_b_name: freshTarget.name,
+      agreement_type: "alliance",
+      status: "active",
+      proposed_by: freshAI.name,
+      terms: `Mutual defense and cooperation pact between ${freshAI.name} and ${freshTarget.name}.`,
+    }).catch(() => {});
+
+    await base44.entities.ChatMessage.create({
+      channel: "global",
+      sender_nation_name: "DIPLOMATIC BUREAU",
+      sender_flag: "🤝",
+      sender_color: "#10b981",
+      sender_role: "system",
+      content: `🤝 ALLIANCE FORMED — ${freshAI.name} and ${freshTarget.name} have entered a formal alliance pact.`,
+    });
+
+    await recordChronicle({
+      event_type: "alliance",
+      title: `Alliance: ${freshAI.name} & ${freshTarget.name}`,
+      summary: `${freshAI.name} formed a strategic alliance with ${freshTarget.name}.`,
+      actors: [freshAI.name, freshTarget.name],
+      importance: "high",
+      era_tag: freshAI.epoch || "",
+    });
+  } catch { /* non-blocking */ }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AI TRADE ROUTE CREATION
+// AI nations establish real trade routes to other nations
+// ─────────────────────────────────────────────────────────────────────────────
+async function executeAITradeRoute(aiNation, allNations) {
+  try {
+    const RESOURCES = ["res_wood","res_stone","res_gold","res_iron","res_oil","res_food"];
+    // Find a resource the AI has plenty of
+    const richResource = RESOURCES.find(r => (aiNation[r] || 0) > 200);
+    if (!richResource) return;
+
+    // Pick a target nation that has little of that resource
+    const candidates = allNations.filter(n =>
+      n.id !== aiNation.id &&
+      (n[richResource] || 0) < 100
+    );
+    if (!candidates.length) return;
+
+    const target = candidates[Math.floor(Math.random() * Math.min(candidates.length, 5))];
+
+    // Check we don't already have a route to this nation for this resource
+    const existing = await base44.entities.TradeRoute.filter({ from_nation_id: aiNation.id, to_nation_id: target.id });
+    if (existing.some(r => r.resource_key === richResource)) return;
+
+    const users = await base44.entities.User.list();
+    const aiEmail = `ai_${aiNation.id}@epoch.nations`;
+    await base44.entities.TradeRoute.create({
+      from_nation_id: aiNation.id, from_nation_name: aiNation.name,
+      to_nation_id: target.id, to_nation_name: target.name,
+      resource_key: richResource,
+      quantity_per_cycle: Math.floor(20 + Math.random() * 40),
+      price_per_100: Math.floor(30 + Math.random() * 30),
+      direction: "export",
+      status: "active",
+      cycles_completed: 0,
+      total_earned: 0,
+      owner_email: aiNation.owner_email || aiEmail,
+    });
+
+    await recordChronicle({
+      event_type: "trade",
+      title: `Trade Route: ${aiNation.name} → ${target.name}`,
+      summary: `${aiNation.name} established a ${richResource.replace("res_","")} trade route to ${target.name}.`,
+      actors: [aiNation.name, target.name],
+      importance: "medium",
+      era_tag: aiNation.epoch || "",
+    });
+  } catch { /* non-blocking */ }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AI NATION GROWTH
+// AI nations autonomously improve their stats, workers, and can advance epochs
+// ─────────────────────────────────────────────────────────────────────────────
+async function executeAINationGrowth(aiNation) {
+  try {
+    const EPOCHS = ["Stone Age","Bronze Age","Iron Age","Classical Age","Medieval Age","Renaissance Age","Industrial Age","Modern Age","Digital Age","Information Age","Space Age","Galactic Age"];
+    const updates = {};
+    const gdp = aiNation.gdp || 200;
+    const stability = aiNation.stability || 65;
+    const pop = aiNation.population || 10;
+
+    // Boost GDP slowly
+    updates.gdp = Math.round(gdp * (1 + 0.01 + Math.random() * 0.02));
+    // Improve manufacturing
+    updates.manufacturing = Math.min(200, (aiNation.manufacturing || 50) + Math.floor(Math.random() * 3));
+    // Grow tech points
+    updates.tech_points = (aiNation.tech_points || 0) + Math.floor(5 + Math.random() * 10);
+    // Stability drift toward 70
+    if (stability < 70) updates.stability = Math.min(100, stability + 1);
+    // Add a worker if pop allows
+    const totalWorkers =
+      (aiNation.workers_farmers || 0) + (aiNation.workers_lumberjacks || 0) +
+      (aiNation.workers_quarry || 0) + (aiNation.workers_miners || 0) +
+      (aiNation.workers_soldiers || 0) + (aiNation.workers_researchers || 0) +
+      (aiNation.workers_hunters || 0);
+    if (totalWorkers < pop - 1 && Math.random() < 0.5) {
+      // Prioritize based on lowest resource
+      if ((aiNation.res_food || 0) < 100) updates.workers_farmers = (aiNation.workers_farmers || 0) + 1;
+      else if ((aiNation.res_wood || 0) < 80) updates.workers_lumberjacks = (aiNation.workers_lumberjacks || 0) + 1;
+      else if ((aiNation.res_gold || 0) < 80) updates.workers_miners = (aiNation.workers_miners || 0) + 1;
+      else updates.workers_researchers = (aiNation.workers_researchers || 0) + 1;
+    }
+    // Epoch advancement when tech points are high enough
+    const epochIdx = EPOCHS.indexOf(aiNation.epoch || "Stone Age");
+    const nextEpoch = EPOCHS[epochIdx + 1];
+    const techNeeded = (epochIdx + 1) * 150;
+    if (nextEpoch && (aiNation.tech_points || 0) >= techNeeded && stability >= 50 && pop >= (epochIdx + 1) * 5) {
+      updates.epoch = nextEpoch;
+      updates.tech_points = 0;
+      updates.tech_level = (aiNation.tech_level || 1) + 1;
+      await base44.entities.ChatMessage.create({
+        channel: "global",
+        sender_nation_name: "WORLD HERALD",
+        sender_flag: "📜",
+        sender_color: "#f59e0b",
+        sender_role: "system",
+        content: `🌟 EPOCH ADVANCE — ${aiNation.name} has entered the ${nextEpoch}!`,
+      }).catch(() => {});
+    }
+
+    await base44.entities.Nation.update(aiNation.id, updates);
+  } catch { /* non-blocking */ }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // AI WAR DECLARATION
 // AI nations with aggressive cultures can declare war on non-protected nations
 // ─────────────────────────────────────────────────────────────────────────────
