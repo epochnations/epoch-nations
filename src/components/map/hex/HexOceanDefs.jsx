@@ -5,6 +5,34 @@
 export default function HexOceanDefs() {
   return (
     <defs>
+      {/* ── Cloud filter ── */}
+      <filter id="cloudBlur">
+        <feGaussianBlur stdDeviation="8"/>
+      </filter>
+
+      {/* ── Enemy red glow filter ── */}
+      <filter id="enemyGlow" x="-30%" y="-30%" width="160%" height="160%">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="5" result="blur"/>
+        <feFlood floodColor="#ef4444" floodOpacity="0.6" result="color"/>
+        <feComposite in="color" in2="blur" operator="in" result="glow"/>
+        <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+
+      {/* ── My island cyan glow ── */}
+      <filter id="myGlow" x="-30%" y="-30%" width="160%" height="160%">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="5" result="blur"/>
+        <feFlood floodColor="#22d3ee" floodOpacity="0.5" result="color"/>
+        <feComposite in="color" in2="blur" operator="in" result="glow"/>
+        <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+
+      {/* ── Hover highlight ── */}
+      <filter id="hoverGlow" x="-40%" y="-40%" width="180%" height="180%">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="7" result="blur"/>
+        <feFlood floodColor="#fbbf24" floodOpacity="0.7" result="color"/>
+        <feComposite in="color" in2="blur" operator="in" result="glow"/>
+        <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
       {/* ── Deep ocean gradient ── */}
       <linearGradient id="deepOcean" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%"   stopColor="#061224" />
