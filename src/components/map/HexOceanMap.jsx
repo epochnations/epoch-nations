@@ -691,6 +691,52 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
         </div>
       )}
 
+      {/* ── My Islands navigation panel ── */}
+      {showMyIslands && myNation && (() => {
+        const myTiles = tiles.filter(t => t.owner_nation_id === myNation.id);
+        const devLabels = ["Outpost","Outpost","Settlement","Town","City","Capital"];
+        return (
+          <div className="absolute top-10 left-3 z-40 w-52 rounded-2xl overflow-hidden shadow-2xl"
+            style={{ background:"rgba(5,14,28,0.97)", border:"1px solid rgba(34,211,238,0.22)", backdropFilter:"blur(16px)", maxHeight:"calc(100% - 56px)", overflowY:"auto" }}
+            onMouseDown={e => e.stopPropagation()}>
+            <div className="px-3 py-2.5 border-b border-white/10">
+              <div className="text-xs font-bold text-cyan-400">🏝️ My Islands ({myTiles.length})</div>
+            </div>
+            {myTiles.length === 0 ? (
+              <div className="px-3 py-4 text-xs text-slate-500 text-center">No islands yet. Click ocean tiles to purchase.</div>
+            ) : (
+              <div className="divide-y divide-white/5">
+                {myTiles.map((t, i) => {
+                  const cfg = TERRAIN_CONFIG[t.terrain_type] || TERRAIN_CONFIG.tropical;
+                  const level = Math.min(5, t.infrastructure_level || 0);
+                  return (
+                    <button key={t.id}
+                      onClick={() => {
+                        const { x, y } = hexToWorld(t.q, t.r);
+                        const { w: W, h: H } = containerSize;
+                        const z = 2.5;
+                        applyZoom(z, W/2, H/2);
+                        setTimeout(() => setPan({ x: W/2 - x*z, y: H/2 - y*z }), 50);
+                        setShowMyIslands(false);
+                      }}
+                      className="w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-white/5 transition-colors">
+                      <span className="text-base">{cfg.emoji}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xs font-bold text-white truncate">
+                          {t.is_capital ? "⭐ Capital" : t.city_name || `${cfg.label} Island`}
+                        </div>
+                        <div className="text-[9px] text-slate-500">{devLabels[level]} · {(t.buildings||[]).length} buildings</div>
+                      </div>
+                      <div className="text-[9px] text-slate-600 ep-mono">({t.q},{t.r})</div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        );
+      })()}
+
       {/* ── Island panel ── */}
       {selectedHex && (
         <IslandPanel
