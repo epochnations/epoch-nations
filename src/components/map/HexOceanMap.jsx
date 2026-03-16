@@ -509,7 +509,7 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
     <div
       ref={containerRef}
       className="relative w-full h-full rounded-2xl select-none"
-      style={{ background: "#071428", cursor: dragging.current ? "grabbing" : "grab", overflow: "hidden" }}
+      style={{ background: "#071428", cursor: selectedHex ? "default" : dragging.current ? "grabbing" : "grab", overflow: "hidden" }}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
@@ -606,6 +606,19 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
             );
           })()}
 
+          {/* Territory influence tints (nation color tint on ocean around owned islands) */}
+          {zoom > 0.3 && tiles.filter(t => t.owner_nation_id).slice(0, 80).map(tile => {
+            const { x: cx, y: cy } = hexToWorld(tile.q, tile.r);
+            const color = tile.owner_color || "#3b82f6";
+            const isMe = tile.owner_nation_id === myNation?.id;
+            return (
+              <ellipse key={`inf_${tile.id}`} cx={cx} cy={cy}
+                rx={HEX_SIZE * 2.2} ry={HEX_SIZE * 2.0}
+                fill={color} opacity={isMe ? 0.06 : 0.035}
+                style={{ pointerEvents: "none" }}/>
+            );
+          })}
+
           {/* Island tiles */}
           {tiles.map(tile => {
             const isMyTile = tile.owner_nation_id === myNation?.id;
@@ -622,27 +635,37 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
             );
           })}
 
-          {/* Trade route lines between my islands */}
-          {zoom > 0.4 && (() => {
-            const myTiles = tiles.filter(t => t.owner_nation_id === myNation?.id);
-            if (myTiles.length < 2) return null;
-            return myTiles.slice(0,-1).map((t,i) => {
-              const a = hexToWorld(t.q, t.r);
-              const b = hexToWorld(myTiles[i+1].q, myTiles[i+1].r);
-              return (
-                <g key={`tr_${i}`}>
-                  <line x1={a.x} y1={a.y} x2={b.x} y2={b.y}
-                    stroke="#22d3ee" strokeWidth="1" strokeDasharray="6,5" opacity="0.3"/>
-                  {/* Animated ship */}
-                  {zoom > 0.9 && (
-                    <text textAnchor="middle" fontSize="14" style={{ pointerEvents:"none" }}>
-                      <animateMotion dur={`${3+i*0.5}s`} repeatCount="indefinite"
-                        path={`M${a.x},${a.y} L${b.x},${b.y}`}/>
-                      ⛵
-                    </text>
-                  )}
-                </g>
-              );
+          {/* Trade route lines + animated ships between all nation islands */}
+          {zoom > 0.3 && (() => {
+            // Build routes for all nations (group tiles by nation)
+            const byNation = {};
+            for (const t of tiles) {
+              if (!t.owner_nation_id) continue;
+              if (!byNation[t.owner_nation_id]) byNation[t.owner_nation_id] = { tiles: [], color: t.owner_color || "#22d3ee", isMe: t.owner_nation_id === myNation?.id };
+              byNation[t.owner_nation_id].tiles.push(t);
+            }
+            return Object.values(byNation).flatMap((nd, ni) => {
+              if (nd.tiles.length < 2) return [];
+              return nd.tiles.slice(0, -1).map((t, i) => {
+                const a = hexToWorld(t.q, t.r);
+                const b = hexToWorld(nd.tiles[i+1].q, nd.tiles[i+1].r);
+                const dist = Math.hypot(b.x - a.x, b.y - a.y);
+                if (dist > HEX_SIZE * 25) return null; // skip very long routes
+                return (
+                  <g key={`tr_${ni}_${i}`}>
+                    <line x1={a.x} y1={a.y} x2={b.x} y2={b.y}
+                      stroke={nd.color} strokeWidth={nd.isMe ? 1.2 : 0.7}
+                      strokeDasharray="5,6" opacity={nd.isMe ? 0.35 : 0.15}/>
+                    {zoom > 0.7 && (
+                      <text textAnchor="middle" fontSize={nd.isMe ? "16" : "11"} style={{ pointerEvents:"none" }}>
+                        <animateMotion dur={`${4+(ni+i)*0.7}s`} repeatCount="indefinite"
+                          path={`M${a.x},${a.y} L${b.x},${b.y}`}/>
+                        {nd.isMe ? "⛵" : "🚢"}
+                      </text>
+                    )}
+                  </g>
+                );
+              }).filter(Boolean);
             });
           })()}
 
