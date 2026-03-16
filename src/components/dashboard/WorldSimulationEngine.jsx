@@ -938,8 +938,8 @@ export default function WorldSimulationEngine({ myNation }) {
     if (!myNation?.id || initializedRef.current) return;
     initializedRef.current = true;
 
-    // Strategic AI tick: every 5 game ticks (5 real minutes)
-    const stratInterval = 5 * TICK_MS + Math.random() * 2 * TICK_MS;
+    // Strategic AI tick: every 2 game ticks (2 real minutes) — smarter & faster
+    const stratInterval = 2 * TICK_MS + Math.random() * TICK_MS;
     tickRef.current = setInterval(() => {
       runStrategicTick(myNation.id);
     }, stratInterval);
