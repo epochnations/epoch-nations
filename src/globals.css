@@ -116,15 +116,13 @@ body { margin: 0; background: #040810; font-family: 'Inter', -apple-system, Blin
   transition: all 0.2s ease;
 }
 
-/* ── Global input text color fix ── */
-input:not([type="range"]):not([type="checkbox"]):not([type="radio"]):not([type="color"]),
-textarea,
-select {
+/* ── Shadcn/UI inputs use white bg by default — ensure black text ── */
+.bg-background input,
+.bg-white input,
+[class*="bg-white"] input,
+input[class*="bg-background"],
+input.bg-white {
   color: #000000 !important;
-}
-input::placeholder,
-textarea::placeholder {
-  color: #6b7280 !important;
 }
 .ep-input:focus {
   outline: none;
