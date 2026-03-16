@@ -214,8 +214,14 @@ export default function WarEngine({ myNation }) {
     if (!myNation?.id || initRef.current) return;
     initRef.current = true;
 
+    // Check for defeated nations immediately + on every war tick
+    checkAndRemoveDefeatedNations();
+
     // War tick every 3 minutes
-    timerRef.current = setInterval(() => runWarTick(myNation.id), 3 * TICK_MS);
+    timerRef.current = setInterval(() => {
+      runWarTick(myNation.id);
+      checkAndRemoveDefeatedNations();
+    }, 3 * TICK_MS);
 
     return () => {
       clearInterval(timerRef.current);
