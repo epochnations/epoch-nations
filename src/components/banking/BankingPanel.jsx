@@ -467,6 +467,7 @@ export default function BankingPanel({ nation, onClose, onRefresh }) {
           })}
         </div>
       )}
+      </>)}
     </PanelShell>
   );
 }
