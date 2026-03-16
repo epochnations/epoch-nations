@@ -78,29 +78,35 @@ export function islandPrice(q, r, nearbyCount = 0) {
 
 const MIN_ZOOM = 0.12;
 const MAX_ZOOM = 6;
-const DRAG_THRESHOLD = 6; // px — below this = click, above = drag
+const DRAG_THRESHOLD = 5;
 
 export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor }) {
   const containerRef = useRef(null);
   const svgRef = useRef(null);
 
-  // Pan/zoom state
   const [zoom, setZoom] = useState(0.7);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const panRef = useRef({ x: 0, y: 0 });
   const zoomRef = useRef(0.7);
 
-  // Drag tracking
+  // Drag tracking — use manual delta instead of movementX/Y
   const dragging = useRef(false);
+  const lastMousePos = useRef({ x: 0, y: 0 });
   const dragStart = useRef({ x: 0, y: 0 });
   const dragDist = useRef(0);
   const lastTouch = useRef(null);
   const lastTouchDist = useRef(null);
 
+  // Inertia
+  const velocity = useRef({ x: 0, y: 0 });
+  const inertiaRef = useRef(null);
+
   // Smooth zoom animation
   const targetZoom = useRef(0.7);
   const zoomAnimRef = useRef(null);
   const zoomCenter = useRef({ x: 0, y: 0 });
+
+  const [showMyIslands, setShowMyIslands] = useState(false);
 
   const [tiles, setTiles] = useState([]);
   const [nations, setNations] = useState([]);
@@ -192,17 +198,41 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
     startZoomAnim();
   }, [startZoomAnim]);
 
-  // ── Pointer handlers (mouse + touch) ──
-  const handleMouseDown = useCallback((e) => {
-    if (e.button !== 0) return;
-    dragging.current = true;
-    dragStart.current = { x: e.clientX, y: e.clientY };
-    dragDist.current = 0;
+  // ── Inertia glide ──
+  const stopInertia = useCallback(() => {
+    cancelAnimationFrame(inertiaRef.current);
+    velocity.current = { x: 0, y: 0 };
   }, []);
 
+  const startInertia = useCallback(() => {
+    cancelAnimationFrame(inertiaRef.current);
+    const tick = () => {
+      const vx = velocity.current.x, vy = velocity.current.y;
+      if (Math.abs(vx) < 0.3 && Math.abs(vy) < 0.3) return;
+      velocity.current = { x: vx * 0.92, y: vy * 0.92 };
+      setPan(p => {
+        const np = { x: p.x + velocity.current.x, y: p.y + velocity.current.y };
+        panRef.current = np;
+        return np;
+      });
+      inertiaRef.current = requestAnimationFrame(tick);
+    };
+    inertiaRef.current = requestAnimationFrame(tick);
+  }, []);
+
+  // ── Pointer handlers — manual delta tracking ──
+  const handleMouseDown = useCallback((e) => {
+    if (e.button !== 0) return;
+    stopInertia();
+    dragging.current = true;
+    lastMousePos.current = { x: e.clientX, y: e.clientY };
+    dragStart.current = { x: e.clientX, y: e.clientY };
+    dragDist.current = 0;
+  }, [stopInertia]);
+
   const handleMouseMove = useCallback((e) => {
-    // Hover hex detection
-    if (svgRef.current) {
+    // Hover detection
+    if (svgRef.current && !dragging.current) {
       try {
         const pt = svgRef.current.createSVGPoint();
         pt.x = e.clientX; pt.y = e.clientY;
@@ -212,12 +242,14 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
       } catch (_) {}
     }
     if (!dragging.current) return;
-    const dx = e.clientX - dragStart.current.x;
-    const dy = e.clientY - dragStart.current.y;
-    dragDist.current = Math.sqrt(dx * dx + dy * dy);
-    // Actually pan using delta from last frame
+    const dx = e.clientX - lastMousePos.current.x;
+    const dy = e.clientY - lastMousePos.current.y;
+    lastMousePos.current = { x: e.clientX, y: e.clientY };
+    velocity.current = { x: dx, y: dy };
+    const dd = Math.hypot(e.clientX - dragStart.current.x, e.clientY - dragStart.current.y);
+    dragDist.current = dd;
     setPan(p => {
-      const np = { x: p.x + e.movementX, y: p.y + e.movementY };
+      const np = { x: p.x + dx, y: p.y + dy };
       panRef.current = np;
       return np;
     });
@@ -226,8 +258,10 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
   const handleMouseUp = useCallback((e) => {
     const wasDrag = dragDist.current > DRAG_THRESHOLD;
     dragging.current = false;
-    if (!wasDrag) {
-      // Treat as click — open panel
+    if (wasDrag) {
+      startInertia();
+    } else {
+      // Click — open panel
       if (svgRef.current) {
         try {
           const pt = svgRef.current.createSVGPoint();
@@ -241,9 +275,25 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
       }
     }
     dragDist.current = 0;
-  }, [tileMap, nationMap, onSelectNation]);
+  }, [tileMap, nationMap, onSelectNation, startInertia]);
 
-  const handleMouseLeave = useCallback(() => { dragging.current = false; }, []);
+  const handleMouseLeave = useCallback(() => {
+    if (dragging.current) startInertia();
+    dragging.current = false;
+  }, [startInertia]);
+
+  // Double-click to zoom to island
+  const handleDblClick = useCallback((e) => {
+    if (svgRef.current) {
+      try {
+        const pt = svgRef.current.createSVGPoint();
+        pt.x = e.clientX; pt.y = e.clientY;
+        const w = pt.matrixTransform(svgRef.current.getScreenCTM().inverse());
+        const { w: W, h: H } = containerSize;
+        applyZoom(Math.min(MAX_ZOOM, zoomRef.current * 2), e.clientX - containerRef.current.getBoundingClientRect().left, e.clientY - containerRef.current.getBoundingClientRect().top);
+      } catch (_) {}
+    }
+  }, [containerSize]);
 
   const handleWheel = useCallback((e) => {
     e.preventDefault();
@@ -265,6 +315,7 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
   }, [handleWheel]);
 
   const handleTouchStart = useCallback((e) => {
+    stopInertia();
     if (e.touches.length === 1) {
       dragging.current = true;
       const t = e.touches[0];
@@ -277,7 +328,7 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
       const dy = e.touches[0].clientY - e.touches[1].clientY;
       lastTouchDist.current = Math.hypot(dx, dy);
     }
-  }, []);
+  }, [stopInertia]);
 
   const handleTouchMove = useCallback((e) => {
     e.preventDefault();
@@ -285,6 +336,7 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
       const t = e.touches[0];
       const dx = t.clientX - lastTouch.current.x;
       const dy = t.clientY - lastTouch.current.y;
+      velocity.current = { x: dx, y: dy };
       lastTouch.current = { x: t.clientX, y: t.clientY };
       const dd = Math.hypot(t.clientX - dragStart.current.x, t.clientY - dragStart.current.y);
       dragDist.current = dd;
@@ -324,10 +376,11 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
         } catch (_) {}
       }
     }
+    if (dragDist.current > DRAG_THRESHOLD) startInertia();
     dragging.current = false;
     lastTouchDist.current = null;
     dragDist.current = 0;
-  }, [tileMap, nationMap, onSelectNation]);
+  }, [tileMap, nationMap, onSelectNation, startInertia]);
 
   // ── Mode focus ──
   useEffect(() => {
