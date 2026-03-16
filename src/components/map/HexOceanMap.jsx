@@ -773,6 +773,15 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
         );
       })()}
 
+      {/* ── Panel dim overlay (blocks map interaction while panel open) ── */}
+      {selectedHex && (
+        <div
+          className="absolute inset-0 z-35"
+          style={{ background: "rgba(0,0,0,0.35)", backdropFilter: "blur(1px)" }}
+          onClick={() => setSelectedHex(null)}
+        />
+      )}
+
       {/* ── Island panel ── */}
       {selectedHex && (
         <IslandPanel
