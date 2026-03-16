@@ -144,8 +144,8 @@ function pickStrategicAction(nation, goal, culture, allNations) {
   // Real trade route creation (writes to DB)
   if ((goal.id === "economic_growth" || goal.id === "dominate_oil") && roll < 0.15) return "create_trade_route";
 
-  // Grow workers / improve nation
-  if (roll < 0.12) return "grow_nation";
+  // Grow workers / improve nation — AI aggressively grows every tick
+  if (roll < 0.35) return "grow_nation";
 
   // Chat diplomacy
   if (goal.id === "forge_alliances" && roll < 0.4) return "propose_alliance";
