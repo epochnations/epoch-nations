@@ -23,22 +23,6 @@ export default function MapControls({
 }) {
   return (
     <div className="absolute right-3 bottom-12 z-30 flex flex-col gap-2 items-end">
-      {/* Mode toggle */}
-      <div className="flex bg-black/70 border border-white/20 rounded-xl overflow-hidden backdrop-blur-sm">
-        <button
-          onClick={() => onModeChange("global")}
-          className={`flex items-center gap-1 px-3 py-2 text-xs font-bold transition-colors ${mode === "global" ? "bg-cyan-500/30 text-cyan-300" : "text-slate-400 hover:text-white"}`}
-        >
-          <Globe size={12}/> Global
-        </button>
-        <button
-          onClick={() => onModeChange("national")}
-          className={`flex items-center gap-1 px-3 py-2 text-xs font-bold transition-colors ${mode === "national" ? "bg-violet-500/30 text-violet-300" : "text-slate-400 hover:text-white"}`}
-        >
-          <Map size={12}/> National
-        </button>
-      </div>
-
       {/* Zoom controls */}
       <div className="flex flex-col bg-black/70 border border-white/20 rounded-xl overflow-hidden backdrop-blur-sm">
         <button onClick={onZoomIn}

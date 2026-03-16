@@ -4,7 +4,7 @@
  */
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
-import { Globe, Wifi, Brain } from "lucide-react";
+import { Globe, Wifi, Brain, Map } from "lucide-react";
 
 import { useMapEngine } from "../map/MapEngine";
 import MapTerrain, { MAP_W, MAP_H, nationPos, CITIES } from "../map/MapTerrain";
@@ -23,8 +23,8 @@ import WeatherRadar from "../map/WeatherRadar";
 import { WarCountdownBar, ProtectionBar } from "../map/MapStatusBars";
 
 const DEFAULT_LAYERS = {
-  wars: true, battles: true, tradeRoutes: true, danger: true, resources: false,
-  territories: true, cities: true, armies: true, infra: false,
+  wars: false, battles: false, tradeRoutes: false, danger: false, resources: false,
+  territories: false, cities: false, armies: false, infra: false,
 };
 
 export default function WorldMap({ myNation, onSelectNation, onOpenAdvisor }) {
@@ -136,15 +136,9 @@ export default function WorldMap({ myNation, onSelectNation, onOpenAdvisor }) {
         {myNation && <ProtectionBar nation={myNation} />}
       </div>
 
-      {/* Map lock overlay — click to unlock */}
+      {/* Map lock overlay — click to unlock, no visible indicator */}
       {!mapUnlocked && (
-        <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none"
-          style={{ background: "rgba(0,0,0,0.1)" }}>
-          <div className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl"
-            style={{ background: "rgba(0,0,0,0.5)", border: "1px solid rgba(74,122,64,0.3)", backdropFilter: "blur(4px)" }}>
-            <span className="text-xl">🗺️</span>
-          </div>
-        </div>
+        <div className="absolute inset-0 z-20" style={{ background: "rgba(0,0,0,0.05)" }} />
       )}
 
       {/* Top Bar */}
@@ -167,6 +161,21 @@ export default function WorldMap({ myNation, onSelectNation, onOpenAdvisor }) {
           onSelectNation={focusNation}
           onSelectCity={focusCity}
         />
+        {/* Global / National mode toggle — top right */}
+        <div className="flex bg-black/70 border border-white/20 rounded-xl overflow-hidden backdrop-blur-sm shrink-0">
+          <button
+            onClick={() => setMode("global")}
+            className={`flex items-center gap-1 px-3 py-1.5 text-xs font-bold transition-colors ${mode === "global" ? "bg-cyan-500/30 text-cyan-300" : "text-slate-400 hover:text-white"}`}
+          >
+            <Globe size={11}/> Global
+          </button>
+          <button
+            onClick={() => setMode("national")}
+            className={`flex items-center gap-1 px-3 py-1.5 text-xs font-bold transition-colors ${mode === "national" ? "bg-violet-500/30 text-violet-300" : "text-slate-400 hover:text-white"}`}
+          >
+            <Map size={11}/> National
+          </button>
+        </div>
         <div className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold ${live ? "text-green-400 bg-green-400/10" : "text-slate-500"}`}>
           <Wifi size={10} /> {live ? "LIVE" : "PAUSED"}
         </div>
