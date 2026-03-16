@@ -194,6 +194,10 @@ export default function NationalProfile() {
           />
         )}
       </main>
+
+      {showBank && myNation && (
+        <BankingPanel nation={myNation} onClose={() => setShowBank(false)} onRefresh={() => loadAll(user?.email)} />
+      )}
     </div>
   );
 }
