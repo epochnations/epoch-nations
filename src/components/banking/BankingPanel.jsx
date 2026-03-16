@@ -240,8 +240,9 @@ export default function BankingPanel({ nation, onClose, onRefresh }) {
             Loans
           </button>
           <button onClick={onClose} className="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-slate-400 hover:text-white">
-          <X size={16} />
-        </button>
+            <X size={16} />
+          </button>
+        </div>
       </div>
 
       {/* Checking & Savings tabs — full content */}
