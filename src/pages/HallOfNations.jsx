@@ -9,6 +9,7 @@ import NationHistoryCard from "../components/hall/NationHistoryCard";
 import LeaderboardTable from "../components/hall/LeaderboardTable";
 import FirstAchievements from "../components/hall/FirstAchievements";
 import NationDetailModal from "../components/hall/NationDetailModal";
+import WorldTimeline from "../components/hall/WorldTimeline";
 
 const RANK_METRICS = [
   { key: "epoch",            label: "Epoch",       icon: "🌍", desc: "Most advanced civilization age" },
@@ -33,7 +34,7 @@ export default function HallOfNations() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [activeMetric, setActiveMetric] = useState("epoch");
-  const [activeTab, setActiveTab] = useState("leaderboard"); // leaderboard | history | firsts
+  const [activeTab, setActiveTab] = useState("leaderboard"); // leaderboard | history | firsts | timeline
   const [selectedNation, setSelectedNation] = useState(null);
   const [showStatus, setShowStatus] = useState(false);
   const [myNation, setMyNation] = useState(null);
@@ -218,6 +219,7 @@ export default function HallOfNations() {
             { id: "leaderboard", label: "🏆 Leaderboard" },
             { id: "history",     label: "📜 Nation Archives" },
             { id: "firsts",      label: "🥇 World Firsts" },
+            { id: "timeline",   label: "⏳ World Timeline" },
           ].map(tab => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)}
               className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${activeTab === tab.id ? "text-white" : "text-slate-500 hover:text-slate-300"}`}
@@ -266,6 +268,9 @@ export default function HallOfNations() {
             )}
             {activeTab === "firsts" && (
               <FirstAchievements nations={enriched} transactions={transactions} />
+            )}
+            {activeTab === "timeline" && (
+              <WorldTimeline />
             )}
           </>
         )}
