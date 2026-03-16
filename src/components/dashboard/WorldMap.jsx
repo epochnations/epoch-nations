@@ -125,8 +125,9 @@ export default function WorldMap({ myNation, onSelectNation, onOpenAdvisor }) {
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full rounded-2xl overflow-hidden select-none"
-      style={{ background: "#060d12", cursor: mapUnlocked ? "grab" : "default" }}
+      className="relative w-full h-full rounded-2xl select-none"
+      style={{ overflow: "visible" }}
+      style={{ background: "transparent", cursor: mapUnlocked ? "grab" : "default" }}
       {...(mapUnlocked ? handlers : {})}
       onClick={!mapUnlocked ? () => setMapUnlocked(true) : undefined}
     >
@@ -181,8 +182,9 @@ export default function WorldMap({ myNation, onSelectNation, onOpenAdvisor }) {
         </div>
       </div>
 
-      {/* Map Canvas */}
-      <div className="absolute inset-0 pt-9" style={{ overflow: "hidden" }}>
+      {/* Map Canvas — infinite world, no overflow clipping */}
+      <div className="absolute inset-0 pt-9" style={{ overflow: "visible", pointerEvents: "none" }}>
+        <div style={{ overflow: "visible", width: "100%", height: "100%", pointerEvents: "all" }}>
         <svg
           width={MAP_W}
           height={MAP_H}
@@ -193,8 +195,10 @@ export default function WorldMap({ myNation, onSelectNation, onOpenAdvisor }) {
             imageRendering: "auto",
             shapeRendering: "geometricPrecision",
             textRendering: "geometricPrecision",
+            overflow: "visible",
           }}
           viewBox={`0 0 ${MAP_W} ${MAP_H}`}
+          overflow="visible"
         >
           <MapTerrain zoom={zoom} />
 
@@ -287,6 +291,7 @@ export default function WorldMap({ myNation, onSelectNation, onOpenAdvisor }) {
             );
           })}
         </svg>
+        </div>
       </div>
 
       {/* Controls */}
