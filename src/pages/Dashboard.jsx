@@ -34,6 +34,7 @@ import WarEngine from "../components/game/WarEngine";
 import AdvancedWarEngine from "../components/game/AdvancedWarEngine";
 import NationMetricsPanel from "../components/dashboard/NationMetricsPanel";
 import SystemStatusDashboard from "../components/dashboard/SystemStatusDashboard";
+import AdvisorTipPopup from "../components/dashboard/AdvisorTipPopup";
 
 export default function Dashboard() {
   const [myNation, setMyNation] = useState(null);
