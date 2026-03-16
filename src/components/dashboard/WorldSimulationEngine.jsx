@@ -406,6 +406,143 @@ async function executeAIStockPurchase(aiNation) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// AI WAR DECLARATION
+// AI nations with aggressive cultures can declare war on non-protected nations
+// ─────────────────────────────────────────────────────────────────────────────
+async function executeAIWarDeclaration(aiNation, allNations) {
+  try {
+    const users = await base44.entities.User.list();
+    const userEmails = new Set(users.map(u => u.email));
+
+    // Find valid targets: not allied, not already at war, not under new-player protection
+    const targets = allNations.filter(n => {
+      if (n.id === aiNation.id) return false;
+      if ((aiNation.at_war_with || []).includes(n.id)) return false;
+      if ((aiNation.allies || []).includes(n.id)) return false;
+      // Skip nations under new-player protection (created within last 48h)
+      if (n.created_date) {
+        const ageMs = Date.now() - new Date(n.created_date).getTime();
+        if (ageMs < 48 * 60 * 60 * 1000) return false;
+      }
+      return true;
+    });
+    if (!targets.length) return;
+
+    const target = targets[Math.floor(Math.random() * Math.min(targets.length, 5))];
+    const freshNations = await base44.entities.Nation.list();
+    const freshAI = freshNations.find(n => n.id === aiNation.id);
+    const freshTarget = freshNations.find(n => n.id === target.id);
+    if (!freshAI || !freshTarget) return;
+
+    // Update war arrays
+    await base44.entities.Nation.update(freshAI.id, {
+      at_war_with: [...(freshAI.at_war_with || []), freshTarget.id],
+      war_started_at: new Date().toISOString(),
+    });
+    await base44.entities.Nation.update(freshTarget.id, {
+      at_war_with: [...(freshTarget.at_war_with || []), freshAI.id],
+      war_started_at: new Date().toISOString(),
+    });
+
+    // Notify target if player
+    if (userEmails.has(freshTarget.owner_email)) {
+      await base44.entities.Notification.create({
+        target_nation_id: freshTarget.id,
+        target_owner_email: freshTarget.owner_email,
+        type: "war_declared",
+        title: `War Declared by ${freshAI.name}`,
+        message: `${freshAI.name} has declared war on your nation!`,
+        severity: "danger",
+        is_read: false,
+      });
+    }
+
+    await base44.entities.ChatMessage.create({
+      channel: "global",
+      sender_nation_name: "WAR BUREAU",
+      sender_flag: "⚔️",
+      sender_color: "#ef4444",
+      sender_role: "system",
+      content: `⚔️ WAR DECLARED — ${freshAI.name} has declared war on ${freshTarget.name}!`,
+    });
+
+    await recordChronicle({
+      event_type: "war",
+      title: `${freshAI.name} declares war on ${freshTarget.name}`,
+      summary: `${freshAI.name} has launched a military campaign against ${freshTarget.name}.`,
+      actors: [freshAI.name, freshTarget.name],
+      importance: "high",
+      era_tag: freshAI.epoch || "",
+    });
+  } catch { /* non-blocking */ }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AI WAR AID
+// AI nations can send credits/resources to nations currently at war
+// ─────────────────────────────────────────────────────────────────────────────
+async function executeWarAid(aiNation, allNations) {
+  try {
+    const users = await base44.entities.User.list();
+    const userEmails = new Set(users.map(u => u.email));
+
+    // Find nations at war — prefer player nations
+    const warNations = allNations.filter(n =>
+      n.id !== aiNation.id &&
+      (n.at_war_with || []).length > 0 &&
+      !(aiNation.at_war_with || []).includes(n.id) // don't aid enemies
+    );
+    if (!warNations.length) return;
+
+    // Prefer allies first, then player nations, then any
+    const allies = warNations.filter(n => (aiNation.allies || []).includes(n.id));
+    const players = warNations.filter(n => userEmails.has(n.owner_email));
+    const target = (allies.length ? allies : players.length ? players : warNations)[Math.floor(Math.random() * (allies.length || players.length || warNations.length))];
+    if (!target) return;
+
+    const freshNations = await base44.entities.Nation.list();
+    const freshAI = freshNations.find(n => n.id === aiNation.id);
+    const freshTarget = freshNations.find(n => n.id === target.id);
+    if (!freshAI || !freshTarget) return;
+
+    const aidAmt = Math.min(400, Math.floor((freshAI.currency || 0) * 0.12));
+    if (aidAmt < 20) return;
+
+    await base44.entities.Nation.update(freshAI.id, { currency: Math.max(0, (freshAI.currency || 0) - aidAmt) });
+    await base44.entities.Nation.update(freshTarget.id, { currency: (freshTarget.currency || 0) + aidAmt });
+
+    await base44.entities.Transaction.create({
+      type: "lend_lease",
+      from_nation_id: freshAI.id, from_nation_name: freshAI.name,
+      to_nation_id: freshTarget.id, to_nation_name: freshTarget.name,
+      total_value: aidAmt,
+      description: `${freshAI.name} sent ${aidAmt} credits in war aid to ${freshTarget.name}`,
+    });
+
+    if (userEmails.has(freshTarget.owner_email)) {
+      await base44.entities.Notification.create({
+        target_nation_id: freshTarget.id,
+        target_owner_email: freshTarget.owner_email,
+        type: "ally_aid",
+        title: `War Aid from ${freshAI.name}`,
+        message: `${freshAI.name} has sent ${aidAmt} credits in war aid to support your war effort.`,
+        severity: "success",
+        is_read: false,
+      });
+    }
+
+    await base44.entities.ChatMessage.create({
+      channel: "global",
+      sender_nation_name: "TRADE BUREAU",
+      sender_flag: "🤝",
+      sender_color: "#10b981",
+      sender_role: "system",
+      content: `🤝 WAR AID — ${freshAI.name} has sent ${aidAmt} credits in wartime support to ${freshTarget.name}.`,
+    });
+  } catch { /* non-blocking */ }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // AI STOCK ISSUANCE
 // Periodically lists stocks for qualifying AI nations that haven't listed yet
 // ─────────────────────────────────────────────────────────────────────────────
