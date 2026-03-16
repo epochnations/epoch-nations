@@ -140,17 +140,22 @@ export default function IslandPanel({ hex, myNation, tiles, allNations, onClose,
 
   return (
     <div
-      className="absolute z-40 flex flex-col rounded-2xl overflow-hidden shadow-2xl"
+      className="absolute flex flex-col rounded-2xl overflow-hidden shadow-2xl"
       style={{
         top: "40px",
-        right: "12px",
-        bottom: "12px",
-        width: "min(320px, calc(100vw - 24px))",
-        background: "rgba(4,10,22,0.98)",
-        border: "1px solid rgba(34,211,238,0.25)",
-        backdropFilter: "blur(20px)",
+        right: "8px",
+        bottom: "8px",
+        width: "min(380px, calc(100vw - 16px))",
+        zIndex: 50,
+        background: "rgba(4,10,22,0.99)",
+        border: "1px solid rgba(34,211,238,0.3)",
+        backdropFilter: "blur(24px)",
+        boxShadow: "0 0 40px rgba(0,0,0,0.8), 0 0 0 1px rgba(34,211,238,0.1)",
       }}
       onMouseDown={e => e.stopPropagation()}
+      onTouchStart={e => e.stopPropagation()}
+      onMouseMove={e => e.stopPropagation()}
+      onMouseUp={e => e.stopPropagation()}
     >
       {/* ── Header ── */}
       <div className="shrink-0 px-4 pt-3 pb-2.5" style={{ borderBottom:"1px solid rgba(255,255,255,0.08)", background:"linear-gradient(135deg,rgba(34,211,238,0.06),rgba(139,92,246,0.04))" }}>
