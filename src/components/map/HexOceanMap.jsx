@@ -198,6 +198,9 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
     startZoomAnim();
   }, [startZoomAnim]);
 
+  // Track if panel is open so we can block map events
+  const panelOpen = !!selectedHex || showMyIslands;
+
   // ── Inertia glide ──
   const stopInertia = useCallback(() => {
     cancelAnimationFrame(inertiaRef.current);
@@ -223,6 +226,7 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
   // ── Pointer handlers — manual delta tracking ──
   const handleMouseDown = useCallback((e) => {
     if (e.button !== 0) return;
+    if (selectedHex) return; // panel open — don't pan
     stopInertia();
     dragging.current = true;
     lastMousePos.current = { x: e.clientX, y: e.clientY };
@@ -231,6 +235,7 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
   }, [stopInertia]);
 
   const handleMouseMove = useCallback((e) => {
+    if (selectedHex) return; // panel open — ignore
     // Hover detection
     if (svgRef.current && !dragging.current) {
       try {
@@ -256,6 +261,7 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
   }, []);
 
   const handleMouseUp = useCallback((e) => {
+    if (selectedHex) return; // panel open — ignore
     const wasDrag = dragDist.current > DRAG_THRESHOLD;
     dragging.current = false;
     if (wasDrag) {
@@ -315,6 +321,7 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
   }, [handleWheel]);
 
   const handleTouchStart = useCallback((e) => {
+    if (selectedHex) return; // panel open — ignore touch on map
     stopInertia();
     if (e.touches.length === 1) {
       dragging.current = true;
@@ -331,6 +338,7 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
   }, [stopInertia]);
 
   const handleTouchMove = useCallback((e) => {
+    if (selectedHex) return;
     e.preventDefault();
     if (e.touches.length === 1 && dragging.current) {
       const t = e.touches[0];
