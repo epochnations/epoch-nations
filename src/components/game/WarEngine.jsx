@@ -271,6 +271,19 @@ async function checkAndRemoveDefeatedNations() {
 
       // 4. Delete the nation
       await base44.entities.Nation.delete(nation.id).catch(() => {});
+
+      // 5. Spawn 1–5 new AI nations to replace the fallen
+      const spawnCount = 1 + Math.floor(Math.random() * 5);
+      await base44.entities.ChatMessage.create({
+        channel: "global",
+        sender_nation_name: "WORLD HERALD",
+        sender_flag: "🌍",
+        sender_color: "#06b6d4",
+        sender_role: "system",
+        content: `🌍 FROM THE ASHES — ${nation.name} has fallen, but ${spawnCount} new nation${spawnCount > 1 ? "s" : ""} will rise to take its place on the world stage!`,
+      }).catch(() => {});
+
+      createNewAINations(spawnCount).catch(() => {});
     }
   } catch (_) {}
 }
