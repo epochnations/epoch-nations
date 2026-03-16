@@ -413,6 +413,7 @@ export default function AIDiplomacyEngine({ myNation, onReady }) {
   const pmCooldownsRef    = useRef({});
   const userEmailsRef     = useRef(new Set());
   const handleMessageRef  = useRef(null);
+  const handledMsgIds     = useRef(new Set());
 
   // Keep handler ref always up-to-date so onReady closure always calls latest version
   useEffect(() => {
@@ -494,6 +495,17 @@ export default function AIDiplomacyEngine({ myNation, onReady }) {
 
   // ── Main player message handler ────────────────────────────────────────────
   async function handlePlayerMessage(msg) {
+    // Deduplicate: skip if we've already handled this message
+    const msgKey = msg.id || `${msg.sender_nation_id}_${msg.content?.slice(0,30)}_${Date.now()}`;
+    if (msg.id) {
+      if (handledMsgIds.current.has(msg.id)) return;
+      handledMsgIds.current.add(msg.id);
+      // Keep set small
+      if (handledMsgIds.current.size > 100) {
+        const oldest = [...handledMsgIds.current].slice(0, 50);
+        oldest.forEach(id => handledMsgIds.current.delete(id));
+      }
+    }
     const allNations  = await base44.entities.Nation.list("-gdp", 30);
     const nationNames = allNations.map(n => n.name);
     const analysis    = analyzeMessage(msg.content || "", nationNames);
