@@ -56,6 +56,60 @@ function pickWarEvent(seed) {
   return WAR_EVENTS[0];
 }
 
+// ── Defeat detection & nation removal ────────────────────────────────────────
+async function checkAndRemoveDefeatedNations() {
+  try {
+    const allNations = await base44.entities.Nation.list("-gdp", 100);
+
+    for (const nation of allNations) {
+      const isDefeated =
+        (nation.stability || 0) <= 0 &&
+        (nation.currency || 0) <= 0;
+
+      if (!isDefeated) continue;
+
+      // 1. Delete their stocks
+      const stocks = await base44.entities.Stock.filter({ nation_id: nation.id }).catch(() => []);
+      for (const stock of stocks) {
+        // Delete all holdings of this stock
+        const holdings = await base44.entities.StockHolding.filter({ stock_id: stock.id }).catch(() => []);
+        for (const h of holdings) {
+          await base44.entities.StockHolding.delete(h.id).catch(() => {});
+        }
+        await base44.entities.Stock.delete(stock.id).catch(() => {});
+      }
+
+      // 2. Remove from all other nations' allies / at_war_with lists
+      for (const other of allNations) {
+        if (other.id === nation.id) continue;
+        const needsUpdate = {};
+        if ((other.allies || []).includes(nation.id)) {
+          needsUpdate.allies = (other.allies || []).filter(id => id !== nation.id);
+        }
+        if ((other.at_war_with || []).includes(nation.id)) {
+          needsUpdate.at_war_with = (other.at_war_with || []).filter(id => id !== nation.id);
+        }
+        if (Object.keys(needsUpdate).length) {
+          await base44.entities.Nation.update(other.id, needsUpdate).catch(() => {});
+        }
+      }
+
+      // 3. Announce elimination
+      await base44.entities.ChatMessage.create({
+        channel: "global",
+        sender_nation_name: "WORLD HERALD",
+        sender_flag: "💀",
+        sender_color: "#ef4444",
+        sender_role: "system",
+        content: `💀 NATION ELIMINATED — ${nation.name} has collapsed and been removed from the world stage.`,
+      }).catch(() => {});
+
+      // 4. Delete the nation
+      await base44.entities.Nation.delete(nation.id).catch(() => {});
+    }
+  } catch (_) {}
+}
+
 // ── Main war tick ─────────────────────────────────────────────────────────────
 async function runWarTick(myNationId) {
   try {
