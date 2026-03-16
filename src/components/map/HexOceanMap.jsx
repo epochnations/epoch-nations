@@ -579,10 +579,37 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
           {/* Deep ocean */}
           <rect x="-8000" y="-8000" width={WORLD_W+16000} height={WORLD_H+16000} fill="url(#deepOcean)"/>
 
-          {/* Animated waves */}
+          {/* Animated wave layer 1 (slow) */}
           <rect x="-8000" y="-8000" width={WORLD_W+16000} height={WORLD_H+16000} fill="url(#wavePattern)" opacity="0.22">
             <animateTransform attributeName="transform" type="translate" from="0 0" to="200 0" dur="5s" repeatCount="indefinite"/>
           </rect>
+
+          {/* Animated wave layer 2 — parallax (faster) */}
+          <rect x="-8000" y="-8000" width={WORLD_W+16000} height={WORLD_H+16000} fill="url(#deepWave)" opacity="0.15">
+            <animateTransform attributeName="transform" type="translate" from="0 0" to="-400 0" dur="9s" repeatCount="indefinite"/>
+          </rect>
+
+          {/* Drifting clouds */}
+          {zoom < 2 && [
+            { cx: 800, cy: 300, r: 140, dur: "40s" },
+            { cx: 2200, cy: 900, r: 100, dur: "55s" },
+            { cx: 3600, cy: 500, r: 160, dur: "48s" },
+            { cx: 1400, cy: 2000, r: 120, dur: "62s" },
+            { cx: 4200, cy: 1500, r: 90, dur: "37s" },
+          ].map((cloud, i) => (
+            <g key={`cloud_${i}`} opacity="0.12">
+              <ellipse cx={cloud.cx} cy={cloud.cy} rx={cloud.r} ry={cloud.r * 0.45} fill="white" filter="url(#cloudBlur)">
+                <animateTransform attributeName="transform" type="translate"
+                  from={`0 0`} to={`${cloud.r * 4} 0`}
+                  dur={cloud.dur} repeatCount="indefinite"/>
+              </ellipse>
+              <ellipse cx={cloud.cx + cloud.r * 0.4} cy={cloud.cy - cloud.r * 0.2} rx={cloud.r * 0.7} ry={cloud.r * 0.35} fill="white" filter="url(#cloudBlur)">
+                <animateTransform attributeName="transform" type="translate"
+                  from={`0 0`} to={`${cloud.r * 4} 0`}
+                  dur={cloud.dur} repeatCount="indefinite"/>
+              </ellipse>
+            </g>
+          ))}
 
           {/* Hex grid lines */}
           {showGrid && zoom > 0.35 && visibleGridHexes.map(({ q, r }) => {

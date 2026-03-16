@@ -87,6 +87,16 @@ export default function HexOceanDefs() {
         <stop offset="100%" stopColor="rgba(6,18,40,0.7)" />
       </radialGradient>
 
+      {/* ── Parallax ocean pattern ── */}
+      <pattern id="deepWave" x="0" y="0" width="400" height="120" patternUnits="userSpaceOnUse">
+        <path d="M0 60 Q50 30 100 60 Q150 90 200 60 Q250 30 300 60 Q350 90 400 60"
+          fill="none" stroke="#1e6a9a" strokeWidth="2.5" opacity="0.18"/>
+        <path d="M0 80 Q60 55 120 80 Q180 105 240 80 Q300 55 360 80 Q390 95 400 80"
+          fill="none" stroke="#1a5580" strokeWidth="1.5" opacity="0.12"/>
+        <path d="M0 40 Q70 15 140 40 Q210 65 280 40 Q350 15 400 40"
+          fill="none" stroke="#163d65" strokeWidth="1" opacity="0.1"/>
+      </pattern>
+
       {/* ── Island clip path shapes ── */}
       <clipPath id="hexClip">
         <polygon points="52,0 26,-45 -26,-45 -52,0 -26,45 26,45" />
