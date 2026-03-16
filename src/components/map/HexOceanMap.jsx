@@ -506,6 +506,7 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseLeave}
+      onDoubleClick={handleDblClick}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -525,7 +526,14 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
         <span className="text-[10px] text-slate-500 ep-mono hidden sm:block">
           {tiles.length} islands · {nations.length} nations
         </span>
-        {myNation && <span className="text-[10px] text-amber-400 ep-mono">{myNation.flag_emoji} {myTileCount} islands</span>}
+        {myNation && (
+          <button
+            onClick={() => setShowMyIslands(s => !s)}
+            className={`text-[10px] font-bold px-2 py-0.5 rounded-lg border transition-all ${showMyIslands ? "text-amber-400 bg-amber-500/15 border-amber-500/30" : "text-amber-400/70 border-amber-500/20"}`}
+            onMouseDown={e => e.stopPropagation()}>
+            {myNation.flag_emoji} {myTileCount} islands
+          </button>
+        )}
         <div className="flex-1"/>
         <span className="text-[9px] text-slate-600 ep-mono">
           {zoomLevel === 1 ? "🌍 Global" : zoomLevel === 2 ? "🗺 Regional" : "🏝 Island Detail"}
