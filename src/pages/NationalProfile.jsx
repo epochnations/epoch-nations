@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
-import { Shield, TrendingUp, Swords, BookOpen, Globe, Share2, Landmark } from "lucide-react";
+import { Shield, TrendingUp, Swords, BookOpen, Globe, Share2, Landmark, ScrollText } from "lucide-react";
 import BankingPanel from "../components/banking/BankingPanel.jsx";
+import DiplomacyPanel from "../components/diplomacy/DiplomacyPanel.jsx";
 import IdentityHeader from "../components/profile/IdentityHeader.jsx";
 import EconomicLedger from "../components/profile/EconomicLedger.jsx";
 import WarRoom from "../components/profile/WarRoom.jsx";
@@ -30,6 +31,7 @@ export default function NationalProfile() {
   const [showEpochTransition, setShowEpochTransition] = useState(false);
   const [newEpoch, setNewEpoch] = useState(null);
   const [showBank, setShowBank] = useState(false);
+  const [showDiplomacy, setShowDiplomacy] = useState(false);
   useEffect(() => {
     init();
   }, []);
@@ -123,6 +125,12 @@ export default function NationalProfile() {
         </div>
         <div className="flex gap-2 items-center">
           {myNation && (
+            <button onClick={() => setShowDiplomacy(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 transition-all">
+              <ScrollText size={12} /> Diplomacy
+            </button>
+          )}
+          {myNation && (
             <button onClick={() => setShowBank(true)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border border-amber-500/30 text-amber-400 hover:bg-amber-500/10 transition-all">
               <Landmark size={12} /> Bank
@@ -197,6 +205,9 @@ export default function NationalProfile() {
 
       {showBank && myNation && (
         <BankingPanel nation={myNation} onClose={() => setShowBank(false)} onRefresh={() => loadAll(user?.email)} />
+      )}
+      {showDiplomacy && myNation && (
+        <DiplomacyPanel myNation={myNation} onClose={() => setShowDiplomacy(false)} onRefresh={() => loadAll(user?.email)} />
       )}
     </div>
   );
