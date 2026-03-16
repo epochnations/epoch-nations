@@ -599,15 +599,20 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
           })()}
 
           {/* Island tiles */}
-          {tiles.map(tile => (
-            <IslandHex
-              key={tile.id}
-              tile={tile}
-              myNation={myNation}
-              isSelected={selectedHex?.q === tile.q && selectedHex?.r === tile.r}
-              zoom={zoom}
-            />
-          ))}
+          {tiles.map(tile => {
+            const isMyTile = tile.owner_nation_id === myNation?.id;
+            const dimmed = mode === "national" && !isMyTile;
+            return (
+              <g key={tile.id} opacity={dimmed ? 0.3 : 1}>
+                <IslandHex
+                  tile={tile}
+                  myNation={myNation}
+                  isSelected={selectedHex?.q === tile.q && selectedHex?.r === tile.r}
+                  zoom={zoom}
+                />
+              </g>
+            );
+          })}
 
           {/* Trade route lines between my islands */}
           {zoom > 0.4 && (() => {
