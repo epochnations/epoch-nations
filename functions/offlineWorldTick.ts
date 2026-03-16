@@ -145,6 +145,21 @@ async function ensureLeaderName(base44, nation) {
   }
 }
 
+async function ensureAINationName(base44, nation) {
+  // Only for AI nations
+  if (nation.owner_email && nation.owner_email.trim() !== "") return;
+  const name = (nation.name || "").trim();
+  // Fix names with numbers or that are too short/generic
+  const hasNumbers = /\d/.test(name);
+  const isTooShort = name.length < 4;
+  const isGeneric = /^(nation|ai|test|country|state)\s*\d*/i.test(name);
+  if (hasNumbers || isTooShort || isGeneric) {
+    const seed = nation.id.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
+    const newName = generateAINationName(seed);
+    await base44.asServiceRole.entities.Nation.update(nation.id, { name: newName });
+  }
+}
+
 async function ensureAIStock(base44, nation) {
   // Only for AI nations (no real owner_email or empty)
   if (nation.owner_email && nation.owner_email.trim() !== "") return;
@@ -216,6 +231,7 @@ Deno.serve(async (req) => {
       try {
         await tickNation(base44, nation);
         await ensureLeaderName(base44, nation);
+        await ensureAINationName(base44, nation);
         await ensureAIStock(base44, nation);
         await tickAIStockPrice(base44, nation);
         processed++;
