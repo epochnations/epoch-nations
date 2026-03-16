@@ -56,6 +56,171 @@ function pickWarEvent(seed) {
   return WAR_EVENTS[0];
 }
 
+// ── AI Nation name/leader pools ───────────────────────────────────────────────
+const AI_NATION_NAMES = [
+  "Valdoria","Ironveil","Stormcrest","Ashenfell","Caldenmoor","Riftgate","Ebonshire",
+  "Thornwall","Solmara","Duskholm","Velarion","Greyspire","Cindral","Aurenveil",
+  "Frostmere","Brightmoor","Shadowfen","Ironpeak","Goldenvast","Embervale",
+  "Stonereach","Wyverholt","Skymere","Ashvale","Copperfield","Ironwood","Silvanus",
+  "Darkwater","Bloodhaven","Starforge","Ravenmoor","Dawnspire","Steelgate","Cinderhold",
+  "Moonveil","Sunreach","Stormveil","Ironclad","Ashrock","Coldwater","Firehaven",
+  "Thunderpeak","Stonewall","Ironmoor","Emberveil","Goldenrock","Silverstone",
+  "Darkwood","Bloodstone","Starfall","Ravencrest","Dawnbreak","Steelwall","Cinderspire",
+  "Moonstone","Sunfall","Stormrock","Ironsong","Ashwood","Coldstone","Firewood",
+];
+const AI_LEADERS = [
+  "Emperor Valdris","Chancellor Meira","High Consul Doran","Warlord Thenka",
+  "President Alek","Grand Marshal Sorin","Empress Lyria","Director Voss",
+  "Archon Caelum","Supreme Leader Ryx","Protector Sable","Commander Vane",
+  "Premier Orik","Grand Vizier Selene","Overseer Kael","Chieftain Brax",
+  "Regent Mira","Admiral Zoryn","Governor Thessa","High King Edran",
+  "Matriarch Zuna","Patriarch Drev","Chancellor Fyra","General Strix",
+  "Consul Aven","Warden Tova","Elder Khosa","Duke Revas","Countess Lyren",
+  "Baron Threx","Magistrate Cova","Warlord Skaar","Ambassador Vael","Praetor Nyx",
+];
+const AI_EPOCHS = ["Stone Age","Bronze Age","Iron Age","Classical Age","Medieval Age"];
+const AI_GOV_TYPES = [
+  "Democracy","Constitutional Monarchy","Absolute Monarchy","Federal Republic",
+  "Socialist Republic","Military Junta","Oligarchy","Theocracy","Technocracy","Confederation"
+];
+const AI_EMOJIS = ["🦅","🐉","🌟","🔱","🛡️","🌙","☀️","🦁","🐯","🌊","⚔️","🏔️","🦊","🐺","🦋"];
+const AI_COLORS = ["#3b82f6","#ef4444","#10b981","#f59e0b","#8b5cf6","#06b6d4","#f97316","#ec4899","#84cc16","#e11d48"];
+
+const AI_OWNER_PREFIX = "ai_bot_";
+
+function randFrom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+async function createNewAINations(count) {
+  const existing = await base44.entities.Nation.list("-created_date", 100).catch(() => []);
+  const usedNames = new Set(existing.map(n => n.name));
+
+  for (let i = 0; i < count; i++) {
+    let name = randFrom(AI_NATION_NAMES);
+    // Ensure unique name
+    let attempts = 0;
+    while (usedNames.has(name) && attempts < 20) {
+      const suffix = ["Empire","Republic","Kingdom","State","Federation","Dominion","Alliance","Union","Pact","Coalition"];
+      name = `${randFrom(AI_NATION_NAMES)} ${randFrom(suffix)}`;
+      attempts++;
+    }
+    usedNames.add(name);
+
+    const leader = randFrom(AI_LEADERS);
+    const epoch = randFrom(AI_EPOCHS);
+    const epochIdx = ["Stone Age","Bronze Age","Iron Age","Classical Age","Medieval Age"].indexOf(epoch);
+    const govType = randFrom(AI_GOV_TYPES);
+    const flagEmoji = randFrom(AI_EMOJIS);
+    const flagColor = randFrom(AI_COLORS);
+    const ownerEmail = `${AI_OWNER_PREFIX}${Date.now()}_${i}@epoch.nations`;
+
+    // Scale starting stats based on epoch
+    const techMult = 1 + epochIdx * 0.5;
+    const gdp = Math.round((300 + Math.random() * 400) * techMult);
+    const stability = Math.round(60 + Math.random() * 25);
+    const currency = Math.round((400 + Math.random() * 600) * techMult);
+    const unitPower = Math.round((15 + Math.random() * 20) * techMult);
+    const techPoints = Math.round(epochIdx * 120 + Math.random() * 80);
+    const techLevel = Math.max(1, epochIdx + 1);
+    const population = Math.round(12 + Math.random() * 20 + epochIdx * 5);
+
+    try {
+      const nation = await base44.entities.Nation.create({
+        name,
+        leader,
+        owner_email: ownerEmail,
+        government_type: govType,
+        epoch,
+        tech_points: techPoints,
+        tech_level: techLevel,
+        gdp,
+        gdp_prev_tick: gdp,
+        national_wealth: gdp * 1.5,
+        stability,
+        public_trust: 0.9 + Math.random() * 0.4,
+        currency,
+        savings_balance: Math.round(currency * 0.3),
+        currency_name: "Credits",
+        currency_stability: 0.95 + Math.random() * 0.1,
+        manufacturing: Math.round(40 + Math.random() * 60),
+        education_spending: Math.round(20 + Math.random() * 20),
+        military_spending: Math.round(15 + Math.random() * 25),
+        unit_power: unitPower,
+        defense_level: Math.round(unitPower * 0.8),
+        population,
+        housing_capacity: population + Math.round(5 + Math.random() * 10),
+        flag_color: flagColor,
+        flag_emoji: flagEmoji,
+        allies: [],
+        at_war_with: [],
+        unlocked_techs: [],
+        tax_rates: { income: 15 + Math.round(Math.random() * 10), sales: 8 + Math.round(Math.random() * 5), corporate: 12 + Math.round(Math.random() * 8), tariff: 5 + Math.round(Math.random() * 5) },
+        res_wood: Math.round(150 + Math.random() * 200),
+        res_stone: Math.round(100 + Math.random() * 200),
+        res_gold: Math.round(60 + Math.random() * 100),
+        res_oil: epochIdx >= 3 ? Math.round(Math.random() * 150) : 0,
+        res_iron: epochIdx >= 1 ? Math.round(50 + Math.random() * 150) : 0,
+        res_food: Math.round(200 + Math.random() * 300),
+        workers_farmers: 3 + Math.round(Math.random() * 3),
+        workers_hunters: 1 + Math.round(Math.random() * 2),
+        workers_lumberjacks: 2 + Math.round(Math.random() * 2),
+        workers_quarry: 1 + Math.round(Math.random() * 2),
+        workers_miners: 1 + Math.round(Math.random() * 2),
+        workers_iron_miners: epochIdx >= 1 ? Math.round(Math.random() * 2) : 0,
+        workers_oil_engineers: epochIdx >= 3 ? Math.round(Math.random() * 2) : 0,
+        workers_builders: 1,
+        workers_soldiers: Math.round(1 + Math.random() * 3),
+        workers_researchers: 1 + Math.round(Math.random() * 2),
+        workers_industrial: epochIdx >= 2 ? Math.round(Math.random() * 3) : 0,
+        workers_fishermen: Math.round(Math.random() * 2),
+      });
+
+      // Create initial stock
+      const ticker = name.replace(/[^A-Za-z]/g, "").substring(0, 4).toUpperCase() || "NATN";
+      const basePrice = Math.max(4, Math.min(60, parseFloat((5 + (gdp / 100) * techMult).toFixed(2))));
+      const totalShares = 500 + epochIdx * 100;
+      const sector = epochIdx >= 3 ? "Technology" : epochIdx >= 2 ? "Finance" : unitPower > 25 ? "Defense" : "Agriculture";
+      await base44.entities.Stock.create({
+        company_name: `${name} National Corp`,
+        ticker,
+        nation_id: nation.id,
+        nation_name: name,
+        sector,
+        total_shares: totalShares,
+        available_shares: totalShares,
+        base_price: basePrice,
+        current_price: basePrice,
+        price_history: [basePrice],
+        market_cap: basePrice * totalShares,
+        is_crashed: false,
+        epoch_required: epoch,
+      });
+
+      // Announce birth
+      await base44.entities.ChatMessage.create({
+        channel: "global",
+        sender_nation_name: "WORLD HERALD",
+        sender_flag: flagEmoji,
+        sender_color: flagColor,
+        sender_role: "system",
+        content: `🌟 NEW NATION FOUNDED — ${flagEmoji} ${name} has risen! Led by ${leader} under a ${govType} government, entering the world stage in the ${epoch}. GDP: ${gdp.toLocaleString()} | Military Power: ${unitPower} | Population: ${population}M`,
+      }).catch(() => {});
+
+      await base44.entities.WorldChronicle.create({
+        event_type: "narrative",
+        title: `${name} Rises`,
+        summary: `A new nation, ${name}, has emerged on the world stage under ${leader}'s ${govType} in the ${epoch}. With a GDP of ${gdp} and military power of ${unitPower}, they are ready to forge their destiny.`,
+        actors: [name],
+        importance: "medium",
+        era_tag: epoch,
+      }).catch(() => {});
+
+    } catch (_) {}
+
+    // Stagger creation
+    await new Promise(r => setTimeout(r, 800));
+  }
+}
+
 // ── Defeat detection & nation removal ────────────────────────────────────────
 async function checkAndRemoveDefeatedNations() {
   try {
