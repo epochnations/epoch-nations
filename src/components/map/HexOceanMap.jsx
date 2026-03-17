@@ -5,9 +5,9 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { Globe, Map, Wifi, Brain, Layers } from "lucide-react";
-import IslandPanel from "./hex/IslandPanel";
 import HexOceanDefs from "./hex/HexOceanDefs";
 import IslandHex from "./hex/IslandHex";
+import { createPageUrl } from "@/utils";
 
 // ── World constants ──────────────────────────────────────────────────────────
 export const WORLD_W = 6000;
@@ -383,8 +383,8 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
           const w = pt.matrixTransform(svgRef.current.getScreenCTM().inverse());
           const { q, r } = worldToHex(w.x, w.y);
           const tile = tileMap[`${q}_${r}`];
-          setSelectedHex({ q, r, tile: tile || null });
           if (tile?.owner_nation_id) onSelectNation?.(nationMap[tile.owner_nation_id] || null);
+          window.location.href = createPageUrl("IslandManagement") + `?q=${q}&r=${r}`;
         } catch (_) {}
       }
     }
@@ -804,28 +804,7 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
         );
       })()}
 
-      {/* ── Panel dim overlay — fixed to cover full screen when panel open ── */}
-      {selectedHex && (
-        <div
-          className="fixed inset-0"
-          style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(2px)", zIndex: 150 }}
-          onClick={() => setSelectedHex(null)}
-        />
-      )}
-
-      {/* ── Island panel ── */}
-      {selectedHex && (
-        <IslandPanel
-          hex={selectedHex}
-          myNation={myNation}
-          tiles={tiles}
-          allNations={nations}
-          onClose={() => setSelectedHex(null)}
-          onPurchase={handlePurchase}
-          onClaim={handleClaim}
-          onRefresh={loadData}
-        />
-      )}
+      {/* Island panel removed — clicking navigates to /IslandManagement?q=&r= */}
     </div>
   );
 }
