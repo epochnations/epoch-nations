@@ -37,6 +37,7 @@ import AdvancedWarEngine from "../components/game/AdvancedWarEngine";
 import NationMetricsPanel from "../components/dashboard/NationMetricsPanel";
 import SystemStatusDashboard from "../components/dashboard/SystemStatusDashboard";
 import AdvisorTipPopup from "../components/dashboard/AdvisorTipPopup";
+import PerspectiveSwitcher from "../components/world/PerspectiveSwitcher";
 
 export default function Dashboard() {
   const [myNation, setMyNation] = useState(null);
@@ -123,6 +124,7 @@ export default function Dashboard() {
             <span className="ep-live-dot" />
             <span className="text-green-400 font-bold ml-1">LIVE</span>
           </div>
+          <PerspectiveSwitcher currentMode="nation" compact />
         </div>
 
         <div className="flex items-center gap-2">
