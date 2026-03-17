@@ -237,14 +237,14 @@ export default function ItemDetailPopup({ item, onClose, onViewRecipe, onViewTre
                   🔨 Full Craft Chain
                 </button>
               )}
-              {onViewTree && hasRecipe && (
-                <button
-                  onClick={() => onViewTree(item)}
-                  className="flex-1 py-2.5 rounded-xl text-xs font-black transition-all"
-                  style={{ background: "rgba(34,211,238,0.1)", border: "1px solid rgba(34,211,238,0.3)", color: "#22d3ee" }}>
-                  🌳 Dep. Tree
-                </button>
-              )}
+              {onViewTree && (
+                 <button
+                   onClick={() => onViewTree(item)}
+                   className="flex-1 py-2.5 rounded-xl text-xs font-black transition-all"
+                   style={{ background: "rgba(34,211,238,0.1)", border: "1px solid rgba(34,211,238,0.3)", color: "#22d3ee" }}>
+                   ⛓️ Chain Diagram
+                 </button>
+               )}
             </div>
           </div>
         </div>
