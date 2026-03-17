@@ -124,7 +124,6 @@ export default function Dashboard() {
             <span className="ep-live-dot" />
             <span className="text-green-400 font-bold ml-1">LIVE</span>
           </div>
-          <PerspectiveSwitcher currentMode="nation" compact />
         </div>
 
         <div className="flex items-center gap-2">
