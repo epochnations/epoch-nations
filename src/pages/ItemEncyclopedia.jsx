@@ -15,6 +15,7 @@ import ItemCard from "../components/crafting/ItemCard";
 import ItemDetailPopup from "../components/crafting/ItemDetailPopup";
 import CraftChainModal from "../components/crafting/CraftChainModal";
 import CraftingTreeVisualizer from "../components/crafting/CraftingTreeVisualizer";
+import ChainVisualizer from "../components/production/ChainVisualizer";
 import InventoryManager from "../components/crafting/InventoryManager";
 import CommunityItemRegistry from "../components/crafting/CommunityItemRegistry";
 
@@ -383,6 +384,16 @@ export default function ItemEncyclopedia() {
           <CraftingTreeVisualizer
             item={treeItem}
             onClose={() => setTreeItem(null)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Production Chain Visualizer — animated Factorio-style */}
+      <AnimatePresence>
+        {chainItem && (
+          <ChainVisualizer
+            item={chainItem}
+            onClose={() => setChainItem(null)}
           />
         )}
       </AnimatePresence>
