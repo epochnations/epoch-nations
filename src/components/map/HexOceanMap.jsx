@@ -264,13 +264,12 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
   }, []);
 
   const handleMouseUp = useCallback((e) => {
-    if (selectedHex) return; // panel open — ignore
     const wasDrag = dragDist.current > DRAG_THRESHOLD;
     dragging.current = false;
     if (wasDrag) {
       startInertia();
     } else {
-      // Click — open panel
+      // Click — navigate to island management page
       if (svgRef.current) {
         try {
           const pt = svgRef.current.createSVGPoint();
@@ -278,8 +277,8 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
           const w = pt.matrixTransform(svgRef.current.getScreenCTM().inverse());
           const { q, r } = worldToHex(w.x, w.y);
           const tile = tileMap[`${q}_${r}`];
-          setSelectedHex({ q, r, tile: tile || null });
           if (tile?.owner_nation_id) onSelectNation?.(nationMap[tile.owner_nation_id] || null);
+          window.location.href = createPageUrl("IslandManagement") + `?q=${q}&r=${r}`;
         } catch (_) {}
       }
     }
@@ -513,7 +512,7 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
     <div
       ref={containerRef}
       className="relative w-full h-full rounded-2xl select-none"
-      style={{ background: "#071428", cursor: selectedHex ? "default" : dragging.current ? "grabbing" : "grab", overflow: "hidden" }}
+      style={{ background: "#071428", cursor: dragging.current ? "grabbing" : "grab", overflow: "hidden" }}
       onPointerDown={handleMouseDown}
       onPointerMove={handleMouseMove}
       onPointerUp={handleMouseUp}
@@ -659,7 +658,7 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
                 <IslandHex
                   tile={tile}
                   myNation={myNation}
-                  isSelected={selectedHex?.q === tile.q && selectedHex?.r === tile.r}
+                  isSelected={false}
                   zoom={zoom}
                 />
               </g>
@@ -743,7 +742,7 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
       </div>
 
       {/* ── Hover tooltip ── */}
-      {hovered && !selectedHex && (
+      {hovered && (
         <div className="absolute bottom-14 left-4 z-40 min-w-[150px] pointer-events-none rounded-xl px-3 py-2.5"
           style={{ background:"rgba(0,0,0,0.88)", border:"1px solid rgba(255,255,255,0.15)", backdropFilter:"blur(12px)" }}>
           <div className="flex items-center gap-2">
