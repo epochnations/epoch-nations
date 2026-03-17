@@ -107,10 +107,12 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
   const zoomCenter = useRef({ x: 0, y: 0 });
 
   const [showMyIslands, setShowMyIslands] = useState(false);
+  const selectedHexRef = useRef(null);
 
   const [tiles, setTiles] = useState([]);
   const [nations, setNations] = useState([]);
   const [selectedHex, setSelectedHex] = useState(null);
+  useEffect(() => { selectedHexRef.current = selectedHex; }, [selectedHex]);
   const [hoveredHex, setHoveredHex] = useState(null);
   const [mode, setMode] = useState("global");
   const [showGrid, setShowGrid] = useState(true);
@@ -304,6 +306,7 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
 
   const handleWheel = useCallback((e) => {
     e.preventDefault();
+    if (selectedHexRef.current) return; // panel open — block all zoom
     const el = containerRef.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
@@ -801,11 +804,11 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
         );
       })()}
 
-      {/* ── Panel dim overlay (blocks map interaction while panel open) ── */}
+      {/* ── Panel dim overlay — fixed to cover full screen when panel open ── */}
       {selectedHex && (
         <div
-          className="absolute inset-0 z-35"
-          style={{ background: "rgba(0,0,0,0.35)", backdropFilter: "blur(1px)" }}
+          className="fixed inset-0"
+          style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(2px)", zIndex: 150 }}
           onClick={() => setSelectedHex(null)}
         />
       )}
