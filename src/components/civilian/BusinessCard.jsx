@@ -66,18 +66,18 @@ export default function BusinessCard({ business, citizen, onRefresh }) {
           {meta.emoji}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="font-bold text-white text-sm truncate">{business.name}</div>
+          <div className="font-bold text-white text-base truncate">{business.name}</div>
           <div className="flex items-center gap-2 mt-0.5">
-            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: `${meta.color}20`, color: meta.color }}>
+            <span className="text-xs font-bold px-1.5 py-0.5 rounded-full" style={{ background: `${meta.color}20`, color: meta.color }}>
               {meta.label} Lv{business.level || 1}
             </span>
-            <span className={`text-[9px] font-bold ${business.is_open ? "text-green-400" : "text-red-400"}`}>
+            <span className={`text-xs font-bold ${business.is_open ? "text-green-400" : "text-red-400"}`}>
               {business.is_open ? "● OPEN" : "● CLOSED"}
             </span>
           </div>
         </div>
         <button onClick={toggleOpen} disabled={toggling}
-          className="shrink-0 px-2 py-1 rounded-lg text-[9px] font-bold border transition-all"
+          className="shrink-0 px-2 py-1 rounded-lg text-xs font-bold border transition-all"
           style={{
             background: business.is_open ? "rgba(248,113,113,0.1)" : "rgba(74,222,128,0.1)",
             borderColor: business.is_open ? "rgba(248,113,113,0.25)" : "rgba(74,222,128,0.25)",
@@ -95,8 +95,8 @@ export default function BusinessCard({ business, citizen, onRefresh }) {
           { label: "Profit", value: `${profit >= 0 ? "+" : ""}${profit}`, color: profit >= 0 ? "#22d3ee" : "#f87171" },
         ].map(s => (
           <div key={s.label} className="text-center">
-            <div className="text-[8px] text-slate-600">{s.label}</div>
-            <div className={`text-xs font-black ep-mono ${s.color === "#22d3ee" ? "text-cyan-400" : ""}`}
+            <div className="text-[11px] text-slate-600">{s.label}</div>
+            <div className={`text-sm font-black ep-mono ${s.color === "#22d3ee" ? "text-cyan-400" : ""}`}
               style={{ color: s.color }}>{s.value}</div>
           </div>
         ))}
@@ -105,28 +105,28 @@ export default function BusinessCard({ business, citizen, onRefresh }) {
       {/* Rep + customers */}
       <div className="flex items-center gap-3 px-4 pb-3">
         <div className="flex items-center gap-1">
-          <Star size={10} className="text-amber-400" />
-          <span className="text-[10px] text-slate-400">{business.reputation || 50} rep</span>
+          <Star size={13} className="text-amber-400" />
+          <span className="text-[13px] text-slate-400">{business.reputation || 50} rep</span>
         </div>
         <div className="flex items-center gap-1">
-          <Users size={10} className="text-blue-400" />
-          <span className="text-[10px] text-slate-400">{business.customers_served || 0} served</span>
+          <Users size={13} className="text-blue-400" />
+          <span className="text-[13px] text-slate-400">{business.customers_served || 0} served</span>
         </div>
         <div className="flex items-center gap-1 ml-auto">
-          <TrendingUp size={10} className="text-emerald-400" />
-          <span className="text-[10px] text-slate-400">{(business.total_earned || 0).toLocaleString()} total</span>
+          <TrendingUp size={13} className="text-emerald-400" />
+          <span className="text-[13px] text-slate-400">{(business.total_earned || 0).toLocaleString()} total</span>
         </div>
       </div>
 
       {/* Upgrades */}
       <div className="px-4 pb-3 space-y-1.5">
-        <div className="text-[9px] text-slate-600 uppercase tracking-wider font-bold">Upgrades</div>
+        <div className="text-xs text-slate-600 uppercase tracking-wider font-bold">Upgrades</div>
         {UPGRADES.filter(u => !ownedUpgrades.includes(u.id)).slice(0, 2).map(u => {
           const canAfford = (citizen?.savings || 0) >= u.cost;
           return (
             <button key={u.id} onClick={() => handleUpgrade(u)}
               disabled={!canAfford || upgrading}
-              className="w-full flex items-center justify-between px-3 py-1.5 rounded-xl text-xs transition-all"
+              className="w-full flex items-center justify-between px-3 py-1.5 rounded-xl text-sm transition-all"
               style={{
                 background: canAfford ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.02)",
                 border: `1px solid ${canAfford ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.04)"}`,
@@ -141,7 +141,7 @@ export default function BusinessCard({ business, citizen, onRefresh }) {
           );
         })}
         {ownedUpgrades.length > 0 && (
-          <div className="text-[9px] text-green-400">✓ {ownedUpgrades.length} upgrade{ownedUpgrades.length > 1 ? "s" : ""} installed</div>
+          <div className="text-xs text-green-400">✓ {ownedUpgrades.length} upgrade{ownedUpgrades.length > 1 ? "s" : ""} installed</div>
         )}
       </div>
     </div>

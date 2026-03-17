@@ -12,8 +12,8 @@ function StatBar({ label, value, color, emoji }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-1">
-        <span className="text-[10px] text-slate-400">{emoji} {label}</span>
-        <span className="text-[10px] font-bold ep-mono" style={{ color }}>{Math.round(value)}%</span>
+        <span className="text-[13px] text-slate-400">{emoji} {label}</span>
+        <span className="text-[13px] font-bold ep-mono" style={{ color }}>{Math.round(value)}%</span>
       </div>
       <div className="h-1.5 rounded-full bg-white/08 overflow-hidden">
         <div className="h-full rounded-full transition-all duration-500"
@@ -35,14 +35,14 @@ export default function CitizenStatsPanel({ citizen, nation, netIncome }) {
           👤
         </div>
         <div className="flex-1 min-w-0">
-          <div className="font-black text-white text-sm truncate">{citizen.display_name}</div>
-          <div className="text-[10px] text-slate-500 truncate">{citizen.job}</div>
-          {nation && <div className="text-[9px] text-amber-400">{nation.flag_emoji} {nation.name}</div>}
+          <div className="font-black text-white text-base truncate">{citizen.display_name}</div>
+          <div className="text-[13px] text-slate-500 truncate">{citizen.job}</div>
+          {nation && <div className="text-xs text-amber-400">{nation.flag_emoji} {nation.name}</div>}
         </div>
         <div className="text-right shrink-0">
-          <div className="text-[9px] text-slate-500">Savings</div>
-          <div className="text-sm font-black text-amber-400 ep-mono">{(citizen.savings || 0).toLocaleString()}</div>
-          <div className="text-[9px]" style={{ color: netIncome >= 0 ? "#4ade80" : "#f87171" }}>
+          <div className="text-xs text-slate-500">Savings</div>
+          <div className="text-base font-black text-amber-400 ep-mono">{(citizen.savings || 0).toLocaleString()}</div>
+          <div className="text-xs" style={{ color: netIncome >= 0 ? "#4ade80" : "#f87171" }}>
             {netIncome >= 0 ? "+" : ""}{netIncome}/tick
           </div>
         </div>
@@ -58,10 +58,10 @@ export default function CitizenStatsPanel({ citizen, nation, netIncome }) {
 
       {/* Skills */}
       <div>
-        <div className="text-[9px] text-slate-600 uppercase tracking-wider font-bold mb-2">Skills (Level {citizen.level || 1})</div>
+        <div className="text-xs text-slate-600 uppercase tracking-wider font-bold mb-2">Skills (Level {citizen.level || 1})</div>
         <div className="flex flex-wrap gap-1.5">
           {Object.entries(citizen.skills || {}).map(([skill, lvl]) => (
-            <div key={skill} className="px-2 py-0.5 rounded-lg text-[9px] font-bold ep-mono"
+            <div key={skill} className="px-2 py-0.5 rounded-lg text-xs font-bold ep-mono"
               style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "#94a3b8" }}>
               {skill} {lvl}
             </div>

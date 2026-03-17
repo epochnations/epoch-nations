@@ -110,7 +110,7 @@ export default function CivilianView() {
 
           {/* Income summary */}
           <div className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
-            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-3">Business Empire</div>
+            <div className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3">Business Empire</div>
             <div className="grid grid-cols-2 gap-2">
               {[
                 { l: "Revenue/tick", v: `+${totalRevenue}`, c: "text-green-400" },
@@ -119,8 +119,8 @@ export default function CivilianView() {
                 { l: "Businesses",   v: businesses.length, c: "text-amber-400" },
               ].map(({ l, v, c }) => (
                 <div key={l} className="rounded-xl px-3 py-2" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
-                  <div className="text-[9px] text-slate-600 mb-0.5">{l}</div>
-                  <div className={`font-black text-sm ep-mono ${c}`}>{v}</div>
+                  <div className="text-xs text-slate-600 mb-0.5">{l}</div>
+                  <div className={`font-black text-base ep-mono ${c}`}>{v}</div>
                 </div>
               ))}
             </div>
@@ -128,8 +128,8 @@ export default function CivilianView() {
 
           {/* Quick guide */}
           <div className="rounded-2xl p-4" style={{ background: "rgba(245,158,11,0.04)", border: "1px solid rgba(245,158,11,0.12)" }}>
-            <div className="text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-2">Tycoon Guide</div>
-            <div className="space-y-1.5 text-[10px] text-slate-400">
+            <div className="text-sm font-bold text-amber-400 uppercase tracking-wider mb-2">Tycoon Guide</div>
+            <div className="space-y-1.5 text-sm text-slate-400">
               {[
                 "🍽️ Restaurants — serve food, gain reputation",
                 "🌾 Farms — produce raw food and resources",
