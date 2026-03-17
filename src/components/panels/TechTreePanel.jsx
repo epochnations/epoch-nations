@@ -4,6 +4,7 @@ import { Cpu, CheckCircle, ChevronRight, Zap, Hammer } from "lucide-react";
 import { EPOCHS, EPOCH_EMOJI, TECH_TREE, EPOCH_STABILITY_THRESHOLD, EPOCH_ADVANCE_COST } from "../game/EpochConfig";
 import { EPOCH_REQUIREMENTS, BUILDING_MAP } from "../game/BuildingConfig";
 import EpochCelebration from "../game/EpochCelebration";
+import ResearchPanel from "../research/ResearchPanel";
 
 const RESOURCE_LABELS = {
   res_wood: "Wood", res_stone: "Stone", res_gold: "Gold",
@@ -27,6 +28,7 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [celebrationEpoch, setCelebrationEpoch] = useState(null);
 
+  const [showResearch, setShowResearch] = useState(false);
   const lastResetKey = `epoch_reset_${nation?.id}`;
   const lastReset = parseInt(localStorage.getItem(lastResetKey) || "0");
   const cooldownRemaining = Math.max(0, EPOCH_RESET_COOLDOWN_MS - (Date.now() - lastReset));
@@ -165,6 +167,12 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
               <Zap size={14} className="text-yellow-400" />
               <span className="text-yellow-400 font-mono font-bold">{nation.tech_points} TP</span>
             </div>
+            <button
+              onClick={() => setShowResearch(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-fuchsia-500/10 border border-fuchsia-500/20 text-fuchsia-400 text-xs font-bold hover:bg-fuchsia-500/20 transition-all"
+            >
+              🔬 Research
+            </button>
             <button onClick={onClose} className="text-slate-400 hover:text-white text-sm p-1">✕</button>
           </div>
         </div>

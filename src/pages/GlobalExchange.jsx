@@ -6,6 +6,7 @@ import ExchangeStockTable from "@/components/exchange/ExchangeStockTable";
 import ExchangeTransactionLog from "@/components/exchange/ExchangeTransactionLog";
 import ExchangeSellModal from "@/components/exchange/ExchangeSellModal";
 import StockModal from "@/components/modals/StockModal";
+import IssueStockPanel from "@/components/panels/IssueStockPanel";
 
 const SORT_OPTIONS = [
   { value: "market_cap", label: "Market Cap" },
@@ -31,6 +32,7 @@ export default function GlobalExchange() {
   const [selectedStock, setSelectedStock] = useState(null);
   const [sellStock, setSellStock] = useState(null);
   const [priceFlash, setPriceFlash] = useState({});
+  const [showIssueStock, setShowIssueStock] = useState(false);
 
   const searchTimer = useRef(null);
 
@@ -190,6 +192,14 @@ export default function GlobalExchange() {
           <span className="ep-live-dot" />
           <span className="text-xs text-green-400 ep-mono hidden md:block font-bold">LIVE</span>
           {myNation && (
+            <button
+              onClick={() => setShowIssueStock(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-bold hover:bg-green-500/20 transition-all"
+            >
+              + Issue Stock
+            </button>
+          )}
+          {myNation && (
             <div className="text-xs font-mono text-slate-400 hidden md:block">
               Treasury: <span className="text-green-400 font-bold">{Math.round(myNation.currency).toLocaleString()} cr</span>
             </div>
@@ -290,6 +300,15 @@ export default function GlobalExchange() {
           myNation={myNation}
           onClose={() => setSellStock(null)}
           onRefresh={() => { refreshNation(); loadTransactions(); }}
+        />
+      )}
+
+      {/* Issue Stock Modal */}
+      {showIssueStock && myNation && (
+        <IssueStockPanel
+          nation={myNation}
+          onRefresh={refreshNation}
+          onClose={() => setShowIssueStock(false)}
         />
       )}
     </div>

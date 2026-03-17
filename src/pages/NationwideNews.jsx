@@ -162,6 +162,9 @@ export default function NationwideNews() {
             className="p-2 rounded-xl bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 transition-all">
             <RefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
           </button>
+          <a href={createPageUrl("GlobalChronicles")} className="px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-500/30 text-slate-400 hover:bg-white/10 transition-all">
+            🌐 Global News
+          </a>
           <a href={createPageUrl("Dashboard")} className="px-3 py-1.5 rounded-xl text-xs font-bold border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 transition-all">
             ← Dashboard
           </a>

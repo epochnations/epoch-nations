@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { X, Check, Lock, ChevronRight, TrendingUp, Shield, BookOpen, Wheat, Zap, Mountain, Banknote, AlertTriangle } from "lucide-react";
+import WorkforcePanel from "./WorkforcePanel";
 
 // ─── Sector config ──────────────────────────────────────────────────────────
 const SECTORS = [
@@ -308,6 +309,7 @@ export default function BudgetCyclePanel({ nation, onClose, onRefresh }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [dirty, setDirty] = useState(false);
+  const [showWorkers, setShowWorkers] = useState(false);
 
   const total = useMemo(() => Object.values(alloc).reduce((a, b) => a + b, 0), [alloc]);
   const projections = useMemo(() => computeProjections(alloc, nation), [alloc, nation]);
@@ -414,6 +416,12 @@ export default function BudgetCyclePanel({ nation, onClose, onRefresh }) {
             <div className={`text-xs font-mono font-bold px-2 py-1 rounded-lg ${total === 100 ? "bg-green-500/15 text-green-400 border border-green-500/30" : "bg-red-500/15 text-red-400 border border-red-500/30"}`}>
               {total}% / 100%
             </div>
+            <button
+              onClick={() => setShowWorkers(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold hover:bg-amber-500/20 transition-all"
+            >
+              👷 Workers
+            </button>
             <button onClick={onClose}><X size={16} className="text-slate-400 hover:text-white" /></button>
           </div>
         </div>
@@ -483,6 +491,9 @@ export default function BudgetCyclePanel({ nation, onClose, onRefresh }) {
           100% { background-position: 200% 0; }
         }
       `}</style>
+      {showWorkers && nation && (
+        <WorkforcePanel nation={nation} onClose={() => setShowWorkers(false)} onRefresh={onRefresh} />
+      )}
     </div>
   );
 }

@@ -129,34 +129,16 @@ export default function Dashboard() {
         <div className="flex items-center gap-2">
           {/* Quick actions */}
           <button
-            onClick={() => setShowIssueStock(true)}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-bold hover:bg-green-500/20 transition-all duration-150"
-          >
-            <Plus size={12} /> Issue Stock
-          </button>
-          <button
             onClick={() => setShowTechTree(true)}
             className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-400 text-xs font-bold hover:bg-violet-500/20 transition-all duration-150"
           >
-            <Cpu size={12} /> Tech Tree
-          </button>
-          <button
-            onClick={() => setShowResearch(true)}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-fuchsia-500/10 border border-fuchsia-500/20 text-fuchsia-400 text-xs font-bold hover:bg-fuchsia-500/20 transition-all duration-150"
-          >
-            🔬 Research
+            <Cpu size={12} /> Tech
           </button>
           <button
             onClick={() => setShowManagement(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-bold hover:bg-cyan-500/20 transition-all duration-150"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-bold hover:bg-cyan-500/20 transition-all duration-150"
           >
-            <SlidersHorizontal size={12} /> <span className="hidden sm:inline">Manage</span>
-          </button>
-          <button
-            onClick={() => setShowWorkforce(true)}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold hover:bg-amber-500/20 transition-all duration-150"
-          >
-            <Users size={12} /> Workers
+            <SlidersHorizontal size={12} /> Manage
           </button>
           <a
             href={createPageUrl("GlobalExchange")}
@@ -171,12 +153,6 @@ export default function Dashboard() {
             🏛️ Government
           </a>
           <a
-            href={createPageUrl("GlobalChronicles")}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-400 text-xs font-bold hover:bg-white/10 hover:text-slate-300 transition-all duration-150"
-          >
-            🌐 Global News
-          </a>
-          <a
             href={createPageUrl("ConstructionHub")}
             className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold hover:bg-amber-500/20 transition-all duration-150"
           >
@@ -188,31 +164,27 @@ export default function Dashboard() {
           >
             🏪 Marketplace
           </a>
-          <a
-            href={createPageUrl("NationalProfile")}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-400 text-xs font-bold hover:bg-violet-500/20 transition-all duration-150"
-          >
-            👤 Profile
-          </a>
-          <a
-            href={createPageUrl("HallOfNations")}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold hover:bg-amber-500/20 transition-all duration-150"
-          >
-            🏆 Hall of Nations
-          </a>
-
-
-          {user && myNation && (
-            <NotificationsPanel nationId={myNation?.id} ownerEmail={user?.email} />
-          )}
-
-
           <button
             onClick={() => setShowTour(true)}
             className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-bold hover:bg-indigo-500/20 transition-all duration-150"
           >
             <BookOpen size={12} /> Tutorial
           </button>
+          <a
+            href={createPageUrl("HallOfNations")}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold hover:bg-amber-500/20 transition-all duration-150"
+          >
+            🏆 Hall of Nations
+          </a>
+          <a
+            href={createPageUrl("NationalProfile")}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-400 text-xs font-bold hover:bg-violet-500/20 transition-all duration-150"
+          >
+            👤 Profile
+          </a>
+          {user && myNation && (
+            <NotificationsPanel nationId={myNation?.id} ownerEmail={user?.email} />
+          )}
           <button
             onClick={() => base44.auth.logout("/")}
             className="p-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors text-slate-400 text-xs"
@@ -274,20 +246,11 @@ export default function Dashboard() {
           <a href={createPageUrl("ConstructionHub")} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-amber-500/10 border border-amber-500/20 text-amber-400 min-h-[44px] flex items-center gap-1.5">
             🏗 Build
           </a>
-          <button onClick={() => setShowIssueStock(true)} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-green-500/10 border border-green-500/20 text-green-400 min-h-[44px]">
-            + Stock
-          </button>
           <button onClick={() => setShowTechTree(true)} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-violet-500/10 border border-violet-500/20 text-violet-400 min-h-[44px]">
             🧬 Tech
           </button>
-          <button onClick={() => setShowResearch(true)} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-fuchsia-500/10 border border-fuchsia-500/20 text-fuchsia-400 min-h-[44px]">
-            🔬 Research
-          </button>
           <button onClick={() => setShowManagement(true)} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 min-h-[44px]">
             📊 Manage
-          </button>
-          <button onClick={() => setShowWorkforce(true)} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-amber-500/10 border border-amber-500/20 text-amber-400 min-h-[44px]">
-            👷 Workers
           </button>
           <a href={createPageUrl("GlobalExchange")} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-green-500/10 border border-green-500/20 text-green-400 min-h-[44px] flex items-center gap-1.5">
             📊 Exchange
@@ -295,13 +258,9 @@ export default function Dashboard() {
           <a href={createPageUrl("NationwideNews")} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-amber-500/10 border border-amber-500/20 text-amber-400 min-h-[44px] flex items-center gap-1.5">
             🏛️ Government
           </a>
-          <a href={createPageUrl("GlobalChronicles")} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-white/5 border border-white/10 text-slate-400 min-h-[44px] flex items-center gap-1.5">
-            🌐 World
-          </a>
           <a href={createPageUrl("Marketplace")} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-green-500/10 border border-green-500/20 text-green-400 min-h-[44px] flex items-center gap-1.5">
             🏪 Market
           </a>
-
           <button onClick={() => setShowTour(true)} className="snap-start shrink-0 px-4 py-3 rounded-xl text-xs font-bold bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 min-h-[44px] flex items-center gap-1.5">
             📖 Tutorial
           </button>

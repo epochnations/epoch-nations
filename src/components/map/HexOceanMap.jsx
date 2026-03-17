@@ -315,13 +315,7 @@ export default function HexOceanMap({ myNation, onSelectNation, onOpenAdvisor })
     applyZoom(targetZoom.current + delta, cx, cy);
   }, [applyZoom]);
 
-  // Attach wheel as non-passive
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    el.addEventListener("wheel", handleWheel, { passive: false });
-    return () => el.removeEventListener("wheel", handleWheel);
-  }, [handleWheel]);
+  // Wheel zoom disabled — use +/− buttons in the corner to zoom
 
   const handleTouchStart = useCallback((e) => {
     if (selectedHex) return; // panel open — ignore touch on map
