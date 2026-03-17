@@ -9,6 +9,7 @@ import Home from './pages/Home';
 import HallOfNations from './pages/HallOfNations';
 import ItemEncyclopedia from './pages/ItemEncyclopedia';
 import IslandManagement from './pages/IslandManagement';
+import CivilianView from './pages/CivilianView';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 
@@ -72,6 +73,7 @@ const AuthenticatedApp = () => {
       <Route path="/HallOfNations" element={<LayoutWrapper currentPageName="HallOfNations"><HallOfNations /></LayoutWrapper>} />
       <Route path="/ItemEncyclopedia" element={<LayoutWrapper currentPageName="ItemEncyclopedia"><ItemEncyclopedia /></LayoutWrapper>} />
       <Route path="/IslandManagement" element={<IslandManagement />} />
+      <Route path="/CivilianView" element={<CivilianView />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
