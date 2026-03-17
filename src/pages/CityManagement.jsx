@@ -4,6 +4,7 @@ import { createPageUrl } from "@/utils";
 import { ChevronLeft, Settings, TrendingUp, AlertCircle, Users, DollarSign, Heart, ShieldAlert } from "lucide-react";
 
 import CitySelector from "../components/city/CitySelector";
+import PerspectiveSwitcher from "../components/world/PerspectiveSwitcher";
 import CityDashboard from "../components/city/CityDashboard";
 import BudgetPanel from "../components/city/BudgetPanel";
 import ZoningPanel from "../components/city/ZoningPanel";
@@ -94,12 +95,9 @@ export default function CityManagement() {
           </div>
         </div>
 
-        <a
-          href={createPageUrl("Dashboard")}
-          className="p-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors text-slate-400 text-xs"
-        >
-          Exit Mayor Mode
-        </a>
+        <div className="flex items-center gap-2">
+          <PerspectiveSwitcher currentMode="city" compact />
+        </div>
       </header>
 
       {/* MAIN CONTENT */}
