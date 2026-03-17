@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState } from "react";
 import { EPOCHS } from "../game/EpochConfig";
 import { TICKS_PER_DAY } from "../game/GameClock";
+import PerspectiveSwitcher from "../world/PerspectiveSwitcher";
 /** Flash glow when a value changes */
 function useFlash(value) {
   const prev = useRef(value);
@@ -104,24 +105,11 @@ export default function NationMetricsPanel({ nation, allNations }) {
         </div>
       </div>
 
-      {/* ── Technology ── */}
+      {/* ── Perspective Switcher ── */}
       <div className="shrink-0">
-        <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase mb-2">TECHNOLOGY</div>
-        <div className="grid grid-cols-2 gap-2">
-          <div className="rounded-xl px-2.5 py-2 text-center" style={{ background: "rgba(139,92,246,0.07)", border: "1px solid rgba(139,92,246,0.15)" }}>
-            <div className="text-[11px] text-slate-500 ep-mono">Tech Points</div>
-            <FlashStat value={Math.round(nation.tech_points || 0)} className="text-[15px] font-black ep-mono text-violet-400">
-              {(nation.tech_points || 0).toLocaleString()}
-            </FlashStat>
-          </div>
-          <div className="rounded-xl px-2.5 py-2 text-center" style={{ background: "rgba(139,92,246,0.07)", border: "1px solid rgba(139,92,246,0.15)" }}>
-            <div className="text-[11px] text-slate-500 ep-mono">Techs</div>
-            <div className="text-[15px] font-black ep-mono text-violet-400">{(nation.unlocked_techs || []).length}</div>
-          </div>
-        </div>
+        <div className="text-[11px] text-slate-500 font-bold ep-mono uppercase mb-2">GAME MODE</div>
+        <PerspectiveSwitcher currentMode="nation" />
       </div>
-
-
 
     </div>
   );
