@@ -70,13 +70,19 @@ export default function CivilianView() {
   );
 
   return (
-    <div className="min-h-screen text-white" style={{ background: "#040810" }}>
+    <div className="min-h-screen text-white ep-grid-bg" style={{ background: "#080c14" }}>
+      {/* Ambient glows */}
+      <div className="fixed top-0 left-1/4 w-[500px] h-[500px] rounded-full blur-3xl pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(245,158,11,0.05) 0%, transparent 70%)" }} />
+      <div className="fixed bottom-0 right-1/4 w-[400px] h-[400px] rounded-full blur-3xl pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(249,115,22,0.04) 0%, transparent 70%)" }} />
+
       {/* Tick engine */}
       {citizen && <BusinessTickEngine citizen={citizen} businesses={businesses} onRefresh={refresh} />}
 
       {/* Header */}
-      <header className="sticky top-0 z-20 border-b px-4 py-3 flex items-center gap-3"
-        style={{ background: "rgba(0,0,0,0.88)", backdropFilter: "blur(24px)", borderColor: "rgba(255,255,255,0.08)" }}>
+      <header className="sticky top-0 z-20 border-b px-6 py-3 flex items-center gap-4"
+        style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.88) 0%, rgba(4,8,16,0.72) 100%)", backdropFilter: "blur(24px)", borderColor: "rgba(245,158,11,0.12)" }}>
         <a href={createPageUrl("Dashboard")} className="p-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors text-slate-400 shrink-0">
           <ArrowLeft size={14} />
         </a>
@@ -84,7 +90,10 @@ export default function CivilianView() {
           style={{ background: "linear-gradient(90deg,#f59e0b,#f97316)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
           CIVILIAN VIEW
         </div>
-        <div className="text-[10px] text-slate-600 ep-mono hidden sm:block">Tycoon Mode · {businesses.length} businesses</div>
+        <div className="hidden md:flex items-center gap-1 ep-mono text-[10px] text-slate-600">
+          <span className="ep-live-dot" />
+          <span className="text-green-400 font-bold ml-1">Tycoon Mode · {businesses.length} businesses</span>
+        </div>
         <div className="flex-1" />
         <PerspectiveSwitcher currentMode="civilian" compact />
         <button onClick={() => setShowNew(true)}
@@ -94,7 +103,7 @@ export default function CivilianView() {
         </button>
       </header>
 
-      <div className="max-w-7xl mx-auto px-3 py-4 grid gap-4 lg:grid-cols-[300px_1fr]">
+      <div className="p-4 grid gap-4 lg:grid-cols-[320px_1fr]" style={{ minHeight: "calc(100vh - 57px)" }}>
         {/* Left: Citizen + summary */}
         <div className="space-y-3">
           <CitizenStatsPanel citizen={citizen} nation={nation} netIncome={netIncome} />
