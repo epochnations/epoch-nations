@@ -309,6 +309,10 @@ export default function TechTreePanel({ nation, onRefresh, onClose }) {
         />
       )}
 
+      {showResearch && (
+        <ResearchPanel nation={nation} onClose={() => setShowResearch(false)} />
+      )}
+
       {showResetConfirm && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
           <div className="w-full max-w-sm bg-[#0f172a] border border-red-500/40 rounded-2xl p-6 shadow-2xl">
