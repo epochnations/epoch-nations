@@ -207,9 +207,30 @@ export default function ResourceEngine({ nation, onRefresh }) {
     const stability = fresh.stability || 75;
     const hasGoodStability = stability >= 30;
 
-    if (hasFoodSurplus && hasHousingRoom && hasGoodStability && Math.random() < 0.3) {
-      // 30% chance of pop growth each tick when conditions are met
-      updates.population = pop + 1;
+    // Count happiness/amenity buildings (parks, hospitals, schools, etc.)
+    const amenityCount = nationBuildings_.filter(b => !b.is_destroyed && [
+      "park","hospital","school","university","marketplace","theatre","library",
+      "palace","sports_arena","cultural_center","grand_bazaar","recreation_center"
+    ].includes(b.building_type)).length;
+
+    // Happiness score: base stability + amenity bonus (each amenity adds 2 points, cap 100)
+    const happinessScore = Math.min(100, stability + amenityCount * 2);
+
+    // Housing room available as a ratio
+    const housingCap = fresh.housing_capacity || 20;
+    const housingRoomRatio = Math.max(0, (housingCap - pop) / housingCap);
+
+    // Growth amount scales with happiness, housing room, and food surplus
+    // Base: 1–5 pop per tick; bonuses push it higher for well-developed nations
+    if (hasFoodSurplus && hasHousingRoom && hasGoodStability) {
+      const growthChance = Math.min(0.95, 0.4 + happinessScore / 200 + housingRoomRatio * 0.3);
+      if (Math.random() < growthChance) {
+        // Growth amount: 1 base + 1 per 10 amenity buildings + 1 per 30 stability above 50
+        const growthAmount = 1
+          + Math.floor(amenityCount / 5)
+          + Math.floor(Math.max(0, happinessScore - 50) / 30);
+        updates.population = Math.min(housingCap, pop + growthAmount);
+      }
     } else if (netFood < 0 && newFood === 0) {
       // FAMINE — population shrinks
       if (Math.random() < 0.5) {
