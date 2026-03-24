@@ -279,6 +279,17 @@ export default function ResourceEngine({ nation, onRefresh }) {
       }
     }
 
+    // --- HOUSING CAPACITY — expand based on housing buildings ---
+    const housingBuildings = nationBuildings_.filter(b => !b.is_destroyed && [
+      "housing","apartment","grand_housing","palace","barracks"
+    ].includes(b.building_type)).length;
+    const parkBonus = nationBuildings_.filter(b => !b.is_destroyed && b.building_type === "park").length;
+    // Base 20 + 50 per housing building + 10 per park (parks attract migrants)
+    const computedHousingCap = 20 + housingBuildings * 50 + parkBonus * 10 + amenityCount * 5;
+    if (computedHousingCap !== (fresh.housing_capacity || 20)) {
+      updates.housing_capacity = computedHousingCap;
+    }
+
     // GDP and treasury are now fully managed by CivilizationEconomyEngine.
     // ResourceEngine only handles physical production & population.
 
