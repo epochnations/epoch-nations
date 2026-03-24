@@ -108,6 +108,9 @@ export default function CityManagement() {
             <CitySelector
               cities={cities}
               selectedCity={selectedCity}
+              nation={myNation}
+              user={user}
+              onCityCreated={() => loadCities(myNation.id, user.email)}
               onSelectCity={(city) => {
                 setSelectedCity(city);
                 loadCityEvents(city.id);
