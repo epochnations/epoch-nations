@@ -1,0 +1,58 @@
+{
+  "name": "TradeAgreement",
+  "type": "object",
+  "properties": {
+    "nation_a_id": {
+      "type": "string"
+    },
+    "nation_a_name": {
+      "type": "string"
+    },
+    "nation_b_id": {
+      "type": "string"
+    },
+    "nation_b_name": {
+      "type": "string"
+    },
+    "agreement_type": {
+      "type": "string",
+      "enum": [
+        "free_trade",
+        "tariff_reduction",
+        "embargo"
+      ],
+      "default": "free_trade"
+    },
+    "tariff_modifier": {
+      "type": "number",
+      "default": 0,
+      "description": "e.g. -0.10 = 10% discount on trade between parties"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "expired",
+        "cancelled"
+      ],
+      "default": "active"
+    },
+    "duration_cycles": {
+      "type": "number",
+      "default": 10
+    },
+    "cycles_remaining": {
+      "type": "number",
+      "default": 10
+    },
+    "owner_email": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "nation_a_id",
+    "nation_b_id",
+    "agreement_type",
+    "owner_email"
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "name": "City",
+  "type": "object",
+  "properties": {
+    "nation_id": {
+      "type": "string"
+    },
+    "city_name": {
+      "type": "string"
+    },
+    "owner_email": {
+      "type": "string"
+    },
+    "population": {
+      "type": "number",
+      "default": 1000
+    },
+    "population_capacity": {
+      "type": "number",
+      "default": 5000
+    },
+    "happiness": {
+      "type": "number",
+      "default": 75,
+      "description": "0-100 citizen happiness"
+    },
+    "crime_rate": {
+      "type": "number",
+      "default": 20
+    },
+    "pollution": {
+      "type": "number",
+      "default": 10
+    },
+    "traffic_congestion": {
+      "type": "number",
+      "default": 0
+    },
+    "budget": {
+      "type": "number",
+      "default": 10000
+    },
+    "tax_rate": {
+      "type": "number",
+      "default": 10,
+      "description": "percentage"
+    },
+    "monthly_income": {
+      "type": "number",
+      "default": 1000
+    },
+    "monthly_expenses": {
+      "type": "number",
+      "default": 800
+    },
+    "education_level": {
+      "type": "number",
+      "default": 50
+    },
+    "health_level": {
+      "type": "number",
+      "default": 60
+    },
+    "safety_level": {
+      "type": "number",
+      "default": 70
+    },
+    "growth_rate": {
+      "type": "number",
+      "default": 1.5,
+      "description": "percentage per cycle"
+    },
+    "disease_outbreak": {
+      "type": "boolean",
+      "default": false
+    },
+    "disaster_flag": {
+      "type": "string",
+      "default": ""
+    },
+    "zone_residential": {
+      "type": "number",
+      "default": 30
+    },
+    "zone_commercial": {
+      "type": "number",
+      "default": 20
+    },
+    "zone_industrial": {
+      "type": "number",
+      "default": 15
+    },
+    "services_schools": {
+      "type": "number",
+      "default": 2
+    },
+    "services_hospitals": {
+      "type": "number",
+      "default": 1
+    },
+    "services_police": {
+      "type": "number",
+      "default": 2
+    },
+    "services_fire": {
+      "type": "number",
+      "default": 1
+    },
+    "immigration_rate": {
+      "type": "number",
+      "default": 5
+    },
+    "specialization": {
+      "type": "string",
+      "enum": [
+        "balanced",
+        "industrial",
+        "agricultural",
+        "tourist",
+        "tech"
+      ],
+      "default": "balanced"
+    },
+    "reputation": {
+      "type": "number",
+      "default": 50,
+      "description": "0-100 city reputation"
+    },
+    "last_updated": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "nation_id",
+    "city_name",
+    "owner_email"
+  ]
+}

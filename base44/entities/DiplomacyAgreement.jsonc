@@ -1,0 +1,57 @@
+{
+  "name": "DiplomacyAgreement",
+  "type": "object",
+  "properties": {
+    "nation_a_id": {
+      "type": "string"
+    },
+    "nation_a_name": {
+      "type": "string"
+    },
+    "nation_b_id": {
+      "type": "string"
+    },
+    "nation_b_name": {
+      "type": "string"
+    },
+    "agreement_type": {
+      "type": "string",
+      "enum": [
+        "alliance",
+        "trade_agreement",
+        "non_aggression_pact",
+        "defense_treaty",
+        "peace_treaty",
+        "sanctions"
+      ],
+      "default": "trade_agreement"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "proposed",
+        "active",
+        "rejected",
+        "expired",
+        "broken"
+      ],
+      "default": "proposed"
+    },
+    "proposed_by": {
+      "type": "string"
+    },
+    "terms": {
+      "type": "string",
+      "default": ""
+    },
+    "expires_at": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "required": [
+    "nation_a_id",
+    "nation_b_id",
+    "agreement_type"
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "name": "ModerationLog",
+  "type": "object",
+  "properties": {
+    "moderator_name": {
+      "type": "string"
+    },
+    "moderator_email": {
+      "type": "string"
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "mute",
+        "unmute",
+        "delete",
+        "warn",
+        "ban",
+        "unban",
+        "promote",
+        "demote",
+        "add_blocked_word",
+        "remove_blocked_word"
+      ]
+    },
+    "target_nation_name": {
+      "type": "string"
+    },
+    "target_nation_id": {
+      "type": "string"
+    },
+    "detail": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "required": [
+    "moderator_name",
+    "action",
+    "target_nation_name"
+  ]
+}

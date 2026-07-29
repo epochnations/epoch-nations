@@ -1,0 +1,93 @@
+{
+  "name": "Stock",
+  "type": "object",
+  "properties": {
+    "company_name": {
+      "type": "string"
+    },
+    "ticker": {
+      "type": "string"
+    },
+    "nation_id": {
+      "type": "string"
+    },
+    "nation_name": {
+      "type": "string"
+    },
+    "sector": {
+      "type": "string",
+      "enum": [
+        "Energy",
+        "Defense",
+        "Technology",
+        "Finance",
+        "Agriculture",
+        "Nano",
+        "Stone",
+        "Iron",
+        "Oil",
+        "Gold",
+        "Timber"
+      ],
+      "default": "Agriculture"
+    },
+    "total_shares": {
+      "type": "number",
+      "default": 500
+    },
+    "available_shares": {
+      "type": "number",
+      "default": 500
+    },
+    "base_price": {
+      "type": "number",
+      "default": 5
+    },
+    "current_price": {
+      "type": "number",
+      "default": 5
+    },
+    "price_history": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "default": []
+    },
+    "market_cap": {
+      "type": "number",
+      "default": 2500
+    },
+    "is_crashed": {
+      "type": "boolean",
+      "default": false
+    },
+    "epoch_required": {
+      "type": "string",
+      "enum": [
+        "Stone Age",
+        "Copper Age",
+        "Bronze Age",
+        "Iron Age",
+        "Dark Ages",
+        "Middle Ages",
+        "Renaissance",
+        "Imperial Age",
+        "Enlightenment Age",
+        "Industrial Age",
+        "Modern Age",
+        "Atomic Age",
+        "Digital Age",
+        "Genetic Age",
+        "Synthetic Age",
+        "Nano Age"
+      ],
+      "default": "Stone Age"
+    }
+  },
+  "required": [
+    "company_name",
+    "ticker",
+    "nation_id"
+  ]
+}

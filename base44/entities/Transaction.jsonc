@@ -1,0 +1,60 @@
+{
+  "name": "Transaction",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "stock_buy",
+        "stock_sell",
+        "lend_lease",
+        "war_attack",
+        "market_crash",
+        "tech_unlock"
+      ]
+    },
+    "from_nation_id": {
+      "type": "string"
+    },
+    "from_nation_name": {
+      "type": "string"
+    },
+    "to_nation_id": {
+      "type": "string"
+    },
+    "to_nation_name": {
+      "type": "string"
+    },
+    "stock_id": {
+      "type": "string"
+    },
+    "stock_ticker": {
+      "type": "string"
+    },
+    "shares": {
+      "type": "number"
+    },
+    "price_per_share": {
+      "type": "number"
+    },
+    "total_value": {
+      "type": "number"
+    },
+    "resource_type": {
+      "type": "string"
+    },
+    "resource_amount": {
+      "type": "number"
+    },
+    "description": {
+      "type": "string"
+    },
+    "epoch": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "type",
+    "from_nation_name"
+  ]
+}

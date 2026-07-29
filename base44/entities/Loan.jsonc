@@ -1,0 +1,110 @@
+{
+  "name": "Loan",
+  "type": "object",
+  "properties": {
+    "borrower_nation_id": {
+      "type": "string"
+    },
+    "borrower_nation_name": {
+      "type": "string"
+    },
+    "borrower_email": {
+      "type": "string"
+    },
+    "loan_type": {
+      "type": "string",
+      "enum": [
+        "short_term",
+        "development",
+        "sovereign_bond"
+      ],
+      "default": "short_term"
+    },
+    "purpose": {
+      "type": "string",
+      "default": ""
+    },
+    "principal": {
+      "type": "number",
+      "default": 0,
+      "description": "Original loan amount"
+    },
+    "balance_remaining": {
+      "type": "number",
+      "default": 0,
+      "description": "Outstanding balance"
+    },
+    "interest_rate": {
+      "type": "number",
+      "default": 0,
+      "description": "Annual interest % from bank"
+    },
+    "interest_accrued": {
+      "type": "number",
+      "default": 0
+    },
+    "repayment_per_tick": {
+      "type": "number",
+      "default": 0
+    },
+    "issued_at": {
+      "type": "string",
+      "default": ""
+    },
+    "due_date": {
+      "type": "string",
+      "default": ""
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "repaid",
+        "defaulted",
+        "sold"
+      ],
+      "default": "active"
+    },
+    "is_defaulted": {
+      "type": "boolean",
+      "default": false
+    },
+    "defaulted_at": {
+      "type": "string",
+      "default": ""
+    },
+    "creditor_nation_id": {
+      "type": "string",
+      "default": "",
+      "description": "Set when debt is purchased by another player"
+    },
+    "creditor_nation_name": {
+      "type": "string",
+      "default": ""
+    },
+    "creditor_email": {
+      "type": "string",
+      "default": ""
+    },
+    "investor_premium": {
+      "type": "number",
+      "default": 10,
+      "description": "Extra % on top of bank rate for debt buyer"
+    },
+    "bond_total_shares": {
+      "type": "number",
+      "default": 0,
+      "description": "For sovereign bonds: total bond units"
+    },
+    "bond_available": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "borrower_nation_id",
+    "borrower_email",
+    "loan_type",
+    "principal"
+  ]
+}

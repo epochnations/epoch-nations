@@ -1,0 +1,33 @@
+{
+  "name": "StockHolding",
+  "type": "object",
+  "properties": {
+    "nation_id": {
+      "type": "string"
+    },
+    "nation_name": {
+      "type": "string"
+    },
+    "stock_id": {
+      "type": "string"
+    },
+    "stock_ticker": {
+      "type": "string"
+    },
+    "company_name": {
+      "type": "string"
+    },
+    "shares_owned": {
+      "type": "number",
+      "default": 0
+    },
+    "avg_buy_price": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "nation_id",
+    "stock_id"
+  ]
+}

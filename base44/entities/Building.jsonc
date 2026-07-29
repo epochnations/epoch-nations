@@ -1,0 +1,44 @@
+{
+  "name": "Building",
+  "type": "object",
+  "properties": {
+    "nation_id": {
+      "type": "string"
+    },
+    "nation_name": {
+      "type": "string"
+    },
+    "owner_email": {
+      "type": "string"
+    },
+    "building_type": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "civilian",
+        "military",
+        "government"
+      ],
+      "default": "civilian"
+    },
+    "level": {
+      "type": "number",
+      "default": 1
+    },
+    "is_destroyed": {
+      "type": "boolean",
+      "default": false
+    },
+    "workers_assigned": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "nation_id",
+    "owner_email",
+    "building_type"
+  ]
+}

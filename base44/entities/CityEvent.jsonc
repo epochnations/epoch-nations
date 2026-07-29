@@ -1,0 +1,66 @@
+{
+  "name": "CityEvent",
+  "type": "object",
+  "properties": {
+    "city_id": {
+      "type": "string"
+    },
+    "nation_id": {
+      "type": "string"
+    },
+    "owner_email": {
+      "type": "string"
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "crime",
+        "disease",
+        "fire",
+        "protest",
+        "achievement",
+        "disaster",
+        "immigration",
+        "emigration",
+        "complaint"
+      ],
+      "default": "complaint"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "impact": {
+      "type": "object",
+      "default": {},
+      "description": "e.g. {happiness: -5, population: -100}"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "default": "medium"
+    },
+    "is_resolved": {
+      "type": "boolean",
+      "default": false
+    },
+    "resolution": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "required": [
+    "city_id",
+    "nation_id",
+    "owner_email",
+    "event_type",
+    "title"
+  ]
+}

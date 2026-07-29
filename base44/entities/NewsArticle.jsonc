@@ -1,0 +1,57 @@
+{
+  "name": "NewsArticle",
+  "type": "object",
+  "properties": {
+    "headline": {
+      "type": "string"
+    },
+    "body": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "war",
+        "economy",
+        "tech",
+        "policy",
+        "propaganda",
+        "milestone"
+      ],
+      "default": "economy"
+    },
+    "tier": {
+      "type": "string",
+      "enum": [
+        "breaking",
+        "gold",
+        "standard"
+      ],
+      "default": "standard"
+    },
+    "nation_name": {
+      "type": "string"
+    },
+    "nation_flag": {
+      "type": "string"
+    },
+    "nation_color": {
+      "type": "string"
+    },
+    "is_propaganda": {
+      "type": "boolean",
+      "default": false
+    },
+    "author_email": {
+      "type": "string"
+    },
+    "image_url": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "required": [
+    "headline",
+    "category"
+  ]
+}

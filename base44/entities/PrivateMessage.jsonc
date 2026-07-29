@@ -1,0 +1,44 @@
+{
+  "name": "PrivateMessage",
+  "type": "object",
+  "properties": {
+    "room_id": {
+      "type": "string",
+      "description": "Deterministic: sorted nation ids joined by _"
+    },
+    "sender_nation_id": {
+      "type": "string"
+    },
+    "sender_nation_name": {
+      "type": "string"
+    },
+    "sender_flag": {
+      "type": "string",
+      "default": "\ud83c\udff4"
+    },
+    "sender_color": {
+      "type": "string",
+      "default": "#3b82f6"
+    },
+    "recipient_nation_id": {
+      "type": "string"
+    },
+    "recipient_nation_name": {
+      "type": "string"
+    },
+    "content": {
+      "type": "string"
+    },
+    "is_read": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "room_id",
+    "sender_nation_id",
+    "sender_nation_name",
+    "recipient_nation_id",
+    "content"
+  ]
+}

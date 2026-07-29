@@ -1,0 +1,70 @@
+{
+  "name": "TradeRoute",
+  "type": "object",
+  "properties": {
+    "from_nation_id": {
+      "type": "string"
+    },
+    "from_nation_name": {
+      "type": "string"
+    },
+    "to_nation_id": {
+      "type": "string"
+    },
+    "to_nation_name": {
+      "type": "string"
+    },
+    "resource_key": {
+      "type": "string",
+      "enum": [
+        "res_wood",
+        "res_stone",
+        "res_iron",
+        "res_oil",
+        "res_gold"
+      ]
+    },
+    "quantity_per_cycle": {
+      "type": "number",
+      "default": 50
+    },
+    "price_per_100": {
+      "type": "number",
+      "default": 50
+    },
+    "direction": {
+      "type": "string",
+      "enum": [
+        "export",
+        "import"
+      ],
+      "default": "export"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "paused",
+        "broken"
+      ],
+      "default": "active"
+    },
+    "cycles_completed": {
+      "type": "number",
+      "default": 0
+    },
+    "total_earned": {
+      "type": "number",
+      "default": 0
+    },
+    "owner_email": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "from_nation_id",
+    "to_nation_id",
+    "resource_key",
+    "owner_email"
+  ]
+}

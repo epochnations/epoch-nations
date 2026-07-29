@@ -1,0 +1,115 @@
+{
+  "name": "CommunityItem",
+  "type": "object",
+  "properties": {
+    "item_id": {
+      "type": "string",
+      "description": "Unique item identifier (snake_case)"
+    },
+    "name": {
+      "type": "string"
+    },
+    "emoji": {
+      "type": "string",
+      "default": "\ud83d\udce6"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "raw_resources",
+        "refined_materials",
+        "tools",
+        "construction",
+        "household",
+        "furniture",
+        "industrial",
+        "vehicles",
+        "military",
+        "electronics",
+        "medical",
+        "agriculture",
+        "food",
+        "energy",
+        "infrastructure",
+        "chemicals",
+        "textiles",
+        "misc"
+      ],
+      "default": "misc"
+    },
+    "tier": {
+      "type": "number",
+      "default": 1,
+      "description": "1-5"
+    },
+    "rarity": {
+      "type": "string",
+      "enum": [
+        "common",
+        "uncommon",
+        "rare",
+        "epic",
+        "legendary"
+      ],
+      "default": "common"
+    },
+    "weight": {
+      "type": "number",
+      "default": 1
+    },
+    "stack_size": {
+      "type": "number",
+      "default": 100
+    },
+    "crafting_station": {
+      "type": "string",
+      "default": "workbench"
+    },
+    "crafting_recipe": {
+      "type": "object",
+      "default": {},
+      "description": "ingredient_id: quantity pairs"
+    },
+    "used_for": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "description": {
+      "type": "string",
+      "default": ""
+    },
+    "author_nation": {
+      "type": "string",
+      "default": ""
+    },
+    "author_email": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected"
+      ],
+      "default": "pending"
+    },
+    "votes": {
+      "type": "number",
+      "default": 0
+    },
+    "rejection_reason": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "required": [
+    "item_id",
+    "name",
+    "category",
+    "author_email"
+  ]
+}

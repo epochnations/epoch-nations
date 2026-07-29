@@ -1,0 +1,79 @@
+{
+  "name": "Business",
+  "type": "object",
+  "properties": {
+    "owner_email": {
+      "type": "string"
+    },
+    "nation_id": {
+      "type": "string",
+      "default": ""
+    },
+    "nation_name": {
+      "type": "string",
+      "default": ""
+    },
+    "name": {
+      "type": "string"
+    },
+    "business_type": {
+      "type": "string",
+      "enum": [
+        "restaurant",
+        "farm",
+        "retail_store",
+        "factory",
+        "workshop"
+      ],
+      "default": "restaurant"
+    },
+    "level": {
+      "type": "number",
+      "default": 1
+    },
+    "revenue_per_tick": {
+      "type": "number",
+      "default": 10
+    },
+    "expenses_per_tick": {
+      "type": "number",
+      "default": 3
+    },
+    "employees": {
+      "type": "number",
+      "default": 0
+    },
+    "reputation": {
+      "type": "number",
+      "default": 50
+    },
+    "total_earned": {
+      "type": "number",
+      "default": 0
+    },
+    "customers_served": {
+      "type": "number",
+      "default": 0
+    },
+    "is_open": {
+      "type": "boolean",
+      "default": true
+    },
+    "config": {
+      "type": "object",
+      "default": {}
+    },
+    "upgrades": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    }
+  },
+  "required": [
+    "owner_email",
+    "name",
+    "business_type"
+  ]
+}

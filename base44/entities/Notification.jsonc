@@ -1,0 +1,50 @@
+{
+  "name": "Notification",
+  "type": "object",
+  "properties": {
+    "target_nation_id": {
+      "type": "string"
+    },
+    "target_owner_email": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "stock_drop",
+        "ally_aid",
+        "war_declared",
+        "market_crash",
+        "tech_unlocked",
+        "lend_lease",
+        "attack_received"
+      ]
+    },
+    "title": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "is_read": {
+      "type": "boolean",
+      "default": false
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "info",
+        "warning",
+        "danger",
+        "success"
+      ],
+      "default": "info"
+    }
+  },
+  "required": [
+    "target_owner_email",
+    "type",
+    "title",
+    "message"
+  ]
+}

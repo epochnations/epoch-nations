@@ -1,0 +1,88 @@
+{
+  "name": "CraftingMarketListing",
+  "type": "object",
+  "properties": {
+    "seller_nation_id": {
+      "type": "string"
+    },
+    "seller_nation_name": {
+      "type": "string"
+    },
+    "seller_flag": {
+      "type": "string",
+      "default": "\ud83c\udff4"
+    },
+    "seller_color": {
+      "type": "string",
+      "default": "#3b82f6"
+    },
+    "item_id": {
+      "type": "string",
+      "description": "Item ID from ItemDatabase"
+    },
+    "item_name": {
+      "type": "string"
+    },
+    "item_emoji": {
+      "type": "string",
+      "default": "\ud83d\udce6"
+    },
+    "item_category": {
+      "type": "string"
+    },
+    "item_rarity": {
+      "type": "string",
+      "enum": [
+        "common",
+        "uncommon",
+        "rare",
+        "epic",
+        "legendary"
+      ],
+      "default": "common"
+    },
+    "item_tier": {
+      "type": "number",
+      "default": 1
+    },
+    "quantity": {
+      "type": "number",
+      "default": 1
+    },
+    "price_per_unit": {
+      "type": "number",
+      "default": 10
+    },
+    "total_price": {
+      "type": "number",
+      "default": 10
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "sold",
+        "cancelled"
+      ],
+      "default": "active"
+    },
+    "buyer_nation_id": {
+      "type": "string",
+      "default": ""
+    },
+    "buyer_nation_name": {
+      "type": "string",
+      "default": ""
+    },
+    "description": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "required": [
+    "seller_nation_id",
+    "item_id",
+    "quantity",
+    "price_per_unit"
+  ]
+}

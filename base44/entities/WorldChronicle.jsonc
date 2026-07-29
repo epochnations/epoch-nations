@@ -1,0 +1,54 @@
+{
+  "name": "WorldChronicle",
+  "type": "object",
+  "properties": {
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "war",
+        "alliance",
+        "peace",
+        "trade",
+        "disaster",
+        "revolution",
+        "tech",
+        "sanctions",
+        "narrative",
+        "crisis"
+      ],
+      "default": "narrative"
+    },
+    "title": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "actors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "importance": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "default": "medium"
+    },
+    "era_tag": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "required": [
+    "event_type",
+    "title",
+    "summary"
+  ]
+}

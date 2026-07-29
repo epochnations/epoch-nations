@@ -1,0 +1,112 @@
+{
+  "name": "HexTile",
+  "type": "object",
+  "properties": {
+    "hex_id": {
+      "type": "string",
+      "description": "Unique hex identifier: q_r"
+    },
+    "q": {
+      "type": "number",
+      "default": 0
+    },
+    "r": {
+      "type": "number",
+      "default": 0
+    },
+    "owner_nation_id": {
+      "type": "string",
+      "default": ""
+    },
+    "owner_nation_name": {
+      "type": "string",
+      "default": ""
+    },
+    "owner_color": {
+      "type": "string",
+      "default": ""
+    },
+    "owner_flag": {
+      "type": "string",
+      "default": ""
+    },
+    "terrain_type": {
+      "type": "string",
+      "enum": [
+        "plains",
+        "mountains",
+        "forest",
+        "coastal",
+        "desert",
+        "ocean",
+        "tundra"
+      ],
+      "default": "plains"
+    },
+    "resource_type": {
+      "type": "string",
+      "enum": [
+        "none",
+        "oil",
+        "iron",
+        "food",
+        "gold",
+        "stone",
+        "uranium"
+      ],
+      "default": "none"
+    },
+    "resource_amount": {
+      "type": "number",
+      "default": 0
+    },
+    "population_capacity": {
+      "type": "number",
+      "default": 100
+    },
+    "infrastructure_level": {
+      "type": "number",
+      "default": 0
+    },
+    "city_name": {
+      "type": "string",
+      "default": ""
+    },
+    "has_city": {
+      "type": "boolean",
+      "default": false
+    },
+    "has_military_base": {
+      "type": "boolean",
+      "default": false
+    },
+    "has_trade_port": {
+      "type": "boolean",
+      "default": false
+    },
+    "buildings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "is_capital": {
+      "type": "boolean",
+      "default": false
+    },
+    "cluster_id": {
+      "type": "string",
+      "default": ""
+    },
+    "protection_until": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "required": [
+    "hex_id",
+    "q",
+    "r"
+  ]
+}

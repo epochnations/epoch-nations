@@ -1,0 +1,58 @@
+{
+  "name": "GlobalMarket",
+  "type": "object",
+  "properties": {
+    "commodity": {
+      "type": "string",
+      "enum": [
+        "food",
+        "wood",
+        "stone",
+        "iron",
+        "steel",
+        "oil",
+        "energy",
+        "rare_minerals"
+      ],
+      "description": "Commodity type \u2014 one record per commodity"
+    },
+    "base_price": {
+      "type": "number",
+      "default": 10
+    },
+    "current_price": {
+      "type": "number",
+      "default": 10
+    },
+    "global_supply": {
+      "type": "number",
+      "default": 1000
+    },
+    "global_demand": {
+      "type": "number",
+      "default": 1000
+    },
+    "price_history": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "default": []
+    },
+    "shortage_active": {
+      "type": "boolean",
+      "default": false
+    },
+    "shortage_reason": {
+      "type": "string",
+      "default": ""
+    },
+    "last_updated": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "required": [
+    "commodity"
+  ]
+}

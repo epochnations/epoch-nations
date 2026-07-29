@@ -1,0 +1,106 @@
+{
+  "name": "NewsEvent",
+  "type": "object",
+  "properties": {
+    "nation_id": {
+      "type": "string"
+    },
+    "owner_email": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "government",
+        "economy",
+        "weather",
+        "crime",
+        "education",
+        "business",
+        "international",
+        "classifieds",
+        "science",
+        "military"
+      ]
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "info",
+        "warning",
+        "critical",
+        "opportunity"
+      ],
+      "default": "info"
+    },
+    "headline": {
+      "type": "string"
+    },
+    "body": {
+      "type": "string"
+    },
+    "author": {
+      "type": "string"
+    },
+    "edition": {
+      "type": "string"
+    },
+    "weather_type": {
+      "type": "string",
+      "default": ""
+    },
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": []
+    },
+    "chosen_option": {
+      "type": "string",
+      "default": ""
+    },
+    "is_resolved": {
+      "type": "boolean",
+      "default": false
+    },
+    "is_disaster": {
+      "type": "boolean",
+      "default": false
+    },
+    "follow_up_trigger": {
+      "type": "string",
+      "default": ""
+    },
+    "stat_preview": {
+      "type": "object",
+      "default": {}
+    },
+    "city_tag": {
+      "type": "string",
+      "default": ""
+    },
+    "city_name": {
+      "type": "string",
+      "default": ""
+    },
+    "city_color": {
+      "type": "string",
+      "default": ""
+    },
+    "city_emoji": {
+      "type": "string",
+      "default": ""
+    },
+    "image_url": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "required": [
+    "nation_id",
+    "owner_email",
+    "category",
+    "headline"
+  ]
+}

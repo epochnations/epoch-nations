@@ -1,0 +1,72 @@
+{
+  "name": "Research",
+  "type": "object",
+  "properties": {
+    "nation_id": {
+      "type": "string"
+    },
+    "nation_name": {
+      "type": "string"
+    },
+    "owner_email": {
+      "type": "string"
+    },
+    "tech_id": {
+      "type": "string",
+      "description": "ID of the technology being researched or completed"
+    },
+    "tech_name": {
+      "type": "string"
+    },
+    "tech_layer": {
+      "type": "number",
+      "default": 1
+    },
+    "tree_branch": {
+      "type": "string",
+      "description": "e.g. agriculture, military, industry, governance, frontier"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "in_progress",
+        "completed",
+        "queued"
+      ],
+      "default": "in_progress"
+    },
+    "progress": {
+      "type": "number",
+      "default": 0,
+      "description": "0-100 completion percentage"
+    },
+    "required_points": {
+      "type": "number",
+      "default": 100
+    },
+    "points_invested": {
+      "type": "number",
+      "default": 0
+    },
+    "is_global_breakthrough": {
+      "type": "boolean",
+      "default": false
+    },
+    "first_discovered_by": {
+      "type": "string",
+      "default": "",
+      "description": "Nation name that first discovered this breakthrough"
+    },
+    "diffusion_penalty": {
+      "type": "number",
+      "default": 0,
+      "description": "Extra cost multiplier for nations researching after first discovery"
+    }
+  },
+  "required": [
+    "nation_id",
+    "owner_email",
+    "tech_id",
+    "tech_name"
+  ]
+}

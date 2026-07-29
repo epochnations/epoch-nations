@@ -1,0 +1,47 @@
+{
+  "name": "Policy",
+  "type": "object",
+  "properties": {
+    "nation_id": {
+      "type": "string"
+    },
+    "nation_name": {
+      "type": "string"
+    },
+    "owner_email": {
+      "type": "string"
+    },
+    "healthcare": {
+      "type": "boolean",
+      "default": false
+    },
+    "martial_law": {
+      "type": "boolean",
+      "default": false
+    },
+    "tech_subsidies": {
+      "type": "boolean",
+      "default": false
+    },
+    "tax_cuts": {
+      "type": "boolean",
+      "default": false
+    },
+    "conscription": {
+      "type": "boolean",
+      "default": false
+    },
+    "propaganda_used_today": {
+      "type": "boolean",
+      "default": false
+    },
+    "influence_points": {
+      "type": "number",
+      "default": 100
+    }
+  },
+  "required": [
+    "nation_id",
+    "owner_email"
+  ]
+}

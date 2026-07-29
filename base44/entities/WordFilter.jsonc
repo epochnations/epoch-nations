@@ -1,0 +1,15 @@
+{
+  "name": "WordFilter",
+  "type": "object",
+  "properties": {
+    "word": {
+      "type": "string"
+    },
+    "added_by": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "word"
+  ]
+}

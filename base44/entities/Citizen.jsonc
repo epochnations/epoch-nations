@@ -1,0 +1,71 @@
+{
+  "name": "Citizen",
+  "type": "object",
+  "properties": {
+    "owner_email": {
+      "type": "string"
+    },
+    "nation_id": {
+      "type": "string",
+      "default": ""
+    },
+    "display_name": {
+      "type": "string",
+      "default": "Citizen"
+    },
+    "job": {
+      "type": "string",
+      "default": "Independent Entrepreneur"
+    },
+    "income_per_day": {
+      "type": "number",
+      "default": 50
+    },
+    "savings": {
+      "type": "number",
+      "default": 1000
+    },
+    "happiness": {
+      "type": "number",
+      "default": 75
+    },
+    "health": {
+      "type": "number",
+      "default": 100
+    },
+    "hunger": {
+      "type": "number",
+      "default": 100
+    },
+    "energy": {
+      "type": "number",
+      "default": 100
+    },
+    "skills": {
+      "type": "object",
+      "default": {
+        "cooking": 1,
+        "farming": 1,
+        "crafting": 1,
+        "trading": 1,
+        "management": 1
+      }
+    },
+    "experience": {
+      "type": "number",
+      "default": 0
+    },
+    "level": {
+      "type": "number",
+      "default": 1
+    },
+    "home_city": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "required": [
+    "owner_email",
+    "display_name"
+  ]
+}

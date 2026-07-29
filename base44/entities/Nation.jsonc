@@ -1,0 +1,321 @@
+{
+  "name": "Nation",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "leader": {
+      "type": "string"
+    },
+    "owner_email": {
+      "type": "string"
+    },
+    "government_type": {
+      "type": "string",
+      "enum": [
+        "Democracy",
+        "Constitutional Monarchy",
+        "Absolute Monarchy",
+        "Federal Republic",
+        "Socialist Republic",
+        "Communist State",
+        "Oligarchy",
+        "Theocracy",
+        "Military Junta",
+        "Technocracy",
+        "Anarcho-Capitalism",
+        "Direct Democracy",
+        "Feudal Kingdom",
+        "Corporate State",
+        "Confederation"
+      ],
+      "default": "Democracy",
+      "description": "Government type \u2014 affects tax rates, stability, and economic defaults"
+    },
+    "epoch": {
+      "type": "string",
+      "enum": [
+        "Stone Age",
+        "Bronze Age",
+        "Iron Age",
+        "Classical Age",
+        "Medieval Age",
+        "Renaissance Age",
+        "Industrial Age",
+        "Modern Age",
+        "Digital Age",
+        "Information Age",
+        "Space Age",
+        "Galactic Age"
+      ],
+      "default": "Stone Age"
+    },
+    "tech_points": {
+      "type": "number",
+      "default": 0
+    },
+    "tech_level": {
+      "type": "number",
+      "default": 1
+    },
+    "gdp": {
+      "type": "number",
+      "default": 500
+    },
+    "gdp_prev_tick": {
+      "type": "number",
+      "default": 500,
+      "description": "Previous tick GDP for growth calc"
+    },
+    "national_wealth": {
+      "type": "number",
+      "default": 500,
+      "description": "GDP + Infra + Resources + Corp Market Cap"
+    },
+    "unemployment_rate": {
+      "type": "number",
+      "default": 0,
+      "description": "percentage 0\u2013100"
+    },
+    "inflation_rate": {
+      "type": "number",
+      "default": 0,
+      "description": "Current inflation %, clamped -5 to +25"
+    },
+    "money_supply": {
+      "type": "number",
+      "default": 1000,
+      "description": "CitizenCurrency + BusinessCapital + Treasury + BankLending"
+    },
+    "currency_stability": {
+      "type": "number",
+      "default": 1.0,
+      "description": "0.1\u20132.0 multiplier on credit value"
+    },
+    "trade_balance": {
+      "type": "number",
+      "default": 0,
+      "description": "Daily exports minus imports in credits"
+    },
+    "resource_price_mod": {
+      "type": "number",
+      "default": 1.0,
+      "description": "Inflation multiplier on resource prices"
+    },
+    "construction_cost_mod": {
+      "type": "number",
+      "default": 1.0,
+      "description": "Inflation multiplier on construction costs"
+    },
+    "stability": {
+      "type": "number",
+      "default": 75
+    },
+    "public_trust": {
+      "type": "number",
+      "default": 1.0
+    },
+    "currency": {
+      "type": "number",
+      "default": 500
+    },
+    "savings_balance": {
+      "type": "number",
+      "default": 0,
+      "description": "Savings account balance \u2014 separate from treasury/checking"
+    },
+    "currency_name": {
+      "type": "string",
+      "default": "Credits"
+    },
+    "tax_rates": {
+      "type": "object",
+      "default": {
+        "income": 15,
+        "sales": 8,
+        "corporate": 12,
+        "tariff": 5
+      },
+      "description": "income / sales / corporate / tariff \u2014 all as percentages"
+    },
+    "manufacturing": {
+      "type": "number",
+      "default": 50
+    },
+    "education_spending": {
+      "type": "number",
+      "default": 20
+    },
+    "military_spending": {
+      "type": "number",
+      "default": 20
+    },
+    "unit_power": {
+      "type": "number",
+      "default": 10
+    },
+    "defense_level": {
+      "type": "number",
+      "default": 10
+    },
+    "population": {
+      "type": "number",
+      "default": 10
+    },
+    "flag_color": {
+      "type": "string",
+      "default": "#3b82f6"
+    },
+    "flag_emoji": {
+      "type": "string",
+      "default": "\ud83c\udff4"
+    },
+    "flag_image_url": {
+      "type": "string",
+      "default": ""
+    },
+    "allies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "at_war_with": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "war_started_at": {
+      "type": "string",
+      "default": ""
+    },
+    "is_in_market_crash": {
+      "type": "boolean",
+      "default": false
+    },
+    "crash_turns_remaining": {
+      "type": "number",
+      "default": 0
+    },
+    "unlocked_techs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "res_wood": {
+      "type": "number",
+      "default": 100
+    },
+    "res_stone": {
+      "type": "number",
+      "default": 100
+    },
+    "res_gold": {
+      "type": "number",
+      "default": 50
+    },
+    "res_oil": {
+      "type": "number",
+      "default": 0
+    },
+    "res_iron": {
+      "type": "number",
+      "default": 0
+    },
+    "res_food": {
+      "type": "number",
+      "default": 200
+    },
+    "workers_farmers": {
+      "type": "number",
+      "default": 2
+    },
+    "workers_hunters": {
+      "type": "number",
+      "default": 1
+    },
+    "workers_fishermen": {
+      "type": "number",
+      "default": 0
+    },
+    "workers_builders": {
+      "type": "number",
+      "default": 1
+    },
+    "workers_lumberjacks": {
+      "type": "number",
+      "default": 2,
+      "description": "Lumberjacks \u2014 produce Wood only"
+    },
+    "workers_quarry": {
+      "type": "number",
+      "default": 1,
+      "description": "Stone Miners \u2014 produce Stone only"
+    },
+    "workers_miners": {
+      "type": "number",
+      "default": 1,
+      "description": "Gold Miners \u2014 produce Gold only"
+    },
+    "workers_iron_miners": {
+      "type": "number",
+      "default": 0,
+      "description": "Iron Miners \u2014 produce Iron only (Iron Age+)"
+    },
+    "workers_oil_engineers": {
+      "type": "number",
+      "default": 0,
+      "description": "Oil Workers \u2014 produce Oil only (Industrial Age+)"
+    },
+    "workers_soldiers": {
+      "type": "number",
+      "default": 1
+    },
+    "workers_researchers": {
+      "type": "number",
+      "default": 1
+    },
+    "workers_industrial": {
+      "type": "number",
+      "default": 0
+    },
+    "housing_capacity": {
+      "type": "number",
+      "default": 20
+    },
+    "nation_description": {
+      "type": "string",
+      "default": ""
+    },
+    "nation_constitution": {
+      "type": "string",
+      "default": ""
+    },
+    "nation_bylaws": {
+      "type": "string",
+      "default": ""
+    },
+    "government_structure": {
+      "type": "string",
+      "default": ""
+    },
+    "anthem_url": {
+      "type": "string",
+      "default": ""
+    },
+    "culture_notes": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "required": [
+    "name",
+    "owner_email"
+  ]
+}
